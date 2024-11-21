@@ -1,12 +1,11 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface PlayerStats {
   name: string;
   score: number;
   gamesPlayed: number;
-  // Add other relevant fields here
 }
 
 interface PlayerWidgetProps {
@@ -21,30 +20,14 @@ const PlayerWidget: React.FC<PlayerWidgetProps> = ({ playerId }) => {
   useEffect(() => {
     const fetchPlayerStats = async () => {
       try {
-        // Retrieve API key and base URL from environment variables
-        const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL; 
-        
-        if (!apiKey || !apiBaseUrl) {
-          throw new Error("API key or base URL is missing. Check your .env.local file.");
-        }
-
-        // Construct the API URL
-        const url = `${apiBaseUrl}/Player/${playerId}`;
-
-        // Make the API request
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${apiKey}`, 
-          },
-        });
+        const response = await fetch(`/api/proxy?playerId=${playerId}`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch player stats: ${response.statusText}`);
         }
 
         const data = await response.json();
-        setPlayerStats(data); // Save player stats in state
+        setPlayerStats(data);
       } catch (err: any) {
         setError(err.message || "An error occurred");
       } finally {
@@ -63,7 +46,6 @@ const PlayerWidget: React.FC<PlayerWidgetProps> = ({ playerId }) => {
       <h2>{playerStats?.name}</h2>
       <p>Score: {playerStats?.score}</p>
       <p>Games Played: {playerStats?.gamesPlayed}</p>
-      {/* Add more stats as needed */}
     </div>
   );
 };
