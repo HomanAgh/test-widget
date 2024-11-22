@@ -6,7 +6,6 @@ const Page = () => {
   const playerId = '448944'; // Example player ID
   return (
     <div>
-      <h1>Player Stats</h1>
       <PlayerWidget playerId={playerId} />
     </div>
   );

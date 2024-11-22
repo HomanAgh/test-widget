@@ -4,71 +4,80 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const playerId = searchParams.get("playerId");
 
-  // Log the incoming request
-  console.log("Incoming Request URL:", req.url);
-  console.log("Extracted Player ID:", playerId);
-
-  const apiKey = process.env.API_KEY;
-  const apiBaseUrl = process.env.API_BASE_URL;
-
-  // Log the environment variables
-  console.log("API Key:", apiKey ? "Present" : "Missing");
-  console.log("API Base URL:", apiBaseUrl);
-
-  // Check for missing playerId
   if (!playerId) {
-    console.error("Error: Player ID is missing");
     return NextResponse.json(
       { error: "Player ID is required" },
       { status: 400 }
     );
   }
 
-  // Check for missing environment variables
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL;
+
   if (!apiKey || !apiBaseUrl) {
-    console.error("Error: API key or base URL is missing");
     return NextResponse.json(
       { error: "API key or base URL is missing" },
       { status: 500 }
     );
   }
 
+  const statsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}`;
+  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}`;
+  
+  console.log("Constructed API URLs:", statsUrl, playerUrl);
+  
   try {
-    // Construct the external API URL
-    const apiUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}`;
-    console.log("Constructed API URL:", apiUrl);
-
-    // Fetch data from the external API
-    const response = await fetch(apiUrl, { method: "GET" });
-
-    // Log the response status
-    console.log("External API Response Status:", response.status);
-
-    // If the response is not OK, log and throw an error
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("External API Error Response:", errorText);
+    // Fetch both URLs concurrently
+    const [statsResponse, playerResponse] = await Promise.all([
+      fetch(statsUrl, { method: "GET" }),
+      fetch(playerUrl, { method: "GET" }),
+    ]);
+  
+    // Check if both responses are OK
+    if (!statsResponse.ok || !playerResponse.ok) {
       throw new Error(
-        `Failed to fetch data: ${response.status} ${response.statusText}`
+        `Failed to fetch data: Stats(${statsResponse.statusText}), Player(${playerResponse.statusText})`
       );
     }
-
-    // Parse and log the response data
-    const data = await response.json();
-    console.log("Fetched Data from External API:", data);
-
-    // Return the response to the client
-    return NextResponse.json(data, { status: 200 });
+  
+    // Parse the JSON responses
+    const statsData = await statsResponse.json();
+    const playerData = await playerResponse.json();
+  
+    console.log("Fetched Stats Data:", statsData);
+    console.log("Fetched Player Data:", playerData);
+  
+    // Process the data (example)
+    const lastFiveGames = statsData.data
+      .sort((a: any, b: any) => new Date(b.game.date).getTime() - new Date(a.game.date).getTime())
+      .slice(0, 5)
+      .map((gameEntry: any) => {
+        const stats = gameEntry.stats || {};
+        return {
+          date: gameEntry.game.date || "Unknown Date",
+          teamName: gameEntry.teamName || "Unknown Team",
+          opponentName: gameEntry.opponentName || "Unknown Opponent",
+          teamScore: gameEntry.teamScore || 0,
+          opponentScore: gameEntry.opponentScore || 0,
+          outcome: gameEntry.outcome || "N/A",
+          goals: stats.G || 0,
+          assists: stats.A || 0,
+          points: stats.PTS || 0,
+        };
+      });
+  
+    return NextResponse.json({
+      playerInfo: playerData,
+      lastFiveGames,
+    });
   } catch (err: any) {
-    // Log the error message
     console.error("Error during fetch:", err.message);
-
-    // Return a 500 error with a custom message
+  
     return NextResponse.json(
       {
         error: "An internal server error occurred while fetching player data. Please try again later.",
       },
       { status: 500 }
     );
-  }
+  }  
 }
