@@ -56,10 +56,25 @@ export default PlayerWidget; */
 
 import React, { useEffect, useState } from "react";
 
+interface GameLog {
+  date: string;
+  teamName: string;
+  opponentName: string;
+  gameType: string;
+  teamScore: number;
+  opponentScore: number;
+  outcome: string;
+  goals: number;
+  assists: number;
+  points: number;
+}
+
+
 interface PlayerStats {
   name: string;
   firstName: string;
   biographyAsHTML: string;
+  lastFiveGames: GameLog[];
 }
 
 interface PlayerWidgetProps {
@@ -87,6 +102,7 @@ const PlayerWidget: React.FC<PlayerWidgetProps> = ({ playerId }) => {
           name: data?.data?.name || "Unknown Player",
           firstName: data?.data?.firstName || "Unknown First Name",
           biographyAsHTML: data?.data?.biographyAsHTML || "No biography available",
+          lastFiveGames: data.lastFiveGames || [],
         });
       } catch (err: any) {
         setError(err.message || "An error occurred");
@@ -106,8 +122,28 @@ const PlayerWidget: React.FC<PlayerWidgetProps> = ({ playerId }) => {
       <h2>Player Name: {playerStats?.name}</h2>
       <p>First Name: {playerStats?.firstName}</p>
       <p>Biography: {playerStats?.biographyAsHTML}</p>
+      <h3>Last 5 Games</h3>
+      {playerStats && playerStats.lastFiveGames && playerStats.lastFiveGames.length > 0 ? (
+        <ul>
+          {playerStats.lastFiveGames.map((game, index) => (
+            <li key={index}>
+              <p>Date: {game.date}</p>
+              <p>Team: {game.teamName}</p>
+              <p>Opponent: {game.opponentName}</p>
+              <p>Game Type: {game.gameType}</p>
+              <p>Score: {game.teamScore} - {game.opponentScore} ({game.outcome})</p>
+              <p>Goals: {game.goals}</p>
+              <p>Assists: {game.assists}</p>
+              <p>Total Points: {game.points}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No recent games available.</p>
+      )}
     </div>
   );
 };
+
 
 export default PlayerWidget;
