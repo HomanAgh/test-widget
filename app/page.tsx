@@ -3,7 +3,7 @@ import React from 'react';
 import PlayerWidget from './components/PlayerWidget';
 
 const Page = () => {
-  const playerId = '23856'; // Example player ID
+  const playerId = '448944'; // Example player ID
   return (
     <div>
       <h1>Player Stats</h1>
