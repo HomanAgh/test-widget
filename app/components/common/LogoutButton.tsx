@@ -7,8 +7,8 @@ const LogoutButton = () => {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn'); // Clear login state
-    router.push('/login'); // Redirect to login page
+    localStorage.removeItem('isLoggedIn');
+    router.push('/');
   };
 
   return <button onClick={handleLogout}>Logout</button>;
