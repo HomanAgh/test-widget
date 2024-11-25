@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     const statsData = await statsResponse.json();
     const playerData = await playerResponse.json();
   
-    console.log("Fetched Stats Data:", statsData);
+    /* console.log("Fetched Stats Data:", statsData); */
     console.log("Fetched Player Data:", playerData);
   
     // Process the data (example)
@@ -65,9 +65,17 @@ export async function GET(req: NextRequest) {
           points: stats.PTS || 0,
         };
       });
+
+      const playerInfo = {
+        name: playerData.data.name || "Unknown Player",
+        firstName: playerData.data.firstName || "Unknown First Name",
+        biographyAsHTML: playerData.data.biographyAsHTML || "No biography available",
+        imageUrl: playerData.data.imageUrl || "No image available",
+      }
+      
   
     return NextResponse.json({
-      playerInfo: playerData,
+      playerInfo,
       lastFiveGames,
     });
   } catch (err: any) {
