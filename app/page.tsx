@@ -1,28 +1,88 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import PlayerWidget from './components/PlayerWidget';
 import LogoutButton from './components/LogoutButton';
 
-const Page = () => {
-  const router = useRouter();
+const MainPage = () => {
+  const [query, setQuery] = useState('');
+  const [players, setPlayers] = useState([]);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn !== 'true') {
-      router.push('/login');
+  const handleSearch = async () => {
+    if (!query) {
+      setError('Please enter a search query.');
+      return;
     }
-  }, [router]);
+  
+    setError('');
+    setPlayers([]);
+    setSelectedPlayerId(null);
+  
+    try {
+      console.log(`Searching for: ${query}`);
+      const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error('Search failed:', errorData);
+        throw new Error(errorData.error || 'Search failed.');
+      }
+  
+      const data = await res.json();
+      console.log('Players:', data.players); // Log players from response
+      setPlayers(data.players || []);
+    } catch (err: any) {
+      console.error('Error during search:', err.message);
+      setError(err.message || 'An error occurred during the search.');
+    }
+  };  
 
-  const playerId = '448944'; // Example player ID
+  const handlePlayerSelect = (playerId: string) => {
+    setSelectedPlayerId(playerId);
+  };
 
   return (
     <div>
-      <PlayerWidget playerId={playerId} />
-      <LogoutButton />
+      <h1>Player Search and Profile</h1>
+
+      {/* Search Bar */}
+      <div>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Enter player name..."
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+
+      {/* Error Message */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {/* Dropdown Menu */}
+      {!selectedPlayerId && players.length > 0 && (
+        <div>
+          <label htmlFor="player-dropdown">Players:</label>
+          <select
+            id="player-dropdown"
+            onChange={(e) => handlePlayerSelect(e.target.value)}
+          >
+            <option value="">Select a player</option>
+            {players.map((player: any) => (
+              <option key={player.id} value={player.id}>
+                {`${player.name} - ${player.league} - ${player.team}`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Player Profile */}
+      {selectedPlayerId && <PlayerWidget playerId={selectedPlayerId} />}
+      <LogoutButton/>
     </div>
   );
 };
 
-export default Page;
+export default MainPage;

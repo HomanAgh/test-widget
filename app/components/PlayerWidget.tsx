@@ -36,7 +36,7 @@ const PlayerWidget: React.FC<PlayerWidgetProps> = ({ playerId }) => {
   useEffect(() => {
     const fetchPlayerStats = async () => {
       try {
-        const response = await fetch(`/api/proxy?playerId=${playerId}`);
+        const response = await fetch(`/api/player?playerId=${playerId}`);
 
         if (!response.ok) {
           throw new Error(
