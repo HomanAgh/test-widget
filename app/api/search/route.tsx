@@ -13,9 +13,10 @@ export async function GET(req: NextRequest) {
   
     const apiKey = process.env.API_KEY;
     const apiBaseUrl = process.env.API_BASE_URL;
-  
-    const searchUrl = `${apiBaseUrl}/v1/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}`;
-  
+    
+    const fields = "player.id,player.name,player.latestStats.team.name,player.latestStats.league.name";
+    const searchUrl = `${apiBaseUrl}/v1/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
+
     try {
       const searchResponse = await fetch(searchUrl, { method: "GET" });
   
@@ -35,8 +36,8 @@ export async function GET(req: NextRequest) {
       const players = searchData.data?.player?.map((p: any) => ({
         id: p.id,
         name: p.name || "Unknown",
-        league: p.league?.name || "Unknown League",
-        team: p.team?.name || "Unknown Team",
+        league: p.latestStats?.league?.name || "Unknown League",
+        team: p.latestStats?.team?.name || "Unknown Team",
       })) || [];
   
       console.log('Parsed Players:', players);
