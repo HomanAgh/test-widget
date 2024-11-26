@@ -71,7 +71,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  /* const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -95,7 +95,32 @@ const LoginPage = () => {
     } catch (err: any) {
       setError(err.message);
     }
+  }; */
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+  
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Login failed');
+      }
+  
+      localStorage.setItem('isLoggedIn', 'true');
+      console.log('[DEBUG] Redirecting to /home');
+      router.push('/home'); // Redirect to HomePage after login
+    } catch (err) {
+      const errorMessage = (err as Error).message || 'An unknown error occurred';
+    console.error('[DEBUG] Login error:', errorMessage);
+    setError(errorMessage);
+    }
   };
+  
 
   return (
     <div>
