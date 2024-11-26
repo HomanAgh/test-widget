@@ -148,6 +148,7 @@ interface GameLog {
 }
 
 interface PlayerStats {
+  id: string;
   name: string;
   firstName: string;
   biographyAsHTML: string;
@@ -176,6 +177,7 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
 
         // Map the external API data to your component's state
         setPlayerStats({
+          id: playerId,
           name: data.playerInfo.name || 'Unknown Player',
           firstName: data.playerInfo.firstName || 'Unknown First Name',
           biographyAsHTML: data.playerInfo.biographyAsHTML || 'No biography available',
@@ -220,7 +222,16 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
           />
         </div>
         <div className="ml-4 flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold">{playerStats?.name}</h2>
+          <h2 className="text-2xl font-semibold">
+          <a
+              href={`https://www.eliteprospects.com/player/${playerStats?.id}/${playerStats?.name}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline text-inherit"
+            >
+              {playerStats?.name}
+            </a>
+          </h2>
           {/* <p className="text-sm text-gray-500">First Name: {playerStats?.firstName}</p> */}
           <div
             /* className="text-sm text-gray-600 mt-2"
