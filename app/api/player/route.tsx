@@ -63,6 +63,7 @@ export async function GET(req: NextRequest) {
           goals: stats.G || 0,
           assists: stats.A || 0,
           points: stats.PTS || 0,
+          plusMinusRating: stats.PM || 0, //test kan ta bort sen om det inte funkar
         };
       });
 
