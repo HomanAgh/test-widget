@@ -1,8 +1,17 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Login Page Tests', () => {
+  test('should redirect unauthenticated users from / to /auth', async ({ page }) => {
+    // Navigate to the root route
+    await page.goto('http://localhost:3000/');
+
+    // Verify redirection to /auth
+    await expect(page).toHaveURL('http://localhost:3000/auth');
+    await expect(page.locator('h1')).toHaveText('Login');
+  });
+
   test('should display login page', async ({ page }) => {
-    // Navigate to the login page
+    // Navigate to the login page directly
     await page.goto('http://localhost:3000/auth');
 
     // Check if the login form is visible

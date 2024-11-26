@@ -91,6 +91,7 @@ const LoginPage = () => {
 
       // Redirect to player search page
       router.push("/player");
+      console.log('Redirecting to /player...');
     } catch (err: any) {
       setError(err.message);
     }
