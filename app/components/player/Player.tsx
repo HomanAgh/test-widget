@@ -1,143 +1,12 @@
-/* 'use client';
-
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-
-interface GameLog {
-  date: string;
-  teamName: string;
-  opponentName: string;
-  gameType: string;
-  teamScore: number;
-  opponentScore: number;
-  outcome: string;
-  goals: number;
-  assists: number;
-  points: number;
-}
-
-interface PlayerStats {
-  name: string;
-  firstName: string;
-  biographyAsHTML: string;
-  imageUrl: string;
-  lastFiveGames: GameLog[];
-}
-
-interface PlayerProps {
-  playerId: string;
-}
-
-const Player: React.FC<PlayerProps> = ({ playerId }) => {
-  const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPlayerStats = async () => {
-      try {
-        const response = await fetch(`/api/player?playerId=${encodeURIComponent(playerId)}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch player stats: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // Map the external API data to your component's state
-        setPlayerStats({
-          name: data.playerInfo.name || 'Unknown Player',
-          firstName: data.playerInfo.firstName || 'Unknown First Name',
-          biographyAsHTML: data.playerInfo.biographyAsHTML || 'No biography available',
-          imageUrl: data.playerInfo.imageUrl || '/default-image.jpg',
-          lastFiveGames: data.lastFiveGames || [],
-        });
-      } catch (err: any) {
-        setError(err.message || 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlayerStats();
-  }, [playerId]);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  return (
-    <div className="max-w-4xl mx-auto p-4 bg-gradient-to-r from-teal-200 to-teal-800 bg-pattern-checkerboard">
-      <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col md:flex-row">
-        <div className="w-24 h-24 rounded-full overflow-hidden">
-          <Image
-            src={playerStats?.imageUrl || '/default-image.jpg'}
-            alt="Player Image"
-            width={96}
-            height={96}
-            className="object-cover"
-          />
-        </div>
-        <div className="ml-4 flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold">{playerStats?.name}</h2>
-          <p className="text-sm text-gray-500">First Name: {playerStats?.firstName}</p>
-          <div
-            className="text-sm text-gray-600 mt-2"
-            dangerouslySetInnerHTML={{ __html: playerStats?.biographyAsHTML || '' }}
-          />
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold">Last 5 Games</h3>
-        {playerStats?.lastFiveGames?.length ? (
-          <table className="w-full mt-4 table-auto border-collapse border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">Date</th>
-                <th className="py-2 px-4 border-b">Team</th>
-                <th className="py-2 px-4 border-b">Opponent</th>
-                <th className="py-2 px-4 border-b">Score</th>
-                <th className="py-2 px-4 border-b">Goals</th>
-                <th className="py-2 px-4 border-b">Assists</th>
-                <th className="py-2 px-4 border-b">Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              {playerStats.lastFiveGames.map((game, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="py-2 px-4 border-b">{game.date}</td>
-                  <td className="py-2 px-4 border-b">{game.teamName}</td>
-                  <td className="py-2 px-4 border-b">{game.opponentName}</td>
-                  <td className="py-2 px-4 border-b">
-                    {game.teamScore} - {game.opponentScore} ({game.outcome})
-                  </td>
-                  <td className="py-2 px-4 border-b">{game.goals}</td>
-                  <td className="py-2 px-4 border-b">{game.assists}</td>
-                  <td className="py-2 px-4 border-b">{game.points}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No recent games available.</p>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default Player;
- */
-
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface GameLog {
   date: string;
   teamName: string;
   opponentName: string;
-  gameType: string;
   teamScore: number;
   opponentScore: number;
   outcome: string;
@@ -150,10 +19,12 @@ interface GameLog {
 interface PlayerStats {
   id: string;
   name: string;
-  firstName: string;
-  biographyAsHTML: string;
   imageUrl: string;
   lastFiveGames: GameLog[];
+  team?: { id: number; name: string };
+  league?: { slug: string; name: string };
+  nationality: string;
+  jerseyNumber: string;
 }
 
 interface PlayerProps {
@@ -164,28 +35,29 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [backgroundColor, setBackgroundColor] = useState("bg-blue-100"); // Default background
+  const [showSummary, setShowSummary] = useState(false); // Toggle between table and summary
 
   useEffect(() => {
     const fetchPlayerStats = async () => {
       try {
-        const response = await fetch(`/api/player?playerId=${encodeURIComponent(playerId)}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch player stats: ${response.statusText}`);
-        }
-
+        const response = await fetch(
+          `/api/player?playerId=${encodeURIComponent(playerId)}`
+        );
         const data = await response.json();
 
-        // Map the external API data to your component's state
         setPlayerStats({
           id: playerId,
-          name: data.playerInfo.name || 'Unknown Player',
-          firstName: data.playerInfo.firstName || 'Unknown First Name',
-          biographyAsHTML: data.playerInfo.biographyAsHTML || 'No biography available',
-          imageUrl: data.playerInfo.imageUrl || '/default-image.jpg',
+          name: data.playerInfo.name || "Unknown Player",
+          imageUrl: data.playerInfo.imageUrl || "/default-image.jpg",
           lastFiveGames: data.lastFiveGames || [],
+          team: data.playerInfo.team,
+          league: data.playerInfo.league,
+          nationality: data.playerInfo.nationality || "Unknown Nationality",
+          jerseyNumber: data.playerInfo.jerseyNumber || "N/A",
         });
       } catch (err: any) {
-        setError(err.message || 'An error occurred');
+        setError(err.message || "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -194,10 +66,10 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
     fetchPlayerStats();
   }, [playerId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className="text-center text-gray-600">Loading...</div>;
+  if (error)
+    return <div className="text-center text-red-600">Error: {error}</div>;
 
-  // Calculate the summary for the last five games
   const summary = playerStats?.lastFiveGames.reduce(
     (acc, game) => {
       acc.goals += game.goals;
@@ -209,102 +81,213 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
     { goals: 0, assists: 0, points: 0, plusMinusRating: 0 }
   );
 
+  const handleBackgroundChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setBackgroundColor(e.target.value);
+  };
+
+  const toggleSummaryView = () => {
+    setShowSummary((prev) => !prev);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-gradient-to-r from-teal-200 to-teal-800 bg-pattern-checkerboard">
-      <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col md:flex-row">
-        <div className="w-24 h-24 rounded-full overflow-hidden">
+    <div
+      className={`max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg ${backgroundColor}`}
+    >
+      {/* Background Color Selector */}
+      <div className="mb-6 text-center">
+        <label
+          htmlFor="color-picker"
+          className="block text-sm font-medium text-gray-800 dark:text-gray-100"
+        >
+          Change Background Color:
+        </label>
+        <select
+          id="color-picker"
+          value={backgroundColor}
+          onChange={handleBackgroundChange}
+          className="mt-2 p-2 border rounded-md dark:bg-gray-800 dark:text-gray-100"
+        >
+          <option value="bg-blue-100">Blue</option>
+          <option value="bg-gray-50">Light Gray</option>
+          <option value="bg-gray-800 text-white">Dark Gray</option>
+          <option value="bg-green-100">Green</option>
+          <option value="bg-yellow-100">Yellow</option>
+        </select>
+      </div>
+
+      {/* Player Info Section */}
+      <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-6">
+        {/* Player Image */}
+        <div className="w-40 h-40 rounded-lg overflow-hidden shadow-md border border-gray-300">
           <Image
-            src={playerStats?.imageUrl || '/default-image.jpg'}
-            alt="Player Image"
-            width={96}
-            height={96}
+            src={playerStats?.imageUrl || "/default-image.jpg"}
+            alt={playerStats?.name || "Player Image"}
+            width={160}
+            height={160}
             className="object-cover"
           />
         </div>
-        <div className="ml-4 flex flex-col justify-center">
-          <h2 className="text-2xl font-semibold">
-          <a
+
+        {/* Player Details */}
+        <div className="mt-4 md:mt-0 text-center md:text-left">
+          {/* Name and Nationality Row */}
+          <div className="flex items-center space-x-2">
+            <a
               href={`https://www.eliteprospects.com/player/${playerStats?.id}/${playerStats?.name}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline text-inherit"
+              className="text-2xl font-semibold text-gray-800 dark:text-gray-100 hover:underline"
             >
               {playerStats?.name}
             </a>
-          </h2>
-          {/* <p className="text-sm text-gray-500">First Name: {playerStats?.firstName}</p> */}
-          <div
-            /* className="text-sm text-gray-600 mt-2"
-            dangerouslySetInnerHTML={{ __html: playerStats?.biographyAsHTML || '' }} */
-          />
+            <span className="text-xl">{playerStats?.nationality}</span> {/* Replace with nationality flag */}
+          </div>
+
+          {/* Jersey, Team, and League Row */}
+          <div className="mt-2">
+            <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
+              <span>#{playerStats?.jerseyNumber || "N/A"} </span>
+              {playerStats?.team ? (
+                <a
+                  href={`https://www.eliteprospects.com/team/${playerStats.team.id}/${playerStats.team.name}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-1xl font-semibold text-gray-800 dark:text-gray-100 hover:underline"
+                >
+                  {playerStats.team.name}
+                </a>
+              ) : (
+                "Unknown Team"
+              )}
+              {" / "}
+              {playerStats?.league ? (
+                <a
+                  href={`https://www.eliteprospects.com/league/${playerStats.league.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-1xl font-semibold text-gray-800 dark:text-gray-100 hover:underline"
+                >
+                  {playerStats.league.name}
+                </a>
+              ) : (
+                "Unknown League"
+              )}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Summary Table */}
-      <div className="mt-6">
-        <h3 className="text-xl font-semibold">Last 5 Games Summary</h3>
-        {summary ? (
-          <table className="w-full mt-4 table-auto border-collapse border border-gray-300">
+      {/* Last 5 Games Section */}
+      <div className="mt-8">
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+            {showSummary ? "Last 5 Games Summary" : "Last 5 Games"}
+          </h3>
+          <button
+            onClick={toggleSummaryView}
+            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600"
+          >
+            {showSummary ? "5 Games" : "Summarize"}
+          </button>
+        </div>
+
+        {/* Summary View */}
+        {showSummary ? (
+          <table className="w-full mt-4 border-collapse border border-gray-300">
             <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">Games</th>
-                <th className="py-2 px-4 border-b">Total Goals</th>
-                <th className="py-2 px-4 border-b">Total Assists</th>
-                <th className="py-2 px-4 border-b">Total Points</th>
-                <th className="py-2 px-4 border-b">Total +/-</th>
+              <tr className="bg-gray-200 text-gray-800 text-sm font-semibold">
+                <th className="py-2 px-4 text-left border border-gray-300">
+                  Games
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  Goals
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  Assists
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  Points
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  +/- Rating
+                </th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="py-2 px-4 border-b text-center">Last 5 games</td>
-                <td className="py-2 px-4 border-b text-center">{summary.goals}</td>
-                <td className="py-2 px-4 border-b text-center">{summary.assists}</td>
-                <td className="py-2 px-4 border-b text-center">{summary.points}</td>
-                <td className="py-2 px-4 border-b text-center">{summary.plusMinusRating}</td>
+              <tr className="bg-blue-100 text-gray-800 text-sm">
+                <td className="py-2 px-4 border border-gray-300">
+                  Last 5 Games
+                </td>
+                <td className="py-2 px-4 text-center border border-gray-300">
+                  {summary?.goals || 0}
+                </td>
+                <td className="py-2 px-4 text-center border border-gray-300">
+                  {summary?.assists || 0}
+                </td>
+                <td className="py-2 px-4 text-center border border-gray-300">
+                  {summary?.points || 0}
+                </td>
+                <td className="py-2 px-4 text-center border border-gray-300">
+                  {summary?.plusMinusRating || 0}
+                </td>
               </tr>
             </tbody>
           </table>
         ) : (
-          <p>No recent games available for summary.</p>
-        )}
-      </div>
-
-      {/* Detailed Table */}
-      {/* <div className="mt-6">
-        <h3 className="text-xl font-semibold">Last 5 Games Details</h3>
-        {playerStats?.lastFiveGames?.length ? (
-          <table className="w-full mt-4 table-auto border-collapse border border-gray-300">
+          // Table View
+          <table className="w-full mt-4 border-collapse border border-gray-300">
             <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">Date</th>
-                <th className="py-2 px-4 border-b">Team</th>
-                <th className="py-2 px-4 border-b">Opponent</th>
-                <th className="py-2 px-4 border-b">Score</th>
-                <th className="py-2 px-4 border-b">Goals</th>
-                <th className="py-2 px-4 border-b">Assists</th>
-                <th className="py-2 px-4 border-b">Points</th>
+              <tr className="bg-gray-200 text-gray-800 text-sm font-semibold">
+                <th className="py-2 px-4 text-left border border-gray-300">
+                  Date
+                </th>
+                <th className="py-2 px-4 text-left border border-gray-300">
+                  Opponent
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  Goals
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  Assists
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  Points
+                </th>
+                <th className="py-2 px-4 text-center border border-gray-300">
+                  +/- Rating
+                </th>
               </tr>
             </thead>
             <tbody>
-              {playerStats.lastFiveGames.map((game, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="py-2 px-4 border-b">{game.date}</td>
-                  <td className="py-2 px-4 border-b">{game.teamName}</td>
-                  <td className="py-2 px-4 border-b">{game.opponentName}</td>
-                  <td className="py-2 px-4 border-b">
-                    {game.teamScore} - {game.opponentScore} ({game.outcome})
+              {playerStats?.lastFiveGames.map((game, index) => (
+                <tr
+                  key={index}
+                  className={`${
+                    index % 2 === 0 ? "bg-blue-100" : "bg-white"
+                  } text-gray-800 text-sm`}
+                >
+                  <td className="py-2 px-4 border border-gray-300">{game.date}</td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {game.opponentName}
                   </td>
-                  <td className="py-2 px-4 border-b">{game.goals}</td>
-                  <td className="py-2 px-4 border-b">{game.assists}</td>
-                  <td className="py-2 px-4 border-b">{game.points}</td>
+                  <td className="py-2 px-4 text-center border border-gray-300">
+                    {game.goals}
+                  </td>
+                  <td className="py-2 px-4 text-center border border-gray-300">
+                    {game.assists}
+                  </td>
+                  <td className="py-2 px-4 text-center border border-gray-300">
+                    {game.points}
+                  </td>
+                  <td className="py-2 px-4 text-center border border-gray-300">
+                    {game.plusMinusRating}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        ) : (
-          <p>No recent games available.</p>
         )}
-      </div> */}
+      </div>
     </div>
   );
 };
