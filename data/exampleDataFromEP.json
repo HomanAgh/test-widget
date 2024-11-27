@@ -1,0 +1,221 @@
+{
+    "_meta": {
+      "generatedAt": "2024-11-27T12:14:10.753728Z"
+    },
+    "data": {
+      "id": 8311,
+      "firstName": "Marcus",
+      "lastName": "Krüger",
+      "name": "Marcus Krüger",
+      "alternativeFirstName": null,
+      "alternativeLastName": null,
+      "alternativeName": null,
+      "initialOfFirstName": "M",
+      "initialOfLastName": "K",
+      "gender": "male",
+      "status": "active",
+      "playerType": "SKATER",
+      "position": "F",
+      "detailedPosition": [
+        "C"
+      ],
+      "shoots": "L",
+      "yearOfBirth": 1990,
+      "dateOfBirth": "1990-05-27",
+      "age": 34,
+      "placeOfBirth": "Stockholm, SWE",
+      "youthTeam": "Huddinge IK",
+      "nationality": {
+        "slug": "SWE",
+        "name": "Sweden",
+        "_links": [
+          "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+        ]
+      },
+      "secondaryNationality": null,
+      "weight": {
+        "metrics": 86,
+        "imperial": 190
+      },
+      "height": {
+        "metrics": 183,
+        "imperial": "6'0\""
+      },
+      "contract": "25/26",
+      "capHit": null,
+      "gameStatus": "healthy",
+      "gameStatusInfo": null,
+      "views": 485629,
+      "imageUrl": "https://files.eliteprospects.com/layout/players/bb_mackankruger.jpg",
+      "imageCopyright": "© Photo: Bildbyrån",
+      "pronunciationUrl": "https://files.eliteprospects.com/layout/player_audio/marcus_kruger.mp3",
+      "verified": false,
+      "contactable": false,
+      "staff": null,
+      "latestStats": {
+        "id": 13392285,
+        "season": {
+          "slug": "2024-2025",
+          "startYear": 2024,
+          "endYear": 2025
+        },
+        "statsType": "default",
+        "status": "rostered",
+        "team": {
+          "id": 3,
+          "name": "Djurgårdens IF",
+          "status": "active",
+          "league": {
+            "slug": "hockeyallsvenskan",
+            "name": "HockeyAllsvenskan",
+            "teamClass": "men",
+            "leagueLevel": "professional",
+            "country": {
+              "slug": "SWE",
+              "name": "Sweden",
+              "_links": [
+                "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+              ]
+            },
+            "continent": "EU",
+            "_links": [
+              "https://api.eliteprospects.com/v1/leagues/hockeyallsvenskan?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            ]
+          },
+          "teamType": "club",
+          "teamClass": "men",
+          "country": {
+            "slug": "SWE",
+            "name": "Sweden",
+            "_links": [
+              "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            ]
+          },
+          "continent": "EU",
+          "_links": [
+            "https://api.eliteprospects.com/v1/teams/3?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+          ]
+        },
+        "teamName": "Djurgårdens IF",
+        "league": {
+          "slug": "hockeyallsvenskan",
+          "name": "HockeyAllsvenskan",
+          "teamClass": "men",
+          "leagueLevel": "professional",
+          "country": {
+            "slug": "SWE",
+            "name": "Sweden",
+            "_links": [
+              "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            ]
+          },
+          "continent": "EU",
+          "_links": [
+            "https://api.eliteprospects.com/v1/leagues/hockeyallsvenskan?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+          ]
+        },
+        "leagueName": "HockeyAllsvenskan",
+        "leagueType": "league",
+        "jerseyNumber": 32,
+        "playerRole": "C",
+        "contractType": null,
+        "regularStats": {
+          "GP": 17,
+          "G": 6,
+          "A": 8,
+          "PTS": 14,
+          "PIM": 34,
+          "PM": 5,
+          "PPG": 0.82
+        },
+        "postseasonType": null,
+        "postseasonName": null,
+        "postseasonStats": null
+      },
+      "latestGameLogsAggregated": [
+        {
+          "stats": {
+            "TOI": "88:40",
+            "SOG": 0,
+            "GP": 5,
+            "G": 0,
+            "A": 0,
+            "PTS": 0,
+            "PIM": 24,
+            "PM": 2,
+            "PPG": 0,
+            "SHG": null
+          },
+          "limit": 5
+        },
+        {
+          "stats": {
+            "TOI": "190:23",
+            "SOG": 1,
+            "GP": 10,
+            "G": 4,
+            "A": 1,
+            "PTS": 5,
+            "PIM": 30,
+            "PM": 3,
+            "PPG": 2,
+            "SHG": null
+          },
+          "limit": 10
+        }
+      ],
+      "nhlRights": null,
+      "agencies": [
+        {
+          "id": 3,
+          "name": "CAA - Creative Artists Agency",
+          "logoUrl": "https://files.eliteprospects.com/layout/agency/3.png",
+          "location": "Los Angeles, CA, USA",
+          "email": "claes.elefalk@caa.com",
+          "country": {
+            "slug": "USA",
+            "name": "USA",
+            "_links": [
+              "https://api.eliteprospects.com/v1/countries/USA?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            ]
+          },
+          "numberOfClients": 288,
+          "agents": [
+            "Dave Nicoletti ()",
+            "André Ruel",
+            "Claes Elefalk",
+            "Dominic Ricard",
+            "J.P. Barry",
+            "Johan Altberg",
+            "Pat Brisson",
+            "Peter Werner"
+          ],
+          "_links": [
+            "https://api.eliteprospects.com/v1/agencies/3?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+          ]
+        }
+      ],
+      "profileDescriptionAsHTML": "Father: <a href=\"/player.php?player=10598\">Peter Krüger</a><br>Brother: <a href=\"/player.php?player=20051\">Måns Krüger</a>",
+      "scoutingReportUrl": null,
+      "scoutingReportThumbnailUrl": null,
+      "biographyAsHTML": "<b>Career transactions</b><br>\r\n- 2010-06-16 • Loaned to Djurgården<br>\r\n- 2010-06-16 • Signed to a three-year entry-level contract by the Chicago Blackhawks<br>\r\n- 2009-06-16 • Signed to a two-year contract extension by Djurgården",
+      "links": {
+        "eliteprospectsUrl": "https://www.eliteprospects.com/player/8311/marcus-kruger",
+        "officialWebUrl": null,
+        "x": null,
+        "twitter": null,
+        "youtube": null,
+        "youtubeDescription": null,
+        "facebook": null,
+        "linkedin": null,
+        "instagram": "https://www.instagram.com/marcuskruger90",
+        "capHitUrl": null
+      },
+      "eliteprospectsUrlPath": "/player/8311/marcus-kruger",
+      "slug": "marcus-kruger",
+      "updatedAt": "2024-11-22T21:33:20.000000Z",
+      "_links": [
+        "https://api.eliteprospects.com/v1/players/8311?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+      ]
+    }
+  }
