@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import BackgroundSelector from "./BackgroundSelector";
 import PlayerInfo from "./PlayerInfo";
 import GamesTable from "./GamesTable";
 
@@ -29,13 +28,13 @@ interface PlayerStats {
 
 interface PlayerProps {
   playerId: string;
+  backgroundColor: string; // Add this to support the background color
 }
 
-const Player: React.FC<PlayerProps> = ({ playerId }) => {
+const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState("bg-blue-100");
 
   useEffect(() => {
     const fetchPlayerStats = async () => {
@@ -71,12 +70,9 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
 
   return (
     <div
-      className={`max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg ${backgroundColor}`}
+      className={`max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg`}
+      style={{ backgroundColor }} // Apply the background color
     >
-      <BackgroundSelector
-        backgroundColor={backgroundColor}
-        setBackgroundColor={setBackgroundColor}
-      />
       {playerStats && <PlayerInfo playerStats={playerStats} />}
       {playerStats && (
         <GamesTable
