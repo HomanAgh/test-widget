@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import BackgroundSelector from "./BackgroundSelector";
 import PlayerInfo from "./PlayerInfo";
@@ -7,21 +5,21 @@ import GamesTable from "./GamesTable";
 
 interface GameLog {
   date: string;
-  teamName: string;
-  opponentName: string;
-  teamScore: number;
-  opponentScore: number;
-  outcome: string;
-  goals: number;
-  assists: number;
-  points: number;
-  plusMinusRating: number;
+  goals?: number;
+  assists?: number;
+  points?: number;
+  plusMinusRating?: number;
+  shotsAgainst?: number;
+  saves?: number;
+  goalsAgainst?: number;
+  savePercentage?: number;
 }
 
 interface PlayerStats {
   id: string;
   name: string;
   imageUrl: string;
+  playerType: "SKATER" | "GOALTENDER";
   lastFiveGames: GameLog[];
   team?: { id: number; name: string };
   league?: { slug: string; name: string };
@@ -48,9 +46,10 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
         const data = await response.json();
 
         setPlayerStats({
-          id: playerId,
+          id: data.playerInfo.id,
           name: data.playerInfo.name || "Unknown Player",
           imageUrl: data.playerInfo.imageUrl || "/default-image.jpg",
+          playerType: data.playerInfo.playerType,
           lastFiveGames: data.lastFiveGames || [],
           team: data.playerInfo.team,
           league: data.playerInfo.league,
@@ -79,7 +78,12 @@ const Player: React.FC<PlayerProps> = ({ playerId }) => {
         setBackgroundColor={setBackgroundColor}
       />
       {playerStats && <PlayerInfo playerStats={playerStats} />}
-      {playerStats && <GamesTable lastFiveGames={playerStats.lastFiveGames} />}
+      {playerStats && (
+        <GamesTable
+          lastFiveGames={playerStats.lastFiveGames}
+          playerType={playerStats.playerType}
+        />
+      )}
     </div>
   );
 };

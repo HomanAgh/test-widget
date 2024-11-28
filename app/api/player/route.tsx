@@ -4,7 +4,6 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const playerId = searchParams.get("playerId");
 
-  // Validate playerId query parameter
   if (!playerId) {
     return NextResponse.json(
       { error: "Player ID is required" },
@@ -12,7 +11,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Validate environment variables
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
 
@@ -23,107 +21,93 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Fields for player information
   const fields = [
     "id",
     "name",
-    "firstName",
+    "playerType",
     "imageUrl",
-    "nationality.name",
-    "latestStats.team.id",
     "latestStats.team.name",
-    "latestStats.league.slug",
     "latestStats.league.name",
-    "latestStats.jerseyNumber",
+    "nationality.name",
   ].join(",");
 
-  // Fields for game logs
-  const fields2 = [
+  const skaterFields = [
     "game.date",
-    "game.dateTime",
-    "teamName",
-    "opponentName",
-    "teamScore",
-    "opponentScore",
-    "outcome",
     "stats.G",
     "stats.A",
     "stats.PTS",
     "stats.PM",
   ].join(",");
 
-  // Construct API URLs
-  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
-  const statsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(fields2)}`;
+  const goalieFields = [
+    "game.date",
+    "stats.SA",
+    "stats.SV",
+    "stats.GA",
+    "stats.SVP",
+  ].join(",");
 
-  console.log("Constructed API URLs:", { playerUrl, statsUrl });
+  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
+  const skaterStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(skaterFields)}`;
+  const goalieStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(goalieFields)}`;
 
   try {
-    // Fetch both player and stats data concurrently
-    const [statsResponse, playerResponse] = await Promise.all([
-      fetch(statsUrl, { method: "GET" }),
-      fetch(playerUrl, { method: "GET" }),
-    ]);
-
-    // Check if both responses are successful
-    if (!statsResponse.ok || !playerResponse.ok) {
-      throw new Error(
-        `Failed to fetch data: Stats(${statsResponse.statusText}), Player(${playerResponse.statusText})`
-      );
+    const playerResponse = await fetch(playerUrl, { method: "GET" });
+    if (!playerResponse.ok) {
+      throw new Error(`Player fetch failed: ${playerResponse.statusText}`);
     }
 
-    // Parse the JSON responses
-    const statsData = await statsResponse.json();
     const playerData = await playerResponse.json();
 
-    console.log("Fetched Player Data:", playerData);
+    const isGoalie = playerData.data.playerType === "GOALTENDER";
+    const statsUrl = isGoalie ? goalieStatsUrl : skaterStatsUrl;
 
-    // Process the last five games
+    const statsResponse = await fetch(statsUrl, { method: "GET" });
+    if (!statsResponse.ok) {
+      throw new Error(`Stats fetch failed: ${statsResponse.statusText}`);
+    }
+
+    const statsData = await statsResponse.json();
+
     const lastFiveGames = statsData.data
       .sort((a: any, b: any) => new Date(b.game.date).getTime() - new Date(a.game.date).getTime())
       .slice(0, 5)
       .map((gameEntry: any) => {
         const stats = gameEntry.stats || {};
-        return {
-          date: gameEntry.game.date || "Unknown Date",
-          teamName: gameEntry.teamName || "Unknown Team",
-          opponentName: gameEntry.opponentName || "Unknown Opponent",
-          teamScore: gameEntry.teamScore || 0,
-          opponentScore: gameEntry.opponentScore || 0,
-          outcome: gameEntry.outcome || "N/A",
-          goals: stats.G || 0,
-          assists: stats.A || 0,
-          points: stats.PTS || 0,
-          plusMinusRating: stats.PM || 0,
-        };
+        if (isGoalie) {
+          return {
+            date: gameEntry.game.date || "Unknown Date",
+            shotsAgainst: stats.SA || 0,
+            saves: stats.SV || 0,
+            goalsAgainst: stats.GA || 0,
+            savePercentage: stats.SVP || 0,
+          };
+        } else {
+          return {
+            date: gameEntry.game.date || "Unknown Date",
+            goals: stats.G || 0,
+            assists: stats.A || 0,
+            points: stats.PTS || 0,
+            plusMinusRating: stats.PM || 0,
+          };
+        }
       });
 
-    // Build the player information object
     const playerInfo = {
       id: playerData.data.id,
       name: playerData.data.name,
-      firstName: playerData.data.firstName,
-      nationality: playerData.data.nationality.name,
+      playerType: playerData.data.playerType,
       imageUrl: playerData.data.imageUrl || "/default-image.jpg",
       team: playerData.data.latestStats?.team,
       league: playerData.data.latestStats?.league,
-      jerseyNumber: playerData.data.latestStats?.jerseyNumber,
+      nationality: playerData.data.nationality.name || "Unknown",
     };
 
-    // Return the combined response
-    return NextResponse.json({
-      playerInfo,
-      lastFiveGames,
-    });
+    return NextResponse.json({ playerInfo, lastFiveGames });
   } catch (error: any) {
-    // Log the error for debugging purposes
     console.error("Error during fetch:", error.message);
-
-    // Return an internal server error response
     return NextResponse.json(
-      {
-        error: "An internal server error occurred while fetching player data. Please try again later.",
-      },
+      { error: "An internal server error occurred while fetching player data." },
       { status: 500 }
     );
   }
