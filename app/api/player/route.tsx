@@ -26,10 +26,15 @@ export async function GET(req: NextRequest) {
     "name",
     "playerType",
     "imageUrl",
-    "latestStats.team.name",
-    "latestStats.league.name",
     "nationality.name",
+    "latestStats.team.id",
+    "latestStats.team.name",
+    "latestStats.league.slug",
+    "latestStats.league.name",
+    "latestStats.jerseyNumber",
   ].join(",");
+
+
 
   const skaterFields = [
     "game.date",
@@ -101,6 +106,7 @@ export async function GET(req: NextRequest) {
       team: playerData.data.latestStats?.team,
       league: playerData.data.latestStats?.league,
       nationality: playerData.data.nationality.name || "Unknown",
+      jerseyNumber: playerData.data.latestStats?.jerseyNumber || "Unknown",
     };
 
     return NextResponse.json({ playerInfo, lastFiveGames });
