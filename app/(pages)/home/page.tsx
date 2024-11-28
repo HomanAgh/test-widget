@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import LogoutButton from "../components/common/LogoutButton";
+import LogoutButton from "../../components/common/LogoutButton";
 
 const HomePage = () => {
   const router = useRouter();

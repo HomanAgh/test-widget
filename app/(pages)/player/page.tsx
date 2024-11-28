@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import SearchBar from "../components/player/SearchBar";
-import ErrorMessage from "../components/common/ErrorMessage";
-import Player from "../components/player/Player";
-import LogoutButton from "../components/common/LogoutButton";
+import SearchBar from "../../components/player/SearchBar";
+import ErrorMessage from "../../components/common/ErrorMessage";
+import Player from "../../components/player/Player";
+import LogoutButton from "../../components/common/LogoutButton";
 
 interface Player {
   id: string;
