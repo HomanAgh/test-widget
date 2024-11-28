@@ -4,6 +4,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const playerId = searchParams.get("playerId");
 
+  // Validate playerId query parameter
   if (!playerId) {
     return NextResponse.json(
       { error: "Player ID is required" },
@@ -11,6 +12,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  // Validate environment variables
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
 
@@ -20,12 +22,14 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  // Fields for player information
   const fields = [
     "id",
     "name",
     "firstName",
     "imageUrl",
-    "nationality.name", 
+    "nationality.name",
     "latestStats.team.id",
     "latestStats.team.name",
     "latestStats.league.slug",
@@ -33,21 +37,35 @@ export async function GET(req: NextRequest) {
     "latestStats.jerseyNumber",
   ].join(",");
 
-  
+  // Fields for game logs
+  const fields2 = [
+    "game.date",
+    "game.dateTime",
+    "teamName",
+    "opponentName",
+    "teamScore",
+    "opponentScore",
+    "outcome",
+    "stats.G",
+    "stats.A",
+    "stats.PTS",
+    "stats.PM",
+  ].join(",");
 
+  // Construct API URLs
   const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
-  const statsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}`;
+  const statsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(fields2)}`;
 
-  console.log("Constructed API URLs:", statsUrl, playerUrl);
+  console.log("Constructed API URLs:", { playerUrl, statsUrl });
 
   try {
-    // Fetch both URLs concurrently
+    // Fetch both player and stats data concurrently
     const [statsResponse, playerResponse] = await Promise.all([
       fetch(statsUrl, { method: "GET" }),
       fetch(playerUrl, { method: "GET" }),
     ]);
 
-    // Check if both responses are OK
+    // Check if both responses are successful
     if (!statsResponse.ok || !playerResponse.ok) {
       throw new Error(
         `Failed to fetch data: Stats(${statsResponse.statusText}), Player(${playerResponse.statusText})`
@@ -60,7 +78,7 @@ export async function GET(req: NextRequest) {
 
     console.log("Fetched Player Data:", playerData);
 
-    // Process the data (example)
+    // Process the last five games
     const lastFiveGames = statsData.data
       .sort((a: any, b: any) => new Date(b.game.date).getTime() - new Date(a.game.date).getTime())
       .slice(0, 5)
@@ -80,7 +98,7 @@ export async function GET(req: NextRequest) {
         };
       });
 
-    // Build the response object with simplified fields
+    // Build the player information object
     const playerInfo = {
       id: playerData.data.id,
       name: playerData.data.name,
@@ -92,13 +110,16 @@ export async function GET(req: NextRequest) {
       jerseyNumber: playerData.data.latestStats?.jerseyNumber,
     };
 
+    // Return the combined response
     return NextResponse.json({
       playerInfo,
       lastFiveGames,
     });
-  } catch (err: any) {
-    console.error("Error during fetch:", err.message);
+  } catch (error: any) {
+    // Log the error for debugging purposes
+    console.error("Error during fetch:", error.message);
 
+    // Return an internal server error response
     return NextResponse.json(
       {
         error: "An internal server error occurred while fetching player data. Please try again later.",
