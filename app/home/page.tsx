@@ -1,53 +1,3 @@
-/* "use client";
-
-import { useRouter } from "next/navigation";
-
-const HomePage = () => {
-  const router = useRouter();
-
-  const handleNavigateToPlayer = () => {
-    router.push("/player");
-  };
-
-  return (
-    <div>
-      <h1>Welcome to the Home Page</h1>
-      <p>Select an option below:</p>
-      <button onClick={handleNavigateToPlayer}>Go to Player Search</button>
-    </div>
-  );
-};
-
-export default HomePage; */
-/* "use client";
-
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import LogoutButton from "../components/common/LogoutButton";
-
-const HomePage = () => {
-  const router = useRouter();
-
-  useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (!isLoggedIn) {
-      router.replace("/auth"); // Redirect to /auth if not logged in
-    }
-  }, [router]);
-
-  return (
-    <div>
-      <h1>Welcome to the Home Page</h1>
-      <p>Select an option below:</p>
-      <button onClick={() => router.push("/player")}>Go to Player Search</button><br />
-      <LogoutButton />
-    </div>
-  );
-};
-
-export default HomePage;
- */
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -82,7 +32,7 @@ const HomePage = () => {
           onChange={(e) => setSelectedOption(e.target.value)}
         >
           <option value="">-- Choose an Option --</option>
-          <option value="/player">Player Search</option>
+          <option value="/player">Player last 5 games</option>
           {/* Add future options here */}
           {/* <option value="/team">Team Search</option> */}
           {/* <option value="/stats">Player Statistics</option> */}
