@@ -1,14 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
-interface Player {
-  id: string;
-  name: string;
-  league: string;
-  team: string;
-  views: number; // Ensure views is included
-}
+import { useTranslation } from "react-i18next"; // Import useTranslation
+import { Player } from "@/app/types/player";
 
 interface SearchBarProps {
   onSelect: (playerId: string) => void;
@@ -16,6 +10,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
+  const { t } = useTranslation(); // Hook for translations
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [players, setPlayers] = useState<Player[]>([]);
@@ -48,7 +43,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         );
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || "Search failed");
+          throw new Error(data.error || t("SearchFailed")); // Use translation for error message
         }
 
         const data = await res.json();
@@ -62,7 +57,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         setPlayers(sortedPlayers);
         setShowDropdown(true);
       } catch (err: any) {
-        onError(err.message || "An error occurred during the search.");
+        onError(err.message || t("SearchError")); // Translatable error
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -70,7 +65,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     };
 
     fetchPlayers();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery, onError, t]);
 
   // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -105,7 +100,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for players..."
+        placeholder={t("SearchPlaceholder")} // Translatable placeholder
         className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(players.length > 0)}
@@ -123,10 +118,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
                 highlightedIndex === index ? "bg-gray-200" : ""
               }`}
             >
-              {`${player.name} - ${player.team} (${player.league}) - Views: ${player.views}`}
+              {`${player.name} - ${player.team} (${player.league}) - ${t("Views")}: ${player.views}`} {/* Translatable "Views" */}
             </li>
           ))}
-          {isLoading && <li className="p-2 text-gray-500">Loading...</li>}
+          {isLoading && <li className="p-2 text-gray-500">{t("Loading")}</li>} {/* Translatable "Loading" */}
         </ul>
       )}
     </div>

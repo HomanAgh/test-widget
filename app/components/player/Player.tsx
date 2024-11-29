@@ -1,37 +1,26 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import PlayerInfo from "./PlayerInfo";
 import GamesTable from "./GamesTable";
-
-interface GameLog {
-  date: string;
-  goals?: number;
-  assists?: number;
-  points?: number;
-  plusMinusRating?: number;
-  shotsAgainst?: number;
-  saves?: number;
-  goalsAgainst?: number;
-  savePercentage?: number;
-}
+import type { Player } from "@/app/types/player";
+import type { PlayerType } from "@/app/types/player";
+import type { GameLog } from "@/app/types/player";
 
 interface PlayerStats {
-  id: string;
-  name: string;
-  imageUrl: string;
-  playerType: "SKATER" | "GOALTENDER";
+  player: Player;
   lastFiveGames: GameLog[];
-  team?: { id: number; name: string };
-  league?: { slug: string; name: string };
-  nationality: string;
-  jerseyNumber: string;
+  playerType: PlayerType;
 }
 
 interface PlayerProps {
   playerId: string;
-  backgroundColor: string; // Add this to support the background color
+  backgroundColor: string; 
 }
 
 const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
+  const { t } = useTranslation(); // Hook for translations
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,35 +34,38 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
         const data = await response.json();
 
         setPlayerStats({
-          id: data.playerInfo.id,
-          name: data.playerInfo.name || "Unknown Player",
-          imageUrl: data.playerInfo.imageUrl || "/default-image.jpg",
-          playerType: data.playerInfo.playerType,
+          player: {
+            id: data.playerInfo.id,
+            name: data.playerInfo.name || t("UnknownPlayer"),
+            imageUrl: data.playerInfo.imageUrl || "/default-image.jpg",
+            team: data.playerInfo.team,
+            league: data.playerInfo.league,
+            nationality: data.playerInfo.nationality || t("UnknownNationality"),
+            jerseyNumber: data.playerInfo.jerseyNumber || t("JerseyNA"),
+            views: data.playerInfo.views,
+          },
           lastFiveGames: data.lastFiveGames || [],
-          team: data.playerInfo.team,
-          league: data.playerInfo.league,
-          nationality: data.playerInfo.nationality || "Unknown Nationality",
-          jerseyNumber: data.playerInfo.jerseyNumber || "N/A",
+          playerType: data.playerInfo.playerType,
         });
       } catch (err: any) {
-        setError(err.message || "An error occurred");
+        setError(err.message || t("ErrorOccurred"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchPlayerStats();
-  }, [playerId]);
+  }, [playerId, t]);
 
-  if (loading) return <div className="text-center text-gray-600">Loading...</div>;
-  if (error) return <div className="text-center text-red-600">Error: {error}</div>;
+  if (loading) return <div className="text-center text-gray-600">{t("Loading")}</div>;
+  if (error) return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error}</div>;
 
   return (
     <div
       className={`max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg`}
-      style={{ backgroundColor }} // Apply the background color
+      style={{ backgroundColor }}
     >
-      {playerStats && <PlayerInfo playerStats={playerStats} />}
+      {playerStats && <PlayerInfo player={playerStats.player} />}
       {playerStats && (
         <GamesTable
           lastFiveGames={playerStats.lastFiveGames}
