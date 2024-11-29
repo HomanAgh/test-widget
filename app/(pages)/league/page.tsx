@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import SearchBar from "../components/league/SearchBar";
-import LeagueTable from "../components/league/LeagueTable";
-import BackgroundSelector from "../components/widgets/BackgroundSelector";
-import LogoutButton from "../components/common/LogoutButton";
+import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import SearchBar from "../../components/league/SearchBar";
+import LeagueTable from "../../components/league/LeagueTable";
+import BackgroundSelector from "../../components/widgets/BackgroundSelector";
+import LogoutButton from "../../components/common/LogoutButton";
+import LanguageButton from "@/app/components/common/LanguageButton";
 
 const LeaguePage: React.FC = () => {
+  const { t } = useTranslation(); // Hook for translations
   const [standings, setStandings] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] = useState<string>("bg-blue-100");
@@ -19,20 +22,20 @@ const LeaguePage: React.FC = () => {
     try {
       const response = await fetch(`/api/league?league=${leagueSlug}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch league standings.");
+        throw new Error(t("FetchError")); // Use translation for error message
       }
       const data = await response.json();
       setStandings(data);
       setError(null);
     } catch (error: any) {
-      setError(error.message);
+      setError(error.message || t("FetchError"));
       setStandings(null);
     }
   };
 
   return (
     <div className={`min-h-screen p-4 bg-gray-50`}>
-      <h1 className="text-2xl font-bold mb-4 text-center">League Standings</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">{t("LeagueStandings")}</h1>
       <BackgroundSelector
         backgroundColor={backgroundColor}
         setBackgroundColor={setBackgroundColor}
@@ -44,8 +47,13 @@ const LeaguePage: React.FC = () => {
       <div
         className={`mt-6 p-6 rounded-md shadow-md ${backgroundColor} ${textColor}`}
       >
-        {standings && <LeagueTable standings={standings} />}
+        {standings ? (
+          <LeagueTable standings={standings} />
+        ) : (
+          <p>{t("NoStandings")}</p>
+        )}
       </div>
+      <LanguageButton />
       <LogoutButton />
     </div>
   );

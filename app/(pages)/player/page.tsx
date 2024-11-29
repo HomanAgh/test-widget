@@ -6,6 +6,8 @@ import SearchBar from "../../components/player/SearchBar";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import WidgetSetup from "../../components/widgets/WidgetSetup";
 import LogoutButton from "../../components/common/LogoutButton";
+import LanguageButton from "../../components/common/LanguageButton";
+
 
 const PlayerPage = () => {
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
@@ -39,6 +41,9 @@ const PlayerPage = () => {
       {selectedPlayerId && <WidgetSetup playerId={selectedPlayerId} />}
 
       {/* Logout Button */}
+
+      
+      <LanguageButton />
       <LogoutButton />
     </div>
   );

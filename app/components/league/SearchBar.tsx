@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 interface SearchBarProps {
   onSelect: (leagueSlug: string) => void;
@@ -8,12 +9,13 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
+  const { t } = useTranslation(); // Hook for translations
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSearch = async () => {
     if (!query) {
-      onError("Please enter a league slug (e.g., 'shl', 'khl')");
+      onError(t("EnterSlugError")); // Use translation for error message
       return;
     }
 
@@ -21,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     try {
       onSelect(query.trim());
     } catch (error) {
-      onError("An error occurred during the search.");
+      onError(t("SearchError")); // Use translation for generic error message
     } finally {
       setIsLoading(false);
     }
@@ -33,7 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Enter league slug (e.g., 'shl', 'khl')..."
+        placeholder={t("EnterLeagueSlug")} // Translatable placeholder
         className="border p-2 rounded-md w-full"
       />
       <button
@@ -43,7 +45,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
           isLoading ? "bg-gray-400" : "bg-blue-500 text-white"
         }`}
       >
-        {isLoading ? "Loading..." : "Search"}
+        {isLoading ? t("Loading") : t("Search")} {/* Translatable button text */}
       </button>
     </div>
   );

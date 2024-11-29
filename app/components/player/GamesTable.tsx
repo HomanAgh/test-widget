@@ -1,20 +1,7 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { GameLog } from "@/app/types/player";
 
-interface GameLog {
-  date: string;
-  // Skater stats
-  goals?: number;
-  assists?: number;
-  points?: number;
-  plusMinusRating?: number;
-  // Goaltender stats
-  shotsAgainst?: number;
-  saves?: number;
-  goalsAgainst?: number;
-  savePercentage?: number;
-}
-
-// Accumulator types for explicit type safety
 interface GoaltenderSummary {
   shotsAgainst: number;
   saves: number;
@@ -35,9 +22,9 @@ interface GamesTableProps {
 }
 
 const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) => {
+  const { t } = useTranslation(); // Import the `t` function for translations
   const [showSummary, setShowSummary] = useState(false);
 
-  // Summary calculation with type narrowing
   let summary: GoaltenderSummary | SkaterSummary;
 
   if (playerType === "GOALTENDER") {
@@ -52,7 +39,6 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) =>
       { shotsAgainst: 0, saves: 0, goalsAgainst: 0, savePercentage: 0 }
     );
 
-    // Average save percentage for goaltenders
     if (lastFiveGames.length > 0) {
       summary.savePercentage /= lastFiveGames.length;
     }
@@ -73,32 +59,32 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) =>
     <div className="mt-8">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-semibold text-gray-800">
-          {showSummary ? "Summary of Last 5 Games" : "Last 5 Games"}
+          {showSummary ? t("SummaryLast5Games") : t("Last5Games")}
         </h3>
         <button
           onClick={() => setShowSummary((prev) => !prev)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          {showSummary ? "View Details" : "View Summary"}
+          {showSummary ? t("ViewDetails") : t("ViewSummary")}
         </button>
       </div>
       <table className="w-full mt-4 border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200 text-gray-800 font-semibold">
-            <th className="py-2 px-4 border">Date</th>
+            <th className="py-2 px-4 border">{t("Date")}</th>
             {playerType === "GOALTENDER" ? (
               <>
-                <th className="py-2 px-4 border">Shots Against</th>
-                <th className="py-2 px-4 border">Saves</th>
-                <th className="py-2 px-4 border">Goals Against</th>
-                <th className="py-2 px-4 border">Save %</th>
+                <th className="py-2 px-4 border">{t("ShotsAgainst")}</th>
+                <th className="py-2 px-4 border">{t("Saves")}</th>
+                <th className="py-2 px-4 border">{t("GoalsAgainst")}</th>
+                <th className="py-2 px-4 border">{t("SavePercentage")}</th>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 border">Goals</th>
-                <th className="py-2 px-4 border">Assists</th>
-                <th className="py-2 px-4 border">Points</th>
-                <th className="py-2 px-4 border">+/- Rating</th>
+                <th className="py-2 px-4 border">{t("Goals")}</th>
+                <th className="py-2 px-4 border">{t("Assists")}</th>
+                <th className="py-2 px-4 border">{t("Points")}</th>
+                <th className="py-2 px-4 border">{t("PlusMinusRating")}</th>
               </>
             )}
           </tr>
@@ -106,7 +92,7 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) =>
         <tbody>
           {showSummary ? (
             <tr className="bg-blue-100">
-              <td className="py-2 px-4 border">Summary</td>
+              <td className="py-2 px-4 border">{t("Summary")}</td>
               {playerType === "GOALTENDER" ? (
                 <>
                   <td className="py-2 px-4 border">{(summary as GoaltenderSummary).shotsAgainst}</td>
