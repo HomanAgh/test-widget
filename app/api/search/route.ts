@@ -21,9 +21,16 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Include `views` in the API query
-  const fields = "player.id,player.name,player.latestStats.team.name,player.latestStats.league.name,player.views";
-  const searchUrl = `${apiBaseUrl}/v1/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
+
+  const searchFields = [
+    "player.id",
+    "player.name",
+    "player.latestStats.team.name",
+    "player.latestStats.league.name",
+    "player.views",
+  ].join(",");
+
+  const searchUrl = `${apiBaseUrl}/v1/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}&fields=${encodeURIComponent(searchFields)}`;
 
   try {
     const searchResponse = await fetch(searchUrl, { method: "GET" });

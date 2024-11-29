@@ -1,24 +1,10 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GameLog } from "@/app/types/player";
-
-interface GoaltenderSummary {
-  shotsAgainst: number;
-  saves: number;
-  goalsAgainst: number;
-  savePercentage: number;
-}
-
-interface SkaterSummary {
-  goals: number;
-  assists: number;
-  points: number;
-  plusMinusRating: number;
-}
+import { GameLog,PlayerType,GoaltenderSummary,SkaterSummary } from "@/app/types/player";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
-  playerType: "SKATER" | "GOALTENDER";
+  playerType: PlayerType;
 }
 
 const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) => {

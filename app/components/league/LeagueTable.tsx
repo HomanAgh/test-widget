@@ -15,7 +15,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings }) => {
   return (
     <div>
       <h1 className="text-lg font-semibold mb-4">
-        {firstSeason} {standings.data[0]?.leagueName || t("League")} {t("LeagueStandings")}
+        {firstSeason} {standings.data[0]?.leagueName || t("League")}
       </h1>
       <table className="table-auto border-collapse border border-gray-300 w-full text-sm">
         <thead>

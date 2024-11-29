@@ -56,6 +56,6 @@
   "Jersey": "Jersey",
   "SearchPlaceholder": "Search for players...",
   "SearchFailed": "Search failed",
-  "Views": "Views"
-  
+  "Views": "Views",
+  "PlayerSearchTitle": "Player Search and Profile"  
 }

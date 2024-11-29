@@ -23,3 +23,17 @@ export type Player = {
     savePercentage?: number;
   };
 
+  export type GoaltenderSummary = {
+    shotsAgainst: number;
+    saves: number;
+    goalsAgainst: number;
+    savePercentage: number;
+  }
+  
+  export type  SkaterSummary = {
+    goals: number;
+    assists: number;
+    points: number;
+    plusMinusRating: number;
+  }
+

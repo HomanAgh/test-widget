@@ -56,5 +56,6 @@
   "Jersey": "Tröja",
   "SearchPlaceholder": "Sök efter spelare...",
   "SearchFailed": "Sökningen misslyckades",
-  "Views": "Visningar"
+  "Views": "Visningar",
+  "PlayerSearchTitle": "Spelarsök och profil" 
 }

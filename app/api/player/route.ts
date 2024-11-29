@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const fields = [
+  const playerInfoField = [
     "id",
     "name",
     "playerType",
@@ -33,8 +33,6 @@ export async function GET(req: NextRequest) {
     "latestStats.league.name",
     "latestStats.jerseyNumber",
   ].join(",");
-
-
 
   const skaterFields = [
     "game.date",
@@ -52,7 +50,7 @@ export async function GET(req: NextRequest) {
     "stats.SVP",
   ].join(",");
 
-  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
+  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(playerInfoField)}`;
   const skaterStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(skaterFields)}`;
   const goalieStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(goalieFields)}`;
 
