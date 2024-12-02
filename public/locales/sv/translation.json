@@ -57,5 +57,6 @@
   "SearchPlaceholder": "Sök efter spelare...",
   "SearchFailed": "Sökningen misslyckades",
   "Views": "Visningar",
-  "PlayerSearchTitle": "Spelarsök och profil" 
+  "PlayerSearchTitle": "Spelarsök och profil",
+  "goToHome": "Gå till Startsidan"  
 }
