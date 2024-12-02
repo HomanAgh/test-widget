@@ -37,6 +37,7 @@ const HomePage = () => {
           <option value="">{t("ChooseOption")}</option>
           <option value="/player">{t("PlayerLast5Games")}</option>
           <option value="/league">{t("LeagueTables")}</option> {/* New Option */}
+          <option value="/teamroster">{t("Teamroster")}</option>
         </select>
         <button onClick={handleNavigate} disabled={!selectedOption}>
           {t("Go")}
