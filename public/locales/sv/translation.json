@@ -57,6 +57,9 @@
   "SearchPlaceholder": "Sök efter spelare...",
   "SearchFailed": "Sökningen misslyckades",
   "Views": "Visningar",
-  "PlayerSearchTitle": "Spelarsök och profil",
-  "goToHome": "Gå till Startsidan"  
+  "PlayerSearchTitle": "Sök på spelarprofil",
+  "goToHome": "Gå till Startsidan",  
+  "Season": "säsong",
+  "SummaryLastNGames": "Sammanfattning av de senaste {{count}} matcherna",
+  "LastNGames": "De senaste {{count}} matcherna"
 }

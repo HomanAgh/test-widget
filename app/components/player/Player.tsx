@@ -10,16 +10,17 @@ import type { GameLog } from "@/app/types/player";
 
 interface PlayerStats {
   player: Player;
-  lastFiveGames: GameLog[];
+  lastGames: GameLog[]; // Updated key to match API response
   playerType: PlayerType;
 }
 
 interface PlayerProps {
   playerId: string;
-  backgroundColor: string; 
+  backgroundColor: string;
+  gameLimit: number; // Prop to specify the number of games to display
 }
 
-const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
+const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit }) => {
   const { t } = useTranslation(); // Hook for translations
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
     const fetchPlayerStats = async () => {
       try {
         const response = await fetch(
-          `/api/player?playerId=${encodeURIComponent(playerId)}`
+          `/api/player?playerId=${encodeURIComponent(playerId)}&limit=${gameLimit}`
         );
         const data = await response.json();
 
@@ -44,7 +45,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
             jerseyNumber: data.playerInfo.jerseyNumber || t("JerseyNA"),
             views: data.playerInfo.views,
           },
-          lastFiveGames: data.lastFiveGames || [],
+          lastGames: data.lastGames || [], // Updated to reflect API's response
           playerType: data.playerInfo.playerType,
         });
       } catch (err: any) {
@@ -55,22 +56,21 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor }) => {
     };
 
     fetchPlayerStats();
-  }, [playerId, t]);
+  }, [playerId, gameLimit, t]); // Include `gameLimit` in the dependency array
 
   if (loading) return <div className="text-center text-gray-600">{t("Loading")}</div>;
   if (error) return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error}</div>;
 
   return (
     <div
-      className={`max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg`}
+      className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
       style={{ backgroundColor }}
     >
       {playerStats && <PlayerInfo player={playerStats.player} />}
       {playerStats && (
         <GamesTable
-          lastFiveGames={playerStats.lastFiveGames}
-          playerType={playerStats.playerType}
-        />
+          lastFiveGames={playerStats.lastGames} // Use updated key
+          playerType={playerStats.playerType} gameLimit={0}        />
       )}
     </div>
   );

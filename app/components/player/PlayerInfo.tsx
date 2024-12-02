@@ -39,7 +39,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
 
         <div className="mt-2">
           <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
-            <span>{t("Jersey")}: #{player.jerseyNumber} </span>
+            <span> #{player.jerseyNumber} </span>
             {player.team ? (
               <a
                 href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}`}

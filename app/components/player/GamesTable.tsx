@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GameLog,PlayerType,GoaltenderSummary,SkaterSummary } from "@/app/types/player";
+import { GameLog, PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
   playerType: PlayerType;
+  gameLimit: number; // Pass the number of games being displayed
 }
 
-const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) => {
-  const { t } = useTranslation(); // Import the `t` function for translations
+const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, gameLimit }) => {
+  const { t } = useTranslation();
   const [showSummary, setShowSummary] = useState(false);
 
   let summary: GoaltenderSummary | SkaterSummary;
@@ -45,7 +46,9 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType }) =>
     <div className="mt-8">
       <div className="flex justify-between items-center">
         <h3 className="text-xl font-semibold text-gray-800">
-          {showSummary ? t("SummaryLast5Games") : t("Last5Games")}
+          {showSummary
+            ? t("SummaryLastNGames", { count: gameLimit }) // Use the dynamic game count
+            : t("LastNGames", { count: gameLimit })}
         </h3>
         <button
           onClick={() => setShowSummary((prev) => !prev)}
