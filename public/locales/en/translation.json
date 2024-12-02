@@ -57,5 +57,6 @@
   "SearchPlaceholder": "Search for players...",
   "SearchFailed": "Search failed",
   "Views": "Views",
-  "PlayerSearchTitle": "Player Search and Profile"  
+  "PlayerSearchTitle": "Player Search and Profile",
+  "goToHome": "Go to Homepage"  
 }

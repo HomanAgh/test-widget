@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next"; // Import useTranslation hook
@@ -8,9 +8,10 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import WidgetSetup from "../../components/widgets/WidgetSetup";
 import LogoutButton from "../../components/common/LogoutButton";
 import LanguageButton from "../../components/common/LanguageButton";
+import HomeButton from "@/app/components/common/HomeButton";
 
 const PlayerPage = () => {
-  const { t } = useTranslation(); // Hook for translations
+  const { t } = useTranslation();
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -28,8 +29,24 @@ const PlayerPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{t("PlayerSearchTitle")}</h1> {/* Translated title */}
+    <div className="max-w-4xl mx-auto p-4 relative">
+      {/* Top Buttons */}
+      <div className="flex justify-between items-center mb-4">
+        {/* Home Button - Top Left */}
+        <div>
+          <HomeButton />
+        </div>
+
+        {/* Language Button - Top Right */}
+        <div>
+          <LanguageButton />
+        </div>
+      </div>
+
+      {/* Page Title */}
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        {t("PlayerSearchTitle")}
+      </h1>
 
       {/* Search Bar for Player Selection */}
       <SearchBar
@@ -41,9 +58,10 @@ const PlayerPage = () => {
       {/* Widget Setup for Player */}
       {selectedPlayerId && <WidgetSetup playerId={selectedPlayerId} />}
 
-      {/* Language and Logout Buttons */}
-      <LanguageButton />
-      <LogoutButton />
+      {/* Logout Button - Positioned Below */}
+      <div className="mt-6">
+        <LogoutButton />
+      </div>
     </div>
   );
 };
