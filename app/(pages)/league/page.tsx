@@ -97,13 +97,21 @@ import ColorPicker from "@/app/components/widgets/color-picker/ColorPicker";
 
 const LeaguePage: React.FC = () => {
   const { t } = useTranslation();
-  const [standings, setStandings] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState<string>("#f9fafb"); // Default background color
+  const [standings, setStandings] = useState<any>(null); // League standings data
+  const [error, setError] = useState<string | null>(null); // Error state
+  const [backgroundStyle, setBackgroundStyle] = useState<{ backgroundColor?: string; backgroundImage?: string }>({
+    backgroundColor: "#f9fafb", // Default background color
+  });
 
-  // Handle color change from ColorPicker
+  // Handle color or gradient selection
   const handleColorChange = (color: string) => {
-    setBackgroundColor(color); // Update the background color dynamically
+    if (color.startsWith("linear-gradient")) {
+      // Apply gradient as backgroundImage
+      setBackgroundStyle({ backgroundImage: color });
+    } else {
+      // Apply solid color as backgroundColor
+      setBackgroundStyle({ backgroundColor: color });
+    }
   };
 
   // Handle league selection from SearchBar
@@ -157,10 +165,12 @@ const LeaguePage: React.FC = () => {
       {/* League Table */}
       <div
         className="mt-6 p-6 rounded-md shadow-md"
-        style={{ backgroundColor }}
+        style={{
+          ...backgroundStyle, // Apply the dynamic background style
+        }}
       >
         {standings ? (
-          <LeagueTable standings={standings} backgroundColor={backgroundColor} />
+          <LeagueTable standings={standings} backgroundColor={backgroundStyle.backgroundColor || "#f9fafb"} />
         ) : (
           <p className="text-center">{t("NoStandings")}</p>
         )}
@@ -175,3 +185,4 @@ const LeaguePage: React.FC = () => {
 };
 
 export default LeaguePage;
+
