@@ -41,6 +41,14 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     setGameLimit(limit);
   };
 
+  // Generate Embed URL
+  const embedUrl = `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
+    backgroundColor
+  )}&gameLimit=${gameLimit}`;  
+
+  // iFrame Embed Code
+  const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
+
   return (
     <div>
       {/* Background Selector */}
@@ -72,6 +80,24 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       {/* Player Widget Preview */}
       <div className="mt-6">
         <Player playerId={playerId} backgroundColor={backgroundColor} gameLimit={gameLimit} />
+      </div>
+
+      {/* Embed Code Section */}
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mb-2">Embed Code</h3>
+        <textarea
+          readOnly
+          value={iframeCode}
+          rows={3}
+          className="w-full p-2 border border-gray-300 rounded-md"
+        ></textarea>
+
+        {/* Preview the iframe */}
+        <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
+        <iframe
+          src={embedUrl}
+          style={{ width: "100%", height: "500px", border: "none" }}
+        ></iframe>
       </div>
     </div>
   );
