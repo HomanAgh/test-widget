@@ -4,18 +4,21 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
-  onSelect: (teamId: string) => void;
+  type: "team" | "league"; // Determines the type of search
+  onSelect: (value: string) => void;
   onError: (error: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
   const { t } = useTranslation();
   const [query, setQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSearch = async () => {
     if (!query) {
-      onError(t("EnterTeamIDError"));
+      // Error messages based on type
+      const errorMessage = type === "team" ? t("EnterTeamIDError") : t("EnterSlugError");
+      onError(errorMessage);
       return;
     }
 
@@ -23,11 +26,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     try {
       onSelect(query.trim());
     } catch {
+      // General error message
       onError(t("SearchError"));
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Placeholder text based on type
+  const placeholderText = type === "team" ? t("EnterTeamID") : t("EnterLeagueSlug");
 
   return (
     <div className="relative w-full">
@@ -35,7 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={t("EnterTeamID")}
+        placeholder={placeholderText}
         className="border p-2 rounded-md w-full"
       />
       <button
