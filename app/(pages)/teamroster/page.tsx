@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next"; // Import useTranslation hook
-import SearchBar from "@/app/components/teamroster/SearchBar";
+import SearchBar from "@/app/components/common/SearchBar";
 import RosterTable from "@/app/components/teamroster/RosterTable";
 import LanguageButton from "../../components/common/LanguageButton";
 import LogoutButton from "@/app/components/common/LogoutButton";
@@ -36,32 +36,25 @@ const TeamRosterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen p-4 bg-gray-50 relative">
-      {/* Top Buttons */}
       <div className="flex justify-between items-center mb-4">
-        {/* Home Button - Top Left */}
         <div>
           <HomeButton />
         </div>
 
-        {/* Language Button - Top Right */}
         <div>
           <LanguageButton />
         </div>
       </div>
 
-      {/* Page Title */}
       <h1 className="text-2xl font-bold mb-4 text-center">
         {t("TeamRoster")}
       </h1>
 
-      {/* Color Picker to choose background color */}
       <ColorPicker onColorChange={handleColorChange} />
 
-      {/* Search Bar for selecting teams */}
-      <SearchBar onSelect={handleTeamSelect} onError={setError} />
+      <SearchBar onSelect={handleTeamSelect} onError={setError} type={"team"} />
       {error && <p className="text-red-500 mt-4">{error}</p>}
 
-      {/* Roster Table container with dynamic background */}
       <div
         className="mt-6 p-6 rounded-md shadow-md"
         style={{ backgroundColor }}
@@ -69,7 +62,6 @@ const TeamRosterPage: React.FC = () => {
         <RosterTable roster={roster} backgroundColor={backgroundColor} />
       </div>
 
-      {/* Logout Button - Positioned Below */}
       <div className="mt-6">
         <LogoutButton />
       </div>
@@ -78,3 +70,4 @@ const TeamRosterPage: React.FC = () => {
 };
 
 export default TeamRosterPage;
+

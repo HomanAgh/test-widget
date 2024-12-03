@@ -1,165 +1,58 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/app/lib/utils";
-import { Check, Copy } from "lucide-react";
-import { toast } from "sonner";
-import PresetColors from "./PresetColors";
-import CustomColor from "./CustomColors";
+"use client";
+
+import React, { useState } from "react";
+
+const solidColors = [
+  "#000000", "#343434", "#595959", "#808080", "#A6A6A6", "#D9D9D9", "#FFFFFF",
+  "#E6B8B7", "#F4CCCC", "#FCE5CD", "#FFF2CC", "#D9EAD3", "#D0E0E3", "#CFE2F3", "#D9D2E9",
+  "#EAD1DC", "#DD7E6B", "#EA9999", "#F9CB9C", "#FFE599", "#B6D7A8", "#A2C4C9", "#9FC5E8", "#B4A7D6",
+  "#D5A6BD", "#CC4125", "#E06666", "#F6B26B", "#FFD966", "#93C47D", "#76A5AF", "#6FA8DC", "#8E7CC3",
+  "#C27BA0", "#A61C00", "#CC0000", "#E69138", "#F1C232", "#6AA84F", "#45818E", "#3D85C6", "#674EA7",
+  "#A64D79", "#85200C", "#990000", "#B45F06", "#BF9000", "#38761D", "#134F5C", "#0B5394", "#351C75",
+  "#741B47", "#5B0F00", "#660000", "#783F04", "#7F6000", "#274E13", "#0C343D", "#073763", "#20124D",
+  "#4C1130",
+];
 
 interface ColorPickerProps {
-
-  onColorChange?: (color: string) => void;
-
-  className?: string;
-
+  onColorSelect: (color: string) => void;
 }
 
-const ColorPicker = ({ onColorChange, className = "" }: ColorPickerProps) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ onColorSelect }) => {
+  const [selectedColor, setSelectedColor] = useState<string>("");
 
-  const [activeTab, setActiveTab] = useState<"preset" | "custom">("preset");
-
-  const [selectedColor, setSelectedColor] = useState<string>("#000000");
-
-  const handleColorChange = (color: string) => {
-
+  const handleColorClick = (color: string) => {
     setSelectedColor(color);
-
-    onColorChange?.(color);
-
-  };
-
-  const copyToClipboard = () => {
-
-    navigator.clipboard.writeText(selectedColor);
-
-    toast("Color code copied!", {
-
-      description: `${selectedColor} has been copied to your clipboard.`,
-
-      duration: 2000,
-
-    });
-
+    onColorSelect(color); // Notify parent of the selected color
   };
 
   return (
+    <div className="p-4 bg-white shadow-md rounded-md w-64">
+      {/* Title */}
+      <h2 className="text-lg font-semibold mb-4 text-center">Solid Colors</h2>
 
-    <div className={cn(
-
-      "w-full max-w-md rounded-xl bg-white/90 backdrop-blur-lg p-4 shadow-lg border border-gray-200/50",
-
-      className
-
-    )}>
-
-      <div className="flex items-center justify-between mb-6 bg-gray-100/50 rounded-lg p-1">
-
-        {["preset", "custom"].map((tab) => (
-
-          <button
-
-            key={tab}
-
-            onClick={() => setActiveTab(tab as "preset" | "custom")}
-
-            className={cn(
-
-              "flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-
-              activeTab === tab 
-
-                ? "bg-white text-gray-900 shadow-sm" 
-
-                : "text-gray-600 hover:text-gray-900"
-
-            )}
-
-          >
-
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-
-          </button>
-
-        ))}
-
-      </div>
-
-      <AnimatePresence mode="wait">
-
-        <motion.div
-
-          key={activeTab}
-
-          initial={{ opacity: 0, y: 10 }}
-
-          animate={{ opacity: 1, y: 0 }}
-
-          exit={{ opacity: 0, y: -10 }}
-
-          transition={{ duration: 0.2 }}
-
-        >
-
-          {activeTab === "preset" ? (
-
-            <PresetColors
-
-              selectedColor={selectedColor}
-
-              onColorSelect={handleColorChange}
-
-            />
-
-          ) : (
-
-            <CustomColor
-
-              value={selectedColor}
-
-              onChange={handleColorChange}
-
-            />
-
-          )}
-
-        </motion.div>
-
-      </AnimatePresence>
-
-      <div className="mt-6 flex items-center justify-between bg-gray-50 rounded-lg p-3">
-
-        <div className="flex items-center gap-3">
-
+      {/* Color Options */}
+      <div className="grid grid-cols-7 gap-2">
+        {solidColors.map((color) => (
           <div
-
-            className="w-6 h-6 rounded-full border border-gray-200"
-
-            style={{ backgroundColor: selectedColor }}
-
+            key={color}
+            onClick={() => handleColorClick(color)}
+            className={`w-8 h-8 rounded-full cursor-pointer border ${
+              selectedColor === color ? "border-orange-500" : "border-gray-300"
+            }`}
+            style={{ backgroundColor: color }}
           />
-
-          <span className="text-sm font-medium">{selectedColor}</span>
-
-        </div>
-
-        <button
-
-          onClick={copyToClipboard}
-
-          className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-
-        >
-
-          <Copy className="w-4 h-4 text-gray-600" />
-
-        </button>
-
+        ))}
       </div>
 
+      {/* Transparent Option */}
+      <button
+        onClick={() => handleColorClick("transparent")}
+        className="w-full mt-4 py-2 text-center text-gray-500 border rounded-md hover:bg-gray-100"
+      >
+        Transparent
+      </button>
     </div>
-
   );
-
 };
 
 export default ColorPicker;
