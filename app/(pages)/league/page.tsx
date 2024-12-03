@@ -155,7 +155,10 @@ const LeaguePage: React.FC = () => {
         <h2 className="text-lg font-semibold mb-2 text-center">
           {t("ChooseBackgroundColor")}
         </h2>
-        <ColorPicker onColorSelect={handleColorChange} />
+        <div className="flex justify-center">
+          <ColorPicker onColorSelect={handleColorChange} />
+        </div>
+        
       </div>
 
       {/* Search Bar */}

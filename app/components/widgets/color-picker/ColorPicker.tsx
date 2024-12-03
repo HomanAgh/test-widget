@@ -118,7 +118,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ onColorSelect }) => {
         onClick={() => handleColorClick("transparent")}
         className="w-full mt-4 py-2 text-center text-gray-500 border rounded-md hover:bg-gray-100 transition-colors duration-200"
       >
-        Transparent
+        Clear
       </button>
     </div>
   );
