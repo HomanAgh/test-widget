@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+/* import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -61,6 +61,88 @@ export async function GET(req: NextRequest) {
     console.error("Error during fetch:", error.message);
     return NextResponse.json(
       { error: "An internal server error occurred while fetching the roster." },
+      { status: 500 }
+    );
+  }
+}
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const query = searchParams.get("query"); // Input team name
+  const offset = searchParams.get("offset") || "0";
+  const limit = searchParams.get("limit") || "100";
+  const sort = searchParams.get("sort") || "player.position";
+
+  const apiKey = process.env.API_KEY;
+  const apiBaseUrl = process.env.API_BASE_URL;
+
+  if (!query) {
+    return NextResponse.json(
+      { error: "Query parameter (team name) is required" },
+      { status: 400 }
+    );
+  }
+
+  if (!apiKey || !apiBaseUrl) {
+    return NextResponse.json(
+      { error: "API key or base URL is missing" },
+      { status: 500 }
+    );
+  }
+
+  try {
+    // Step 1: Fetch team ID based on team name
+    const searchUrl = `${apiBaseUrl}/v1/teams?name=${encodeURIComponent(query)}&apiKey=${apiKey}`;
+    const searchResponse = await fetch(searchUrl);
+
+    if (!searchResponse.ok) {
+      throw new Error(`Failed to search team by name: ${searchResponse.statusText}`);
+    }
+
+    const searchData = await searchResponse.json();
+    const team = searchData.data?.find((t: any) =>
+      t.name.toLowerCase() === query.toLowerCase()
+    );
+
+    if (!team) {
+      return NextResponse.json(
+        { error: "Team not found" },
+        { status: 404 }
+      );
+    }
+
+    const teamId = team.id;
+
+    // Step 2: Fetch roster using the resolved team ID
+    const fields = "player.id,player.firstName,player.lastName,player.position,jerseyNumber,player.nationality.name";
+    const rosterUrl = `${apiBaseUrl}/v1/teams/${teamId}/roster?fields=${fields}&offset=${offset}&limit=${limit}&sort=${sort}&apiKey=${apiKey}`;
+
+    const rosterResponse = await fetch(rosterUrl);
+
+    if (!rosterResponse.ok) {
+      throw new Error(`Failed to fetch roster: ${rosterResponse.statusText}`);
+    }
+
+    const rosterData = await rosterResponse.json();
+
+    // Transform the roster data
+    const roster = rosterData.data.map((entry: any) => ({
+      id: entry.player.id,
+      firstName: entry.player.firstName,
+      lastName: entry.player.lastName,
+      position: entry.player.position,
+      jerseyNumber: entry.jerseyNumber,
+      nationality: entry.player.nationality.name,
+    }));
+
+    return NextResponse.json(roster);
+  } catch (error: any) {
+    console.error("Error during team roster fetch:", error.message);
+    return NextResponse.json(
+      { error: "An internal server error occurred." },
       { status: 500 }
     );
   }

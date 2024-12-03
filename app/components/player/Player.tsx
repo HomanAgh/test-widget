@@ -56,7 +56,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit })
     };
 
     fetchPlayerStats();
-  }, [playerId, gameLimit, t]); // Include `gameLimit` in the dependency array
+  }, [playerId, gameLimit]); // Include `gameLimit` in the dependency array
 
   if (loading) return <div className="text-center text-gray-600">{t("Loading")}</div>;
   if (error) return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error}</div>;
