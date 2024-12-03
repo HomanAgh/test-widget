@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import { useRouter } from "next/navigation";
-import SearchBar from "../../components/player/SearchBar";
+import SearchBar from "../../components/player/PlayerSearch";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import WidgetSetup from "../../components/widgets/WidgetSetup";
 import LogoutButton from "../../components/common/LogoutButton";

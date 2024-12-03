@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next"; // Import useTranslation
-import { Player } from "@/app/types/player";
+import { Team } from "@/app/types/team"; // Assume a Team type is defined
 
-interface SearchBarProps {
-  onSelect: (playerId: string) => void;
+interface TeamSearchBarProps {
+  onSelect: (teamId: string) => void;
   onError: (error: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
+const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
   const { t } = useTranslation(); // Hook for translations
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,11 +27,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Fetch and sort players by views when the debounced query changes
+  // Fetch and sort teams by name when the debounced query changes
   useEffect(() => {
-    const fetchPlayers = async () => {
+    const fetchTeams = async () => {
       if (!debouncedQuery) {
-        setPlayers([]);
+        setTeams([]);
         setShowDropdown(false);
         return;
       }
@@ -39,7 +39,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/search?query=${encodeURIComponent(debouncedQuery)}`
+          `/api/searchTeam?query=${encodeURIComponent(debouncedQuery)}`
         );
         if (!res.ok) {
           const data = await res.json();
@@ -48,13 +48,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
 
         const data = await res.json();
 
-        // Sort players by views and limit to top 20
-        const sortedPlayers = data.players
-          .filter((player: Player) => typeof player.views === "number")
-          .sort((a: Player, b: Player) => b.views - a.views) // Descending order
-          .slice(0, 20); // Top 20 players
+        // Sort teams alphabetically and limit to top 20
+        const sortedTeams = data.teams
+          .sort((a: Team, b: Team) => a.name.localeCompare(b.name)) // Alphabetical order
+          .slice(0, 20); // Top 20 teams
 
-        setPlayers(sortedPlayers);
+        setTeams(sortedTeams);
         setShowDropdown(true);
       } catch (err: any) {
         onError(err.message || t("SearchError")); // Translatable error
@@ -64,23 +63,23 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
       }
     };
 
-    fetchPlayers();
-  }, [debouncedQuery, onError, t]);
+    fetchTeams();
+  }, [debouncedQuery, onError]);
 
   // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showDropdown || players.length === 0) return;
+    if (!showDropdown || teams.length === 0) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev + 1) % players.length);
+      setHighlightedIndex((prev) => (prev + 1) % teams.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev - 1 + players.length) % players.length);
+      setHighlightedIndex((prev) => (prev - 1 + teams.length) % teams.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (highlightedIndex >= 0 && highlightedIndex < players.length) {
-        handleSelect(players[highlightedIndex].id);
+      if (highlightedIndex >= 0 && highlightedIndex < teams.length) {
+        handleSelect(teams[highlightedIndex].id);
       } else if (query.trim()) {
         setShowDropdown(false);
         onSelect(query.trim());
@@ -88,10 +87,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     }
   };
 
-  const handleSelect = (playerId: string) => {
+  const handleSelect = (teamId: string) => {
     setShowDropdown(false);
     setQuery("");
-    onSelect(playerId);
+    onSelect(teamId);
   };
 
   return (
@@ -100,25 +99,25 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={t("SearchPlaceholder")} // Translatable placeholder
+        placeholder={t("SearchTeamPlaceholder")} // Translatable placeholder
         className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
-        onFocus={() => setShowDropdown(players.length > 0)}
+        onFocus={() => setShowDropdown(teams.length > 0)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
       />
       {showDropdown && (
         <ul
           className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10"
         >
-          {players.map((player, index) => (
+          {teams.map((team, index) => (
             <li
-              key={player.id}
-              onClick={() => handleSelect(player.id)}
+              key={team.id}
+              onClick={() => handleSelect(team.id)}
               className={`p-2 cursor-pointer hover:bg-gray-100 ${
                 highlightedIndex === index ? "bg-gray-200" : ""
               }`}
             >
-              {`${player.name} - ${player.team} (${player.league}) - ${t("Views")}: ${player.views}`} {/* Translatable "Views" */}
+              {`${team.name} - ${team.league} (${team.country})`} {/* Display team details */}
             </li>
           ))}
           {isLoading && <li className="p-2 text-gray-500">{t("Loading")}</li>} {/* Translatable "Loading" */}
@@ -128,4 +127,4 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
   );
 };
 
-export default SearchBar;
+export default TeamSearchBar;

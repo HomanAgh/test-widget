@@ -22,7 +22,8 @@ export async function GET(req: NextRequest) {
   }
 
   const teamUrl = `${apiBaseUrl}/v1/teams/${teamId}?apiKey=${apiKey}`;
-  
+  console.log("Fetching team data from URL:", teamUrl);
+
   try {
     const teamResponse = await fetch(teamUrl, { method: "GET" });
     if (!teamResponse.ok) {
@@ -30,13 +31,19 @@ export async function GET(req: NextRequest) {
     }
 
     const teamData = await teamResponse.json();
+    console.log("Fetched Team Data:", teamData);
 
-    // Extract team colors and other details
+    if (!teamData || !teamData.data) {
+      throw new Error("Invalid API response: Team data is missing.");
+    }
+
     const teamInfo = {
-      id: teamData.data.id,
-      name: teamData.data.name,
-      logo: teamData.data.logo?.medium,
-      colors: teamData.data.logo?.colors || [],
+      id: teamData.data?.id || "Unknown ID",
+      name: teamData.data?.name || "Unknown Team",
+      league: teamData.data?.league?.name || "Unknown League",
+      country: teamData.data?.country?.name || "Unknown Country",
+      logo: teamData.data?.logo?.medium || null,
+      colors: teamData.data?.logo?.colors || [],
     };
 
     return NextResponse.json(teamInfo);
@@ -48,7 +55,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-
-
-

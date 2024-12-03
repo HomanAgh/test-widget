@@ -14,7 +14,7 @@ const HomePage = () => {
     if (!isLoggedIn) {
       router.replace("/auth"); // Redirect to /auth if not logged in
     } else {
-      router.replace("/player"); // Redirect to /player if logged in
+      router.replace("/home"); // Redirect to /player if logged in
     }
   }, [isLoggedIn, router]);
 
