@@ -34,13 +34,13 @@
   "UnknownSeason": "Okänd säsong",
   "League": "Liga",
   "Rank": "#",
-  "Team": "Lag",
+  "TeamRoster": "Laguppställning",
   "GP": "SM",
   "Wins": "V",
   "Losses": "F",
   "PTS": "P",
   "UnknownTeam": "Okänt lag",
-  "EnterLeagueSlug": "Ange ligans slug (t.ex. 'shl', 'khl')...",
+  "EnterLeagueSlug": "Ange en ligas namn (t.ex. 'shl', 'nhl')...",
   "Search": "Sök",
   "Loading": "Laddar...",
   "EnterSlugError": "Ange en ligans slug (t.ex. 'shl', 'khl').",
@@ -61,5 +61,6 @@
   "goToHome": "Gå till Startsidan",  
   "Season": "säsong",
   "SummaryLastNGames": "Sammanfattning av de senaste {{count}} matcherna",
-  "LastNGames": "De senaste {{count}} matcherna"
+  "LastNGames": "De senaste {{count}} matcherna",
+  "PlayerLastGames": "Spelarens senaste matcher"
 }

@@ -34,13 +34,13 @@
   "UnknownSeason": "Unknown Season",
   "League": "League",
   "Rank": "#",
-  "Team": "Team",
+  "TeamRoster": "Team roster",
   "GP": "GP",
   "Wins": "W",
   "Losses": "L",
   "PTS": "PTS",
   "UnknownTeam": "Unknown Team",
-  "EnterLeagueSlug": "Enter league slug (e.g., 'shl', 'khl')...",
+  "EnterLeagueSlug": "Enter a leagues name (t.ex., 'nhl', 'shl')...",
   "Search": "Search",
   "Loading": "Loading...",
   "EnterSlugError": "Please enter a league slug (e.g., 'shl', 'khl').",
@@ -61,6 +61,7 @@
   "goToHome": "Go to Homepage",
   "Season" : "season",
   "SummaryLastNGames": "Summary Last {{count}} Games",
-  "LastNGames": "Last {{count}} Games"
+  "LastNGames": "Last {{count}} Games",
+  "PlayerLastGames": "Player last couple games"
   
 }
