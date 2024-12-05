@@ -30,35 +30,28 @@ const PlayerPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 relative">
-      {/* Top Buttons */}
       <div className="flex justify-between items-center mb-4">
-        {/* Home Button - Top Left */}
         <div>
           <HomeButton />
         </div>
 
-        {/* Language Button - Top Right */}
         <div>
           <LanguageButton />
         </div>
       </div>
 
-      {/* Page Title */}
       <h1 className="text-2xl font-bold mb-4 text-center">
         {t("PlayerSearchTitle")}
       </h1>
 
-      {/* Search Bar for Player Selection */}
       <SearchBar
         onSelect={handlePlayerSelect}
         onError={(error) => setError(error)}
       />
       {error && <ErrorMessage error={error} onClose={() => setError("")} />}
 
-      {/* Widget Setup for Player */}
       {selectedPlayerId && <WidgetSetup playerId={selectedPlayerId} />}
 
-      {/* Logout Button - Positioned Below */}
       <div className="mt-6">
         <LogoutButton />
       </div>

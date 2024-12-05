@@ -9,13 +9,15 @@ import LanguageButton from '@/app/components/common/LanguageButton';
 import LogoutButton from '@/app/components/common/LogoutButton';
 import HomeButton from '@/app/components/common/HomeButton';
 import Team from '@/app/components/team/Team'; // Import the new Team component
-import ColorPicker from '@/app/components/widgets/color-picker/ColorPicker';
+import ToggleableColorPicker from '@/app/components/widgets/color-picker/ToggleableColorPicker'; // Import the new ToggleableColorPicker
 
 const TeamPage: React.FC = () => {
   const { t } = useTranslation();
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState<string>('#f9fafb'); // Default background color
+  const [backgroundStyle, setBackgroundStyle] = useState<{ backgroundColor?: string; backgroundImage?: string }>({
+    backgroundColor: '#f9fafb', // Default background color
+  });
   const router = useRouter();
 
   // Redirect to login if not logged in
@@ -32,7 +34,13 @@ const TeamPage: React.FC = () => {
   };
 
   const handleColorChange = (color: string) => {
-    setBackgroundColor(color);
+    if (color.startsWith("linear-gradient")) {
+      // Apply gradient as backgroundImage
+      setBackgroundStyle({ backgroundImage: color });
+    } else {
+      // Apply solid color as backgroundColor
+      setBackgroundStyle({ backgroundColor: color });
+    }
   };
 
   return (
@@ -56,15 +64,24 @@ const TeamPage: React.FC = () => {
       />
       {error && <ErrorMessage error={error} onClose={() => setError("")} />}
 
-      {/* Color Picker */}
+      {/* Toggleable Color Picker */}
       <div className="my-4">
         <h2 className="text-lg font-semibold text-center">{t('ChooseBackgroundColor')}</h2>
-        <ColorPicker onColorSelect={handleColorChange} />
+        <div className="flex justify-center">
+          <ToggleableColorPicker onColorSelect={handleColorChange} />
+        </div>
       </div>
 
       {/* Team Information */}
       {selectedTeamId ? (
-        <Team teamId={selectedTeamId} backgroundColor={backgroundColor} />
+        <div
+          className="mt-6 p-6 rounded-md shadow-md"
+          style={{
+            ...backgroundStyle, // Apply the dynamic background style
+          }}
+        >
+          <Team teamId={selectedTeamId} backgroundColor={''} />
+        </div>
       ) : (
         <p className="text-center text-gray-600 mt-6">{t('NoTeamSelected')}</p>
       )}
