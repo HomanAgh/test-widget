@@ -93,7 +93,7 @@ import LeagueTable from "../../components/league/LeagueTable";
 import LogoutButton from "../../components/common/LogoutButton";
 import LanguageButton from "@/app/components/common/LanguageButton";
 import HomeButton from "@/app/components/common/HomeButton";
-import ColorPicker from "@/app/components/widgets/color-picker/ColorPicker";
+import ToggleableColorPicker from "@/app/components/widgets/color-picker/ToggleableColorPicker"; // Import ToggleableColorPicker
 
 const LeaguePage: React.FC = () => {
   const { t } = useTranslation();
@@ -150,15 +150,14 @@ const LeaguePage: React.FC = () => {
         {t("LeagueStandings")}
       </h1>
 
-      {/* Color Picker */}
+      {/* Toggleable Color Picker */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2 text-center">
           {t("ChooseBackgroundColor")}
         </h2>
         <div className="flex justify-center">
-          <ColorPicker onColorSelect={handleColorChange} />
+          <ToggleableColorPicker onColorSelect={handleColorChange} />
         </div>
-        
       </div>
 
       {/* Search Bar */}
@@ -188,4 +187,6 @@ const LeaguePage: React.FC = () => {
 };
 
 export default LeaguePage;
+
+
 
