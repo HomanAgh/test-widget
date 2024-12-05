@@ -21,7 +21,18 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const teamUrl = `${apiBaseUrl}/v1/teams/${teamId}?apiKey=${apiKey}`;
+  const teamColorField = [
+    "id",
+    "name",
+    "league.name",
+    "country.name",
+    "logo.small",
+    "logo.medium",
+    "logo.large",
+    "logo.colors",
+  ].join(",")
+
+  const teamUrl = `${apiBaseUrl}/v1/teams/${teamId}?apiKey=${apiKey}&fields=${encodeURIComponent(teamColorField)}`;
   console.log("Fetching team data from URL:", teamUrl);
 
   try {
@@ -42,7 +53,9 @@ export async function GET(req: NextRequest) {
       name: teamData.data?.name || "Unknown Team",
       league: teamData.data?.league?.name || "Unknown League",
       country: teamData.data?.country?.name || "Unknown Country",
-      logo: teamData.data?.logo?.medium || null,
+      logoS: teamData.data?.logo?.small || null,
+      logoM: teamData.data?.logo?.medium || null,
+      logoL: teamData.data?.logo?.large || null,
       colors: teamData.data?.logo?.colors || [],
     };
 
