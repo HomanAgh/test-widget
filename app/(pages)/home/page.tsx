@@ -35,9 +35,9 @@ const HomePage = () => {
           onChange={(e) => setSelectedOption(e.target.value)}
         >
           <option value="">{t("ChooseOption")}</option>
-          <option value="/player">{t("PlayerLast5Games")}</option>
+          <option value="/player">{t("PlayerLastGames")}</option>
           <option value="/league">{t("LeagueTables")}</option> {/* New Option */}
-          <option value="/team">{t("team")}</option>
+          <option value="/team">{t("TeamRoster")}</option>
         </select>
         <button onClick={handleNavigate} disabled={!selectedOption}>
           {t("Go")}
