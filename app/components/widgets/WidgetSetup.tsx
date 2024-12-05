@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ToggleableColorPicker from "./color-picker/ToggleableColorPicker"; // Import ToggleableColorPicker
+import BackgroundSelector from "./BackgroundSelector"; // Updated BackgroundSelector
 import Player from "../player/Player";
 
 interface WidgetSetupProps {
@@ -41,31 +41,14 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     fetchTeamColor();
   }, [playerId]);
 
-  // Handle background color or gradient change
   const handleColorChange = (color: string) => {
-    if (color.startsWith("linear-gradient")) {
-      setBackgroundStyle({ backgroundImage: color }); // Apply gradient as backgroundImage
-    } else {
-      setBackgroundStyle({ backgroundColor: color, backgroundImage: undefined }); // Apply solid color and reset gradient
-    }
-  };
-  
-  /* const handleColorChange = (color: string) => {
     if (color.startsWith("linear-gradient")) {
       setBackgroundStyle({ backgroundImage: color });
     } else {
       setBackgroundStyle({ backgroundColor: color });
     }
-  }; */
-
-  // Handle team color selection
-  const handleTeamColorSelection = () => {
-    if (teamColor) {
-      setBackgroundStyle({ backgroundColor: teamColor });
-    }
   };
 
-  // Handle game limit selection
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
   };
@@ -78,26 +61,19 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
   return (
     <div>
+      {/* Background Selector */}
       <div className="mb-6">
-        <h3 className="text-lg font-medium mb-2">Select Background Color:</h3>
-        <ToggleableColorPicker onColorSelect={handleColorChange} />
+        <h3 className="text-lg font-medium mb-2 text-center">Background Options:</h3>
+        <BackgroundSelector
+          backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
+          setBackgroundColor={(color) =>
+            setBackgroundStyle({ backgroundColor: color })
+          }
+          teamColor={teamColor || undefined}
+        />
       </div>
 
-      {teamColor && (
-        <div className="mb-4 text-center">
-          <button
-            onClick={handleTeamColorSelection}
-            className={`px-4 py-2 rounded-md ${
-              backgroundStyle.backgroundColor === teamColor
-                ? "bg-blue-700 text-white"
-                : "bg-blue-500 text-white"
-            } hover:bg-blue-600 transition`}
-          >
-            Use Team Color
-          </button>
-        </div>
-      )}
-
+      {/* Game Limit Selector */}
       <div className="mb-6 text-center">
         <h3 className="text-lg font-medium mb-2">Select Number of Games:</h3>
         <div className="flex justify-center space-x-4">
@@ -106,9 +82,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
               key={limit}
               onClick={() => handleGameLimitChange(limit)}
               className={`px-4 py-2 rounded-md ${
-                gameLimit === limit
-                  ? "bg-green-600 text-white"
-                  : "bg-green-400 text-white"
+                gameLimit === limit ? "bg-green-600 text-white" : "bg-green-400 text-white"
               } hover:bg-green-500`}
             >
               {limit} Games
@@ -117,6 +91,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         </div>
       </div>
 
+      {/* Player Widget Preview */}
       <div className="mt-6">
         <Player
           playerId={playerId}
@@ -125,6 +100,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         />
       </div>
 
+      {/* Embed Code Section */}
       <div className="mt-8">
         <h3 className="text-lg font-medium mb-2">Embed Code</h3>
         <textarea
@@ -134,6 +110,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           className="w-full p-2 border border-gray-300 rounded-md"
         ></textarea>
 
+        {/* Preview the iframe */}
         <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
         <iframe
           src={embedUrl}
