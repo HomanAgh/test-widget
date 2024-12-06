@@ -25,7 +25,6 @@ export type Player = {
   };
 
   export type GoaltenderSummary = {
-    gamesPlayed: number;
     shotsAgainst: number;
     saves: number;
     goalsAgainst: number;
@@ -33,12 +32,28 @@ export type Player = {
   }
   
   export type  SkaterSummary = {
+    goals: number;
+    assists: number;
+    points: number;
+    plusMinusRating: number;
+  }
+
+  export type Skater = {
     gamesPlayed: number;
     goals: number;
     assists: number;
     points: number;
     plusMinusRating: number;
   }
+
+  export type Goalie = {
+    gamesPlayed: number;
+    shotsAgainst: number;
+    saves: number;
+    goalsAgainst: number;
+    savePercentage: number;
+  }
+
 
   
 

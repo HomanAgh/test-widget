@@ -1,9 +1,9 @@
 import React from "react";
-import { PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
+import { PlayerType, Goalie, Skater } from "@/app/types/player";
 
 interface PlayerStatsTableProps {
   playerType: PlayerType; // Player type: "GOALTENDER" or "SKATER"
-  stats: GoaltenderSummary | SkaterSummary; // Stats data// Number of games played
+  stats: Goalie | Skater; // Stats data// Number of games played
 }
 
 const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({ playerType, stats}) => {
@@ -35,22 +35,22 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({ playerType, stats})
         </thead>
         <tbody>
           <tr className="bg-white text-gray-800">
-            <td className="py-2 px-4 border">{(stats as GoaltenderSummary ).gamesPlayed}</td>
+            <td className="py-2 px-4 border">{(stats as Goalie ).gamesPlayed}</td>
             {isGoaltender ? (
               <>
-                <td className="py-2 px-4 border">{(stats as GoaltenderSummary).shotsAgainst}</td>
-                <td className="py-2 px-4 border">{(stats as GoaltenderSummary).saves}</td>
-                <td className="py-2 px-4 border">{(stats as GoaltenderSummary).goalsAgainst}</td>
+                <td className="py-2 px-4 border">{(stats as Goalie).shotsAgainst}</td>
+                <td className="py-2 px-4 border">{(stats as Goalie).saves}</td>
+                <td className="py-2 px-4 border">{(stats as Goalie).goalsAgainst}</td>
                 <td className="py-2 px-4 border">
-                  {((stats as GoaltenderSummary).savePercentage || 0).toFixed(2)}%
+                  {((stats as Goalie).savePercentage || 0).toFixed(2)}%
                 </td>
               </>
             ) : (
               <>
-                <td className="py-2 px-4 border">{(stats as SkaterSummary).goals}</td>
-                <td className="py-2 px-4 border">{(stats as SkaterSummary).assists}</td>
-                <td className="py-2 px-4 border">{(stats as SkaterSummary).points}</td>
-                <td className="py-2 px-4 border">{(stats as SkaterSummary).plusMinusRating}</td>
+                <td className="py-2 px-4 border">{(stats as Skater).goals}</td>
+                <td className="py-2 px-4 border">{(stats as Skater).assists}</td>
+                <td className="py-2 px-4 border">{(stats as Skater).points}</td>
+                <td className="py-2 px-4 border">{(stats as Skater).plusMinusRating}</td>
               </>
             )}
           </tr>

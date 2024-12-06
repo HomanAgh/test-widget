@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import PlayerStatsTable from "./PlayerStatsTable";
-import type { PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
+import type { PlayerType, Goalie, Skater } from "@/app/types/player";
 
 interface PlayerStatProps {
   playerId: string;
@@ -13,7 +13,7 @@ interface PlayerStatProps {
 const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, backgroundColor }) => {
   const { t } = useTranslation(); // Hook for translations
   const [playerType, setPlayerType] = useState<PlayerType | null>(null);
-  const [stats, setStats] = useState<GoaltenderSummary | SkaterSummary | null>(null);
+  const [stats, setStats] = useState<Goalie | Skater | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
