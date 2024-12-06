@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import BackgroundSelector from "./BackgroundSelector"; // Updated BackgroundSelector
+import BackgroundSelector from "./BackgroundSelector";
 import Player from "../player/Player";
+import PlayerStat from "../player/PlayerStat";
 
 interface WidgetSetupProps {
   playerId: string;
@@ -15,6 +16,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   });
   const [teamColor, setTeamColor] = useState<string | null>(null);
   const [gameLimit, setGameLimit] = useState(5);
+  const [showCurrentSeasonStats, setShowCurrentSeasonStats] = useState(false); // Track which widget to show
 
   // Fetch the team color when the playerId changes
   useEffect(() => {
@@ -51,6 +53,10 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
+  };
+
+  const toggleDisplay = () => {
+    setShowCurrentSeasonStats((prev) => !prev);
   };
 
   const embedUrl = `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
@@ -91,13 +97,32 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         </div>
       </div>
 
-      {/* Player Widget Preview */}
+      {/* Toggle Button for Current Season Stats */}
+      <div className="text-center mb-6">
+        <button
+          onClick={toggleDisplay}
+          className={`px-6 py-2 rounded-md ${
+            showCurrentSeasonStats ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
+          } hover:bg-blue-500`}
+        >
+          {showCurrentSeasonStats ? "Show Recent Games" : "Show Current Season Stats"}
+        </button>
+      </div>
+
+      {/* Player Widget or PlayerStat Preview */}
       <div className="mt-6">
-        <Player
-          playerId={playerId}
-          backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
-          gameLimit={gameLimit}
-        />
+        {showCurrentSeasonStats ? (
+          <PlayerStat
+            playerId={playerId}
+            backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
+          />
+        ) : (
+          <Player
+            playerId={playerId}
+            backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
+            gameLimit={gameLimit}
+          />
+        )}
       </div>
 
       {/* Embed Code Section */}
