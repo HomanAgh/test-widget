@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
   const goalieFields = [
     "latestStats.regularStats.GP",
     "latestStats.regularStats.SA",
-    "latestStats.regularStats.SV",
+    "latestStats.regularStats.SVS",
     "latestStats.regularStats.GA",
     "latestStats.regularStats.SVP",
   ].join(",");

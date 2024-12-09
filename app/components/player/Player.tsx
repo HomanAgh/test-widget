@@ -1,27 +1,29 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import { useTranslation } from "react-i18next";
 import PlayerInfo from "./PlayerInfo";
 import GamesTable from "./GamesTable";
+import PlayerStat from "./PlayerStat";
 import type { Player } from "@/app/types/player";
 import type { PlayerType } from "@/app/types/player";
 import type { GameLog } from "@/app/types/player";
 
 interface PlayerStats {
   player: Player;
-  lastGames: GameLog[]; // Updated key to match API response
+  lastGames: GameLog[];
   playerType: PlayerType;
 }
 
 interface PlayerProps {
   playerId: string;
   backgroundColor: string;
-  gameLimit: number; // Prop to specify the number of games to display
+  gameLimit: number;
+  showCurrentSeasonStats: boolean; // Received as prop
 }
 
-const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit }) => {
-  const { t } = useTranslation(); // Hook for translations
+const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, showCurrentSeasonStats }) => {
+  const { t } = useTranslation();
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +47,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit })
             jerseyNumber: data.playerInfo.jerseyNumber || t("JerseyNA"),
             views: data.playerInfo.views,
           },
-          lastGames: data.lastGames || [], // Updated to reflect API's response
+          lastGames: data.lastGames || [],
           playerType: data.playerInfo.playerType,
         });
       } catch (err: any) {
@@ -56,7 +58,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit })
     };
 
     fetchPlayerStats();
-  }, [playerId, gameLimit]); // Include `gameLimit` in the dependency array
+  }, [playerId, gameLimit]);
 
   if (loading) return <div className="text-center text-gray-600">{t("Loading")}</div>;
   if (error) return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error}</div>;
@@ -68,9 +70,20 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit })
     >
       {playerStats && <PlayerInfo player={playerStats.player} />}
       {playerStats && (
-        <GamesTable
-          lastFiveGames={playerStats.lastGames} // Use updated key
-          playerType={playerStats.playerType} gameLimit={0}        />
+        <div>
+          {showCurrentSeasonStats ? (
+            <PlayerStat
+              playerId={playerId}
+              backgroundColor={backgroundColor}
+            />
+          ) : (
+            <GamesTable
+              lastFiveGames={playerStats.lastGames}
+              playerType={playerStats.playerType}
+              gameLimit={gameLimit}
+            />
+          )}
+        </div>
       )}
     </div>
   );

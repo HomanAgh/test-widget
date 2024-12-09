@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import BackgroundSelector from "./BackgroundSelector";
 import Player from "../player/Player";
-import PlayerStat from "../player/PlayerStat";
 
 interface WidgetSetupProps {
   playerId: string;
@@ -16,9 +15,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   });
   const [teamColor, setTeamColor] = useState<string | null>(null);
   const [gameLimit, setGameLimit] = useState(5);
-  const [showCurrentSeasonStats, setShowCurrentSeasonStats] = useState(false); // Track which widget to show
+  const [showCurrentSeasonStats, setShowCurrentSeasonStats] = useState(false);
 
-  // Fetch the team color when the playerId changes
   useEffect(() => {
     const fetchTeamColor = async () => {
       try {
@@ -29,7 +27,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         if (teamId) {
           const teamResponse = await fetch(`/api/team?teamId=${teamId}`);
           const teamData = await teamResponse.json();
-          const fetchedTeamColor = teamData.colors[0]; // Use the first team color
+          const fetchedTeamColor = teamData.colors[0];
           setTeamColor(fetchedTeamColor);
         } else {
           setTeamColor(null);
@@ -59,15 +57,16 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     setShowCurrentSeasonStats((prev) => !prev);
   };
 
-  const embedUrl = `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
-    backgroundStyle.backgroundColor || ""
-  )}&gameLimit=${gameLimit}`;
+  const embedUrl = useMemo(() => {
+    return `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
+      backgroundStyle.backgroundColor || ""
+    )}&gameLimit=${gameLimit}&showCurrentSeasonStats=${showCurrentSeasonStats}`;
+  }, [playerId, backgroundStyle, gameLimit, showCurrentSeasonStats]);
 
   const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
 
   return (
     <div>
-      {/* Background Selector */}
       <div className="mb-6">
         <h3 className="text-lg font-medium mb-2 text-center">Background Options:</h3>
         <BackgroundSelector
@@ -79,7 +78,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         />
       </div>
 
-      {/* Game Limit Selector */}
       <div className="mb-6 text-center">
         <h3 className="text-lg font-medium mb-2">Select Number of Games:</h3>
         <div className="flex justify-center space-x-4">
@@ -97,8 +95,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         </div>
       </div>
 
-      {/* Toggle Button for Current Season Stats */}
-      <div className="text-center mb-6">
+      <div className="text-center my-4">
         <button
           onClick={toggleDisplay}
           className={`px-6 py-2 rounded-md ${
@@ -109,23 +106,15 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         </button>
       </div>
 
-      {/* Player Widget or PlayerStat Preview */}
       <div className="mt-6">
-        {showCurrentSeasonStats ? (
-          <PlayerStat
-            playerId={playerId}
-            backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
-          />
-        ) : (
-          <Player
-            playerId={playerId}
-            backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
-            gameLimit={gameLimit}
-          />
-        )}
+        <Player
+          playerId={playerId}
+          backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
+          gameLimit={gameLimit}
+          showCurrentSeasonStats={showCurrentSeasonStats}
+        />
       </div>
 
-      {/* Embed Code Section */}
       <div className="mt-8">
         <h3 className="text-lg font-medium mb-2">Embed Code</h3>
         <textarea
@@ -135,7 +124,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           className="w-full p-2 border border-gray-300 rounded-md"
         ></textarea>
 
-        {/* Preview the iframe */}
         <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
         <iframe
           src={embedUrl}
