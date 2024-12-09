@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import PlayerInfo from "./PlayerInfo";
-import GamesTable from "./GamesTable";
+import GamesTable from "./PlayerGamesTable";
 import PlayerStat from "./PlayerStat";
 import PlayerSeasons from "./PlayerSeasons";
+import PlayerCareers from "./PlayerCareer";
 import type { Player } from "@/app/types/player";
 import type { PlayerType } from "@/app/types/player";
 import type { GameLog } from "@/app/types/player";
@@ -22,7 +23,7 @@ interface PlayerProps {
   gameLimit: number;
   // Use a string prop to determine which view to show:
   // "stats" | "seasons" | "games"
-  viewMode: "stats" | "seasons" | "games";
+  viewMode: "stats" | "seasons" | "career" | "games";
 }
 
 const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, viewMode }) => {
@@ -82,6 +83,12 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
           )}
           {viewMode === "seasons" && (
             <PlayerSeasons
+              playerId={playerId}
+              backgroundColor={backgroundColor}
+            />
+          )}
+           {viewMode === "career" && (
+            <PlayerCareers
               playerId={playerId}
               backgroundColor={backgroundColor}
             />

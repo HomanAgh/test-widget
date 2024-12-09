@@ -69,6 +69,19 @@ export interface SeasonStats {
   points?: number; // SKATER only
 }
 
+export interface CareerStats {
+  league: string;
+  numberOfSeasons: number;
+  gamesPlayed: number;
+  goals?: number; // Only for skaters
+  assists?: number; // Only for skaters
+  points?: number; // Only for skaters
+  goalsAgainstAverage?: number; // Only for goalies
+  savePercentage?: number; // Only for goalies
+  shutouts?: number; // Only for goalies
+}
+
+
 
 
 

@@ -13,7 +13,10 @@ const EmbedPlayer = () => {
   
   // Read the viewMode from the URL, defaulting to "stats" if not provided
   const viewModeParam = searchParams.get("viewMode");
-  const viewMode = (viewModeParam === "seasons" || viewModeParam === "games" || viewModeParam === "stats")
+  const viewMode = (viewModeParam === "seasons" || 
+    viewModeParam === "games" || 
+    viewModeParam === "career" || 
+    viewModeParam === "stats")
     ? viewModeParam
     : "stats";
 
