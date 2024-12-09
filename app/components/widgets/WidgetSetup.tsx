@@ -15,7 +15,9 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   });
   const [teamColor, setTeamColor] = useState<string | null>(null);
   const [gameLimit, setGameLimit] = useState(5);
-  const [showCurrentSeasonStats, setShowCurrentSeasonStats] = useState(false);
+
+  // New state for view mode
+  const [viewMode, setViewMode] = useState<"stats" | "seasons" | "games">("stats");
 
   useEffect(() => {
     const fetchTeamColor = async () => {
@@ -53,15 +55,12 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     setGameLimit(limit);
   };
 
-  const toggleDisplay = () => {
-    setShowCurrentSeasonStats((prev) => !prev);
-  };
-
   const embedUrl = useMemo(() => {
+    // Include viewMode in query params
     return `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
       backgroundStyle.backgroundColor || ""
-    )}&gameLimit=${gameLimit}&showCurrentSeasonStats=${showCurrentSeasonStats}`;
-  }, [playerId, backgroundStyle, gameLimit, showCurrentSeasonStats]);
+    )}&gameLimit=${gameLimit}&viewMode=${viewMode}`;
+  }, [playerId, backgroundStyle, gameLimit, viewMode]);
 
   const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
 
@@ -71,9 +70,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         <h3 className="text-lg font-medium mb-2 text-center">Background Options:</h3>
         <BackgroundSelector
           backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
-          setBackgroundColor={(color) =>
-            setBackgroundStyle({ backgroundColor: color })
-          }
+          setBackgroundColor={(color) => setBackgroundStyle({ backgroundColor: color })}
           teamColor={teamColor || undefined}
         />
       </div>
@@ -96,14 +93,33 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       </div>
 
       <div className="text-center my-4">
-        <button
-          onClick={toggleDisplay}
-          className={`px-6 py-2 rounded-md ${
-            showCurrentSeasonStats ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
-          } hover:bg-blue-500`}
-        >
-          {showCurrentSeasonStats ? "Show Recent Games" : "Show Current Season Stats"}
-        </button>
+        <h3 className="text-lg font-medium mb-2">View Mode:</h3>
+        <div className="flex justify-center space-x-4">
+          <button
+            onClick={() => setViewMode("stats")}
+            className={`px-6 py-2 rounded-md ${
+              viewMode === "stats" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
+            } hover:bg-blue-500`}
+          >
+            Show Current Season Stats
+          </button>
+          <button
+            onClick={() => setViewMode("seasons")}
+            className={`px-6 py-2 rounded-md ${
+              viewMode === "seasons" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
+            } hover:bg-blue-500`}
+          >
+            Show Player Seasons
+          </button>
+          <button
+            onClick={() => setViewMode("games")}
+            className={`px-6 py-2 rounded-md ${
+              viewMode === "games" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
+            } hover:bg-blue-500`}
+          >
+            Show Recent Games
+          </button>
+        </div>
       </div>
 
       <div className="mt-6">
@@ -111,7 +127,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           playerId={playerId}
           backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
           gameLimit={gameLimit}
-          showCurrentSeasonStats={showCurrentSeasonStats}
+          viewMode={viewMode}
         />
       </div>
 

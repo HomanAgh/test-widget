@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import PlayerInfo from "./PlayerInfo";
 import GamesTable from "./GamesTable";
 import PlayerStat from "./PlayerStat";
+import PlayerSeasons from "./PlayerSeasons";
 import type { Player } from "@/app/types/player";
 import type { PlayerType } from "@/app/types/player";
 import type { GameLog } from "@/app/types/player";
@@ -19,10 +20,12 @@ interface PlayerProps {
   playerId: string;
   backgroundColor: string;
   gameLimit: number;
-  showCurrentSeasonStats: boolean; // Received as prop
+  // Use a string prop to determine which view to show:
+  // "stats" | "seasons" | "games"
+  viewMode: "stats" | "seasons" | "games";
 }
 
-const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, showCurrentSeasonStats }) => {
+const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, viewMode }) => {
   const { t } = useTranslation();
   const [playerStats, setPlayerStats] = useState<PlayerStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,12 +74,19 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, s
       {playerStats && <PlayerInfo player={playerStats.player} />}
       {playerStats && (
         <div>
-          {showCurrentSeasonStats ? (
+          {viewMode === "stats" && (
             <PlayerStat
               playerId={playerId}
               backgroundColor={backgroundColor}
             />
-          ) : (
+          )}
+          {viewMode === "seasons" && (
+            <PlayerSeasons
+              playerId={playerId}
+              backgroundColor={backgroundColor}
+            />
+          )}
+          {viewMode === "games" && (
             <GamesTable
               lastFiveGames={playerStats.lastGames}
               playerType={playerStats.playerType}

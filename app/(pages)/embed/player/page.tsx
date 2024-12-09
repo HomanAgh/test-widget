@@ -7,10 +7,15 @@ import { useSearchParams } from "next/navigation";
 const EmbedPlayer = () => {
   const searchParams = useSearchParams();
 
-  const playerId = searchParams.get("playerId") || ""; 
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF"; 
+  const playerId = searchParams.get("playerId") || "";
+  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
   const gameLimit = parseInt(searchParams.get("gameLimit") || "5", 10);
-  const showCurrentSeasonStats = searchParams.get("showCurrentSeasonStats") === "true"; 
+  
+  // Read the viewMode from the URL, defaulting to "stats" if not provided
+  const viewModeParam = searchParams.get("viewMode");
+  const viewMode = (viewModeParam === "seasons" || viewModeParam === "games" || viewModeParam === "stats")
+    ? viewModeParam
+    : "stats";
 
   if (!playerId) {
     return <div>Missing player ID</div>;
@@ -22,7 +27,7 @@ const EmbedPlayer = () => {
         playerId={playerId}
         backgroundColor={backgroundColor}
         gameLimit={gameLimit}
-        showCurrentSeasonStats={showCurrentSeasonStats} // Pass dynamically
+        viewMode={viewMode} 
       />
     </div>
   );

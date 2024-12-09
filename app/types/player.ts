@@ -54,6 +54,23 @@ export type Player = {
     savePercentage: number;
   }
 
+  // Type for a single season's stats
+export interface SeasonStats {
+  season: string;
+  team: string;
+  league: string;
+  role: "GOALTENDER" | "SKATER";
+  gamesPlayed: number;
+  goalsAgainstAverage?: number; // GOALTENDER only
+  savePercentage?: number; // GOALTENDER only
+  shutouts?: number; // GOALTENDER only
+  goals?: number; // SKATER only
+  assists?: number; // SKATER only
+  points?: number; // SKATER only
+}
+
+
+
 
   
 
