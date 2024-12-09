@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ToggleableColorPicker from "./color-picker/ToggleableColorPicker";
+import ToggleableColorPicker from "../common/color-picker/ToggleableColorPicker";
 
 interface BackgroundSelectorProps {
   backgroundColor: string;

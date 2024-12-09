@@ -93,7 +93,7 @@ import LeagueTable from "../../components/league/LeagueTable";
 import LogoutButton from "../../components/common/LogoutButton";
 import LanguageButton from "@/app/components/common/LanguageButton";
 import HomeButton from "@/app/components/common/HomeButton";
-import ToggleableColorPicker from "@/app/components/widgets/color-picker/ToggleableColorPicker"; // Import ToggleableColorPicker
+import ToggleableColorPicker from "@/app/components/common/color-picker/ToggleableColorPicker"; // Import ToggleableColorPicker
 
 const LeaguePage: React.FC = () => {
   const { t } = useTranslation();
