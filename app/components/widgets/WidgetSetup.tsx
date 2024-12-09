@@ -16,8 +16,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   const [teamColor, setTeamColor] = useState<string | null>(null);
   const [gameLimit, setGameLimit] = useState(5);
 
-  // New state for view mode
-  const [viewMode, setViewMode] = useState<"stats" | "seasons" | "games">("stats");
+  // Updated state to include "career" view
+  const [viewMode, setViewMode] = useState<"stats" | "seasons" | "career" | "games">("stats");
 
   useEffect(() => {
     const fetchTeamColor = async () => {
@@ -56,7 +56,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   };
 
   const embedUrl = useMemo(() => {
-    // Include viewMode in query params
     return `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
       backgroundStyle.backgroundColor || ""
     )}&gameLimit=${gameLimit}&viewMode=${viewMode}`;
@@ -73,23 +72,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           setBackgroundColor={(color) => setBackgroundStyle({ backgroundColor: color })}
           teamColor={teamColor || undefined}
         />
-      </div>
-
-      <div className="mb-6 text-center">
-        <h3 className="text-lg font-medium mb-2">Select Number of Games:</h3>
-        <div className="flex justify-center space-x-4">
-          {[5, 10, 15, 20].map((limit) => (
-            <button
-              key={limit}
-              onClick={() => handleGameLimitChange(limit)}
-              className={`px-4 py-2 rounded-md ${
-                gameLimit === limit ? "bg-green-600 text-white" : "bg-green-400 text-white"
-              } hover:bg-green-500`}
-            >
-              {limit} Games
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="text-center my-4">
@@ -112,6 +94,14 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
             Show Player Seasons
           </button>
           <button
+            onClick={() => setViewMode("career")}
+            className={`px-6 py-2 rounded-md ${
+              viewMode === "career" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
+            } hover:bg-blue-500`}
+          >
+            Show Player Career
+          </button>
+          <button
             onClick={() => setViewMode("games")}
             className={`px-6 py-2 rounded-md ${
               viewMode === "games" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
@@ -121,6 +111,25 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           </button>
         </div>
       </div>
+
+      {viewMode === "games" && (
+        <div className="mt-4 text-center">
+          <h3 className="text-lg font-medium mb-2">Select Number of Games:</h3>
+          <div className="flex justify-center space-x-4">
+            {[5, 10, 15, 20, 25].map((limit) => (
+              <button
+                key={limit}
+                onClick={() => handleGameLimitChange(limit)}
+                className={`px-4 py-2 rounded-md ${
+                  gameLimit === limit ? "bg-green-600 text-white" : "bg-green-400 text-white"
+                } hover:bg-green-500`}
+              >
+                {limit} Games
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <Player

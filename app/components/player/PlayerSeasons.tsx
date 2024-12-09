@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import SeasonsTable from "./SeasonsTable"; // New table component for seasons
+import SeasonsTable from "./PlayerSeasonsTable"; // New table component for seasons
 import type { SeasonStats, PlayerType } from "@/app/types/player";
 
 interface PlayerSeasonsProps {
