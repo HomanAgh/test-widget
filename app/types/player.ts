@@ -12,6 +12,7 @@ export type Player = {
   export type PlayerType = "SKATER" | "GOALTENDER";
   
   export type GameLog = {
+    gameLimit: number,
     date: string;
     goals?: number;
     assists?: number;
@@ -36,4 +37,40 @@ export type Player = {
     points: number;
     plusMinusRating: number;
   }
+
+  export type Skater = {
+    gamesPlayed: number;
+    goals: number;
+    assists: number;
+    points: number;
+    plusMinusRating: number;
+  }
+
+  export type Goalie = {
+    gamesPlayed: number;
+    shotsAgainst: number;
+    saves: number;
+    goalsAgainst: number;
+    savePercentage: number;
+  }
+
+  // Type for a single season's stats
+export interface SeasonStats {
+  season: string;
+  team: string;
+  league: string;
+  role: "GOALTENDER" | "SKATER";
+  gamesPlayed: number;
+  goalsAgainstAverage?: number; // GOALTENDER only
+  savePercentage?: number; // GOALTENDER only
+  shutouts?: number; // GOALTENDER only
+  goals?: number; // SKATER only
+  assists?: number; // SKATER only
+  points?: number; // SKATER only
+}
+
+
+
+
+  
 

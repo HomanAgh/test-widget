@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
 import React from "react";
-import Player from "../../../components/player/Player"; // Adjust import path based on your project
+import Player from "../../../components/player/Player";
 import { useSearchParams } from "next/navigation";
 
 const EmbedPlayer = () => {
   const searchParams = useSearchParams();
 
-  const playerId = searchParams.get("playerId") || ""; // Fetch playerId from query string
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF"; // Default background color
-  const gameLimit = parseInt(searchParams.get("gameLimit") || "5", 10); // Default game limit
+  const playerId = searchParams.get("playerId") || "";
+  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
+  const gameLimit = parseInt(searchParams.get("gameLimit") || "5", 10);
+  
+  // Read the viewMode from the URL, defaulting to "stats" if not provided
+  const viewModeParam = searchParams.get("viewMode");
+  const viewMode = (viewModeParam === "seasons" || viewModeParam === "games" || viewModeParam === "stats")
+    ? viewModeParam
+    : "stats";
 
   if (!playerId) {
     return <div>Missing player ID</div>;
@@ -21,6 +27,7 @@ const EmbedPlayer = () => {
         playerId={playerId}
         backgroundColor={backgroundColor}
         gameLimit={gameLimit}
+        viewMode={viewMode} 
       />
     </div>
   );
