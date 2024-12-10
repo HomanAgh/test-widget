@@ -42,7 +42,8 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor
         // Map the seasonal stats
         const mappedSeasons = data.stats.map((season: any) => ({
           season: season.season,
-          team: season.team,
+          teamName: season.teamName,
+          teamId: season.teamId,
           league: season.league,
           role: season.role,
           gamesPlayed: season.stats.gamesPlayed,

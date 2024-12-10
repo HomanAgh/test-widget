@@ -57,7 +57,8 @@ export type Player = {
   // Type for a single season's stats
 export interface SeasonStats {
   season: string;
-  team: string;
+  teamName: string;
+  teamId: number;
   league: string;
   role: "GOALTENDER" | "SKATER";
   gamesPlayed: number;

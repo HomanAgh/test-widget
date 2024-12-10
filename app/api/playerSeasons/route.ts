@@ -40,7 +40,8 @@ export async function GET(req: NextRequest) {
         season: season.slug,
         startYear: season.startYear,
         endYear: season.endYear,
-        team: team?.name || "N/A",
+        teamId: team?.id || null,
+        teamName: team?.name || "N/A",
         league: league?.name || "N/A",
         role: isGoalie ? "GOALTENDER" : "SKATER",
         stats: isGoalie

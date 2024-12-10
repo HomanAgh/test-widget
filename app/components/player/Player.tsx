@@ -7,9 +7,7 @@ import GamesTable from "./PlayerGamesTable";
 import PlayerStat from "./PlayerStat";
 import PlayerSeasons from "./PlayerSeasons";
 import PlayerCareers from "./PlayerCareer";
-import type { Player } from "@/app/types/player";
-import type { PlayerType } from "@/app/types/player";
-import type { GameLog } from "@/app/types/player";
+import type { Player, PlayerType, GameLog } from "@/app/types/player";
 
 interface PlayerStats {
   player: Player;
@@ -21,8 +19,6 @@ interface PlayerProps {
   playerId: string;
   backgroundColor: string;
   gameLimit: number;
-  // Use a string prop to determine which view to show:
-  // "stats" | "seasons" | "games"
   viewMode: "stats" | "seasons" | "career" | "games";
 }
 

@@ -33,7 +33,16 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({ careers }) => {
       <tbody>
         {careers.map((career, index) => (
           <tr key={index} className="border-t">
-            <td className="py-2 px-4">{career.league}</td>
+            <td className="py-2 px-4">
+              <a
+              href={`https://www.eliteprospects.com/league/${career.league.toLowerCase().replace(/\s+/g, "-")}/stats/all-time`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+              >
+              {career.league}
+              </a>
+            </td>
             <td className="py-2 px-4">{career.numberOfSeasons}</td>
             <td className="py-2 px-4">{career.gamesPlayed}</td>
             {isGoalie ? (
