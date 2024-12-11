@@ -39,19 +39,19 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
         setPlayerStats({
           player: {
             id: data.playerInfo.id,
-            name: data.playerInfo.name || t("UnknownPlayer"),
+            name: data.playerInfo.name || "UnknownPlayer",
             imageUrl: data.playerInfo.imageUrl || "/default-image.jpg",
             team: data.playerInfo.team,
             league: data.playerInfo.league,
-            nationality: data.playerInfo.nationality || t("UnknownNationality"),
-            jerseyNumber: data.playerInfo.jerseyNumber || t("JerseyNA"),
+            nationality: data.playerInfo.nationality || "UnknownNationality",
+            jerseyNumber: data.playerInfo.jerseyNumber || "JerseyNA",
             views: data.playerInfo.views,
           },
           lastGames: data.lastGames || [],
           playerType: data.playerInfo.playerType,
         });
       } catch (err: any) {
-        setError(err.message || t("ErrorOccurred"));
+        setError(err.message || "ErrorOccurred");
       } finally {
         setLoading(false);
       }

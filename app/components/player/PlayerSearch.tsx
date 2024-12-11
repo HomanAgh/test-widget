@@ -43,7 +43,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         );
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || t("SearchFailed")); // Use translation for error message
+          throw new Error(data.error || "SearchFailed"); // Use translation for error message
         }
 
         const data = await res.json();
@@ -57,7 +57,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         setPlayers(sortedPlayers);
         setShowDropdown(true);
       } catch (err: any) {
-        onError(err.message || t("SearchError")); // Translatable error
+        onError(err.message || "SearchError"); // Translatable error
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -65,7 +65,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     };
 
     fetchPlayers();
-  }, [debouncedQuery, onError, t]);
+  }, [debouncedQuery, onError]);
 
   // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

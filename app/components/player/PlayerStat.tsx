@@ -28,7 +28,7 @@ const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, backgroundColor }) =>
       
           if (!data.stats) {
             console.error("Stats missing in response:", data); // Log when stats are missing.
-            setError(t("NoStatsAvailable"));
+            setError("NoStatsAvailable");
             return;
           }
       
@@ -59,7 +59,7 @@ const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, backgroundColor }) =>
           if (err instanceof Error) {
             setError(err.message);
           } else {
-            setError(t("UnknownErrorOccurred"));
+            setError("UnknownErrorOccurred");
           }
         } finally {
           setLoading(false);

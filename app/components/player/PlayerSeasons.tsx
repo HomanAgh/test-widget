@@ -31,7 +31,7 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor
 
         if (!data || !data.stats) {
           console.error("Missing stats in API response:", data); // Debug log
-          setError(t("NoStatsAvailable"));
+          setError("NoStatsAvailable");
           return;
         }
 
@@ -64,7 +64,7 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor
         console.log("Mapped Seasons:", mappedSeasons); // Debug log
       } catch (err) {
         console.error("Error fetching player seasons:", err); // Error log
-        setError(t("ErrorOccurred"));
+        setError("ErrorOccurred");
       } finally {
         setLoading(false);
       }

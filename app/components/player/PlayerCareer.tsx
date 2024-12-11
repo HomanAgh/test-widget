@@ -34,7 +34,7 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({ playerId, backgroundColor 
 
         if (!data || !data.stats) {
           console.error("No stats available in the response:", data); // Debug log
-          setError(t("NoStatsAvailable"));
+          setError("NoStatsAvailable");
           return;
         }
 
