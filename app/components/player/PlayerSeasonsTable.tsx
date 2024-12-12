@@ -34,8 +34,28 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
         {seasons.map((season, index) => (
           <tr key={index} className="border-t">
             <td className="py-2 px-4">{season.season}</td>
-            <td className="py-2 px-4">{season.team}</td>
-            <td className="py-2 px-4">{season.league}</td>
+            <td className="py-2 px-4">
+              <a
+                href={`https://www.eliteprospects.com/team/${season.teamId}/${encodeURIComponent(
+                  season.teamName
+                )}/${season.season}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                {season.teamName}
+              </a>
+            </td>
+            <td className="py-2 px-4">
+              <a
+                href={`https://www.eliteprospects.com/league/${season.league}/stats/${season.season}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline"
+              >
+                {season.league}
+              </a>
+            </td>
             <td className="py-2 px-4">{season.gamesPlayed}</td>
             {playerType === "GOALTENDER" ? (
               <>

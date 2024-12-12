@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import { useRouter } from "next/navigation";
 import SearchBar from "../../components/player/PlayerSearch";
 import ErrorMessage from "../../components/common/ErrorMessage";
-import WidgetSetup from "../../components/widgets/WidgetSetup";
+import WidgetSetup from "../../components/widget/PlayerWidgetSetup";
 import LogoutButton from "../../components/common/LogoutButton";
 import LanguageButton from "../../components/common/LanguageButton";
 import HomeButton from "@/app/components/common/HomeButton";

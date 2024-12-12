@@ -9,7 +9,7 @@ import LanguageButton from '@/app/components/common/LanguageButton';
 import LogoutButton from '@/app/components/common/LogoutButton';
 import HomeButton from '@/app/components/common/HomeButton';
 import Team from '@/app/components/team/Team'; // Import the new Team component
-import ToggleableColorPicker from '@/app/components/widgets/color-picker/ToggleableColorPicker'; // Import the new ToggleableColorPicker
+import ToggleableColorPicker from '@/app/components/common/color-picker/ToggleableColorPicker'; // Import the new ToggleableColorPicker
 
 const TeamPage: React.FC = () => {
   const { t } = useTranslation();

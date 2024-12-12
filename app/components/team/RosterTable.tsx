@@ -22,7 +22,7 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
     >
       <thead>
         <tr className="bg-blue-600 text-white">
-          <th className="border border-gray-300 px-2 py-1 text-center">{t("PlayerID")}</th>
+          <th className="border border-gray-300 px-2 py-1 text-center">{t("#")}</th>
           <th className="border border-gray-300 px-2 py-1 text-left">{t("Name")}</th>
           <th className="border border-gray-300 px-2 py-1 text-center">{t("Position")}</th>
           <th className="border border-gray-300 px-2 py-1 text-center">{t("JerseyNumber")}</th>
@@ -35,7 +35,7 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
             key={player.id || `player-${index}`}
             className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
           >
-            <td className="border border-gray-300 px-2 py-1 text-center">{player.id}</td>
+            <td className="border border-gray-300 px-2 py-1 text-center">{index + 1}</td>
             <td className="border border-gray-300 px-2 py-1 text-left">{`${player.firstName} ${player.lastName}`}</td>
             <td className="border border-gray-300 px-2 py-1 text-center">{player.position}</td>
             <td className="border border-gray-300 px-2 py-1 text-center">{player.jerseyNumber}</td>
