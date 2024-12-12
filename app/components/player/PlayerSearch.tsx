@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useTranslation } from "react-i18next";
 import { Player } from "@/app/types/player";
 
 interface SearchBarProps {
@@ -10,7 +10,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
-  const { t } = useTranslation(); // Hook for translations
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [players, setPlayers] = useState<Player[]>([]);
@@ -43,7 +43,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         );
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || "SearchFailed"); // Use translation for error message
+          throw new Error(data.error || "SearchFailed");
         }
 
         const data = await res.json();
@@ -57,7 +57,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         setPlayers(sortedPlayers);
         setShowDropdown(true);
       } catch (err: any) {
-        onError(err.message || "SearchError"); // Translatable error
+        onError(err.message || "SearchError");
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -100,7 +100,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={t("SearchPlaceholder")} // Translatable placeholder
+        placeholder={t("SearchPlaceholder")}
         className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(players.length > 0)}
@@ -118,10 +118,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
                 highlightedIndex === index ? "bg-gray-200" : ""
               }`}
             >
-              {`${player.name} - ${player.team} (${player.league}) - ${t("Views")}: ${player.views}`} {/* Translatable "Views" */}
+              {`${player.name} - ${player.team} (${player.league}) - ${t("Views")}: ${player.views}`}
             </li>
           ))}
-          {isLoading && <li className="p-2 text-gray-500">{t("Loading")}</li>} {/* Translatable "Loading" */}
+          {isLoading && <li className="p-2 text-gray-500">{t("Loading")}</li>}
         </ul>
       )}
     </div>

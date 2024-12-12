@@ -1,12 +1,19 @@
+// app/api/player/[playerId]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const playerId = searchParams.get("playerId");
-  const limit = parseInt(searchParams.get("limit") || "5", 10); // Default limit to 5
+export async function GET(req: NextRequest, props: { params: Promise<{ playerId: string }> }) {
+  const params = await props.params;
+
+  const playerId: string = await params.playerId;
+
+  const limit = parseInt(req.nextUrl.searchParams.get("limit") || "5", 10); // Default limit to 5
 
   if (!playerId) {
-    return NextResponse.json({ error: "Player ID is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Player ID is required" },
+      { status: 400 }
+    );
   }
 
   const apiKey = process.env.API_KEY;
@@ -48,9 +55,15 @@ export async function GET(req: NextRequest) {
     "stats.SVP",
   ].join(",");
 
-  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(playerInfoField)}`;
-  const skaterStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(skaterFields)}&limit=${limit}`;
-  const goalieStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(goalieFields)}&limit=${limit}`;
+  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(
+    playerInfoField
+  )}`;
+  const skaterStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
+    skaterFields
+  )}&limit=${limit}`;
+  const goalieStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
+    goalieFields
+  )}&limit=${limit}`;
 
   try {
     // Fetch player info

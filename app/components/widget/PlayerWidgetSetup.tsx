@@ -22,7 +22,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   useEffect(() => {
     const fetchTeamColor = async () => {
       try {
-        const playerResponse = await fetch(`/api/player?playerId=${playerId}`);
+        const playerResponse = await fetch(`/api/player/${encodeURIComponent(playerId)}`);
         const playerData = await playerResponse.json();
         const teamId = playerData.playerInfo.team?.id;
 
