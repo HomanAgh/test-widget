@@ -82,6 +82,13 @@ export interface CareerStats {
   shutouts?: number; // Only for goalies
 }
 
+export interface AlumniPlayer { // nytt interface, kolla om det funkar
+  id: number;
+  name: string;
+  birthYear: number;
+  draftPick?: string;  
+}
+
 
 
 
