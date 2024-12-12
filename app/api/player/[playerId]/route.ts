@@ -2,10 +2,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { playerId: string } }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ playerId: string }> }) {
+  const params = await props.params;
 
   const playerId: string = await params.playerId;
 
