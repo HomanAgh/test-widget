@@ -1,3 +1,5 @@
+// app/components/player/Player.tsx
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -32,8 +34,14 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
     const fetchPlayerStats = async () => {
       try {
         const response = await fetch(
-          `/api/player?playerId=${encodeURIComponent(playerId)}&limit=${gameLimit}`
+          `/api/player/${encodeURIComponent(playerId)}?limit=${gameLimit}`
         );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to fetch player data");
+        }
+
         const data = await response.json();
 
         setPlayerStats({
@@ -45,7 +53,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
             league: data.playerInfo.league,
             nationality: data.playerInfo.nationality || "UnknownNationality",
             jerseyNumber: data.playerInfo.jerseyNumber || "JerseyNA",
-            views: data.playerInfo.views,
+            views: data.playerInfo.views || 0, // Assuming views might exist
           },
           lastGames: data.lastGames || [],
           playerType: data.playerInfo.playerType,
@@ -83,7 +91,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
               backgroundColor={backgroundColor}
             />
           )}
-           {viewMode === "career" && (
+          {viewMode === "career" && (
             <PlayerCareers
               playerId={playerId}
               backgroundColor={backgroundColor}
