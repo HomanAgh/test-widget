@@ -41,7 +41,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
                 )}/${season.season}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className="hover:underline"
               >
                 {season.teamName}
               </a>
@@ -51,7 +51,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
                 href={`https://www.eliteprospects.com/league/${season.league}/stats/${season.season}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
+                className="hover:underline"
               >
                 {season.league}
               </a>
