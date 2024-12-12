@@ -99,15 +99,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
 export default PlayerTable; */
 
 import React from 'react';
-
-interface Player {
-  name: string;
-  birthYear: number;
-  draftPick?: string; // New column for draft pick
-}
+import { AlumniPlayer } from '@/app/types/player';
 
 interface PlayerTableProps {
-  players: Player[];
+  players: AlumniPlayer[];
 }
 
 const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
