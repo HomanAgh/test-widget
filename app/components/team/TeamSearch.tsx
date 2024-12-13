@@ -97,7 +97,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={"Search for players..."} // Translatable placeholder
+        placeholder={"Search for Team..."} // Translatable placeholder
         className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(teams.length > 0)}

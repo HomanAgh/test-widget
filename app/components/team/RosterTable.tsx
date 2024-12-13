@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 
 interface RosterTableProps {
@@ -34,7 +33,16 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
             className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
           >
             <td className="border border-gray-300 px-2 py-1 text-center">{index + 1}</td>
-            <td className="border border-gray-300 px-2 py-1 text-left">{`${player.firstName} ${player.lastName}`}</td>
+            <td className="border border-gray-300 px-2 py-1 text-left">
+              <a
+                href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {`${player.firstName} ${player.lastName}`}
+              </a>
+            </td>
             <td className="border border-gray-300 px-2 py-1 text-center">{player.position}</td>
             <td className="border border-gray-300 px-2 py-1 text-center">{player.jerseyNumber}</td>
             <td className="border border-gray-300 px-2 py-1 text-center">{player.nationality}</td>

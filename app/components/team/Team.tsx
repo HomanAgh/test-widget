@@ -69,9 +69,40 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
       {teamStats && (
         <div>
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-center">{teamStats.team.name}</h2>
+            <h2 className="text-2xl font-bold text-center">
+              <a
+                href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {teamStats.team.name}
+              </a>
+            </h2>
             <p className="text-center text-gray-600">
-              {`${"League"}: ${teamStats.team.league} | ${"Country"}: ${teamStats.team.country}`}
+              <span>
+                {"League"}:{" "}
+                <a
+                  href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  {teamStats.team.league}
+                </a>
+              </span>{" "}
+              |{" "}
+              <span>
+                {"Country"}:{" "}
+                <a
+                  href={`https://www.eliteprospects.com/nation/${teamStats.team.country}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  {teamStats.team.country}
+                </a>
+              </span>
             </p>
           </div>
           <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} />
@@ -80,4 +111,5 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
     </div>
   );
 };
+
 export default Team;
