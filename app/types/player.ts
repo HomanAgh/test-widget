@@ -87,6 +87,7 @@ export interface AlumniPlayer { // nytt interface, kolla om det funkar
   name: string;
   birthYear: number;
   draftPick?: string;  
+  teams?: string[];
 }
 
 
