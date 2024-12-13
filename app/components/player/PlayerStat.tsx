@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import useSWR from "swr";
 import PlayerStatsTable from "./PlayerStatsTable";
 import type { PlayerType, Goalie, Skater } from "@/app/types/player";
@@ -22,24 +21,23 @@ const fetcher = (url: string) =>
   });
 
 const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, backgroundColor }) => {
-  const { t } = useTranslation();
 
   // Use SWR to fetch player stats
   const { data, error } = useSWR(`/api/playerStats?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
   // Handle loading state
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{t("Loading")}</div>;
+    return <div className="text-center text-gray-600">{"Loading..."}</div>;
   }
 
   // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error.message}</div>;
+    return <div className="text-center text-red-600">{"An error occurred"}: {error.message}</div>;
   }
 
   // Now we have data and no error. Validate and map data.
   if (!data || !data.stats || !data.playerInfo) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: NoStatsAvailable</div>;
+    return <div className="text-center text-red-600">{"An error occurred"}: NoStatsAvailable</div>;
   }
 
   const type: PlayerType = data.playerInfo.playerType;

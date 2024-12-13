@@ -2,11 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import LanguageButton from "@/app/components/common/LanguageButton";
-import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
-  const { t } = useTranslation(); // Hook for translations
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,14 +21,14 @@ const LoginPage = () => {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || t("LoginFailed"));
+        throw new Error(data.error || "Login Failed");
       }
 
       localStorage.setItem("isLoggedIn", "true");
       console.log("[DEBUG] Redirecting to /home");
       router.push("/home"); // Redirect to HomePage after login
     } catch (err) {
-      const errorMessage = (err as Error).message || t("UnknownError");
+      const errorMessage = (err as Error).message || "Unknown Error";
       console.error("[DEBUG] Login error:", errorMessage);
       setError(errorMessage);
     }
@@ -39,30 +36,29 @@ const LoginPage = () => {
 
   return (
     <div>
-      <h1>{t("Login")}</h1>
+      <h1>{"Login"}</h1>
       <form onSubmit={handleLogin}>
         <div>
-          <label>{t("Username")}</label>
+          <label>{"Username"}</label>
           <input
             type="text"
             value={username}
-            placeholder={t("UsernamePlaceholder")}
+            placeholder={"Username"}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
         <div>
-          <label>{t("Password")}</label>
+          <label>{"Password"}</label>
           <input
             type="password"
             value={password}
-            placeholder={t("PasswordPlaceholder")}
+            placeholder={"Password"}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">{t("Submit")}</button>
+        <button type="submit">{"Submit"}</button>
       </form>
-      <LanguageButton />
     </div>
   );
 };

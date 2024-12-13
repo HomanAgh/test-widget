@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Player } from "@/app/types/player";
 
 interface SearchBarProps {
@@ -10,7 +9,6 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
-  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [players, setPlayers] = useState<Player[]>([]);
@@ -100,7 +98,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={t("SearchPlaceholder")}
+        placeholder={"Search for players..."}
         className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(players.length > 0)}
@@ -118,10 +116,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
                 highlightedIndex === index ? "bg-gray-200" : ""
               }`}
             >
-              {`${player.name} - ${player.team} (${player.league}) - ${t("Views")}: ${player.views}`}
+              {`${player.name} - ${player.team} (${player.league}) - ${"Views"}: ${player.views}`}
             </li>
           ))}
-          {isLoading && <li className="p-2 text-gray-500">{t("Loading")}</li>}
+          {isLoading && <li className="p-2 text-gray-500">{"Loading..."}</li>}
         </ul>
       )}
     </div>

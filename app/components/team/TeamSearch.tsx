@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next"; // Import useTranslation
 import { Team } from "@/app/types/team"; // Assume a Team type is defined
 
 interface TeamSearchBarProps {
@@ -10,7 +9,6 @@ interface TeamSearchBarProps {
 }
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
-  const { t } = useTranslation(); // Hook for translations
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [teams, setTeams] = useState<Team[]>([]);
@@ -43,7 +41,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         );
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || t("SearchFailed")); // Use translation for error message
+          throw new Error(data.error || "Search Failed"); // Use translation for error message
         }
 
         const data = await res.json();
@@ -56,7 +54,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         setTeams(sortedTeams);
         setShowDropdown(true);
       } catch (err: any) {
-        onError(err.message || t("SearchError")); // Translatable error
+        onError(err.message || "An error occurred during the search."); // Translatable error
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -99,7 +97,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={t("SearchTeamPlaceholder")} // Translatable placeholder
+        placeholder={"Search for players..."} // Translatable placeholder
         className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(teams.length > 0)}
@@ -120,7 +118,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
               {`${team.name} - ${team.league} (${team.country})`} {/* Display team details */}
             </li>
           ))}
-          {isLoading && <li className="p-2 text-gray-500">{t("Loading")}</li>} {/* Translatable "Loading" */}
+          {isLoading && <li className="p-2 text-gray-500">{"Loading..."}</li>} {/* Translatable "Loading" */}
         </ul>
       )}
     </div>

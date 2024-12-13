@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import CareerTable from "./PlayerCareerTable"; // Table component for displaying stats
 import type { CareerStats } from "@/app/types/player";
@@ -22,7 +21,6 @@ const fetcher = (url: string) =>
   });
 
 const PlayerCareers: React.FC<PlayerCareerProps> = ({ playerId, backgroundColor }) => {
-  const { t } = useTranslation();
 
   // Use SWR to fetch the player's career data
   const { data, error } = useSWR(`/api/playerCareer?playerId=${playerId}`, fetcher);
@@ -30,17 +28,17 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({ playerId, backgroundColor 
   // Handle loading state
   // If there's no data and no error yet, it's still loading
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{t("Loading")}</div>;
+    return <div className="text-center text-gray-600">{"Loading..."}</div>;
   }
 
   // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error.message}</div>;
+    return <div className="text-center text-red-600">{"Error Occurred"}: {error.message}</div>;
   }
 
   // Now we have data and no error
   if (!data || !data.stats) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: NoStatsAvailable</div>;
+    return <div className="text-center text-red-600">{"Error Occurred"}: NoStatsAvailable</div>;
   }
 
   console.log("Fetched Player Career Stats:", data); // Debug log

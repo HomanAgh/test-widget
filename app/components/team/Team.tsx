@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import RosterTable from '@/app/components/team/RosterTable';
 import type { Team as TeamType, RosterPlayer } from '@/app/types/team';
 
@@ -16,7 +15,6 @@ interface TeamStats {
 }
 
 const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
-  const { t } = useTranslation();
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,14 +40,14 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
         setTeamStats({
           team: {
             id: teamInfo.id,
-            name: teamInfo.name || t("UnknownTeam"),
-            league: teamInfo.league || t("UnknownLeague"),
-            country: teamInfo.country || t("UnknownCountry"),
+            name: teamInfo.name || "Unknown Team",
+            league: teamInfo.league || "Unknown League",
+            country: teamInfo.country || "Unknown Country",
           },
           roster: roster,
         });
       } catch (err: any) {
-        setError(err.message || t("ErrorOccurred"));
+        setError(err.message || "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -60,8 +58,8 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
   
   
 
-  if (loading) return <div className="text-center text-gray-600">{t("Loading")}</div>;
-  if (error) return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error}</div>;
+  if (loading) return <div className="text-center text-gray-600">{"Loading..."}</div>;
+  if (error) return <div className="text-center text-red-600">{"An error occurred"}: {error}</div>;
 
   return (
     <div
@@ -73,7 +71,7 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-center">{teamStats.team.name}</h2>
             <p className="text-center text-gray-600">
-              {`${t("League")}: ${teamStats.team.league} | ${t("Country")}: ${teamStats.team.country}`}
+              {`${"League"}: ${teamStats.team.league} | ${"Country"}: ${teamStats.team.country}`}
             </p>
           </div>
           <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} />

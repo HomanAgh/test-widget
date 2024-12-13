@@ -1,17 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { useRouter, usePathname } from "next/navigation";
 import SearchBar from "@/app/components/player/PlayerSearch";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
 import WidgetSetup from "@/app/components/widget/PlayerWidgetSetup";
 import LogoutButton from "@/app/components/common/LogoutButton";
-import LanguageButton from "@/app/components/common/LanguageButton";
 import HomeButton from "@/app/components/common/HomeButton";
 
 const PlayerPage = () => {
-  const { t } = useTranslation();
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -43,14 +40,10 @@ const PlayerPage = () => {
         <div>
           <HomeButton />
         </div>
-
-        <div>
-          <LanguageButton />
-        </div>
       </div>
 
       <h1 className="text-2xl font-bold mb-4 text-center">
-        {t("PlayerSearchTitle")}
+        {"Player Search"}
       </h1>
 
       <SearchBar

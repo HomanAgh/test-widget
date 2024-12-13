@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import PlayerInfo from "./PlayerInfo";
 import GamesTable from "./PlayerGamesTable";
@@ -34,7 +33,6 @@ const fetcher = (url: string) =>
   });
 
 const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, viewMode }) => {
-  const { t } = useTranslation();
 
   // Use SWR to fetch data
   const { data, error } = useSWR(
@@ -44,12 +42,12 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
 
   // Handle loading state
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{t("Loading")}</div>;
+    return <div className="text-center text-gray-600">{"Loading..."}</div>;
   }
 
   // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error.message}</div>;
+    return <div className="text-center text-red-600">{"Error Occurred"}: {error.message}</div>;
   }
 
   // At this point, `data` is loaded and no error occurred
