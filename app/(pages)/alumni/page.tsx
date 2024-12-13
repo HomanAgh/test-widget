@@ -8,18 +8,6 @@ import LeagueFilter from '@/app/components/alumni/LeagueFilter';
 import { AlumniPlayer } from '@/app/types/player'; //nytt import
 import { League } from '@/app/types/league';  //nytt import
 
-/* interface Player {
-  id: number;
-  name: string;
-  birthYear: number;
-  draftPick?: string;
-}
-
-interface League {
-  slug: string;
-  name: string;
-} */
-
 const SearchPlayers = () => {
   const [results, setResults] = useState<AlumniPlayer[]>([]); //ändra från Player till AlumniPlayer
   const [proLeagues, setProLeagues] = useState<League[]>([]);
@@ -77,7 +65,7 @@ const SearchPlayers = () => {
   useEffect(() => {
     if (!query) return;
 
-    const fetchPlayers = async () => {
+    /* const fetchPlayers = async () => {
       setLoading(true);
       setError('');
       setResults([]);
@@ -111,7 +99,7 @@ const SearchPlayers = () => {
         }));
 
         // Fetch draft picks after fetching players
-        const draftPickData = await fetchDraftPicks(players.map((p: { id: any }) => p.id));
+        const draftPickData = await fetchDraftPicksAndTeams(players.map((p: { id: any }) => p.id));
         const playersWithDraftPicks = players.map((player: { id: string | number }) => ({
           ...player,
           draftPick: draftPickData[player.id] || 'N/A',
@@ -123,12 +111,63 @@ const SearchPlayers = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }; */
+
+    // Inside the fetchPlayers function
+const fetchPlayers = async () => {
+  setLoading(true);
+  setError('');
+  setResults([]);
+
+  try {
+    let url = `/api/alumni?query=${encodeURIComponent(query)}`;
+
+    if (activeFilter === 'league' && selectedLeague) {
+      url += `&league=${selectedLeague}`;
+    } else if (activeFilter === 'customLeague' && selectedCustomLeague) {
+      url += `&league=${selectedCustomLeague}`;
+    } else if (activeFilter === 'junLeague' && selectedJunLeague) {
+      url += `&league=${selectedJunLeague}`;
+    } else if (activeFilter === 'customJunLeague' && selectedCustomJunLeague) {
+      url += `&league=${selectedCustomJunLeague}`;
+    }
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch players');
+    }
+
+    const data = await response.json();
+    const players = data.players.map((player: any) => ({
+      id: player.id,
+      name: player.name,
+      birthYear: player.dateOfBirth
+        ? new Date(player.dateOfBirth).getFullYear()
+        : 'Unknown',
+    }));
+
+    // Fetch draft picks and teams after fetching players
+    const draftPickAndTeamData = await fetchDraftPicksAndTeams(players.map((p: { id: any; }) => p.id));
+    const playersWithAdditionalData = players.map((player: { id: string | number; }) => ({
+      ...player,
+      draftPick: draftPickAndTeamData[player.id]?.draftPick || 'N/A',
+      teams: draftPickAndTeamData[player.id]?.teams || 'N/A',
+    }));
+
+    setResults(playersWithAdditionalData);
+  } catch (err: any) {
+    setError(err.message || 'An error occurred');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     fetchPlayers();
   }, [query, selectedLeague, selectedCustomLeague, selectedJunLeague, selectedCustomJunLeague, activeFilter]);
 
-  const fetchDraftPicks = async (playerIds: number[]) => {
+  /* const fetchDraftPicks = async (playerIds: number[]) => {
     try {
       const idsString = playerIds.join(',');
       const response = await fetch(`/api/draftpicks?playerIds=${idsString}`);
@@ -144,7 +183,28 @@ const SearchPlayers = () => {
     } catch (err) {
       console.error('Error fetching draft picks:', (err as any).message);
       return {};
-    }
+    } */
+      const fetchDraftPicksAndTeams = async (playerIds: number[]) => {
+        try {
+          const idsString = playerIds.join(',');
+          const response = await fetch(`/api/draftpicks?playerIds=${idsString}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch draft picks and teams');
+          }
+      
+          const data = await response.json();
+          // Adjusted to handle "players" instead of "draftPicks"
+          return data.players.reduce((acc: { [key: string]: any }, entry: any) => {
+            acc[entry.playerId] = {
+              draftPick: entry.draftPick || 'N/A',
+              teams: entry.teams || 'N/A',
+            };
+            return acc;
+          }, {});
+        } catch (err) {
+          console.error('Error fetching draft picks and teams:', (err as any).message);
+          return {};
+        }
   };
 
   const handleSelect = (newQuery: string) => {
