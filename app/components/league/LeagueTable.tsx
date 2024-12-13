@@ -130,7 +130,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                         href={team.team.links?.eliteprospectsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
+                        className="hover:underline"
                       >
                         {team.team.name || "Unknown Team"}
                       </a>
