@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { GameLog, PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
 
 interface GamesTableProps {
@@ -9,7 +8,6 @@ interface GamesTableProps {
 }
 
 const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, gameLimit }) => {
-  const { t } = useTranslation();
   const [showSummary, setShowSummary] = useState(false);
 
   let summary: GoaltenderSummary | SkaterSummary;
@@ -45,35 +43,35 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
   return (
     <div className="mt-8">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold text-gray-800">
-          {showSummary
-            ? t("SummaryLastNGames", { count: gameLimit }) // Use the dynamic game count
-            : t("LastNGames", { count: gameLimit })}
-        </h3>
+      <h3 className="text-xl font-semibold text-gray-800">
+        {showSummary
+          ? `Summary Last ${gameLimit} Games` 
+          : `Last ${gameLimit} Games`}
+      </h3>
         <button
           onClick={() => setShowSummary((prev) => !prev)}
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          {showSummary ? t("ViewDetails") : t("ViewSummary")}
+          {showSummary ? "View Details" : "View Summary"}
         </button>
       </div>
       <table className="w-full mt-4 border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200 text-gray-800 font-semibold">
-            <th className="py-2 px-4 border">{t("Date")}</th>
+            <th className="py-2 px-4 border">{"Date"}</th>
             {playerType === "GOALTENDER" ? (
               <>
-                <th className="py-2 px-4 border">{t("ShotsAgainst")}</th>
-                <th className="py-2 px-4 border">{t("Saves")}</th>
-                <th className="py-2 px-4 border">{t("GoalsAgainst")}</th>
-                <th className="py-2 px-4 border">{t("SavePercentage")}</th>
+                <th className="py-2 px-4 border">"Shots Against"</th>
+                <th className="py-2 px-4 border">"Saves"</th>
+                <th className="py-2 px-4 border">"Goals Against"</th>
+                <th className="py-2 px-4 border">"Save %"</th>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 border">{t("Goals")}</th>
-                <th className="py-2 px-4 border">{t("Assists")}</th>
-                <th className="py-2 px-4 border">{t("Points")}</th>
-                <th className="py-2 px-4 border">{t("PlusMinusRating")}</th>
+                <th className="py-2 px-4 border">"Goals"</th>
+                <th className="py-2 px-4 border">"Assists"</th>
+                <th className="py-2 px-4 border">"Points"</th>
+                <th className="py-2 px-4 border">+/- Rating"</th>
               </>
             )}
           </tr>
@@ -81,7 +79,7 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
         <tbody>
           {showSummary ? (
             <tr className="bg-blue-100">
-              <td className="py-2 px-4 border">{t("Summary")}</td>
+              <td className="py-2 px-4 border">"Summary"</td>
               {playerType === "GOALTENDER" ? (
                 <>
                   <td className="py-2 px-4 border">{(summary as GoaltenderSummary).shotsAgainst}</td>

@@ -2,12 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import LogoutButton from "../../components/common/LogoutButton";
-import LanguageButton from "../../components/common/LanguageButton";
 
 const HomePage = () => {
-  const { t } = useTranslation(); // Hook for translations
   const router = useRouter();
   const [selectedOption, setSelectedOption] = useState("");
 
@@ -25,8 +22,8 @@ const HomePage = () => {
 
   return (
     <div>
-      <h1>{t("WelcomeHome")}</h1>
-      <p>{t("SelectOption")}</p>
+      <h1>{"Welcome Home"}</h1>
+      <p>{"Select Option"}</p>
 
       {/* Dropdown List */}
       <div>
@@ -34,16 +31,16 @@ const HomePage = () => {
           value={selectedOption}
           onChange={(e) => setSelectedOption(e.target.value)}
         >
-          <option value="">{t("ChooseOption")}</option>
-          <option value="/player">{t("PlayerLastGames")}</option>
-          <option value="/league">{t("LeagueTables")}</option> {/* New Option */}
-          <option value="/team">{t("TeamRoster")}</option>
+          <option value="">{"Choose Option"}</option>
+          <option value="/player">{"Player Last Games"}</option>
+          <option value="/league">{"League Tables"}</option> {/* New Option */}
+          <option value="/team">{"Team Roster"}</option>
+          <option value="/alumni">{"Alumni"}</option>
         </select>
         <button onClick={handleNavigate} disabled={!selectedOption}>
-          {t("Go")}
+          {"Go"}
         </button>
       </div>
-      <LanguageButton />
       <LogoutButton />
     </div>
   );

@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { useTranslation } from "react-i18next"; // Import useTranslation
 import { Player } from "@/app/types/player";
 
 interface PlayerInfoProps {
@@ -10,14 +9,13 @@ interface PlayerInfoProps {
 }
 
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
-  const { t } = useTranslation(); // Hook for translations
 
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-6">
       <div className="w-40 h-40 rounded-lg overflow-hidden shadow-md border border-gray-300">
         <Image
           src={player.imageUrl || "/default-image.jpg"}
-          alt={t("PlayerImageAlt")} // Translatable alt text
+          alt={"Player Image Alt"} // Translatable alt text
           width={160}
           height={160}
           className="object-cover"
@@ -50,7 +48,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
                 {player.team.name}
               </a>
             ) : (
-              t("UnknownTeam") // Translatable fallback
+              "Unknown Team" // Translatable fallback
             )}
             {" / "}
             {player.league ? (
@@ -63,7 +61,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
                 {player.league.name}
               </a>
             ) : (
-              t("UnknownLeague") // Translatable fallback
+              "Unknown League" // Translatable fallback
             )}
           </p>
         </div>

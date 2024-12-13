@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 interface LeagueTableProps {
   standings: {
@@ -30,13 +29,12 @@ interface LeagueTableProps {
 }
 
 const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor }) => {
-  const { t } = useTranslation();
 
   if (!standings || !standings.data) return null;
 
   // Extract league name and season title
-  const leagueName = standings.data[0]?.team.league.name || t("UnknownLeague");
-  const seasonTitle = standings.data[0]?.season.slug || t("UnknownSeason");
+  const leagueName = standings.data[0]?.team.league.name || "Unknown League";
+  const seasonTitle = standings.data[0]?.season.slug || "Unknown Season";
 
   // Check if any team has group data
   const hasGroups = standings.data.some((team) => team.group);
@@ -44,7 +42,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
   // Group teams by `group`
   const groups: { [key: string]: any[] } = standings.data.reduce(
     (acc: { [key: string]: any[] }, team: any) => {
-      const groupName = team.group || t("UnknownGroup");
+      const groupName = team.group || "Unknown Group";
       if (!acc[groupName]) {
         acc[groupName] = [];
       }
@@ -58,7 +56,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
     <div>
       {/* League Title */}
       <h1 className="text-lg font-semibold mb-4 text-center">
-        {leagueName} {t("Season")}: {seasonTitle}
+        {leagueName} {"Season"}: {seasonTitle}
       </h1>
 
       {/* Render without groups if no team has group data */}
@@ -69,12 +67,12 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
         >
           <thead>
             <tr className="bg-red-600 text-white">
-              <th className="border border-gray-300 px-2 py-1 text-center">{t("#")}</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">{t("Team")}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{t("GP")}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{t("W")}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{t("L")}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{t("PTS")}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-left">{"Team"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"GP"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"W"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"L"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"PTS"}</th>
             </tr>
           </thead>
           <tbody>
@@ -91,7 +89,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                     rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
-                    {team.team.name || t("UnknownTeam")}
+                    {team.team.name || "Unknown Team"}
                   </a>
                 </td>
                 <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.GP || 0}</td>
@@ -112,12 +110,12 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
             >
               <thead>
                 <tr className="bg-red-600 text-white">
-                  <th className="border border-gray-300 px-2 py-1 text-center">{t("#")}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-left">{t("Team")}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{t("GP")}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{t("W")}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{t("L")}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{t("PTS")}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-left">{"Team"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"GP"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"W"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"L"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"PTS"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,7 +132,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                         rel="noopener noreferrer"
                         className="text-blue-500 hover:underline"
                       >
-                        {team.team.name || t("UnknownTeam")}
+                        {team.team.name || "Unknown Team"}
                       </a>
                     </td>
                     <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.GP || 0}</td>

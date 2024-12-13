@@ -1,18 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import SearchBar from '@/app/components/team/TeamSearch';
 import ErrorMessage from '@/app/components/common/ErrorMessage';
-import LanguageButton from '@/app/components/common/LanguageButton';
 import LogoutButton from '@/app/components/common/LogoutButton';
 import HomeButton from '@/app/components/common/HomeButton';
 import Team from '@/app/components/team/Team'; // Import the new Team component
 import ToggleableColorPicker from '@/app/components/common/color-picker/ToggleableColorPicker'; // Import the new ToggleableColorPicker
 
 const TeamPage: React.FC = () => {
-  const { t } = useTranslation();
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [backgroundStyle, setBackgroundStyle] = useState<{ backgroundColor?: string; backgroundImage?: string }>({
@@ -49,13 +46,10 @@ const TeamPage: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         {/* Home Button */}
         <HomeButton />
-
-        {/* Language Button */}
-        <LanguageButton />
       </div>
 
       {/* Page Title */}
-      <h1 className="text-2xl font-bold mb-4 text-center">{t('TeamSearchTitle')}</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">{'Team Search'}</h1>
 
       {/* Search Bar for Team Selection */}
       <SearchBar
@@ -66,7 +60,7 @@ const TeamPage: React.FC = () => {
 
       {/* Toggleable Color Picker */}
       <div className="my-4">
-        <h2 className="text-lg font-semibold text-center">{t('ChooseBackgroundColor')}</h2>
+        <h2 className="text-lg font-semibold text-center">{'Choose BackgroundColor'}</h2>
         <div className="flex justify-center">
           <ToggleableColorPicker onColorSelect={handleColorChange} />
         </div>
@@ -83,7 +77,7 @@ const TeamPage: React.FC = () => {
           <Team teamId={selectedTeamId} backgroundColor={''} />
         </div>
       ) : (
-        <p className="text-center text-gray-600 mt-6">{t('NoTeamSelected')}</p>
+        <p className="text-center text-gray-600 mt-6">{'No Team Selected'}</p>
       )}
 
       {/* Logout Button */}

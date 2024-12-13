@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import SeasonsTable from "./PlayerSeasonsTable"; // New table component for seasons
 import type { SeasonStats, PlayerType } from "@/app/types/player";
@@ -22,24 +21,23 @@ const fetcher = (url: string) =>
   });
 
 const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor }) => {
-  const { t } = useTranslation();
 
   // Use SWR to fetch player seasonal stats
   const { data, error } = useSWR(`/api/playerSeasons?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
   // Handle loading state
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{t("Loading")}</div>;
+    return <div className="text-center text-gray-600">{"Loading..."}</div>;
   }
 
   // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: {error.message}</div>;
+    return <div className="text-center text-red-600">{"An error occurred"}: {error.message}</div>;
   }
 
   // At this point, data is loaded and no error
   if (!data || !data.stats || data.stats.length === 0) {
-    return <div className="text-center text-red-600">{t("ErrorOccurred")}: NoStatsAvailable</div>;
+    return <div className="text-center text-red-600">{"An error occurred"}: NoStatsAvailable</div>;
   }
 
   console.log("Fetched Player Seasons:", data); // Debug log

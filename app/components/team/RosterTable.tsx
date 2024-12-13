@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 interface RosterTableProps {
   roster: any[];
@@ -9,10 +8,9 @@ interface RosterTableProps {
 }
 
 const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) => {
-  const { t } = useTranslation();
 
   if (!roster || roster.length === 0) {
-    return <p>{t("NoRoster")}</p>;
+    return <p>{"No Roster"}</p>;
   }
 
   return (
@@ -22,11 +20,11 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
     >
       <thead>
         <tr className="bg-blue-600 text-white">
-          <th className="border border-gray-300 px-2 py-1 text-center">{t("#")}</th>
-          <th className="border border-gray-300 px-2 py-1 text-left">{t("Name")}</th>
-          <th className="border border-gray-300 px-2 py-1 text-center">{t("Position")}</th>
-          <th className="border border-gray-300 px-2 py-1 text-center">{t("JerseyNumber")}</th>
-          <th className="border border-gray-300 px-2 py-1 text-center">{t("Nationality")}</th>
+          <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
+          <th className="border border-gray-300 px-2 py-1 text-left">{"Name"}</th>
+          <th className="border border-gray-300 px-2 py-1 text-center">{"Position"}</th>
+          <th className="border border-gray-300 px-2 py-1 text-center">{"JerseyNumber"}</th>
+          <th className="border border-gray-300 px-2 py-1 text-center">{"Nationality"}</th>
         </tr>
       </thead>
       <tbody>

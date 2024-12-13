@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
   type: "team" | "league"; // Determines the type of search
@@ -10,7 +9,6 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
-  const { t } = useTranslation();
   const [query, setQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -19,8 +17,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
       // Error messages based on type
       const errorMessage =
         type === "team"
-          ? t("EnterTeamNameError") // Updated for team names
-          : t("EnterLeagueSlugError");
+          ? "Enter Team Name Error" // Updated for team names
+          : "Enter League Slug Error";
       onError(errorMessage);
       return;
     }
@@ -30,7 +28,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
       onSelect(query.trim());
     } catch {
       // General error message
-      onError(t("SearchError"));
+      onError("Search Error");
     } finally {
       setIsLoading(false);
     }
@@ -39,8 +37,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
   // Placeholder text based on type
   const placeholderText =
     type === "team"
-      ? t("EnterTeamName") // Updated for team names
-      : t("EnterLeagueSlug");
+      ? "Enter Team Name" // Updated for team names
+      : "Enter League Slug";
 
   return (
     <div className="relative w-full">
@@ -58,7 +56,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
           isLoading ? "bg-gray-400" : "bg-blue-500 text-white"
         }`}
       >
-        {isLoading ? t("Loading") : t("Search")}
+        {isLoading ? "Loading..." : "Search"}
       </button>
     </div>
   );
