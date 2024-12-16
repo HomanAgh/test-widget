@@ -11,7 +11,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({ players }) => {
       <table className="min-w-full table-auto border-collapse border border-gray-300">
         <thead className="bg-zinc-800 text-white">
           <tr>
-            <th className="border border-gray-300 px-4 py-2 text-left">Player ifiodfojiefojiefojieojiefojiefojiefojief</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Player</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Birth Year</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Draft Pick</th>
             <th className="border border-gray-300 px-4 py-2 text-left">Teams</th>
