@@ -13,3 +13,8 @@ export interface Team {
     jerseyNumber: string;
     nationality: string;
   }
+
+  export interface TeamsAPIResponse {
+    teams: Team[];
+  }
+  

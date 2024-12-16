@@ -90,7 +90,21 @@ export interface AlumniPlayer { // nytt interface, kolla om det funkar
   teams?: string[];
 }
 
+export interface AlumniAPIResponse { // nytt interface, kolla om det funkar
+  players: {
+    id: number;
+    name: string;
+    dateOfBirth?: string; // or possibly null if not always present
+  }[];
+}
 
+export interface DraftPickAPIResponse { // nytt interface, kolla om det funkar
+  players: {
+    playerId: number;
+    draftPick?: string;
+    teams?: string[];
+  }[];
+}
 
 
 
