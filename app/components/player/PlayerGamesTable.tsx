@@ -61,17 +61,17 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
             <th className="py-2 px-4 border">{"Date"}</th>
             {playerType === "GOALTENDER" ? (
               <>
-                <th className="py-2 px-4 border">"Shots Against"</th>
-                <th className="py-2 px-4 border">"Saves"</th>
-                <th className="py-2 px-4 border">"Goals Against"</th>
-                <th className="py-2 px-4 border">"Save %"</th>
+                <th className="py-2 px-4 border">Shots Against</th>
+                <th className="py-2 px-4 border">Saves</th>
+                <th className="py-2 px-4 border">Goals Against</th>
+                <th className="py-2 px-4 border">Save %</th>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 border">"Goals"</th>
-                <th className="py-2 px-4 border">"Assists"</th>
-                <th className="py-2 px-4 border">"Points"</th>
-                <th className="py-2 px-4 border">+/- Rating"</th>
+                <th className="py-2 px-4 border">Goals</th>
+                <th className="py-2 px-4 border">Assists</th>
+                <th className="py-2 px-4 border">Points</th>
+                <th className="py-2 px-4 border">+/- Rating</th>
               </>
             )}
           </tr>
@@ -79,7 +79,7 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
         <tbody>
           {showSummary ? (
             <tr className="bg-blue-100">
-              <td className="py-2 px-4 border">"Summary"</td>
+              <td className="py-2 px-4 border">Summary</td>
               {playerType === "GOALTENDER" ? (
                 <>
                   <td className="py-2 px-4 border">{(summary as GoaltenderSummary).shotsAgainst}</td>
