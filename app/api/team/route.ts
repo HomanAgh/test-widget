@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     "logo.colors",
   ].join(",")
 
-  const teamUrl = `${apiBaseUrl}/v1/teams/${teamId}?apiKey=${apiKey}&fields=${encodeURIComponent(teamColorField)}`;
+  const teamUrl = `${apiBaseUrl}/teams/${teamId}?apiKey=${apiKey}&fields=${encodeURIComponent(teamColorField)}`;
   console.log("Fetching team data from URL:", teamUrl);
 
   try {

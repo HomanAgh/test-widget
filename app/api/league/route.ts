@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
   // Include only the required fields
   const fields = "team.league.name,team.name,team.links.eliteprospectsUrl,stats.GP,stats.W,stats.L,stats.PTS,season.slug,group";
-  const standingsUrl = `${apiBaseUrl}/v1/leagues/${leagueSlug}/standings?fields=${fields}&apiKey=${apiKey}`;
+  const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?fields=${fields}&apiKey=${apiKey}`;
 
 
   console.log("Fetching league standings from:", standingsUrl);

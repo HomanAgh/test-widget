@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   try {
     // Construct the roster fetch URL
     const fields = "player.id,player.firstName,player.lastName,player.position,jerseyNumber,player.nationality.name";
-    const rosterUrl = `${apiBaseUrl}/v1/teams/${teamId}/roster?fields=${fields}&apiKey=${apiKey}`;
+    const rosterUrl = `${apiBaseUrl}/teams/${teamId}/roster?fields=${fields}&apiKey=${apiKey}`;
     console.log("Fetching roster from URL:", rosterUrl);
 
     const response = await fetch(rosterUrl);

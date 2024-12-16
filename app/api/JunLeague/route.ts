@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE_URL = 'https://api.eliteprospects.com/v1';
-const API_KEY = 'zp87Qi0RfESG95zhH1x9FlimIZPmMhbq'; // Replace with your actual API key
+const apiKey = process.env.API_KEY;
+const apiBaseUrl = process.env.API_BASE_URL;
 
 interface LeagueDetails {
   slug: string;
@@ -20,7 +20,7 @@ export async function GET() {
     // Fetch leagues for each league level
     const leaguePromises = leagueLevels.map(async (level) => {
       const res = await fetch(
-        `${API_BASE_URL}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${API_KEY}`
+        `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${apiKey}`
       );
 
       if (!res.ok) {

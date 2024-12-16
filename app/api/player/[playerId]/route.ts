@@ -55,13 +55,13 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
     "stats.SVP",
   ].join(",");
 
-  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(
+  const playerUrl = `${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(
     playerInfoField
   )}`;
-  const skaterStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
+  const skaterStatsUrl = `${apiBaseUrl}/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
     skaterFields
   )}&limit=${limit}`;
-  const goalieStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
+  const goalieStatsUrl = `${apiBaseUrl}/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
     goalieFields
   )}&limit=${limit}`;
 

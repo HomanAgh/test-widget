@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const playerStatsUrl = `${apiBaseUrl}/v1/players/${playerId}/stats/all-time-league?apiKey=${apiKey}`;
+  const playerStatsUrl = `${apiBaseUrl}/players/${playerId}/stats/all-time-league?apiKey=${apiKey}`;
 
   try {
     // Fetch player stats

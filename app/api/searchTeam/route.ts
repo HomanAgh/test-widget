@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   ].join(",");
 
   // Construct the search URL
-  const searchUrl = `${apiBaseUrl}/v1/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}&fields=${encodeURIComponent(searchFields)}`;
+  const searchUrl = `${apiBaseUrl}/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}&fields=${encodeURIComponent(searchFields)}`;
 
   try {
     const searchResponse = await fetch(searchUrl, { method: "GET" });
