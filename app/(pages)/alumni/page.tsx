@@ -168,7 +168,7 @@ export default SearchPlayers;
 
  */
 
-'use client';
+'use client'; //hejhopp test
 
 import React, { useState, useEffect } from 'react';
 import PlayerTable from '@/app/components/alumni/PlayerTable';
