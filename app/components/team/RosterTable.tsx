@@ -5,7 +5,7 @@ interface RosterTableProps {
   roster: any[];
   backgroundColor?: string;
 }
-
+//lol
 const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) => {
 
   if (!roster || roster.length === 0) {

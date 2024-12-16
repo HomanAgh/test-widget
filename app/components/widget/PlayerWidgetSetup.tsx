@@ -42,7 +42,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
     fetchTeamColor();
   }, [playerId]);
-
+  
+  /*
   const handleColorChange = (color: string) => {
     if (color.startsWith("linear-gradient")) {
       setBackgroundStyle({ backgroundImage: color });
@@ -50,6 +51,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       setBackgroundStyle({ backgroundColor: color });
     }
   };
+  */
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
