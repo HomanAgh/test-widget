@@ -178,22 +178,6 @@ import TeamSearchBar from '@/app/components/alumni/TeamSearchBar';
 import { AlumniPlayer, AlumniAPIResponse, DraftPickAPIResponse } from '@/app/types/player';
 import { League } from '@/app/types/league';
 
-/* interface AlumniAPIResponse {
-  players: {
-    id: number;
-    name: string;
-    dateOfBirth?: string;
-  }[];
-}
-
-interface DraftPickAPIResponse {
-  players: {
-    playerId: number;
-    draftPick?: string;
-    teams?: string[];
-  }[];
-} */
-
 const SearchPlayers = () => {
   const [results, setResults] = useState<AlumniPlayer[]>([]);
   const [proLeagues, setProLeagues] = useState<League[]>([]);

@@ -108,6 +108,5 @@ export interface DraftPickAPIResponse { // nytt interface, kolla om det funkar
 
 
 
-
   
 
