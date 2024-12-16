@@ -29,7 +29,7 @@
         "slug": "SWE",
         "name": "Sweden",
         "_links": [
-          "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+          "https://api.eliteprospects.com/v1/countries/SWE?apiKey="
         ]
       },
       "secondaryNationality": null,
@@ -74,12 +74,12 @@
               "slug": "SWE",
               "name": "Sweden",
               "_links": [
-                "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+                "https://api.eliteprospects.com/v1/countries/SWE?apiKey="
               ]
             },
             "continent": "EU",
             "_links": [
-              "https://api.eliteprospects.com/v1/leagues/hockeyallsvenskan?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+              "https://api.eliteprospects.com/v1/leagues/hockeyallsvenskan?apiKey="
             ]
           },
           "teamType": "club",
@@ -88,12 +88,12 @@
             "slug": "SWE",
             "name": "Sweden",
             "_links": [
-              "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+              "https://api.eliteprospects.com/v1/countries/SWE?apiKey="
             ]
           },
           "continent": "EU",
           "_links": [
-            "https://api.eliteprospects.com/v1/teams/3?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            "https://api.eliteprospects.com/v1/teams/3?apiKey="
           ]
         },
         "teamName": "Djurgårdens IF",
@@ -106,12 +106,12 @@
             "slug": "SWE",
             "name": "Sweden",
             "_links": [
-              "https://api.eliteprospects.com/v1/countries/SWE?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+              "https://api.eliteprospects.com/v1/countries/SWE?apiKey="
             ]
           },
           "continent": "EU",
           "_links": [
-            "https://api.eliteprospects.com/v1/leagues/hockeyallsvenskan?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            "https://api.eliteprospects.com/v1/leagues/hockeyallsvenskan?apiKey="
           ]
         },
         "leagueName": "HockeyAllsvenskan",
@@ -176,7 +176,7 @@
             "slug": "USA",
             "name": "USA",
             "_links": [
-              "https://api.eliteprospects.com/v1/countries/USA?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+              "https://api.eliteprospects.com/v1/countries/USA?apiKey="
             ]
           },
           "numberOfClients": 288,
@@ -191,7 +191,7 @@
             "Peter Werner"
           ],
           "_links": [
-            "https://api.eliteprospects.com/v1/agencies/3?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+            "https://api.eliteprospects.com/v1/agencies/3?apiKey="
           ]
         }
       ],
@@ -215,7 +215,7 @@
       "slug": "marcus-kruger",
       "updatedAt": "2024-11-22T21:33:20.000000Z",
       "_links": [
-        "https://api.eliteprospects.com/v1/players/8311?apiKey=zp87Qi0RfESG95zhH1x9FlimIZPmMhbq"
+        "https://api.eliteprospects.com/v1/players/8311?apiKey="
       ]
     }
   }
