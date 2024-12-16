@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE_URL = 'https://api.eliteprospects.com/v1';
-const API_KEY = 'zp87Qi0RfESG95zhH1x9FlimIZPmMhbq'; // Replace with your actual API key
+const apiKey = process.env.API_KEY;
+const apiBaseUrl = process.env.API_BASE_URL;
 
 interface ApiResponse<T> {
   data?: T[];
@@ -22,7 +22,7 @@ interface TeamResponseItem {
 const fetchDraftPick = async (playerId: string): Promise<string> => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/players/${playerId}/draft-selections?offset=0&limit=1&sort=-year&fields=year,round,overall&apiKey=${API_KEY}`
+      `${apiBaseUrl}/players/${playerId}/draft-selections?offset=0&limit=1&sort=-year&fields=year,round,overall&apiKey=${apiKey}`
     );
 
     if (!response.ok) {
@@ -50,7 +50,7 @@ const fetchDraftPick = async (playerId: string): Promise<string> => {
 const fetchTeamsByLeague = async (playerId: string, league: string): Promise<string[]> => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/player-stats/teams?offset=0&limit=100&sort=team&player=${playerId}&league=${league}&apiKey=${API_KEY}`
+      `${apiBaseUrl}/player-stats/teams?offset=0&limit=100&sort=team&player=${playerId}&league=${league}&apiKey=${apiKey}`
     );
     if (!response.ok) {
       throw new Error(`Failed to fetch teams for player ${playerId}`);

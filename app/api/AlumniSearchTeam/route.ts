@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE_URL = 'https://api.eliteprospects.com/v1';
-const API_KEY = 'zp87Qi0RfESG95zhH1x9FlimIZPmMhbq'; // Replace with your actual API key
+const apiKey = process.env.API_KEY;
+const apiBaseUrl = process.env.API_BASE_URL;
 
 interface EliteProspectLeague {
   name: string;
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     console.log('Fetching teams with query:', query);
 
     const response = await fetch(
-      `${API_BASE_URL}/teams?q=${encodeURIComponent(query)}&offset=0&limit=20&sort=name&apiKey=${API_KEY}`
+      `${apiBaseUrl}/teams?q=${encodeURIComponent(query)}&offset=0&limit=20&sort=name&apiKey=${apiKey}`
     );
 
     if (!response.ok) {

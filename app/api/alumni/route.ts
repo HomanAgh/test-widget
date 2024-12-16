@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const API_BASE_URL = 'https://api.eliteprospects.com/v1';
-const API_KEY = 'zp87Qi0RfESG95zhH1x9FlimIZPmMhbq'; // Replace with your actual API key
+const apiKey = process.env.API_KEY;
+const apiBaseUrl = process.env.API_BASE_URL;
 
 interface ApiResponse<T> {
   data?: T[];
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
   try {
     // Step 1: Fetch teams matching the query
     const teamsResponse = await fetch(
-      `${API_BASE_URL}/teams?q=${encodeURIComponent(query)}&apiKey=${API_KEY}`
+      `${apiBaseUrl}/teams?q=${encodeURIComponent(query)}&apiKey=${apiKey}`
     );
     if (!teamsResponse.ok) {
       throw new Error(`Failed to fetch teams: ${teamsResponse.statusText}`);
@@ -50,9 +50,9 @@ export async function GET(request: Request) {
       // Step 2: Fetch players for each team ID
       const playersByTeamPromises = teamIds.map((id: number) =>
         fetch(
-          `${API_BASE_URL}/players?hasPlayedInTeam=${id}${
+          `${apiBaseUrl}/players?hasPlayedInTeam=${id}${
             league ? `&hasPlayedInLeague=${league}` : ''
-          }&apiKey=${API_KEY}`
+          }&apiKey=${apiKey}`
         )
           .then((res) => {
             if (!res.ok) {
@@ -73,9 +73,9 @@ export async function GET(request: Request) {
 
     // Step 3: Fetch players matching the youthTeam directly
     const youthTeamResponse = await fetch(
-      `${API_BASE_URL}/players?offset=0&limit=100&sort=name&youthTeam=${encodeURIComponent(query)}${
+      `${apiBaseUrl}/players?offset=0&limit=100&sort=name&youthTeam=${encodeURIComponent(query)}${
         league ? `&hasPlayedInLeague=${league}` : ''
-      }&apiKey=${API_KEY}`
+      }&apiKey=${apiKey}`
     );
     if (!youthTeamResponse.ok) {
       throw new Error(`Failed to fetch youth team players: ${youthTeamResponse.statusText}`);

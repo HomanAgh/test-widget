@@ -52,9 +52,9 @@ export async function GET(req: NextRequest) {
   ].join(",");
   console.log("Goalie fields:", goalieFields);
 
-  const playerUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(playerFields)}`;
-  const skaterStatsUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(skaterFields)}`;
-  const goalieStatsUrl = `${apiBaseUrl}/v1/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(goalieFields)}`;
+  const playerUrl = `${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(playerFields)}`;
+  const skaterStatsUrl = `${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(skaterFields)}`;
+  const goalieStatsUrl = `${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(goalieFields)}`;
   console.log("Player URL:", playerUrl);
   console.log("Skater stats URL:", skaterStatsUrl);
   console.log("Goalie stats URL:", goalieStatsUrl);
