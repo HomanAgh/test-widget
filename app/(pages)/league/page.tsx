@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
+import  {LeagueTableProps} from "@/app/types/league";
 import SearchBar from "@/app/components/common/SearchBar";
 import LeagueTable from "../../components/league/LeagueTable";
 import LogoutButton from "../../components/common/LogoutButton";
@@ -8,7 +9,7 @@ import HomeButton from "@/app/components/common/HomeButton";
 import ToggleableColorPicker from "@/app/components/common/color-picker/ToggleableColorPicker"; // Import ToggleableColorPicker
 
 const LeaguePage: React.FC = () => {
-  const [standings, setStandings] = useState<any>(null); // League standings data
+  const [standings, setStandings] = useState<LeagueTableProps["standings"] | null>(null);
   const [error, setError] = useState<string | null>(null); // Error state
   const [backgroundStyle, setBackgroundStyle] = useState<{ backgroundColor?: string; backgroundImage?: string }>({
     backgroundColor: "#f9fafb", // Default background color
@@ -35,8 +36,12 @@ const LeaguePage: React.FC = () => {
       const data = await response.json();
       setStandings(data); // Update standings data
       setError(null); // Clear previous errors
-    } catch (error: any) {
-      setError(error.message || "Fetch Error");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
       setStandings(null); // Clear standings on error
     }
   };
