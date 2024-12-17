@@ -38,7 +38,7 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({ careers }) => {
               href={`https://www.eliteprospects.com/league/${career.league.toLowerCase().replace(/\s+/g, "-")}/stats/all-time`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline"
+              className="text-blue-600 hover:underline hover:text-blue-800"
               >
               {career.league}
               </a>

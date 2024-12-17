@@ -3,6 +3,7 @@ export interface Team {
     name: string;
     league: string;
     country: string;
+    logoM: string;
   }
   
   export interface RosterPlayer {

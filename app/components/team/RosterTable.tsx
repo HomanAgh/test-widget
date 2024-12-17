@@ -38,7 +38,7 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
                 href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
+                className="text-blue-600 hover:underline hover:text-blue-800"
               >
                 {`${player.firstName} ${player.lastName}`}
               </a>
