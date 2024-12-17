@@ -1,13 +1,15 @@
 export type Player = {
-    id: string;
-    name: string;
-    imageUrl: string;
-    team?: { id: number; name: string };
-    league?: { slug: string; name: string };
-    nationality: string;
-    jerseyNumber: string;
-    views: number;
-  }
+  id: string;
+  name: string;
+  team?: { id: number; name: string };
+  league?: { slug: string; name: string };
+  jerseyNumber: string;
+  views: number;
+  flagUrls?: {
+    primary: string | null;
+    secondary: string | null;
+  };
+};
 
   export type PlayerType = "SKATER" | "GOALTENDER";
   
