@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Helper function to fetch the flag URL based on nationality slug
+const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string) => {
+  try {
+    const response = await fetch(`${apiBaseUrl}/countries/${slug}?apiKey=${apiKey}`);
+    if (response.ok) {
+      const countryData = await response.json();
+      return countryData.data.flagUrl?.small || null; // Return the small flag URL
+    }
+  } catch {
+    console.warn(`Failed to fetch flag for ${slug}`);
+  }
+  return null;
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const teamId = searchParams.get("teamId");
@@ -26,8 +40,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Construct the roster fetch URL
-    const fields = "player.id,player.firstName,player.lastName,player.position,jerseyNumber,player.nationality.name";
+    // Update the roster fetch URL to include nationality slug and dateOfBirth
+    const fields = "player.id,player.firstName,player.lastName,player.position,jerseyNumber,player.nationality.slug,player.dateOfBirth";
     const rosterUrl = `${apiBaseUrl}/teams/${teamId}/roster?fields=${fields}&apiKey=${apiKey}`;
     console.log("Fetching roster from URL:", rosterUrl);
 
@@ -48,22 +62,27 @@ export async function GET(req: NextRequest) {
         { status: 404 }
       );
     }
-    
 
-    // Transform roster data
-    const roster = data.data.map((entry: any) => ({
-      id: entry.player?.id || "Unknown ID",
-      firstName: entry.player?.firstName || "Unknown",
-      lastName: entry.player?.lastName || "Unknown",
-      position: entry.player?.position || "Unknown",
-      jerseyNumber: entry.jerseyNumber || "N/A",
-      nationality: entry.player?.nationality?.name || "Unknown",
-    }));
-    console.log("Raw roster data:", JSON.stringify(data.data, null, 2));
+    // Transform roster data with flagUrl and dateOfBirth
+    const roster = await Promise.all(
+      data.data.map(async (entry: any) => {
+        const flagUrl = entry.player?.nationality?.slug
+          ? await fetchCountryFlag(entry.player.nationality.slug, apiKey, apiBaseUrl)
+          : null;
+
+        return {
+          id: entry.player?.id || "Unknown ID",
+          firstName: entry.player?.firstName || "Unknown",
+          lastName: entry.player?.lastName || "Unknown",
+          position: entry.player?.position || "Unknown",
+          jerseyNumber: entry.jerseyNumber || "N/A",
+          dateOfBirth: entry.player?.dateOfBirth || "N/A",
+          flagUrl: flagUrl || null, // Add fetched flag URL
+        };
+      })
+    );
+
     console.log("Transformed roster data:", JSON.stringify(roster, null, 2));
-    
-    
-
     return NextResponse.json(roster);
   } catch (error: any) {
     console.error("Error during roster fetch:", error.message);

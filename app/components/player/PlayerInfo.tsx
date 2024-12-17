@@ -32,7 +32,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
             href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-2xl font-semibold text-gray-800 dark:text-gray-100 hover:underline"
+            className="text-2xl font-semibold text-blue-800 text-blue-800 hover:underline hover:text-blue-800"
           >
             {player.name}
           </a>
@@ -40,14 +40,14 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
 
         {/* Team and League Info */}
         <div className="mt-2">
-          <p className="text-lg font-medium text-gray-600 dark:text-gray-400">
+          <p className="text-lg font-medium text-blue-800">
             <span> #{player.jerseyNumber} </span>
             {player.team ? (
               <a
                 href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
+                className="hover:underline hover:text-blue-800"
               >
                 {player.team.name}
               </a>
@@ -60,7 +60,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
                 href={`https://www.eliteprospects.com/league/${player.league.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
+                className="hover:underline hover:text-blue-800"
               >
                 {player.league.name}
               </a>

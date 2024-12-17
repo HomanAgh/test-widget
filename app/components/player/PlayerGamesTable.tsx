@@ -61,17 +61,17 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
             <th className="py-2 px-4 border">{"Date"}</th>
             {playerType === "GOALTENDER" ? (
               <>
-                <th className="py-2 px-4 border">Shots Against</th>
-                <th className="py-2 px-4 border">Saves</th>
-                <th className="py-2 px-4 border">Goals Against</th>
-                <th className="py-2 px-4 border">Save %</th>
+                <th className="py-2 px-4 border">GA</th>
+                <th className="py-2 px-4 border">SA</th>
+                <th className="py-2 px-4 border">SV</th>
+                <th className="py-2 px-4 border">SV%</th>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 border">Goals</th>
-                <th className="py-2 px-4 border">Assists</th>
-                <th className="py-2 px-4 border">Points</th>
-                <th className="py-2 px-4 border">+/- Rating</th>
+                <th className="py-2 px-4 border">G</th>
+                <th className="py-2 px-4 border">A</th>
+                <th className="py-2 px-4 border">TP</th>
+                <th className="py-2 px-4 border">+/-</th>
               </>
             )}
           </tr>
@@ -82,9 +82,9 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
               <td className="py-2 px-4 border">Summary</td>
               {playerType === "GOALTENDER" ? (
                 <>
+                  <td className="py-2 px-4 border">{(summary as GoaltenderSummary).goalsAgainst}</td>
                   <td className="py-2 px-4 border">{(summary as GoaltenderSummary).shotsAgainst}</td>
                   <td className="py-2 px-4 border">{(summary as GoaltenderSummary).saves}</td>
-                  <td className="py-2 px-4 border">{(summary as GoaltenderSummary).goalsAgainst}</td>
                   <td className="py-2 px-4 border">
                     {(summary as GoaltenderSummary).savePercentage.toFixed(2)}%
                   </td>
@@ -107,9 +107,9 @@ const GamesTable: React.FC<GamesTableProps> = ({ lastFiveGames, playerType, game
                 <td className="py-2 px-4 border">{game.date}</td>
                 {playerType === "GOALTENDER" ? (
                   <>
+                    <td className="py-2 px-4 border">{game.goalsAgainst || 0}</td>
                     <td className="py-2 px-4 border">{game.shotsAgainst || 0}</td>
                     <td className="py-2 px-4 border">{game.saves || 0}</td>
-                    <td className="py-2 px-4 border">{game.goalsAgainst || 0}</td>
                     <td className="py-2 px-4 border">{game.savePercentage?.toFixed(2) || "0.00"}%</td>
                   </>
                 ) : (

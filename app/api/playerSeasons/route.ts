@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
               goals: regularStats?.G || 0,
               assists: regularStats?.A || 0,
               points: regularStats?.PTS || 0,
+              plusMinus: regularStats?.PM || 0,
             },
       };
     });

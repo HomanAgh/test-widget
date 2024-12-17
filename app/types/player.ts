@@ -70,6 +70,7 @@ export interface SeasonStats {
   goals?: number; // SKATER only
   assists?: number; // SKATER only
   points?: number; // SKATER only
+  plusMinus?: number; // SKATER only
 }
 
 export interface CareerStats {
@@ -82,6 +83,7 @@ export interface CareerStats {
   goalsAgainstAverage?: number; // Only for goalies
   savePercentage?: number; // Only for goalies
   shutouts?: number; // Only for goalies
+  plusMinus?: number; // SKATER only
 }
 
 export interface AlumniPlayer { // nytt interface, kolla om det funkar
