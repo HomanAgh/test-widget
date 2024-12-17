@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   },
 
     images: {
-      //domains: ['files.eliteprospects.com'], // Add the external domain here
+      domains: ['files.eliteprospects.com'], // Add the external domain here
   },
 };
 

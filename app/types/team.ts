@@ -12,8 +12,10 @@ export interface Team {
     lastName: string;
     position: string;
     jerseyNumber: string;
-    nationality: string;
+    dateOfBirth: string; // Added to store player's date of birth
+    flagUrl: string | null; // Added to store the flag URL for the player's nationality
   }
+  
 
   export interface TeamsAPIResponse {
     teams: Team[];
