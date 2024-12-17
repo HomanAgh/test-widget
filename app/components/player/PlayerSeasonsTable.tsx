@@ -11,21 +11,21 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
     <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
       <thead className="bg-gray-200">
         <tr>
-          <th className="py-2 px-4 text-left">Season</th>
+          <th className="py-2 px-4 text-left">S</th>
           <th className="py-2 px-4 text-left">Team</th>
           <th className="py-2 px-4 text-left">League</th>
-          <th className="py-2 px-4 text-left">Games Played</th>
+          <th className="py-2 px-4 text-left">GP</th>
           {playerType === "GOALTENDER" ? (
             <>
               <th className="py-2 px-4 text-left">GAA</th>
-              <th className="py-2 px-4 text-left">Save %</th>
-              <th className="py-2 px-4 text-left">Shutouts</th>
+              <th className="py-2 px-4 text-left">SV%</th>
+              <th className="py-2 px-4 text-left">SO</th>
             </>
           ) : (
             <>
-              <th className="py-2 px-4 text-left">Goals</th>
-              <th className="py-2 px-4 text-left">Assists</th>
-              <th className="py-2 px-4 text-left">Points</th>
+              <th className="py-2 px-4 text-left">G</th>
+              <th className="py-2 px-4 text-left">A</th>
+              <th className="py-2 px-4 text-left">TP</th>
             </>
           )}
         </tr>

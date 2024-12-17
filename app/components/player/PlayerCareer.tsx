@@ -58,6 +58,7 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({ playerId, backgroundColor 
           goals: career.stats.goals,
           assists: career.stats.assists,
           points: career.stats.points,
+          plusMinus: career.stats.plusMinus,
         }),
   }));
 
