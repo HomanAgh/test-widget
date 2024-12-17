@@ -7,11 +7,12 @@ const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string
       const countryData = await response.json();
       return countryData.data.flagUrl?.small || null; // Return the small flag URL
     }
-  } catch (err) {
+  } catch {
     console.warn(`Failed to fetch flag for ${slug}`);
   }
   return null;
 };
+
 
 export async function GET(req: NextRequest, props: { params: Promise<{ playerId: string }> }) {
   const params = await props.params;
