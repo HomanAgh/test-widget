@@ -5,19 +5,17 @@ const apiBaseUrl = process.env.API_BASE_URL;
 
 interface ApiResponse<T> {
   data?: T[];
-  // Add other fields as needed, like meta, pagination, etc.
 }
 
 interface Team {
   id: number;
   name?: string;
-  // Add other known fields for teams if needed
 }
 
 interface Player {
   id: number;
   name?: string;
-  // Add other known fields for players if needed
+  dateOfBirth?: string;
 }
 
 export async function GET(request: Request) {
@@ -31,28 +29,28 @@ export async function GET(request: Request) {
 
   try {
     // Step 1: Fetch teams matching the query
-    const teamsResponse = await fetch(
-      `${apiBaseUrl}/teams?q=${encodeURIComponent(query)}&apiKey=${apiKey}`
-    );
+    const teamsUrl = `${apiBaseUrl}/teams?q=${encodeURIComponent(query)}&apiKey=${apiKey}`;
+    const teamsResponse = await fetch(teamsUrl);
     if (!teamsResponse.ok) {
       throw new Error(`Failed to fetch teams: ${teamsResponse.statusText}`);
     }
 
     const teamsData: ApiResponse<Team> = await teamsResponse.json();
-    console.log('Teams Data:', teamsData); // Log full response for teams
+    console.log('Teams Data:', teamsData);
 
     let playersByTeam: Player[] = [];
     if (teamsData?.data && teamsData.data.length > 0) {
       // Extract team IDs
       const teamIds = teamsData.data.map((team: Team) => team.id);
-      console.log('Team IDs:', teamIds); // Log team IDs
+      console.log('Team IDs:', teamIds);
 
-      // Step 2: Fetch players for each team ID
+      // Step 2: Fetch players for each team ID, requesting only the needed fields
+      const fieldsParam = 'id,name,dateOfBirth'; 
       const playersByTeamPromises = teamIds.map((id: number) =>
         fetch(
           `${apiBaseUrl}/players?hasPlayedInTeam=${id}${
             league ? `&hasPlayedInLeague=${league}` : ''
-          }&apiKey=${apiKey}`
+          }&apiKey=${apiKey}&fields=${encodeURIComponent(fieldsParam)}`
         )
           .then((res) => {
             if (!res.ok) {
@@ -68,24 +66,24 @@ export async function GET(request: Request) {
 
       // Flatten the array of player arrays
       playersByTeam = playersByTeamResponses.flat();
-      console.log('Players by Team:', playersByTeam); // Log combined players by team
+      console.log('Players by Team:', playersByTeam);
     }
 
-    // Step 3: Fetch players matching the youthTeam directly
-    const youthTeamResponse = await fetch(
-      `${apiBaseUrl}/players?offset=0&limit=100&sort=name&youthTeam=${encodeURIComponent(query)}${
-        league ? `&hasPlayedInLeague=${league}` : ''
-      }&apiKey=${apiKey}`
-    );
+    // Step 3: Fetch players matching the youthTeam directly, again with limited fields
+    const youthTeamUrl = `${apiBaseUrl}/players?offset=0&limit=100&sort=name&youthTeam=${encodeURIComponent(query)}${
+      league ? `&hasPlayedInLeague=${league}` : ''
+    }&apiKey=${apiKey}&fields=id,name,dateOfBirth`;
+
+    const youthTeamResponse = await fetch(youthTeamUrl);
     if (!youthTeamResponse.ok) {
       throw new Error(`Failed to fetch youth team players: ${youthTeamResponse.statusText}`);
     }
 
     const youthTeamData: ApiResponse<Player> = await youthTeamResponse.json();
-    console.log('Youth Team Players Response:', youthTeamData); // Log youth team response
+    console.log('Youth Team Players Response:', youthTeamData);
 
     const playersByYouthTeam = youthTeamData.data || [];
-    console.log('Players by Youth Team:', playersByYouthTeam); // Log parsed youth team players
+    console.log('Players by Youth Team:', playersByYouthTeam);
 
     // Step 4: Combine all players and remove duplicates by id
     const allPlayers = [...playersByTeam, ...playersByYouthTeam].reduce(
@@ -97,10 +95,17 @@ export async function GET(request: Request) {
       },
       []
     );
-    console.log('Combined Players:', allPlayers); // Log combined list of players
 
-    // Step 5: Return the combined players
-    return NextResponse.json({ players: allPlayers });
+    console.log('Combined Players:', allPlayers);
+
+    // Step 5: Convert dateOfBirth to birthYear and return minimal fields
+    const minimalPlayers = allPlayers.map((player) => ({
+      id: player.id,
+      name: player.name || '',
+      birthYear: player.dateOfBirth ? new Date(player.dateOfBirth).getFullYear() : null,
+    }));
+
+    return NextResponse.json({ players: minimalPlayers });
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('Error fetching players:', error.message);
