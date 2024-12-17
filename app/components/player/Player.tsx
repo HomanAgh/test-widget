@@ -56,12 +56,11 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
     player: {
       id: data.playerInfo.id,
       name: data.playerInfo.name || "UnknownPlayer",
-      imageUrl: data.playerInfo.imageUrl || "/default-image.jpg",
       team: data.playerInfo.team,
       league: data.playerInfo.league,
-      nationality: data.playerInfo.nationality || "UnknownNationality",
       jerseyNumber: data.playerInfo.jerseyNumber || "JerseyNA",
       views: data.playerInfo.views || 0,
+      flagUrls: data.playerInfo.flagUrls,
     },
     lastGames: data.lastGames || [],
     playerType: data.playerInfo.playerType,

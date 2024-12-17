@@ -83,9 +83,7 @@ const SearchPlayers = () => {
         const players: AlumniPlayer[] = data.players.map((player) => ({
           id: player.id,
           name: player.name,
-          birthYear: player.dateOfBirth
-            ? new Date(player.dateOfBirth).getFullYear()
-            : NaN,
+           birthYear: player.birthYear || NaN,
         }));
 
         const draftPickAndTeamData = await fetchDraftPicksAndTeams(players.map((p) => p.id), leagueParam);

@@ -15,9 +15,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   });
   const [teamColor, setTeamColor] = useState<string | null>(null);
   const [gameLimit, setGameLimit] = useState(5);
-
-  // Updated state to include "career" view
   const [viewMode, setViewMode] = useState<"stats" | "seasons" | "career" | "games">("stats");
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const fetchTeamColor = async () => {
@@ -42,16 +41,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
     fetchTeamColor();
   }, [playerId]);
-  
-  /*
-  const handleColorChange = (color: string) => {
-    if (color.startsWith("linear-gradient")) {
-      setBackgroundStyle({ backgroundImage: color });
-    } else {
-      setBackgroundStyle({ backgroundColor: color });
-    }
-  };
-  */
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
@@ -80,7 +69,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         <h3 className="text-lg font-medium mb-2">View Mode:</h3>
         <div className="flex justify-center space-x-4">
           <button
-            onClick={() => setViewMode("stats")}
+            onClick={() => { setViewMode("stats"); setShowPreview(false); }}
             className={`px-6 py-2 rounded-md ${
               viewMode === "stats" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
             } hover:bg-blue-500`}
@@ -88,7 +77,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
             Show Current Season Stats
           </button>
           <button
-            onClick={() => setViewMode("seasons")}
+            onClick={() => { setViewMode("seasons"); setShowPreview(false); }}
             className={`px-6 py-2 rounded-md ${
               viewMode === "seasons" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
             } hover:bg-blue-500`}
@@ -96,7 +85,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
             Show Player Seasons
           </button>
           <button
-            onClick={() => setViewMode("career")}
+            onClick={() => { setViewMode("career"); setShowPreview(false); }}
             className={`px-6 py-2 rounded-md ${
               viewMode === "career" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
             } hover:bg-blue-500`}
@@ -104,7 +93,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
             Show Player Career
           </button>
           <button
-            onClick={() => setViewMode("games")}
+            onClick={() => { setViewMode("games"); setShowPreview(false); }}
             className={`px-6 py-2 rounded-md ${
               viewMode === "games" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
             } hover:bg-blue-500`}
@@ -121,7 +110,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
             {[5, 10, 15, 20, 25].map((limit) => (
               <button
                 key={limit}
-                onClick={() => handleGameLimitChange(limit)}
+                onClick={() => { handleGameLimitChange(limit); setShowPreview(false); }}
                 className={`px-4 py-2 rounded-md ${
                   gameLimit === limit ? "bg-green-600 text-white" : "bg-green-400 text-white"
                 } hover:bg-green-500`}
@@ -144,18 +133,28 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
       <div className="mt-8">
         <h3 className="text-lg font-medium mb-2">Embed Code</h3>
-        <textarea
-          readOnly
-          value={iframeCode}
-          rows={3}
-          className="w-full p-2 border border-gray-300 rounded-md"
-        ></textarea>
+        <div className="flex items-center space-x-4">
+          <textarea
+            readOnly
+            value={iframeCode}
+            rows={3}
+            className="w-full p-2 border border-gray-300 rounded-md"
+          ></textarea>
+          <button
+            onClick={() => setShowPreview(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
+          >
+            Preview
+          </button>
+        </div>
 
         <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
-        <iframe
-          src={embedUrl}
-          style={{ width: "100%", height: "500px", border: "none" }}
-        ></iframe>
+        {showPreview && (
+          <iframe
+            src={embedUrl}
+            style={{ width: "100%", height: "500px", border: "none" }}
+          ></iframe>
+        )}
       </div>
     </div>
   );

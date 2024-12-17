@@ -1,13 +1,15 @@
 export type Player = {
-    id: string;
-    name: string;
-    imageUrl: string;
-    team?: { id: number; name: string };
-    league?: { slug: string; name: string };
-    nationality: string;
-    jerseyNumber: string;
-    views: number;
-  }
+  id: string;
+  name: string;
+  team?: { id: number; name: string };
+  league?: { slug: string; name: string };
+  jerseyNumber: string;
+  views: number;
+  flagUrls?: {
+    primary: string | null;
+    secondary: string | null;
+  };
+};
 
   export type PlayerType = "SKATER" | "GOALTENDER";
   
@@ -85,7 +87,7 @@ export interface CareerStats {
 export interface AlumniPlayer { // nytt interface, kolla om det funkar
   id: number;
   name: string;
-  birthYear: number;
+  birthYear: number | null;
   draftPick?: string;  
   teams?: string[];
 }
@@ -94,7 +96,7 @@ export interface AlumniAPIResponse { // nytt interface, kolla om det funkar
   players: {
     id: number;
     name: string;
-    dateOfBirth?: string; // or possibly null if not always present
+    birthYear: number;
   }[];
 }
 
