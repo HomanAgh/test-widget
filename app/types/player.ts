@@ -92,6 +92,7 @@ export interface AlumniPlayer { // nytt interface, kolla om det funkar
   birthYear: number | null;
   draftPick?: string;  
   teams?: string[];
+  
 }
 
 export interface AlumniAPIResponse { // nytt interface, kolla om det funkar
