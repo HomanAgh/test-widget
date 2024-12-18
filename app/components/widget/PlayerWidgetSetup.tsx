@@ -51,7 +51,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       backgroundStyle.backgroundColor || ""
     )}&gameLimit=${gameLimit}&viewMode=${viewMode}`;
   }, [playerId, backgroundStyle, gameLimit, viewMode]);
-
+//600-700 HEIGHT
   const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
 
   return (

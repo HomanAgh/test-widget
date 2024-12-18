@@ -63,6 +63,7 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor
           goals: season.stats.goals,
           assists: season.stats.assists,
           points: season.stats.points,
+          plusMinus: season.stats.plusMinus,
         }),
   }));
 

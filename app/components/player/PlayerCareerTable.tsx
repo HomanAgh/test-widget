@@ -13,19 +13,19 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({ careers }) => {
       <thead className="bg-gray-200">
         <tr>
           <th className="py-2 px-4 text-left">League</th>
-          <th className="py-2 px-4 text-left">Number of Seasons</th>
-          <th className="py-2 px-4 text-left">Games Played</th>
+          <th className="py-2 px-4 text-left">Years</th>
+          <th className="py-2 px-4 text-left">GP</th>
           {isGoalie ? (
             <>
               <th className="py-2 px-4 text-left">GAA</th>
-              <th className="py-2 px-4 text-left">Save %</th>
-              <th className="py-2 px-4 text-left">Shutouts</th>
+              <th className="py-2 px-4 text-left">SV%</th>
+              <th className="py-2 px-4 text-left">SO</th>
             </>
           ) : (
             <>
-              <th className="py-2 px-4 text-left">Goals</th>
-              <th className="py-2 px-4 text-left">Assists</th>
-              <th className="py-2 px-4 text-left">Points</th>
+              <th className="py-2 px-4 text-left">G</th>
+              <th className="py-2 px-4 text-left">A</th>
+              <th className="py-2 px-4 text-left">TP</th>
             </>
           )}
         </tr>
@@ -38,7 +38,7 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({ careers }) => {
               href={`https://www.eliteprospects.com/league/${career.league.toLowerCase().replace(/\s+/g, "-")}/stats/all-time`}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:underline"
+              className="text-blue-600 hover:underline hover:text-blue-800"
               >
               {career.league}
               </a>
