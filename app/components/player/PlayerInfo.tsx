@@ -1,5 +1,6 @@
 import React from "react";
 import { Player } from "@/app/types/player";
+import Image from 'next/image';
 
 interface PlayerInfoProps {
   player: Player;
@@ -21,7 +22,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
           )}
           {/* Secondary Nationality Flag */}
           {player.flagUrls?.secondary && (
-            <img
+            <Image
               src={player.flagUrls.secondary}
               alt="Secondary flag"
               className="w-6 h-4 object-contain"
