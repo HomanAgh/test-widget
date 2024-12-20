@@ -17,6 +17,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   const [gameLimit, setGameLimit] = useState(5);
   const [viewMode, setViewMode] = useState<"stats" | "seasons" | "career" | "games">("stats");
   const [showPreview, setShowPreview] = useState(false);
+  const [showSummary, setShowSummary] = useState(false); // New state for summary
 
   useEffect(() => {
     const fetchTeamColor = async () => {
@@ -49,8 +50,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   const embedUrl = useMemo(() => {
     return `http://localhost:3000/embed/player?playerId=${playerId}&backgroundColor=${encodeURIComponent(
       backgroundStyle.backgroundColor || ""
-    )}&gameLimit=${gameLimit}&viewMode=${viewMode}`;
-  }, [playerId, backgroundStyle, gameLimit, viewMode]);
+    )}&gameLimit=${gameLimit}&viewMode=${viewMode}&showSummary=${showSummary}`;
+  }, [playerId, backgroundStyle, gameLimit, viewMode, showSummary]); 
 //600-700 HEIGHT
   const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
 
@@ -118,6 +119,15 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
                 {limit} Games
               </button>
             ))}
+             {/* New Summary Button */}
+             <button
+              onClick={() => setShowSummary((prev) => !prev)}
+              className={`px-4 py-2 rounded-md ${
+                showSummary ? "bg-purple-600 text-white" : "bg-purple-400 text-white"
+              } hover:bg-purple-500`}
+            >
+              {showSummary ? "View Details" : "View Summary"}
+            </button>
           </div>
         </div>
       )}
@@ -128,6 +138,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           backgroundColor={backgroundStyle.backgroundColor || "#FFFFFF"}
           gameLimit={gameLimit}
           viewMode={viewMode}
+          showSummary={showSummary}
         />
       </div>
 
@@ -150,7 +161,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
         <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
         {showPreview && (
-          <iframe
+          <iframe   
             src={embedUrl}
             style={{ width: "100%", height: "500px", border: "none" }}
           ></iframe>

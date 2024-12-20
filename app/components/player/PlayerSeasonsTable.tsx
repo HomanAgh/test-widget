@@ -7,7 +7,7 @@ interface SeasonsTableProps {
 }
 
 const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
-  let displayedYears: Set<string> = new Set();
+  const displayedYears: Set<string> = new Set();
 
   return (
     <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">

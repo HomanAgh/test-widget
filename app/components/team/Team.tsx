@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import RosterTable from '@/app/components/team/RosterTable';
 import type { Team as TeamType, RosterPlayer } from '@/app/types/team';
+import Image from 'next/image';
 
 interface TeamProps {
   teamId: string;
@@ -71,10 +72,12 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
           <div className="mb-6 flex items-center justify-center space-x-4">
             {/* Medium Team Logo */}
             {teamStats.team.logoM && (
-              <img
+              <Image
                 src={teamStats.team.logoM}
                 alt={`${teamStats.team.name} Logo`}
-                className="w-12 h-auto"
+                layout="intrinsic" // Automatically calculates height based on the original aspect ratio
+                width={48} // Set a base width
+                height={48} // Optional, as `layout="intrinsic"` handles aspect ratio
               />
             )}
             {/* Team Name */}
