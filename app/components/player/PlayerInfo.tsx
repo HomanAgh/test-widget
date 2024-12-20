@@ -14,7 +14,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
         <div className="flex items-center space-x-2">
           {/* Primary Nationality Flag */}
           {player.flagUrls?.primary && (
-            <img
+            <Image
               src={player.flagUrls.primary}
               alt="Primary flag"
               className="w-6 h-4 object-contain"
