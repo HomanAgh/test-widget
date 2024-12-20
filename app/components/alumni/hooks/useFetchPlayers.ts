@@ -85,7 +85,7 @@ export const useFetchPlayers = (
  */
 
 import { useState, useEffect } from 'react';
-import { AlumniPlayer, AlumniAPIResponse, DraftPickAPIResponse } from '@/app/types/player';
+import { AlumniPlayer, AlumniAPIResponse} from '@/app/types/player';
 import { fetchDraftPicksAndTeams } from './fetchDraftPicksAndTeams';
 
 export const useFetchPlayers = (
