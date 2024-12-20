@@ -1,4 +1,4 @@
-import { AlumniPlayer, DraftPickAPIResponse } from '@/app/types/player';
+import { DraftPickAPIResponse } from '@/app/types/player';
 
 /* export const fetchDraftPicksAndTeams = async (
   playerIds: number[],
