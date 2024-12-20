@@ -17,7 +17,9 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
             <Image
               src={player.flagUrls.primary}
               alt="Primary flag"
-              className="w-6 h-4 object-contain"
+              className="object-contain"
+              width={24} // Set width dynamically or use a fixed size
+              height={16} // Adjust height accordingly
             />
           )}
           {/* Secondary Nationality Flag */}
@@ -25,7 +27,9 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
             <Image
               src={player.flagUrls.secondary}
               alt="Secondary flag"
-              className="w-6 h-4 object-contain"
+              className="object-contain"
+              width={24} // Same width as the primary flag
+              height={16} // Same height as the primary flag
             />
           )}
           {/* Player Name */}

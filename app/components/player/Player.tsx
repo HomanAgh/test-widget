@@ -20,6 +20,7 @@ interface PlayerProps {
   backgroundColor: string;
   gameLimit: number;
   viewMode: "stats" | "seasons" | "career" | "games";
+  showSummary: boolean;
 }
 
 // Define a fetcher function for SWR
@@ -32,7 +33,7 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
-const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, viewMode }) => {
+const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, viewMode, showSummary }) => {
 
   // Use SWR to fetch data
   const { data, error } = useSWR(
@@ -87,6 +88,7 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
             lastFiveGames={playerStats.lastGames}
             playerType={playerStats.playerType}
             gameLimit={gameLimit}
+            showSummary={showSummary}
           />
         )}
       </div>

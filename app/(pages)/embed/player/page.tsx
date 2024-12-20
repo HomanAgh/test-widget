@@ -27,6 +27,8 @@ const PlayerPageContent = () => {
     ? viewModeParam
     : "stats";
 
+    const showSummary = searchParams.get("showSummary") === "true";
+
   if (!playerId) {
     return <div>Missing player ID</div>;
   }
@@ -38,6 +40,7 @@ const PlayerPageContent = () => {
         backgroundColor={backgroundColor}
         gameLimit={gameLimit}
         viewMode={viewMode}
+        showSummary={showSummary}
       />
     </div>
   );

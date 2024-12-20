@@ -75,7 +75,9 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
               <Image
                 src={teamStats.team.logoM}
                 alt={`${teamStats.team.name} Logo`}
-                className="w-12 h-auto"
+                layout="intrinsic" // Automatically calculates height based on the original aspect ratio
+                width={48} // Set a base width
+                height={48} // Optional, as `layout="intrinsic"` handles aspect ratio
               />
             )}
             {/* Team Name */}
