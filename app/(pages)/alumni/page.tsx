@@ -211,7 +211,6 @@ import { useFetchPlayers } from '@/app/components/alumni/hooks/useFetchPlayers';
 
 const SearchPlayers = () => {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [teamColors, setTeamColors] = useState<string[]>([]);
   const [useTeamColor, setUseTeamColor] = useState<boolean>(false); // Default to not using team colors
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
@@ -234,7 +233,6 @@ const SearchPlayers = () => {
 
         const team = data.teams?.[0];
         if (team?.id) {
-          setSelectedTeamId(team.id);
 
           const colorResponse = await fetch(`/api/team?teamId=${team.id}`);
           const colorData = await colorResponse.json();

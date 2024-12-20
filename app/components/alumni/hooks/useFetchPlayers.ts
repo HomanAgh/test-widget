@@ -85,7 +85,7 @@ export const useFetchPlayers = (
  */
 
 import { useState, useEffect } from 'react';
-import { AlumniPlayer, AlumniAPIResponse, DraftPickAPIResponse } from '@/app/types/player';
+import { AlumniPlayer, AlumniAPIResponse} from '@/app/types/player';
 import { fetchDraftPicksAndTeams } from './fetchDraftPicksAndTeams';
 
 export const useFetchPlayers = (
@@ -107,47 +107,61 @@ export const useFetchPlayers = (
   const limit = 20; // Number of players to fetch per request
 
   const fetchPlayers = async (reset: boolean = false) => {
-    if (!selectedTeam || loading) return;
-
     setLoading(true);
     setError('');
-
+  
     try {
-      let url = `/api/alumni?query=${encodeURIComponent(selectedTeam)}&offset=${offset}&limit=${limit}`;
+      let url = `/api/alumni?query=${encodeURIComponent(selectedTeam || '')}&offset=${offset}&limit=${limit}`;
       if (leagueParam) url += `&league=${leagueParam}`;
-
+  
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch players.');
-
+  
       const data = (await response.json()) as AlumniAPIResponse;
       const players: AlumniPlayer[] = data.players.map((player) => ({
         id: player.id,
         name: player.name,
         birthYear: player.birthYear || NaN,
       }));
-
+  
       const draftPickAndTeamData = await fetchDraftPicksAndTeams(players.map((p) => p.id), leagueParam);
-
+  
       const playersWithAdditionalData = players.map((player) => ({
         ...player,
         draftPick: draftPickAndTeamData[player.id]?.draftPick || 'N/A',
         teams: draftPickAndTeamData[player.id]?.teams || [],
       }));
-
-      setResults((prev) => (reset ? playersWithAdditionalData : [...prev, ...playersWithAdditionalData]));
-      setOffset((prev) => prev + limit);
-      setHasMore(playersWithAdditionalData.length === limit); // If fewer players are fetched, there are no more
+  
+      setResults((prev) => {
+        const combinedResults = reset ? playersWithAdditionalData : [...prev, ...playersWithAdditionalData];
+        const uniqueResults = Array.from(
+          new Map(combinedResults.map((player) => [player.id, player])).values()
+        );
+        return uniqueResults;
+      });
+  
+      setOffset((prev) => prev + players.length);
+      setHasMore(players.length === limit);
     } catch (err) {
-      setError('Failed to fetch players.');
       console.error('Error fetching players:', err);
+      setError('Failed to fetch players.');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
+  
+  /* useEffect(() => {
     if (selectedTeam) fetchPlayers(true); // Reset results when team changes
+  }, [selectedTeam, activeFilter, leagueParam]); */
+  useEffect(() => {
+    if (selectedTeam || leagueParam) {
+      setResults([]); // Clear results
+      setOffset(0); // Reset offset
+      setHasMore(true); // Allow fetching more
+      fetchPlayers(true); // Fetch new data
+    }
   }, [selectedTeam, activeFilter, leagueParam]);
+  
 
   return { results, loading, error, hasMore, fetchPlayers };
 };
