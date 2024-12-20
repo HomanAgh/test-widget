@@ -47,11 +47,16 @@ const fetchDraftPick = async (playerId: string): Promise<string> => {
   }
 };
 
-const fetchTeamsByLeague = async (playerId: string, league: string): Promise<string[]> => {
+const fetchTeamsByLeague = async (
+  playerId: string,
+  league: string | null
+): Promise<string[]> => {
   try {
+    const leagueParam = league ? `&league=${league}` : '';
     const response = await fetch(
-      `${apiBaseUrl}/player-stats/teams?offset=0&limit=100&sort=team&player=${playerId}&league=${league}&apiKey=${apiKey}`
+      `${apiBaseUrl}/player-stats/teams?offset=0&limit=100&sort=team&player=${playerId}${leagueParam}&apiKey=${apiKey}`
     );
+
     if (!response.ok) {
       throw new Error(`Failed to fetch teams for player ${playerId}`);
     }
@@ -76,9 +81,13 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const playerIds = searchParams.get('playerIds'); // Comma-separated list of player IDs
   const league = searchParams.get('league'); // Selected league
+  const fetchAllLeagues = searchParams.get('fetchAllLeagues') === 'true'; // Fetch all leagues flag
 
-  if (!playerIds || !league) {
-    return NextResponse.json({ error: 'Player IDs and league are required.' }, { status: 400 });
+  if (!playerIds || (!league && !fetchAllLeagues)) {
+    return NextResponse.json(
+      { error: 'Player IDs and league are required unless fetching all leagues.' },
+      { status: 400 }
+    );
   }
 
   try {
@@ -88,7 +97,7 @@ export async function GET(request: Request) {
     const playerDataPromises = uniqueIds.map(async (playerId) => {
       const [draftPick, teams] = await Promise.all([
         fetchDraftPick(playerId),
-        fetchTeamsByLeague(playerId, league),
+        fetchTeamsByLeague(playerId, fetchAllLeagues ? null : league),
       ]);
 
       return {
