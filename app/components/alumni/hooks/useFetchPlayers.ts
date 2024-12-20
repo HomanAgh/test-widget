@@ -1,91 +1,5 @@
-/* import { useState, useEffect } from 'react';
-import { AlumniPlayer, AlumniAPIResponse, DraftPickAPIResponse } from '@/app/types/player';
-
-export const useFetchPlayers = (
-  selectedTeam: string | null,
-  activeFilter: string,
-  leagueParam: string | null
-) => {
-  const [results, setResults] = useState<AlumniPlayer[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (!selectedTeam) return;
-
-    const fetchPlayers = async () => {
-      setLoading(true);
-      setError('');
-      setResults([]);
-
-      try {
-        let url = `/api/alumni?query=${encodeURIComponent(selectedTeam)}`;
-        if (leagueParam) url += `&league=${leagueParam}`;
-
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to fetch players.');
-
-        const data = (await response.json()) as AlumniAPIResponse;
-        const players: AlumniPlayer[] = data.players.map((player) => ({
-          id: player.id,
-          name: player.name,
-          birthYear: player.birthYear || NaN,
-        }));
-
-        const draftPickAndTeamData = await fetchDraftPicksAndTeams(players.map((p) => p.id), leagueParam);
-
-        const playersWithAdditionalData = players.map((player) => ({
-          ...player,
-          draftPick: draftPickAndTeamData[player.id]?.draftPick || 'N/A',
-          teams: draftPickAndTeamData[player.id]?.teams || [],
-        }));
-
-        setResults(playersWithAdditionalData);
-      } catch (err) {
-        setError('Failed to fetch players.');
-        console.error('Error fetching players:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlayers();
-  }, [selectedTeam, activeFilter, leagueParam]);
-
-  const fetchDraftPicksAndTeams = async (
-    playerIds: number[],
-    league: string | null
-  ): Promise<Record<number, { draftPick: string; teams: string[] }>> => {
-    try {
-      const idsString = playerIds.join(',');
-      let url = `/api/draftpicks?playerIds=${idsString}`;
-      if (league) url += `&league=${league}`;
-
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch draft picks and teams.');
-
-      const data = (await response.json()) as DraftPickAPIResponse;
-      return data.players.reduce((acc, entry) => {
-        acc[entry.playerId] = {
-          draftPick: entry.draftPick || 'N/A',
-          teams: entry.teams || [],
-        };
-        return acc;
-      }, {} as Record<number, { draftPick: string; teams: string[] }>);
-    } catch (err) {
-      console.error('Error fetching draft picks and teams:', err);
-      return {};
-    }
-  };
-
-  return { results, loading, error };
-};
-
-
- */
-
 import { useState, useEffect } from 'react';
-import { AlumniPlayer, AlumniAPIResponse} from '@/app/types/player';
+import { AlumniPlayer, AlumniAPIResponse } from '@/app/types/player';
 import { fetchDraftPicksAndTeams } from './fetchDraftPicksAndTeams';
 
 export const useFetchPlayers = (
@@ -102,46 +16,63 @@ export const useFetchPlayers = (
   const [results, setResults] = useState<AlumniPlayer[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [hasMore, setHasMore] = useState(true); // New state to track if more players exist
-  const [offset, setOffset] = useState(0); // Tracks current offset
-  const limit = 20; // Number of players to fetch per request
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const limit = 20; // Number of players per request
 
+  // Fetch players from API
   const fetchPlayers = async (reset: boolean = false) => {
+    if (!selectedTeam && !leagueParam) {
+      setError('Either a team or league must be selected.');
+      return;
+    }
+
     setLoading(true);
     setError('');
-  
+
     try {
-      let url = `/api/alumni?query=${encodeURIComponent(selectedTeam || '')}&offset=${offset}&limit=${limit}`;
-      if (leagueParam) url += `&league=${leagueParam}`;
-  
+      let url = `/api/alumni?offset=${reset ? 0 : offset}&limit=${limit}`;
+      if (selectedTeam) url += `&query=${encodeURIComponent(selectedTeam)}`;
+      if (leagueParam) {
+        url += `&league=${leagueParam}`;
+      } else {
+        url += `&fetchAllLeagues=true`; // Indicate fetching for all leagues
+      }
+
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch players.');
-  
+
       const data = (await response.json()) as AlumniAPIResponse;
+
+      // Map players to the AlumniPlayer type
       const players: AlumniPlayer[] = data.players.map((player) => ({
         id: player.id,
         name: player.name,
-        birthYear: player.birthYear || NaN,
+        birthYear: player.birthYear || null,
       }));
-  
-      const draftPickAndTeamData = await fetchDraftPicksAndTeams(players.map((p) => p.id), leagueParam);
-  
+
+      // Fetch additional draft pick and team data
+      const draftPickAndTeamData = await fetchDraftPicksAndTeams(
+        players.map((p) => p.id),
+        leagueParam
+      );
+
       const playersWithAdditionalData = players.map((player) => ({
         ...player,
         draftPick: draftPickAndTeamData[player.id]?.draftPick || 'N/A',
         teams: draftPickAndTeamData[player.id]?.teams || [],
       }));
-  
+
       setResults((prev) => {
-        const combinedResults = reset ? playersWithAdditionalData : [...prev, ...playersWithAdditionalData];
-        const uniqueResults = Array.from(
-          new Map(combinedResults.map((player) => [player.id, player])).values()
-        );
-        return uniqueResults;
+        const combinedResults = reset
+          ? playersWithAdditionalData
+          : [...prev, ...playersWithAdditionalData];
+        // Ensure unique results by player ID
+        return Array.from(new Map(combinedResults.map((player) => [player.id, player])).values());
       });
-  
+
       setOffset((prev) => prev + players.length);
-      setHasMore(players.length === limit);
+      setHasMore(players.length === limit); // Check if there are more players to fetch
     } catch (err) {
       console.error('Error fetching players:', err);
       setError('Failed to fetch players.');
@@ -149,19 +80,16 @@ export const useFetchPlayers = (
       setLoading(false);
     }
   };
-  
-  /* useEffect(() => {
-    if (selectedTeam) fetchPlayers(true); // Reset results when team changes
-  }, [selectedTeam, activeFilter, leagueParam]); */
+
+  // Watch for changes to selected team, active filter, or leagueParam
   useEffect(() => {
     if (selectedTeam || leagueParam) {
-      setResults([]); // Clear results
-      setOffset(0); // Reset offset
-      setHasMore(true); // Allow fetching more
-      fetchPlayers(true); // Fetch new data
+      setResults([]);
+      setOffset(0);
+      setHasMore(true);
+      fetchPlayers(true); // Fetch new data and reset results
     }
   }, [selectedTeam, activeFilter, leagueParam]);
-  
 
   return { results, loading, error, hasMore, fetchPlayers };
 };
