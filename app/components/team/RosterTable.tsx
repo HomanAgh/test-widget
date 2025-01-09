@@ -36,7 +36,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
     .filter((player) => player.position !== "G" && player.position !== "D")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
 
-  const renderPlayerRow = (player: RosterPlayer, index: number) => (
+  const renderPlayerRow = (player: RosterPlayer) => (
     <tr key={player.id}>
       <td className="border border-gray-300 px-2 py-1 text-center">#{player.jerseyNumber}</td>
       <td className="border border-gray-300 px-2 py-1 text-left">

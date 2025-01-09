@@ -6,7 +6,6 @@ import SearchBar from '@/app/components/team/TeamSearch';
 import ErrorMessage from '@/app/components/common/ErrorMessage';
 import LogoutButton from '@/app/components/common/LogoutButton';
 import HomeButton from '@/app/components/common/HomeButton';
-import Team from '@/app/components/team/Team'; // Import the new Team component
 import WidgetSetup from '@/app/components/widget/TeamWidgetSetup'; // Import the new ToggleableColorPicker
 
 const TeamPage: React.FC = () => {
