@@ -73,9 +73,10 @@ export async function GET(req: NextRequest) {
       );
   
       return NextResponse.json({ leagues });
-    } catch (error: any) {
+    } catch (error : any) {
+        console.error("Error during search fetch:", error.message);
       return NextResponse.json(
-        { error: "An internal server error occurred." },
+        { message: "An internal server error occurred." },
         { status: 500 }
       );
     }
