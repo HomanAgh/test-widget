@@ -7,7 +7,8 @@ import type { CareerStats } from "@/app/types/player";
 
 interface PlayerCareerProps {
   playerId: string;
-  backgroundColor: string;
+  backgroundColor?: string;
+  textColor?: string; // NEW
 }
 
 // Define a fetcher function for SWR
@@ -20,13 +21,15 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
-const PlayerCareers: React.FC<PlayerCareerProps> = ({ playerId, backgroundColor }) => {
-
+const PlayerCareers: React.FC<PlayerCareerProps> = ({
+  playerId,
+  backgroundColor = "#FFFFFF", // default if not provided
+  textColor = "#000000",       // default if not provided
+}) => {
   // Use SWR to fetch the player's career data
   const { data, error } = useSWR(`/api/playerCareer?playerId=${playerId}`, fetcher);
 
   // Handle loading state
-  // If there's no data and no error yet, it's still loading
   if (!data && !error) {
     return <div className="text-center text-gray-600">{"Loading..."}</div>;
   }
@@ -67,9 +70,19 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({ playerId, backgroundColor 
   return (
     <div
       className="max-w-6xl mx-auto my-8 p-6 rounded-lg shadow-lg"
-      style={{ backgroundColor }}
+      style={{
+        backgroundColor,
+        color: textColor, // ensure text inherits our chosen color
+      }}
     >
-      {careers && <CareerTable careers={careers} />}
+      <h2 className="text-2xl font-bold mb-4">Career Statistics</h2>
+      {careers && (
+        <CareerTable
+          careers={careers}
+          backgroundColor={backgroundColor} // pass to the table
+          textColor={textColor}            // pass to the table
+        />
+      )}
     </div>
   );
 };

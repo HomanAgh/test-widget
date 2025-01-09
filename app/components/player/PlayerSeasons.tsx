@@ -2,15 +2,15 @@
 
 import React from "react";
 import useSWR from "swr";
-import SeasonsTable from "./PlayerSeasonsTable"; // New table component for seasons
+import SeasonsTable from "./PlayerSeasonsTable";
 import type { SeasonStats, PlayerType } from "@/app/types/player";
 
 interface PlayerSeasonsProps {
   playerId: string;
-  backgroundColor: string;
+  backgroundColor?: string; // NEW
+  textColor?: string;       // NEW
 }
 
-// Define a fetcher function for SWR
 const fetcher = (url: string) =>
   fetch(url).then(async (res) => {
     if (!res.ok) {
@@ -20,32 +20,28 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
-const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor }) => {
-
-  // Use SWR to fetch player seasonal stats
+const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
+  playerId,
+  backgroundColor = "#FFFFFF",
+  textColor = "#000000",
+}) => {
   const { data, error } = useSWR(`/api/playerSeasons?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
-  // Handle loading state
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{"Loading..."}</div>;
+    return <div style={{ color: textColor }}>Loading...</div>;
   }
 
-  // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{"An error occurred"}: {error.message}</div>;
+    return <div style={{ color: "red" }}>Error: {error.message}</div>;
   }
 
-  // At this point, data is loaded and no error
   if (!data || !data.stats || data.stats.length === 0) {
-    return <div className="text-center text-red-600">{"An error occurred"}: NoStatsAvailable</div>;
+    return <div style={{ color: "red" }}>NoStatsAvailable</div>;
   }
 
-  console.log("Fetched Player Seasons:", data); // Debug log
+  const playerType: PlayerType =
+    data.stats[0]?.role === "GOALTENDER" ? "GOALTENDER" : "SKATER";
 
-  // Determine if the player is a GOALTENDER or SKATER
-  const playerType: PlayerType = data.stats[0]?.role === "GOALTENDER" ? "GOALTENDER" : "SKATER";
-
-  // Map the seasonal stats
   const seasons: SeasonStats[] = data.stats.map((season: any) => ({
     season: season.season,
     teamName: season.teamName,
@@ -67,17 +63,12 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({ playerId, backgroundColor
         }),
   }));
 
-  console.log("Mapped Seasons:", seasons); // Debug log
-
   return (
     <div
       className="max-w-6xl mx-auto my-8 p-6 rounded-lg shadow-lg"
-      style={{ backgroundColor }}
+      style={{ backgroundColor, color: textColor }}
     >
-      <SeasonsTable
-        playerType={playerType}
-        seasons={seasons}
-      />
+      <SeasonsTable playerType={playerType} seasons={seasons} backgroundColor={backgroundColor} textColor={textColor} />
     </div>
   );
 };

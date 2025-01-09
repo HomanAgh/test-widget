@@ -2,55 +2,81 @@ import React from "react";
 import { PlayerType, Goalie, Skater } from "@/app/types/player";
 
 interface PlayerStatsTableProps {
-  playerType: PlayerType; // Player type: "GOALTENDER" or "SKATER"
-  stats: Goalie | Skater; // Stats data// Number of games played
+  playerType: PlayerType;
+  stats: Goalie | Skater;
+  backgroundColor?: string; // NEW
+  textColor?: string;       // NEW
 }
 
-const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({ playerType, stats}) => {
+const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
+  playerType,
+  stats,
+  backgroundColor = "#FFFFFF",
+  textColor = "#000000",
+}) => {
   const isGoaltender = playerType === "GOALTENDER";
 
   return (
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold text-gray-800">Statistics</h3>
-      <table className="w-full mt-4 border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200 text-gray-800 font-semibold">
-            <th className="py-2 px-4 border">GP</th>
+    <div>
+      <h3 style={{ color: textColor, fontSize: "1.25rem", fontWeight: "600" }}>Statistics</h3>
+      <table
+        className="w-full mt-4 border-collapse"
+        style={{ backgroundColor, color: textColor, border: "1px solid #ccc" }}
+      >
+        <thead style={{ filter: "brightness(90%)" }}>
+          <tr>
+            <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>GP</th>
             {isGoaltender ? (
               <>
-                <th className="py-2 px-4 border">GA</th>
-                <th className="py-2 px-4 border">SA</th>
-                <th className="py-2 px-4 border">SV</th>
-                <th className="py-2 px-4 border">SV%</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>GA</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>SA</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>SV</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>SV%</th>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 border">G</th>
-                <th className="py-2 px-4 border">A</th>
-                <th className="py-2 px-4 border">TP</th>
-                <th className="py-2 px-4 border">+/-</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>G</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>A</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>TP</th>
+                <th style={{ padding: "0.5rem", border: "1px solid #ccc" }}>+/-</th>
               </>
             )}
           </tr>
         </thead>
         <tbody>
-          <tr className="bg-white text-gray-800">
-            <td className="py-2 px-4 border">{(stats as Goalie ).gamesPlayed}</td>
+          <tr style={{ border: "1px solid #ccc" }}>
+            <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+              {(stats as Goalie).gamesPlayed}
+            </td>
             {isGoaltender ? (
               <>
-                <td className="py-2 px-4 border">{(stats as Goalie).goalsAgainst}</td>
-                <td className="py-2 px-4 border">{(stats as Goalie).shotsAgainst}</td>
-                <td className="py-2 px-4 border">{(stats as Goalie).saves}</td>
-                <td className="py-2 px-4 border">
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Goalie).goalsAgainst}
+                </td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Goalie).shotsAgainst}
+                </td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Goalie).saves}
+                </td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
                   {((stats as Goalie).savePercentage || 0).toFixed(2)}%
                 </td>
               </>
             ) : (
               <>
-                <td className="py-2 px-4 border">{(stats as Skater).goals}</td>
-                <td className="py-2 px-4 border">{(stats as Skater).assists}</td>
-                <td className="py-2 px-4 border">{(stats as Skater).points}</td>
-                <td className="py-2 px-4 border">{(stats as Skater).plusMinusRating}</td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Skater).goals}
+                </td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Skater).assists}
+                </td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Skater).points}
+                </td>
+                <td style={{ padding: "0.5rem", border: "1px solid #ccc" }}>
+                  {(stats as Skater).plusMinusRating}
+                </td>
               </>
             )}
           </tr>

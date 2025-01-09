@@ -5,17 +5,23 @@ import RosterTable from '@/app/components/team/RosterTable';
 import type { Team as TeamType, RosterPlayer } from '@/app/types/team';
 import Image from 'next/image';
 
-interface TeamProps {
-  teamId: string;
-  backgroundColor: string;
-}
-
 interface TeamStats {
   team: TeamType;
   roster: RosterPlayer[];
 }
 
-const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
+interface TeamProps {
+  teamId: string;
+  backgroundColor: string;
+  textColor?: string;
+}
+
+const Team: React.FC<TeamProps> = ({ 
+  teamId, 
+  backgroundColor,
+  textColor = "0000000",
+}) => {
+
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +70,10 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
   return (
     <div
       className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
-      style={{ backgroundColor }}
+      style={{ 
+        backgroundColor, 
+        color: textColor,
+      }}
     >
       {teamStats && (
         <div>
@@ -81,12 +90,12 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
               />
             )}
             {/* Team Name */}
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-bold" style={{ color: textColor }}>
               <a
                 href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline hover:text-blue-800"
+                className="hover:underline"
               >
                 {teamStats.team.name}
               </a>
@@ -94,14 +103,14 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
           </div>
 
           {/* League and Country */}
-          <p className="text-center text-gray-600">
+          <p className="text-center text-gray-600" style={{ color: textColor }}>
             <span>
               {"League"}:{" "}
               <a
                 href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline hover:text-blue-800"
+                className="hover:underline"
               >
                 {teamStats.team.league}
               </a>
@@ -113,7 +122,7 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
                 href={`https://www.eliteprospects.com/nation/${teamStats.team.country}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline hover:text-blue-800"
+                className="hover:underline"
               >
                 {teamStats.team.country}
               </a>
@@ -121,7 +130,7 @@ const Team: React.FC<TeamProps> = ({ teamId, backgroundColor }) => {
           </p>
 
           {/* Roster Table */}
-          <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} />
+          <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} textColor={textColor} />
         </div>
       )}
     </div>
