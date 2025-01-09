@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import  {LeagueTableProps} from "@/app/types/league";
-import SearchBar from "@/app/components/common/SearchBar";
+import SearchBar from "@/app/components/league/LeagueSearch";
 import LeagueTable from "../../components/league/LeagueTable";
 import LogoutButton from "../../components/common/LogoutButton";
 import HomeButton from "@/app/components/common/HomeButton";
@@ -72,7 +72,7 @@ const LeaguePage: React.FC = () => {
       </div>
 
       {/* Search Bar */}
-      <SearchBar onSelect={handleLeagueSelect} onError={setError} type={"league"} />
+      <SearchBar onSelect={handleLeagueSelect} onError={setError} />
       {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
       {/* League Table */}
