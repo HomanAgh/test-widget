@@ -18,12 +18,13 @@ interface PlayerStats {
 interface PlayerProps {
   playerId: string;
   backgroundColor: string;
+  textColor?: string; // NEW
   gameLimit: number;
   viewMode: "stats" | "seasons" | "career" | "games";
   showSummary: boolean;
 }
 
-// Define a fetcher function for SWR
+// fetcher for SWR
 const fetcher = (url: string) =>
   fetch(url).then(async (res) => {
     if (!res.ok) {
@@ -33,35 +34,36 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
-const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, viewMode, showSummary }) => {
-
-  // Use SWR to fetch data
+const Player: React.FC<PlayerProps> = ({
+  playerId,
+  backgroundColor,
+  textColor = "#000000", // default
+  gameLimit,
+  viewMode,
+  showSummary
+}) => {
   const { data, error } = useSWR(
     `/api/player/${encodeURIComponent(playerId)}?limit=${gameLimit}`,
     fetcher
   );
 
-  // Handle loading state
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{"Loading..."}</div>;
+    return <div className="text-center text-gray-600">Loading...</div>;
   }
 
-  // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{"Error Occurred"}: {error.message}</div>;
+    return <div className="text-center text-red-600">Error: {error.message}</div>;
   }
 
-  // At this point, `data` is loaded and no error occurred
-  // Construct playerStats from `data`
   const playerStats: PlayerStats = {
     player: {
       id: data.playerInfo.id,
       name: data.playerInfo.name || "UnknownPlayer",
       team: data.playerInfo.team,
       league: data.playerInfo.league,
-      jerseyNumber: data.playerInfo.jerseyNumber || "JerseyNA",
+      jerseyNumber: data.playerInfo.jerseyNumber || "N/A",
       views: data.playerInfo.views || 0,
-      flagUrls: data.playerInfo.flagUrls,
+      flagUrls: data.playerInfo.flagUrls || [],
     },
     lastGames: data.lastGames || [],
     playerType: data.playerInfo.playerType,
@@ -70,28 +72,35 @@ const Player: React.FC<PlayerProps> = ({ playerId, backgroundColor, gameLimit, v
   return (
     <div
       className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
-      style={{ backgroundColor }}
+      style={{
+        backgroundColor,
+        color: textColor, // children will inherit this color unless overridden
+      }}
     >
-      <PlayerInfo player={playerStats.player} />
-      <div>
-        {viewMode === "stats" && (
-          <PlayerStat playerId={playerId} backgroundColor={backgroundColor} />
-        )}
-        {viewMode === "seasons" && (
-          <PlayerSeasons playerId={playerId} backgroundColor={backgroundColor} />
-        )}
-        {viewMode === "career" && (
-          <PlayerCareers playerId={playerId} backgroundColor={backgroundColor} />
-        )}
-        {viewMode === "games" && (
-          <GamesTable
-            lastFiveGames={playerStats.lastGames}
-            playerType={playerStats.playerType}
-            gameLimit={gameLimit}
-            showSummary={showSummary}
-          />
-        )}
-      </div>
+      <PlayerInfo 
+        player={playerStats.player}
+        textColor={textColor}
+      />
+
+      {viewMode === "stats" && (
+        <PlayerStat playerId={playerId} backgroundColor={backgroundColor} textColor={textColor} />
+      )}
+      {viewMode === "seasons" && (
+        <PlayerSeasons playerId={playerId} backgroundColor={backgroundColor} textColor={textColor} />
+      )}
+      {viewMode === "career" && (
+        <PlayerCareers playerId={playerId} backgroundColor={backgroundColor} textColor={textColor} />
+      )}
+      {viewMode === "games" && (
+        <GamesTable
+          lastFiveGames={playerStats.lastGames}
+          playerType={playerStats.playerType}
+          gameLimit={gameLimit}
+          showSummary={showSummary}
+          backgroundColor={backgroundColor}
+          textColor={textColor}
+        />
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { RosterPlayer } from "@/app/types/team";
 interface RosterTableProps {
   roster: RosterPlayer[];
   backgroundColor?: string;
+  textColor?: string;
 }
 
 const calculateAge = (dateOfBirth: string): number | "N/A" => {
@@ -19,7 +20,11 @@ const calculateAge = (dateOfBirth: string): number | "N/A" => {
     : age - 1;
 };
 
-const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) => {
+const RosterTable: React.FC<RosterTableProps> = ({ 
+  roster, 
+  backgroundColor = "#FFFFFF",
+  textColor = "#000000", 
+}) => {
   if (!roster || roster.length === 0) {
     return <p>{"No Roster"}</p>;
   }
@@ -31,8 +36,8 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
     .filter((player) => player.position !== "G" && player.position !== "D")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
 
-  const renderPlayerRow = (player: RosterPlayer, index: number) => (
-    <tr key={player.id} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+  const renderPlayerRow = (player: RosterPlayer) => (
+    <tr key={player.id}>
       <td className="border border-gray-300 px-2 py-1 text-center">#{player.jerseyNumber}</td>
       <td className="border border-gray-300 px-2 py-1 text-left">
         {player.flagUrl && (
@@ -48,7 +53,8 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
           href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline hover:text-blue-800"
+          className="text-blue-600 hover:underline hover:text-blue-800 "
+          style={{ color: textColor}}
         >
           {`${player.firstName} ${player.lastName} (${player.position})`}
         </a>
@@ -63,10 +69,13 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
   return (
     <table
       className="table-auto border-collapse border border-gray-300 w-full text-sm"
-      style={{ backgroundColor }}
+      style={{ 
+        backgroundColor,
+        color: textColor, 
+      }}
     >
-      <thead>
-        <tr className="bg-blue-600 text-white">
+      <thead >
+        <tr className="bg-blue-600 text-white" style={{ color: textColor }}>
           <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
           <th className="border border-gray-300 px-2 py-1 text-left">{"PLAYER"}</th>
           <th className="border border-gray-300 px-2 py-1 text-center">{"A"}</th>
@@ -102,7 +111,7 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster, backgroundColor }) =>
         {forwards.length > 0 && (
           <>
             <tr>
-              <td colSpan={4} className="bg-blue-200 text-left px-2 py-1 font-bold uppercase">
+              <td colSpan={4} className="bg-blue-200 text-left px-2 py-1 font-bold uppercase" >
                 {"FORWARDS"}
               </td>
             </tr>

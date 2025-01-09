@@ -4,14 +4,24 @@ import type { SeasonStats, PlayerType } from "@/app/types/player";
 interface SeasonsTableProps {
   playerType: PlayerType;
   seasons: SeasonStats[];
+  backgroundColor?: string; // NEW
+  textColor?: string;       // NEW
 }
 
-const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
+const SeasonsTable: React.FC<SeasonsTableProps> = ({
+  playerType,
+  seasons,
+  backgroundColor = "#FFFFFF",
+  textColor = "#000000",
+}) => {
   const displayedYears: Set<string> = new Set();
 
   return (
-    <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-      <thead className="bg-gray-200">
+    <table
+      className="min-w-full shadow-md rounded-lg overflow-hidden"
+      style={{ backgroundColor, color: textColor }}
+    >
+      <thead style={{ filter: "brightness(90%)" }}>
         <tr>
           <th className="py-2 px-4 text-left">S</th>
           <th className="py-2 px-4 text-left">Team</th>
@@ -40,7 +50,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
           }
 
           return (
-            <tr key={index} className="border-t">
+            <tr key={index} className="border-t" style={{ backgroundColor, color: textColor }}>
               <td className="py-2 px-4">{isYearDisplayed ? "" : season.season}</td>
               <td className="py-2 px-4">
                 <a
@@ -49,7 +59,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
                   )}/${season.season}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline hover:text-blue-800"
+                  style={{ color: textColor, textDecoration: "underline" }}
                 >
                   {season.teamName}
                 </a>
@@ -59,7 +69,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({ playerType, seasons }) => {
                   href={`https://www.eliteprospects.com/league/${season.league}/stats/${season.season}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline hover:text-blue-800"
+                  style={{ color: textColor, textDecoration: "underline" }}
                 >
                   {season.league}
                 </a>

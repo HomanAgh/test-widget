@@ -7,10 +7,10 @@ import type { PlayerType, Goalie, Skater } from "@/app/types/player";
 
 interface PlayerStatProps {
   playerId: string;
-  backgroundColor: string;
+  backgroundColor?: string;
+  textColor?: string; // NEW
 }
 
-// Define a fetcher function for SWR
 const fetcher = (url: string) =>
   fetch(url).then(async (res) => {
     if (!res.ok) {
@@ -20,28 +20,27 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
-const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, backgroundColor }) => {
-
-  // Use SWR to fetch player stats
+const PlayerStat: React.FC<PlayerStatProps> = ({
+  playerId,
+  backgroundColor = "#FFFFFF",
+  textColor = "#000000",
+}) => {
   const { data, error } = useSWR(`/api/playerStats?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
-  // Handle loading state
   if (!data && !error) {
-    return <div className="text-center text-gray-600">{"Loading..."}</div>;
+    return <div style={{ color: textColor }}>Loading...</div>;
   }
 
-  // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{"An error occurred"}: {error.message}</div>;
+    return <div style={{ color: "red" }}>Error: {error.message}</div>;
   }
 
-  // Now we have data and no error. Validate and map data.
   if (!data || !data.stats || !data.playerInfo) {
-    return <div className="text-center text-red-600">{"An error occurred"}: NoStatsAvailable</div>;
+    return <div style={{ color: "red" }}>NoStatsAvailable</div>;
   }
 
   const type: PlayerType = data.playerInfo.playerType;
-  
+
   const stats = type === "GOALTENDER"
     ? {
         gamesPlayed: data.stats?.gamesPlayed || 0,
@@ -58,17 +57,12 @@ const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, backgroundColor }) =>
         plusMinusRating: data.stats?.plusMinusRating ?? "N/A",
       } as Skater;
 
-  console.log("Mapped Stats:", stats); // Debug: Log mapped stats.
-
   return (
     <div
       className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
-      style={{ backgroundColor }}
+      style={{ backgroundColor, color: textColor }}
     >
-      <PlayerStatsTable
-        playerType={type}
-        stats={stats}
-      />
+      <PlayerStatsTable playerType={type} stats={stats} backgroundColor={backgroundColor} textColor={textColor} />
     </div>
   );
 };

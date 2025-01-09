@@ -1,65 +1,186 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from "react";
+import ToggleableColorPicker from "../common/color-picker/ToggleableColorPicker";
 
 interface TeamBackgroundColorSelectorProps {
-  teamId: string; // Team ID to fetch data for
-  onColorSelect: (color: string) => void; // Function to set the selected color
+  /** 
+   * If you have just a playerId, we'll fetch the player's team color from /api/player
+   * Then fetch the team colors from /api/team
+   */
+  playerId?: string;
+
+  /**
+   * If you have a direct teamName, you can pass that instead of playerId.
+   */
+  teamName?: string;
+
+  /**
+   * If you already have a known teamId, pass it here
+   */
+  teamId?: string;
+
+  /**
+   * Should we start with team colors enabled by default?
+   */
+  defaultEnabled?: boolean;
+
+  /**
+   * Called whenever we get either the team color array or the custom color
+   */
+  onTeamColorsChange?: (colors: string[]) => void;
+  onUseTeamColorChange?: (useTeamColor: boolean) => void;
+  onCustomColorChange?: (color: string) => void;
+
+  /**
+   * Custom button labels
+   */
+  enableText?: string;
+  disableText?: string;
 }
 
-const TeamBackgroundColorSelector: React.FC<TeamBackgroundColorSelectorProps> = ({ teamId, onColorSelect }) => {
-  const [colors, setColors] = useState<string[]>([]); // Fetched team colors
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+const TeamBackgroundColorSelector: React.FC<TeamBackgroundColorSelectorProps> = ({
+  playerId,
+  teamName,
+  teamId,
+  defaultEnabled = false,
+  onTeamColorsChange,
+  onUseTeamColorChange,
+  onCustomColorChange,
+  enableText = "Enable Team Colors",
+  disableText = "Disable Team Colors",
+}) => {
+  const [resolvedTeamId, setResolvedTeamId] = useState<string | null>(teamId ?? null);
+  const [teamColors, setTeamColors] = useState<string[]>([]);
 
-  // Fetch team data based on the teamId
+  // When we disable "Use Team Color", we allow a custom color
+  const [customColor, setCustomColor] = useState("#FFFFFF");
+
+  // Whether team colors are currently enabled
+  const [useTeamColor, setUseTeamColor] = useState(defaultEnabled);
+
+  /**
+   * Step 1: Figure out the final Team ID from either:
+   *  - direct teamId
+   *  - playerId => fetch player's team
+   *  - teamName => fetch team by name
+   */
   useEffect(() => {
-    const fetchTeamColors = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`/api/team?teamId=${teamId}`);
-        if (!response.ok) throw new Error('Failed to fetch team colors.');
+    // If we have an explicit teamId, use it directly
+    if (teamId) {
+      setResolvedTeamId(teamId);
+      return;
+    }
 
-        const data = await response.json();
-        if (data.colors && data.colors.length > 0) {
-          setColors(data.colors);
-        } else {
-          setError('No colors found for this team.');
+    // If we have a playerId, fetch player's info => get teamId
+    if (playerId) {
+      const fetchPlayerTeamId = async () => {
+        try {
+          const playerResponse = await fetch(`/api/player/${encodeURIComponent(playerId)}`);
+          const playerData = await playerResponse.json();
+          const fetchedTeamId = playerData?.playerInfo?.team?.id;
+          setResolvedTeamId(fetchedTeamId || null);
+        } catch (err) {
+          console.error("Failed to fetch team from player:", err);
+          setResolvedTeamId(null);
         }
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unknown error occurred.');
+      };
+      fetchPlayerTeamId();
+      return;
+    }
+
+    // If we have a teamName, fetch the ID
+    if (teamName) {
+      const fetchTeamIdByName = async () => {
+        try {
+          const response = await fetch(`/api/AlumniSearchTeam?query=${encodeURIComponent(teamName)}`);
+          const data = await response.json();
+          const foundTeam = data?.teams?.[0];
+          setResolvedTeamId(foundTeam?.id || null);
+        } catch (err) {
+          console.error("Failed to fetch team by name:", err);
+          setResolvedTeamId(null);
         }
-      } finally {
-        setLoading(false);
+      };
+      fetchTeamIdByName();
+      return;
+    }
+
+    // If none of the above, no team to fetch
+    setResolvedTeamId(null);
+  }, [playerId, teamName, teamId]);
+
+  /**
+   * Step 2: With the resolvedTeamId, fetch that team's colors
+   */
+  useEffect(() => {
+    if (!resolvedTeamId) {
+      setTeamColors([]);
+      onTeamColorsChange?.([]);
+      return;
+    }
+
+    const fetchColors = async () => {
+      try {
+        const colorResponse = await fetch(`/api/team?teamId=${resolvedTeamId}`);
+        const colorData = await colorResponse.json();
+        if (Array.isArray(colorData.colors)) {
+          setTeamColors(colorData.colors);
+          onTeamColorsChange?.(colorData.colors);
+        } else {
+          setTeamColors([]);
+          onTeamColorsChange?.([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch team colors:", err);
+        setTeamColors([]);
+        onTeamColorsChange?.([]);
       }
     };
+    fetchColors();
+  }, [resolvedTeamId, onTeamColorsChange]);
 
-    fetchTeamColors();
-  }, [teamId]);
+  /**
+   * Step 3: Whenever user toggles "useTeamColor", tell parent
+   */
+  useEffect(() => {
+    onUseTeamColorChange?.(useTeamColor);
+  }, [useTeamColor, onUseTeamColorChange]);
+
+  /**
+   * Step 4: Whenever user picks a custom color, tell parent
+   */
+  useEffect(() => {
+    onCustomColorChange?.(customColor);
+  }, [customColor, onCustomColorChange]);
 
   return (
-    <div className="mb-6">
-      <h2 className="text-lg font-bold mb-2">Team Background Colors</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {!loading && !error && colors.length > 0 && (
-        <div className="flex space-x-2">
-          {colors.map((color, index) => (
-            <button
-              key={index}
-              style={{ backgroundColor: color }}
-              className="w-10 h-10 rounded-full border border-gray-300 hover:scale-110 transition-transform"
-              onClick={() => onColorSelect(color)} // Set background color on click
-              title={`Set background color to ${color}`}
-            />
-          ))}
+    <div>
+      {/* Toggle Team Colors on/off */}
+      <div className="flex items-center justify-center gap-4 mb-4">
+        <button
+          className={`px-4 py-2 rounded-md ${useTeamColor ? "bg-blue-500" : "bg-gray-500"} text-white`}
+          onClick={() => setUseTeamColor((prev) => !prev)}
+        >
+          {useTeamColor ? disableText : enableText}
+        </button>
+      </div>
+
+      {/* If using team colors and we have them, show them */}
+      {useTeamColor && teamColors.length > 0 && (
+        <p className="text-center">Team Colors: {teamColors.join(", ")}</p>
+      )}
+
+      {/* If not using team color, show a color picker */}
+      {!useTeamColor && (
+        <div className="flex justify-center mt-4">
+          <ToggleableColorPicker
+            onColorSelect={(color) => {
+              setCustomColor(color);
+            }}
+          />
         </div>
       )}
-      {!loading && colors.length === 0 && <p>No colors available for this team.</p>}
     </div>
   );
 };
