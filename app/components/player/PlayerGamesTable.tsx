@@ -1,25 +1,55 @@
+"use client";
+
 import React from "react";
-import { PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
+import { GameLog, PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
 
 interface GamesTableProps {
+  lastFiveGames: GameLog[];
   playerType: PlayerType;
-  showSummary: boolean;
+  backgroundColor?: string; // NEW
+  textColor?: string;       // NEW
   gameLimit: number;
-  lastFiveGames: any[]; // Type it based on your actual data structure
-  summary: GoaltenderSummary | SkaterSummary;
-  backgroundColor?: string;
-  textColor?: string;
+  showSummary: boolean;
 }
 
 const GamesTable: React.FC<GamesTableProps> = ({
-  playerType,
-  showSummary,
-  gameLimit,
   lastFiveGames,
-  summary,
+  playerType,
   backgroundColor = "#FFFFFF",
   textColor = "#000000",
+  gameLimit,
+  showSummary,
 }) => {
+  let summary: GoaltenderSummary | SkaterSummary;
+
+  if (playerType === "GOALTENDER") {
+    summary = lastFiveGames.reduce<GoaltenderSummary>(
+      (acc, game) => {
+        acc.shotsAgainst += game.shotsAgainst || 0;
+        acc.saves += game.saves || 0;
+        acc.goalsAgainst += game.goalsAgainst || 0;
+        acc.savePercentage += game.savePercentage || 0;
+        return acc;
+      },
+      { shotsAgainst: 0, saves: 0, goalsAgainst: 0, savePercentage: 0 }
+    );
+
+    if (lastFiveGames.length > 0) {
+      summary.savePercentage /= lastFiveGames.length;
+    }
+  } else {
+    summary = lastFiveGames.reduce<SkaterSummary>(
+      (acc, game) => {
+        acc.goals += game.goals || 0;
+        acc.assists += game.assists || 0;
+        acc.points += game.points || 0;
+        acc.plusMinusRating += game.plusMinusRating || 0;
+        return acc;
+      },
+      { goals: 0, assists: 0, points: 0, plusMinusRating: 0 }
+    );
+  }
+
   return (
     <div
       className="mt-8 p-4 rounded-md"
@@ -28,9 +58,9 @@ const GamesTable: React.FC<GamesTableProps> = ({
         color: textColor,
       }}
     >
-      <h2 className="text-2xl font-bold mb-4" style={{ color: textColor }}>
+      <h3 className="text-2xl font-bold mb-4" style={{ color: textColor }}>
         {showSummary ? `Summary Last ${gameLimit} Games` : `Last ${gameLimit} Games`}
-      </h2>
+      </h3>
 
       <table
         className="min-w-full shadow-md rounded-lg overflow-hidden mt-4"
@@ -48,7 +78,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           }}
         >
           <tr>
-            <th className="py-2 px-4 text-left">Date</th>
+            <th className="py-2 px-4 text-center">Date</th>
             {playerType === "GOALTENDER" ? (
               <>
                 <th className="py-2 px-4 text-center">GA</th>
@@ -105,7 +135,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
                   border: "1px solid #ccc",
                 }}
               >
-                <td className="py-2 px-4 text-left">{game.date}</td>
+                <td className="py-2 px-4 text-center">{game.date}</td>
                 {playerType === "GOALTENDER" ? (
                   <>
                     <td className="py-2 px-4 text-center">{game.goalsAgainst || 0}</td>
