@@ -70,18 +70,10 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
   return (
     <div
       className="max-w-6xl mx-auto my-8 p-6 rounded-lg shadow-lg"
-      style={{
-        backgroundColor,
-        color: textColor, // ensure text inherits our chosen color
-      }}
+      style={{ backgroundColor, color: textColor }}
     >
-      <h2 className="text-2xl font-bold mb-4">Career Statistics</h2>
       {careers && (
-        <CareerTable
-          careers={careers}
-          backgroundColor={backgroundColor} // pass to the table
-          textColor={textColor}            // pass to the table
-        />
+        <CareerTable careers={careers} backgroundColor={backgroundColor} textColor={textColor}/>
       )}
     </div>
   );

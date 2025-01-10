@@ -59,7 +59,7 @@ const PlayerStat: React.FC<PlayerStatProps> = ({
 
   return (
     <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
+      className="max-w-6xl mx-auto my-8 p-6 rounded-lg shadow-lg"
       style={{ backgroundColor, color: textColor }}
     >
       <PlayerStatsTable playerType={type} stats={stats} backgroundColor={backgroundColor} textColor={textColor} />

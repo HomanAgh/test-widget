@@ -43,11 +43,11 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
           <thead>
             <tr className="bg-red-600 text-white">
               <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">{"Team"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"Team"}</th>
               <th className="border border-gray-300 px-2 py-1 text-center">{"GP"}</th>
               <th className="border border-gray-300 px-2 py-1 text-center">{"W"}</th>
               <th className="border border-gray-300 px-2 py-1 text-center">{"L"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{"PTS"}</th>
+              <th className="border border-gray-300 px-2 py-1 text-center">{"TP"}</th>
             </tr>
           </thead>
           <tbody>
@@ -86,11 +86,11 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
               <thead>
                 <tr className="bg-red-600 text-white">
                   <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-left">{"Team"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"Team"}</th>
                   <th className="border border-gray-300 px-2 py-1 text-center">{"GP"}</th>
                   <th className="border border-gray-300 px-2 py-1 text-center">{"W"}</th>
                   <th className="border border-gray-300 px-2 py-1 text-center">{"L"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"PTS"}</th>
+                  <th className="border border-gray-300 px-2 py-1 text-center">{"TP"}</th>
                 </tr>
               </thead>
               <tbody>
