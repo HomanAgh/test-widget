@@ -1,7 +1,15 @@
 export interface League {
     slug: string;
     name: string;
+    country: {
+      name: string;
+    }
+    fullName: string;
   }
+
+export interface LeaguesAPIResponse {
+  leagues: League[];
+  } 
   
   export interface LeagueTableProps {
     standings: {

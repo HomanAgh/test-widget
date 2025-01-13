@@ -6,7 +6,7 @@ import SearchBar from '@/app/components/team/TeamSearch';
 import ErrorMessage from '@/app/components/common/ErrorMessage';
 import LogoutButton from '@/app/components/common/LogoutButton';
 import HomeButton from '@/app/components/common/HomeButton';
-import WidgetSetup from '@/app/components/widget/TeamWidgetSetup'; // Import the new ToggleableColorPicker
+import WidgetSetup from '@/app/components/widget/TeamWidgetSetup'; 
 
 const TeamPage: React.FC = () => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);

@@ -6,6 +6,11 @@ export interface Team {
     logoM: string;
   }
   
+  export interface TeamsAPIResponse {
+    teams: Team[];
+  }
+  
+  
   export interface RosterPlayer {
     id: string;
     firstName: string;
@@ -14,11 +19,6 @@ export interface Team {
     jerseyNumber: string;
     dateOfBirth: string; // Added to store player's date of birth
     flagUrl: string | null; // Added to store the flag URL for the player's nationality
-  }
-  
-
-  export interface TeamsAPIResponse {
-    teams: Team[];
   }
   
   
