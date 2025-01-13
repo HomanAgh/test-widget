@@ -1,11 +1,15 @@
 import React from "react";
-import type { SeasonStats, PlayerType } from "@/app/types/player";
+import { SeasonStats, PlayerType } from "@/app/types/player";
+import Table from "../common/style/Table";
+import TableHeader from "../common/style/TableHeader";
+import TableTitel from "../common/style/TableTitle";
+import TableWrapper from "../common/style/TableWrapper"; // Import TableWrapper
 
 interface SeasonsTableProps {
   playerType: PlayerType;
   seasons: SeasonStats[];
-  backgroundColor?: string; // NEW
-  textColor?: string;       // NEW
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 const SeasonsTable: React.FC<SeasonsTableProps> = ({
@@ -17,48 +21,27 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
   const displayedYears: Set<string> = new Set();
 
   return (
-    <div
-      className="mt-8 p-4 rounded-md"
-      style={{
-        backgroundColor,
-        color: textColor,
-      }}
-    >
-      <h2 className="text-2xl font-bold mb-4" style={{ color: textColor }}>
-        Season Statistics
-      </h2>
-
-      <table
-        className="min-w-full shadow-md rounded-lg overflow-hidden"
-        style={{
-          backgroundColor,
-          color: textColor,
-          border: "1px solid #ccc",
-        }}
-      >
-        <thead
-          style={{
-            filter: "brightness(90%)",
-            backgroundColor,
-            color: textColor,
-          }}
-        >
+    <div>
+      <TableTitel align="left">Season Statistics</TableTitel>
+      <TableWrapper backgroundColor={backgroundColor} textColor={textColor}>
+      <table className="min-w-full shadow-md rounded-lg overflow-hidden">
+        <thead style={{ filter: "brightness(90%)" }}>
           <tr>
-            <th className="py-2 px-4 text-left">S</th>
-            <th className="py-2 px-4 text-left">Team</th>
-            <th className="py-2 px-4 text-left">League</th>
-            <th className="py-2 px-4 text-center">GP</th>
+            <TableHeader align="left">S</TableHeader>
+            <TableHeader align="left">Team</TableHeader>
+            <TableHeader align="left">League</TableHeader>
+            <TableHeader align="center">GP</TableHeader>
             {playerType === "GOALTENDER" ? (
               <>
-                <th className="py-2 px-4 text-center">GAA</th>
-                <th className="py-2 px-4 text-center">SV%</th>
-                <th className="py-2 px-4 text-center">SO</th>
+                <TableHeader align="center">GAA</TableHeader>
+                <TableHeader align="center">SV%</TableHeader>
+                <TableHeader align="center">SO</TableHeader>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 text-center">G</th>
-                <th className="py-2 px-4 text-center">A</th>
-                <th className="py-2 px-4 text-center">TP</th>
+                <TableHeader align="center">G</TableHeader>
+                <TableHeader align="center">A</TableHeader>
+                <TableHeader align="center">TP</TableHeader>
               </>
             )}
           </tr>
@@ -79,8 +62,8 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
                   color: textColor,
                 }}
               >
-                <td className="py-2 px-4 text-left">{isYearDisplayed ? "" : season.season}</td>
-                <td className="py-2 px-4 text-left">
+                <Table align="left">{isYearDisplayed ? "" : season.season}</Table>
+                <Table align="left">
                   <a
                     href={`https://www.eliteprospects.com/team/${season.teamId}/${encodeURIComponent(
                       season.teamName
@@ -94,8 +77,8 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
                   >
                     {season.teamName}
                   </a>
-                </td>
-                <td className="py-2 px-4 text-left">
+                </Table>
+                <Table align="left">
                   <a
                     href={`https://www.eliteprospects.com/league/${season.league}/stats/${season.season}`}
                     target="_blank"
@@ -107,21 +90,19 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
                   >
                     {season.league}
                   </a>
-                </td>
-                <td className="py-2 px-4 text-center">{season.gamesPlayed}</td>
+                </Table>
+                <Table align="center">{season.gamesPlayed}</Table>
                 {playerType === "GOALTENDER" ? (
                   <>
-                    <td className="py-2 px-4 text-center">
-                      {season.goalsAgainstAverage || "N/A"}
-                    </td>
-                    <td className="py-2 px-4 text-center">{season.savePercentage || "N/A"}</td>
-                    <td className="py-2 px-4 text-center">{season.shutouts || 0}</td>
+                    <Table align="center">{season.goalsAgainstAverage || "N/A"}</Table>
+                    <Table align="center">{season.savePercentage || "N/A"}</Table>
+                    <Table align="center">{season.shutouts || 0}</Table>
                   </>
                 ) : (
                   <>
-                    <td className="py-2 px-4 text-center">{season.goals || 0}</td>
-                    <td className="py-2 px-4 text-center">{season.assists || 0}</td>
-                    <td className="py-2 px-4 text-center">{season.points || 0}</td>
+                    <Table align="center">{season.goals || 0}</Table>
+                    <Table align="center">{season.assists || 0}</Table>
+                    <Table align="center">{season.points || 0}</Table>
                   </>
                 )}
               </tr>
@@ -129,6 +110,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
           })}
         </tbody>
       </table>
+    </TableWrapper>
     </div>
   );
 };

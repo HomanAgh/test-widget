@@ -1,13 +1,17 @@
-"use client";
+"use client"; // Use this if you're in Next.js 13+ with server-side rendering
 
 import React from "react";
 import { GameLog, PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
+import Table from "../common/style/Table";
+import TableHeader from "../common/style/TableHeader";
+import TableTitel from "../common/style/TableTitle";
+import TableWrapper from "../common/style/TableWrapper";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
   playerType: PlayerType;
-  backgroundColor?: string; // NEW
-  textColor?: string;       // NEW
+  backgroundColor?: string;
+  textColor?: string;  
   gameLimit: number;
   showSummary: boolean;
 }
@@ -51,111 +55,89 @@ const GamesTable: React.FC<GamesTableProps> = ({
   }
 
   return (
-    <div
-      className="mt-8 p-4 rounded-md"
-      style={{
-        backgroundColor,
-        color: textColor,
-      }}
-    >
-      <h3 className="text-2xl font-bold mb-4" style={{ color: textColor }}>
-        {showSummary ? `Summary Last ${gameLimit} Games` : `Last ${gameLimit} Games`}
-      </h3>
-
-      <table
-        className="min-w-full shadow-md rounded-lg overflow-hidden mt-4"
-        style={{
-          backgroundColor,
-          color: textColor,
-          border: "1px solid #ccc",
-        }}
-      >
-        <thead
-          style={{
-            filter: "brightness(90%)",
-            backgroundColor,
-            color: textColor,
-          }}
-        >
-          <tr>
-            <th className="py-2 px-4 text-center">Date</th>
-            {playerType === "GOALTENDER" ? (
-              <>
-                <th className="py-2 px-4 text-center">GA</th>
-                <th className="py-2 px-4 text-center">SA</th>
-                <th className="py-2 px-4 text-center">SV</th>
-                <th className="py-2 px-4 text-center">SV%</th>
-              </>
-            ) : (
-              <>
-                <th className="py-2 px-4 text-center">G</th>
-                <th className="py-2 px-4 text-center">A</th>
-                <th className="py-2 px-4 text-center">TP</th>
-                <th className="py-2 px-4 text-center">+/-</th>
-              </>
-            )}
-          </tr>
-        </thead>
-
-        <tbody>
-          {showSummary ? (
-            <tr
-              style={{
-                backgroundColor,
-                color: textColor,
-                border: "1px solid #ccc",
-              }}
-            >
-              <td className="py-2 px-4 text-center">Summary</td>
+    <div>
+      <TableTitel align="left">{showSummary ? `Summary Last ${gameLimit} Games` : `Last ${gameLimit} Games`}</TableTitel>
+      <TableWrapper backgroundColor={backgroundColor} textColor={textColor}>
+        <table className="min-w-full shadow-md rounded-lg overflow-hidden mt-4">
+          <thead style={{ filter: "brightness(90%)" }}>
+            <tr>
+              <TableHeader align="center">Date</TableHeader>
               {playerType === "GOALTENDER" ? (
                 <>
-                  <td className="py-2 px-4 text-center">{(summary as GoaltenderSummary).goalsAgainst}</td>
-                  <td className="py-2 px-4 text-center">{(summary as GoaltenderSummary).shotsAgainst}</td>
-                  <td className="py-2 px-4 text-center">{(summary as GoaltenderSummary).saves}</td>
-                  <td className="py-2 px-4 text-center">
-                    {(summary as GoaltenderSummary).savePercentage.toFixed(2)}%
-                  </td>
+                  <TableHeader align="center">GA</TableHeader>
+                  <TableHeader align="center">SA</TableHeader>
+                  <TableHeader align="center">SV</TableHeader>
+                  <TableHeader align="center">SV%</TableHeader>
                 </>
               ) : (
                 <>
-                  <td className="py-2 px-4 text-center">{(summary as SkaterSummary).goals}</td>
-                  <td className="py-2 px-4 text-center">{(summary as SkaterSummary).assists}</td>
-                  <td className="py-2 px-4 text-center">{(summary as SkaterSummary).points}</td>
-                  <td className="py-2 px-4 text-center">{(summary as SkaterSummary).plusMinusRating}</td>
+                  <TableHeader align="center">G</TableHeader>
+                  <TableHeader align="center">A</TableHeader>
+                  <TableHeader align="center">TP</TableHeader>
+                  <TableHeader align="center">+/-</TableHeader>
                 </>
               )}
             </tr>
-          ) : (
-            lastFiveGames.map((game, index) => (
+          </thead>
+
+          <tbody>
+            {showSummary ? (
               <tr
-                key={index}
                 style={{
-                  backgroundColor: index % 2 === 0 ? "rgba(0,0,255,0.1)" : backgroundColor,
+                  backgroundColor,
                   color: textColor,
                   border: "1px solid #ccc",
                 }}
               >
-                <td className="py-2 px-4 text-center">{game.date}</td>
+                <Table align="center">Summary</Table>
                 {playerType === "GOALTENDER" ? (
                   <>
-                    <td className="py-2 px-4 text-center">{game.goalsAgainst || 0}</td>
-                    <td className="py-2 px-4 text-center">{game.shotsAgainst || 0}</td>
-                    <td className="py-2 px-4 text-center">{game.saves || 0}</td>
-                    <td className="py-2 px-4 text-center">{game.savePercentage?.toFixed(2) || "0.00"}%</td>
+                    <Table align="center">{(summary as GoaltenderSummary).goalsAgainst}</Table>
+                    <Table align="center">{(summary as GoaltenderSummary).shotsAgainst}</Table>
+                    <Table align="center">{(summary as GoaltenderSummary).saves}</Table>
+                    <Table align="center">{(summary as GoaltenderSummary).savePercentage.toFixed(2)}%</Table>
                   </>
                 ) : (
                   <>
-                    <td className="py-2 px-4 text-center">{game.goals || 0}</td>
-                    <td className="py-2 px-4 text-center">{game.assists || 0}</td>
-                    <td className="py-2 px-4 text-center">{game.points || 0}</td>
-                    <td className="py-2 px-4 text-center">{game.plusMinusRating || 0}</td>
+                    <Table align="center">{(summary as SkaterSummary).goals}</Table>
+                    <Table align="center">{(summary as SkaterSummary).assists}</Table>
+                    <Table align="center">{(summary as SkaterSummary).points}</Table>
+                    <Table align="center">{(summary as SkaterSummary).plusMinusRating}</Table>
                   </>
                 )}
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              lastFiveGames.map((game, index) => (
+                <tr
+                  key={index}
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "rgba(0,0,255,0.1)" : backgroundColor,
+                    color: textColor,
+                    border: "1px solid #ccc",
+                  }}
+                >
+                  <Table align="center">{game.date}</Table>
+                  {playerType === "GOALTENDER" ? (
+                    <>
+                      <Table align="center">{game.goalsAgainst || 0}</Table>
+                      <Table align="center">{game.shotsAgainst || 0}</Table>
+                      <Table align="center">{game.saves || 0}</Table>
+                      <Table align="center">{game.savePercentage?.toFixed(2) || "0.00"}%</Table>
+                    </>
+                  ) : (
+                    <>
+                      <Table align="center">{game.goals || 0}</Table>
+                      <Table align="center">{game.assists || 0}</Table>
+                      <Table align="center">{game.points || 0}</Table>
+                      <Table align="center">{game.plusMinusRating || 0}</Table>
+                    </>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </TableWrapper>
     </div>
   );
 };

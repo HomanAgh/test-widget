@@ -1,6 +1,7 @@
 import React from "react";
 import { Player } from "@/app/types/player";
 import Image from "next/image";
+import Link from "../common/style/Link"; // Import the Link component
 
 interface PlayerInfoProps {
   player: Player;
@@ -8,7 +9,6 @@ interface PlayerInfoProps {
 }
 
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, textColor = "#000000" }) => {
-  // We replaced the "text-blue-800" classes with inline style color or your own logic
   return (
     <div style={{ color: textColor }}>
       <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-6">
@@ -35,15 +35,10 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, textColor = "#000000" }
                 height={16}
               />
             )}
-            {/* Player Name (link) */}
-            <a
-              href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: textColor, textDecoration: "underline" }}
-            >
+            {/* Player Name (Link) */}
+            <Link href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}>
               <span style={{ fontSize: "1.25rem", fontWeight: "600" }}>{player.name}</span>
-            </a>
+            </Link>
           </div>
 
           {/* Team and League Info */}
@@ -51,27 +46,17 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, textColor = "#000000" }
             <p style={{ fontSize: "1rem", fontWeight: "500", color: textColor }}>
               <span> #{player.jerseyNumber} </span>
               {player.team ? (
-                <a
-                  href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: textColor, textDecoration: "underline" }}
-                >
+                <Link href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}`}>
                   {player.team.name}
-                </a>
+                </Link>
               ) : (
                 "Unknown Team"
               )}
               {" / "}
               {player.league ? (
-                <a
-                  href={`https://www.eliteprospects.com/league/${player.league.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: textColor, textDecoration: "underline" }}
-                >
+                <Link href={`https://www.eliteprospects.com/league/${player.league.slug}`}>
                   {player.league.name}
-                </a>
+                </Link>
               ) : (
                 "Unknown League"
               )}

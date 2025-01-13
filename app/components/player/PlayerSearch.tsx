@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Player } from "@/app/types/player";
+import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 
 interface SearchBarProps {
   onSelect: (playerId: string) => void;
@@ -16,16 +17,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Debounce the search query
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 500); // Adjust delay as needed
+    }, 500);
 
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Fetch and sort players by views when the debounced query changes
   useEffect(() => {
     const fetchPlayers = async () => {
       if (!debouncedQuery) {
@@ -36,21 +35,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
 
       setIsLoading(true);
       try {
-        const res = await fetch(
-          `/api/searchPlayer?query=${encodeURIComponent(debouncedQuery)}`
-        );
+        const res = await fetch(`/api/searchPlayer?query=${encodeURIComponent(debouncedQuery)}`);
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.error || "SearchFailed");
         }
 
         const data = await res.json();
-
-        // Sort players by views and limit to top 20
         const sortedPlayers = data.players
           .filter((player: Player) => typeof player.views === "number")
-          .sort((a: Player, b: Player) => b.views - a.views) // Descending order
-          .slice(0, 20); // Top 20 players
+          .sort((a: Player, b: Player) => b.views - a.views)
+          .slice(0, 20);
 
         setPlayers(sortedPlayers);
         setShowDropdown(true);
@@ -65,7 +60,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     fetchPlayers();
   }, [debouncedQuery, onError]);
 
-  // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || players.length === 0) return;
 
@@ -93,36 +87,31 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
   };
 
   return (
-    <div className="relative w-full">
-      <input
+    <SearchBarContainer>
+      <SearchInput
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={"Search for players..."}
-        className="border p-2 rounded-md w-full"
+        placeholder="Search for players..."
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(players.length > 0)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
       />
       {showDropdown && (
-        <ul
-          className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10"
-        >
+        <Dropdown>
           {players.map((player, index) => (
-            <li
+            <DropdownItem
               key={player.id}
               onClick={() => handleSelect(player.id)}
-              className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                highlightedIndex === index ? "bg-gray-200" : ""
-              }`}
+              isHighlighted={highlightedIndex === index}
             >
-              {`${player.name} - ${player.team} (${player.league}) - ${"Views"}: ${player.views}`}
-            </li>
+              {`${player.name} - ${player.team} (${player.league}) - Views: ${player.views}`}
+            </DropdownItem>
           ))}
-          {isLoading && <li className="p-2 text-gray-500">{"Loading..."}</li>}
-        </ul>
+          {isLoading && <LoadingItem />}
+        </Dropdown>
       )}
-    </div>
+    </SearchBarContainer>
   );
 };
 
