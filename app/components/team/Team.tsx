@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import RosterTable from '@/app/components/team/RosterTable';
-import type { Team as TeamType, RosterPlayer } from '@/app/types/team';
-import Image from 'next/image';
+import React, { useEffect, useState } from "react";
+import RosterTable from "@/app/components/team/RosterTable";
+import type { Team as TeamType, RosterPlayer } from "@/app/types/team";
+import Image from "next/image";
+import Link from "../common/style/Link"; // Import the Link component
 
 interface TeamStats {
   team: TeamType;
@@ -91,14 +92,9 @@ const Team: React.FC<TeamProps> = ({
             )}
             {/* Team Name */}
             <h2 className="text-2xl font-bold" style={{ color: textColor }}>
-              <a
-                href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline"
-              >
+              <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
                 {teamStats.team.name}
-              </a>
+              </Link>
             </h2>
           </div>
 
@@ -106,26 +102,16 @@ const Team: React.FC<TeamProps> = ({
           <p className="text-center text-gray-600" style={{ color: textColor }}>
             <span>
               {"League"}:{" "}
-              <a
-                href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline"
-              >
+              <Link href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}>
                 {teamStats.team.league}
-              </a>
+              </Link>
             </span>{" "}
             |{" "}
             <span>
               {"Country"}:{" "}
-              <a
-                href={`https://www.eliteprospects.com/nation/${teamStats.team.country}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline"
-              >
+              <Link href={`https://www.eliteprospects.com/nation/${teamStats.team.country}`}>
                 {teamStats.team.country}
-              </a>
+              </Link>
             </span>
           </p>
 

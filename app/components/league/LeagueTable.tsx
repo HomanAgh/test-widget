@@ -2,6 +2,10 @@
 
 import React from "react";
 import { LeagueTableProps } from "@/app/types/league";
+import Table from "../common/style/Table";
+import TableHeader from "../common/style/TableHeader";
+import TableTitel from "../common/style/TableTitle";
+import Link from "../common/style/Link";
 
 const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor }) => {
 
@@ -30,9 +34,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
   return (
     <div>
       {/* League Title */}
-      <h1 className="text-lg font-semibold mb-4 text-center">
-        {leagueName} {"Season"}: {seasonTitle}
-      </h1>
+      <TableTitel align="center">{leagueName} {"Season"}: {seasonTitle}</TableTitel>
 
       {/* Render without groups if no team has group data */}
       {!hasGroups ? (
@@ -42,12 +44,12 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
         >
           <thead>
             <tr className="bg-red-600 text-white">
-              <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{"Team"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{"GP"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{"W"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{"L"}</th>
-              <th className="border border-gray-300 px-2 py-1 text-center">{"TP"}</th>
+              <TableHeader align="center">{"#"}</TableHeader>
+              <TableHeader align="center">{"Team"}</TableHeader>
+              <TableHeader align="center">{"GP"}</TableHeader>
+              <TableHeader align="center">{"W"}</TableHeader>
+              <TableHeader align="center">{"L"}</TableHeader>
+              <TableHeader align="center">{"TP"}</TableHeader>
             </tr>
           </thead>
           <tbody>
@@ -56,21 +58,20 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                 key={team.id || `team-${index}`}
                 className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
               >
-                <td className="border border-gray-300 px-2 py-1 text-center">{index + 1}</td>
-                <td className="border border-gray-300 px-2 py-1 text-left">
+                <Table align="center">{index + 1}</Table>
+                <Table align="left">
                   <a
                     href={team.team.links?.eliteprospectsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
                   >
                     {team.team.name || "Unknown Team"}
                   </a>
-                </td>
-                <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.GP || 0}</td>
-                <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.W || 0}</td>
-                <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.L || 0}</td>
-                <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.PTS || 0}</td>
+                </Table>
+                <Table align="center">{team.stats?.GP || 0}</Table>
+                <Table align="center">{team.stats?.W || 0}</Table>
+                <Table align="center">{team.stats?.L || 0}</Table>
+                <Table align="center">{team.stats?.PTS || 0}</Table>
               </tr>
             ))}
           </tbody>
@@ -85,12 +86,12 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
             >
               <thead>
                 <tr className="bg-red-600 text-white">
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"Team"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"GP"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"W"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"L"}</th>
-                  <th className="border border-gray-300 px-2 py-1 text-center">{"TP"}</th>
+                  <TableHeader align="center">{"#"}</TableHeader>
+                  <TableHeader align="left">{"Team"}</TableHeader>
+                  <TableHeader align="center">{"GP"}</TableHeader>
+                  <TableHeader align="center">{"W"}</TableHeader>
+                  <TableHeader align="center">{"L"}</TableHeader>
+                  <TableHeader align="center">{"TP"}</TableHeader>
                 </tr>
               </thead>
               <tbody>
@@ -99,22 +100,16 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                     key={team.id || `team-${index}`}
                     className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                   >
-                    <td className="border border-gray-300 px-2 py-1 text-center">{index + 1}</td>
-                    <td className="border border-gray-300 px-2 py-1 text-left">
-                      <a
-                        href={team.team.links?.eliteprospectsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline hover:text-blue-800"
-                      >
-                        {team.team.name || "Unknown Team"}
-                      </a>
-                    </td>
-                    <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.GP || 0}</td>
-                    <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.W || 0}</td>
-                    <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.L || 0}</td>
-                    <td className="border border-gray-300 px-2 py-1 text-center">{team.stats?.PTS || 0}</td>
-
+                    <Table align="center">{index + 1}</Table>
+                    <Table align="left">
+                      <Link href={team.team.links?.eliteprospectsUrl}>
+                          {team.team.name || "Unknown Team"}
+                      </Link>
+                    </Table>
+                    <Table align="center">{team.stats?.GP || 0}</Table>
+                    <Table align="center">{team.stats?.W || 0}</Table>
+                    <Table align="center">{team.stats?.L || 0}</Table>
+                    <Table align="center">{team.stats?.PTS || 0}</Table>
                   </tr>
                 ))}
               </tbody>

@@ -1,13 +1,11 @@
 "use client";
+
 import React from "react";
 import Image from "next/image";
 import { RosterPlayer } from "@/app/types/team";
-
-interface RosterTableProps {
-  roster: RosterPlayer[];
-  backgroundColor?: string;
-  textColor?: string;
-}
+import Table from "../common/style/Table";
+import TableHeader from "../common/style/TableHeader";
+import Link from "../common/style/Link"; // Import the Link component
 
 const calculateAge = (dateOfBirth: string): number | "N/A" => {
   if (!dateOfBirth) return "N/A";
@@ -20,7 +18,7 @@ const calculateAge = (dateOfBirth: string): number | "N/A" => {
     : age - 1;
 };
 
-const RosterTable: React.FC<RosterTableProps> = ({ 
+const RosterTable: React.FC<{ roster: RosterPlayer[], backgroundColor?: string, textColor?: string }> = ({ 
   roster, 
   backgroundColor = "#FFFFFF",
   textColor = "#000000", 
@@ -38,8 +36,8 @@ const RosterTable: React.FC<RosterTableProps> = ({
 
   const renderPlayerRow = (player: RosterPlayer) => (
     <tr key={player.id}>
-      <td className="border border-gray-300 px-2 py-1 text-center">#{player.jerseyNumber}</td>
-      <td className="border border-gray-300 px-2 py-1 text-left">
+      <Table align="center">#{player.jerseyNumber}</Table>
+      <Table align="left">
         {player.flagUrl && (
           <Image
             src={player.flagUrl}
@@ -49,20 +47,13 @@ const RosterTable: React.FC<RosterTableProps> = ({
             className="inline-block mr-2"
           />
         )}
-        <a
-          href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline hover:text-blue-800 "
-          style={{ color: textColor}}
-        >
+        {/* Replace anchor tag with Link component */}
+        <Link href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}>
           {`${player.firstName} ${player.lastName} (${player.position})`}
-        </a>
-      </td>
-      <td className="border border-gray-300 px-2 py-1 text-center">{calculateAge(player.dateOfBirth)}</td>
-      <td className="border border-gray-300 px-2 py-1 text-center">
-        {player.dateOfBirth ? new Date(player.dateOfBirth).getFullYear() : "N/A"}
-      </td>
+        </Link>
+      </Table>
+      <Table align="center">{calculateAge(player.dateOfBirth)}</Table>
+      <Table align="center">{player.dateOfBirth ? new Date(player.dateOfBirth).getFullYear() : "N/A"}</Table>
     </tr>
   );
 
@@ -76,10 +67,10 @@ const RosterTable: React.FC<RosterTableProps> = ({
     >
       <thead >
         <tr className="bg-blue-600 text-white" style={{ color: textColor }}>
-          <th className="border border-gray-300 px-2 py-1 text-center">{"#"}</th>
-          <th className="border border-gray-300 px-2 py-1 text-left">{"PLAYER"}</th>
-          <th className="border border-gray-300 px-2 py-1 text-center">{"A"}</th>
-          <th className="border border-gray-300 px-2 py-1 text-center">{"BORN"}</th>
+          <TableHeader align="center">{"#"}</TableHeader>
+          <TableHeader align="left">{"PLAYER"}</TableHeader>
+          <TableHeader align="center">{"A"}</TableHeader>
+          <TableHeader align="center">{"BORN"}</TableHeader>
         </tr>
       </thead>
       <tbody>

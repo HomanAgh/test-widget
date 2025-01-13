@@ -1,5 +1,9 @@
 import React from "react";
 import { PlayerType, Goalie, Skater } from "@/app/types/player";
+import Table from "../common/style/Table";
+import TableHeader from "../common/style/TableHeader";
+import TableTitel from "../common/style/TableTitle";
+import TableWrapper from "../common/style/TableWrapper"; // Import TableWrapper
 
 interface PlayerStatsTableProps {
   playerType: PlayerType;
@@ -17,63 +21,53 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
   const isGoaltender = playerType === "GOALTENDER"; 
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Statistics</h2>
-      <table
-        className="min-w-full shadow-md rounded-lg overflow-hidden"
-        style={{ backgroundColor, color: textColor, border: "1px solid #ccc" }}
-      >
-        {/* If you want a slightly darker header row, we can keep filter: brightness(90%). */}
-        <thead
-          style={{
-            filter: "brightness(90%)",
-            backgroundColor,
-            color: textColor,
-          }}
-        >
+   <div>
+     <TableTitel align="left">Statistics</TableTitel>
+     <TableWrapper backgroundColor={backgroundColor} textColor={textColor}>
+      <table className="min-w-full shadow-md rounded-lg overflow-hidden">
+        <thead style={{ filter: "brightness(90%)" }}>
           <tr>
-            <th className="py-2 px-4 text-center">GP</th>
+            <TableHeader align="center">GP</TableHeader>
             {isGoaltender ? (
               <>
-                <th className="py-2 px-4 text-center">GA</th>
-                <th className="py-2 px-4 text-center">SA</th>
-                <th className="py-2 px-4 text-center">SV</th>
-                <th className="py-2 px-4 text-center">SV%</th>
+                <TableHeader align="center">GA</TableHeader>
+                <TableHeader align="center">SA</TableHeader>
+                <TableHeader align="center">SV</TableHeader>
+                <TableHeader align="center">SV%</TableHeader>
               </>
             ) : (
               <>
-                <th className="py-2 px-4 text-center">G</th>
-                <th className="py-2 px-4 text-center">A</th>
-                <th className="py-2 px-4 text-center">TP</th>
-                <th className="py-2 px-4 text-center">+/-</th>
+                <TableHeader align="center">G</TableHeader>
+                <TableHeader align="center">A</TableHeader>
+                <TableHeader align="center">TP</TableHeader>
+                <TableHeader align="center">+/-</TableHeader>
               </>
             )}
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td className="py-2 px-4 text-center">{(stats as Goalie).gamesPlayed}</td>
+            <Table align="center">{(stats as Goalie).gamesPlayed}</Table>
             {isGoaltender ? (
               <>
-                <td className="py-2 px-4 text-center">{(stats as Goalie).goalsAgainst}</td>
-                <td className="py-2 px-4 text-center">{(stats as Goalie).shotsAgainst}</td>
-                <td className="py-2 px-4 text-center">{(stats as Goalie).saves}</td>
-                <td className="py-2 px-4 text-center">
-                  {((stats as Goalie).savePercentage || 0).toFixed(2)}%
-                </td>
+                <Table align="center">{(stats as Goalie).goalsAgainst}</Table>
+                <Table align="center">{(stats as Goalie).shotsAgainst}</Table>
+                <Table align="center">{(stats as Goalie).saves}</Table>
+                <Table align="center">{((stats as Goalie).savePercentage || 0).toFixed(2)}%</Table>
               </>
             ) : (
               <>
-                <td className="py-2 px-4 text-center">{(stats as Skater).goals}</td>
-                <td className="py-2 px-4 text-center">{(stats as Skater).assists}</td>
-                <td className="py-2 px-4 text-center">{(stats as Skater).points}</td>
-                <td className="py-2 px-4 text-center">{(stats as Skater).plusMinusRating}</td>
+                <Table align="center">{(stats as Skater).goals}</Table>
+                <Table align="center">{(stats as Skater).assists}</Table>
+                <Table align="center">{(stats as Skater).points}</Table>
+                <Table align="center">{(stats as Skater).plusMinusRating}</Table>
               </>
             )}
           </tr>
         </tbody>
       </table>
-    </div>
+    </TableWrapper>
+   </div>
   );
 };
 
