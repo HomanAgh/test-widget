@@ -3,7 +3,7 @@ import { DraftPickAPIResponse } from '@/app/types/player';
 export const fetchDraftPicksAndTeams = async (
   playerIds: number[],
   league: string | null
-): Promise<Record<number, { draftPick: string; teams: string[] }>> => {
+): Promise<Record<number, { draftPick: string; teams: { name: string; leagueLevel: string | null }[] }>> => {
   if (!playerIds || playerIds.length === 0) {
     console.warn('No player IDs provided.');
     return {};
@@ -34,10 +34,14 @@ export const fetchDraftPicksAndTeams = async (
     return data.players.reduce((acc, entry) => {
       acc[entry.playerId] = {
         draftPick: entry.draftPick || 'N/A',
-        teams: entry.teams || [],
+        teams: (entry.teams || []).map((team: any) => ({
+          name: team.name, // Ensure the team object has a `name` property
+          leagueLevel: team.leagueLevel || 'unknown', // Ensure `leagueLevel` is present
+        })),
       };
+      console.log(`Player ${entry.playerId} teams:`, acc[entry.playerId].teams);
       return acc;
-    }, {} as Record<number, { draftPick: string; teams: string[] }>);
+    }, {} as Record<number, { draftPick: string; teams: { name: string; leagueLevel: string | null }[] }>);
   } catch (err) {
     console.error('Error fetching draft picks and teams:', err);
     return {};

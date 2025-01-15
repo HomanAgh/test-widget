@@ -86,13 +86,17 @@ export interface CareerStats {
   plusMinus?: number; // SKATER only
 }
 
-export interface AlumniPlayer { // nytt interface, kolla om det funkar
+export interface AlumniPlayer {
   id: number;
   name: string;
   birthYear: number | null;
-  draftPick?: string;  
-  teams?: string[];
+  draftPick?: string;
+  teams: {
+    name: string;
+    leagueLevel: string | null;
+  }[]; // Updated to reflect array of objects with name and leagueLevel
 }
+
 
 export interface AlumniAPIResponse { // nytt interface, kolla om det funkar
   players: {

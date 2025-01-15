@@ -1,153 +1,3 @@
-/* import { NextResponse } from 'next/server';
-
-const apiKey = process.env.API_KEY;
-const apiBaseUrl = process.env.API_BASE_URL;
-
-// Minimal interfaces
-interface ApiResponse<T> {
-  data?: T[];
-}
-interface Player {
-  id: number;
-  name?: string;
-  dateOfBirth?: string;
-}
-
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-
-  // numeric team IDs, e.g. ?teamIds=21240,33613
-  const teamIdsParam = searchParams.get('teamIds');
-  // optional league param, e.g. ?league=nhl
-  const league = searchParams.get('league');
-  // toggle for including youth team fetch, e.g. ?includeYouth=true
-  const includeYouth = searchParams.get('includeYouth') === 'true';
-  // offset & limit for pagination
-  const offset = parseInt(searchParams.get('offset') || '0', 10);
-  const limit = parseInt(searchParams.get('limit') || '20', 10);
-
-  // parse IDs into an array of numbers
-  const teamIds = teamIdsParam
-    ? teamIdsParam.split(',').map((idStr) => parseInt(idStr.trim(), 10))
-    : [];
-
-  // string-based param for youthTeam (if you want the user’s typed name):
-  // e.g. ?teams=San Jose Jr. Sharks
-  const teamsParam = searchParams.get('teams'); 
-
-  console.log('Alumni Route: Received query params =>');
-  console.log('  teamIdsParam =', teamIdsParam);
-  console.log('  league =', league);
-  console.log('  includeYouth =', includeYouth);
-  console.log('  teamsParam =', teamsParam);
-  console.log('  offset =', offset, 'limit =', limit);
-
-  let allPlayers: Player[] = [];
-
-  try {
-    // 1) For each numeric team ID, fetch "hasPlayedInTeam=<ID>"
-    for (const id of teamIds) {
-      // Build external URL
-      let playersUrl = `${apiBaseUrl}/players?hasPlayedInTeam=${id}`;
-      if (league) {
-        playersUrl += `&hasPlayedInLeague=${league}`;
-      } else {
-        // optionally handle "fetchAllLeagues"
-        playersUrl += `&fetchAllLeagues=true`;
-      }
-      playersUrl += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
-
-      console.log(`Alumni Route: fetching players for teamId=${id}:`, playersUrl);
-      const res = await fetch(playersUrl);
-      console.log(
-        `Alumni Route: response status for teamId=${id} =>`,
-        res.status
-      );
-      if (!res.ok) {
-        console.error(
-          `Alumni Route: failed to fetch players for team ID ${id}: ${res.statusText}`
-        );
-        continue; // or throw an error if you want
-      }
-
-      const json: ApiResponse<Player> = await res.json();
-      const playersForTeam = json.data || [];
-      console.log(`Alumni Route: Team ID ${id} returned ${playersForTeam.length} players.`);
-      allPlayers.push(...playersForTeam);
-    }
-
-    // 2) If includeYouth=true AND teamsParam is present, do a youthTeam fetch:
-    if (includeYouth && teamsParam) {
-      // e.g. "San Jose Jr. Sharks"
-      let youthUrl = `${apiBaseUrl}/players?youthTeam=${encodeURIComponent(
-        teamsParam
-      )}`;
-      if (league) {
-        youthUrl += `&hasPlayedInLeague=${league}`;
-      } else {
-        youthUrl += `&fetchAllLeagues=true`;
-      }
-      youthUrl += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
-
-      console.log('Alumni Route: fetching youthTeamUrl:', youthUrl);
-      const youthRes = await fetch(youthUrl);
-      console.log('Alumni Route: youthTeamUrl response status =>', youthRes.status);
-
-      if (youthRes.ok) {
-        const youthJson: ApiResponse<Player> = await youthRes.json();
-        const youthPlayers = youthJson.data || [];
-        console.log(`Alumni Route: youthTeam=${teamsParam} returned ${youthPlayers.length} players.`);
-        allPlayers.push(...youthPlayers);
-      } else {
-        console.warn(
-          `Alumni Route: youthTeam fetch failed with ${youthRes.statusText}`
-        );
-      }
-    }
-
-    // 3) Deduplicate by ID
-    const uniquePlayers = allPlayers.reduce((acc, player) => {
-      if (!acc.some((p) => p.id === player.id)) {
-        acc.push(player);
-      }
-      return acc;
-    }, [] as Player[]);
-
-    console.log(
-      'Alumni Route: total unique players before pagination =',
-      uniquePlayers.length
-    );
-
-    // 4) Paginate
-    const paginatedPlayers = uniquePlayers.slice(offset, offset + limit);
-    console.log(
-      `Alumni Route: returning players from index ${offset} to ${
-        offset + limit
-      }, final count = ${paginatedPlayers.length}`
-    );
-
-    // 5) Convert dateOfBirth => birthYear
-    const minimalPlayers = paginatedPlayers.map((player) => ({
-      id: player.id,
-      name: player.name || '',
-      birthYear: player.dateOfBirth
-        ? new Date(player.dateOfBirth).getFullYear()
-        : null,
-    }));
-
-    // 6) Return JSON
-    return NextResponse.json({
-      players: minimalPlayers,
-      total: uniquePlayers.length,
-      nextOffset: offset + limit < uniquePlayers.length ? offset + limit : null,
-    });
-  } catch (error: unknown) {
-    console.error('Alumni Route: Error in fetching data:', error);
-    return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
-  }
-}
- */
-
 import { NextResponse } from 'next/server';
 
 const apiKey = process.env.API_KEY;
@@ -157,7 +7,6 @@ const apiBaseUrl = process.env.API_BASE_URL;
 interface ApiResponse<T> {
   data?: T[];
 }
-
 interface Player {
   id: number;
   name?: string;
@@ -167,86 +16,89 @@ interface Player {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  // Get query parameters
-  const teamIdsParam = searchParams.get('teamIds'); // e.g., ?teamIds=21240,33613
-  const league = searchParams.get('league'); // e.g., ?league=nhl
-  const includeYouth = searchParams.get('includeYouth') === 'true'; // ?includeYouth=true
-  const offset = parseInt(searchParams.get('offset') || '0', 10); // Pagination offset
-  const limit = parseInt(searchParams.get('limit') || '20', 10); // Pagination limit
-  const teamsParam = searchParams.get('teams'); // For youth team name
+  // Parse team IDs
+  const teamIdsParam = searchParams.get('teamIds'); // e.g. "21240,33613"
+  // e.g. "nhl,shl,ohl" => should be an OR
+  const leagueParam = searchParams.get('league');
+  const includeYouth = searchParams.get('includeYouth') === 'true';
+  const offset = parseInt(searchParams.get('offset') || '0', 10);
+  const limit = parseInt(searchParams.get('limit') || '20', 10);
+  const teamsParam = searchParams.get('teams'); // for youth team name
 
   console.log('Alumni Route: Received query params =>');
   console.log('  teamIdsParam =', teamIdsParam);
-  console.log('  league =', league);
+  console.log('  leagueParam =', leagueParam);
   console.log('  includeYouth =', includeYouth);
   console.log('  teamsParam =', teamsParam);
   console.log('  offset =', offset, 'limit =', limit);
 
+  // Convert teamIds => number[]
+  const teamIds = teamIdsParam
+    ? teamIdsParam.split(',').map((idStr) => parseInt(idStr.trim(), 10))
+    : [];
+  // Convert league => string[]
+  const leagues = leagueParam
+    ? leagueParam.split(',').map((l) => l.trim().toLowerCase())
+    : [];
+
   let allPlayers: Player[] = [];
 
   try {
-    // Step 1: Fetch players for each numeric team ID
-    if (teamIdsParam) {
-      const teamIds = teamIdsParam.split(',').map((idStr) => parseInt(idStr.trim(), 10));
-      for (const id of teamIds) {
-        let playersUrl = `${apiBaseUrl}/players?hasPlayedInTeam=${id}`;
-        if (league) {
-          playersUrl += `&hasPlayedInLeague=${league}`;
-        } else {
-          playersUrl += `&fetchAllLeagues=true`;
-        }
-        playersUrl += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
-
-        console.log(`Alumni Route: fetching players for teamId=${id}:`, playersUrl);
-        const res = await fetch(playersUrl);
-        console.log(`Alumni Route: response status for teamId=${id} =>`, res.status);
-
-        if (res.ok) {
-          const json: ApiResponse<Player> = await res.json();
-          const playersForTeam = json.data || [];
-          console.log(`Alumni Route: Team ID ${id} returned ${playersForTeam.length} players.`);
-          allPlayers.push(...playersForTeam);
-        } else {
-          console.error(`Alumni Route: failed to fetch players for team ID ${id}: ${res.statusText}`);
+    //
+    // 1) Fetch players for each numeric team ID, BUT do multiple fetches
+    //    for each league => OR logic.
+    //
+    for (const id of teamIds) {
+      if (leagues.length === 0) {
+        // If no league specified, or user wants "all leagues", do a single fetch
+        const url = buildTeamUrl(id, null);
+        console.log(`Alumni Route: fetching all leagues for teamId=${id} => ${url}`);
+        await fetchAndCombinePlayers(url, allPlayers, id);
+      } else {
+        // leagues array => do 1 fetch per league => OR
+        for (const singleLeague of leagues) {
+          const url = buildTeamUrl(id, singleLeague);
+          console.log(
+            `Alumni Route: fetching teamId=${id}, singleLeague=${singleLeague} => ${url}`
+          );
+          await fetchAndCombinePlayers(url, allPlayers, id);
         }
       }
     }
 
-    // Step 2: Fetch players by youth team if includeYouth=true
+    //
+    // 2) If includeYouth=true && teamsParam present => fetch youthTeam with OR logic for leagues
+    //
     if (includeYouth && teamsParam) {
-      let youthUrl = `${apiBaseUrl}/players?youthTeam=${encodeURIComponent(teamsParam)}`;
-      if (league) {
-        youthUrl += `&hasPlayedInLeague=${league}`;
+      if (leagues.length === 0) {
+        // No specific league => fetchAllLeagues for youthTeam
+        const url = buildYouthUrl(teamsParam, null);
+        console.log(`Alumni Route: fetching youthTeam (all leagues) => ${url}`);
+        await fetchAndCombinePlayers(url, allPlayers, /*teamId=*/-1);
       } else {
-        youthUrl += `&fetchAllLeagues=true`;
-      }
-      youthUrl += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
-
-      console.log('Alumni Route: fetching youthTeamUrl:', youthUrl);
-      const youthRes = await fetch(youthUrl);
-      console.log('Alumni Route: youthTeamUrl response status =>', youthRes.status);
-
-      if (youthRes.ok) {
-        const youthJson: ApiResponse<Player> = await youthRes.json();
-        const youthPlayers = youthJson.data || [];
-        console.log(`Alumni Route: youthTeam=${teamsParam} returned ${youthPlayers.length} players.`);
-        allPlayers.push(...youthPlayers);
-      } else {
-        console.warn(`Alumni Route: youthTeam fetch failed with ${youthRes.statusText}`);
+        // OR logic for each league
+        for (const singleLeague of leagues) {
+          const url = buildYouthUrl(teamsParam, singleLeague);
+          console.log(
+            `Alumni Route: fetching youthTeam (league=${singleLeague}) => ${url}`
+          );
+          await fetchAndCombinePlayers(url, allPlayers, /*teamId=*/-1);
+        }
       }
     }
 
-    // Step 3: Deduplicate players by ID
-    const uniquePlayers = allPlayers.reduce((acc, player) => {
-      if (!acc.some((p) => p.id === player.id)) {
-        acc.push(player);
-      }
-      return acc;
-    }, [] as Player[]);
+    //
+    // 3) Deduplicate
+    //
+    const uniquePlayers = deduplicatePlayersById(allPlayers);
+    console.log(
+      'Alumni Route: total unique players before pagination =',
+      uniquePlayers.length
+    );
 
-    console.log('Alumni Route: total unique players before pagination =', uniquePlayers.length);
-
-    // Step 4: Paginate
+    //
+    // 4) Paginate
+    //
     const paginatedPlayers = uniquePlayers.slice(offset, offset + limit);
     console.log(
       `Alumni Route: returning players from index ${offset} to ${
@@ -254,7 +106,9 @@ export async function GET(request: Request) {
       }, final count = ${paginatedPlayers.length}`
     );
 
-    // Step 5: Convert dateOfBirth to birthYear
+    //
+    // 5) Convert dateOfBirth => birthYear
+    //
     const minimalPlayers = paginatedPlayers.map((player) => ({
       id: player.id,
       name: player.name || '',
@@ -263,14 +117,77 @@ export async function GET(request: Request) {
         : null,
     }));
 
-    // Step 6: Return response
+    //
+    // 6) Return
+    //
     return NextResponse.json({
       players: minimalPlayers,
       total: uniquePlayers.length,
       nextOffset: offset + limit < uniquePlayers.length ? offset + limit : null,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('Alumni Route: Error in fetching data:', error);
     return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
   }
+}
+
+/**
+ * Helper function: Build a URL for players from a single team and league (or no league).
+ */
+function buildTeamUrl(teamId: number, singleLeague: string | null) {
+  let url = `${apiBaseUrl}/players?hasPlayedInTeam=${teamId}`;
+  if (singleLeague) {
+    url += `&hasPlayedInLeague=${singleLeague}`;
+  } else {
+    url += `&fetchAllLeagues=true`;
+  }
+  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
+  return url;
+}
+
+/**
+ * Helper function: Build a URL for youthTeam with a single league (or none).
+ */
+function buildYouthUrl(teamsParam: string, singleLeague: string | null) {
+  let url = `${apiBaseUrl}/players?youthTeam=${encodeURIComponent(teamsParam)}`;
+  if (singleLeague) {
+    url += `&hasPlayedInLeague=${singleLeague}`;
+  } else {
+    url += `&fetchAllLeagues=true`;
+  }
+  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
+  return url;
+}
+
+/**
+ * Helper: fetch, parse, and push results into the allPlayers array.
+ */
+async function fetchAndCombinePlayers(
+  url: string,
+  allPlayers: Player[],
+  teamId: number
+) {
+  const res = await fetch(url);
+  console.log(`Alumni Route: response status for teamId=${teamId} =>`, res.status);
+
+  if (!res.ok) {
+    console.error(`Alumni Route: failed to fetch players for teamId=${teamId}: ${res.statusText}`);
+    return;
+  }
+
+  const json: ApiResponse<Player> = await res.json();
+  const players = json.data || [];
+  console.log(`Alumni Route: Team ID ${teamId} => fetched ${players.length} players.`);
+  allPlayers.push(...players);
+}
+
+/**
+ * Helper: deduplicate players by their ID.
+ */
+function deduplicatePlayersById(players: Player[]): Player[] {
+  const uniqueMap = new Map<number, Player>();
+  for (const p of players) {
+    uniqueMap.set(p.id, p);
+  }
+  return Array.from(uniqueMap.values());
 }
