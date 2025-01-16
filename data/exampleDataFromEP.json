@@ -100,7 +100,7 @@
         "league": {
           "slug": "hockeyallsvenskan",
           "name": "HockeyAllsvenskan",
-          "teamClass": "men",
+          "s": "men",
           "leagueLevel": "professional",
           "country": {
             "slug": "SWE",

@@ -20,12 +20,12 @@ export const useFetchLeagues = () => {
         const junData = await junResponse.json();
 
         // Professional leagues
-        const customLeagueSlugs = ['nhl', 'ahl', 'shl', 'khl', 'liiga', 'nl', 'del'];
+        const customLeagueSlugs = ['pwhl-w', 'nhl', 'ahl', 'shl', 'khl', 'liiga', 'nl', 'del'];
         setProLeagues(proData.leagues || []);
         setCustomLeagues(proData.leagues.filter((league: League) => customLeagueSlugs.includes(league.slug)));
 
         // Junior leagues
-        const customJuniorLeagueSlugs = ['chl', 'ohl', 'whl', 'qmjhl'];
+        const customJuniorLeagueSlugs = ['jwhl-w', 'ushl', 'cchl', 'ohl', 'whl', 'qmjhl'];
         setJunLeagues(junData.leagues || []); // Set all junior leagues
         setCustomJunLeagues(junData.leagues.filter((league: League) => customJuniorLeagueSlugs.includes(league.slug)));
       } catch (err: unknown) {
