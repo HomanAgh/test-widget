@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     ? leagueParam.split(',').map((l) => l.trim().toLowerCase())
     : [];
 
-  let allPlayers: Player[] = [];
+  const allPlayers: Player[] = [];
 
   try {
     //
