@@ -15,6 +15,7 @@ interface DraftSelection {
 
 interface TeamResponseItem {
   team: {
+    id?: number;
     league: { leagueLevel?: string };
     name: string;
   };
@@ -53,14 +54,16 @@ const fetchDraftPick = async (playerId: string): Promise<string> => {
 // 2. Fetch teams from multiple leagues for a single player
 //    => "OR" logic by calling the API once per league and combining results.
 //
-const fetchTeamsByLeagues = async (
+export const fetchTeamsByLeagues = async (
   playerId: string,
   leagues: string[] | null
 ): Promise<{ name: string; leagueLevel: string | null }[]> => {
   try {
-    // If no leagues specified, return empty or possibly fetchAllLeagues
+    // If no leagues specified, either return empty or handle "fetchAllLeagues" in your own logic
     if (!leagues || leagues.length === 0) {
-      console.log(`No leagues specified for player ${playerId}; returning empty array or fetching all leagues if desired.`);
+      console.log(
+        `No leagues specified for player ${playerId}; returning empty array (or fetch all if needed).`
+      );
       return [];
     }
 
@@ -72,23 +75,57 @@ const fetchTeamsByLeagues = async (
       console.log(`Fetching teams for player ${playerId}, league=${league}\nURL => ${url}`);
 
       const response = await fetch(url);
-
       if (!response.ok) {
         console.error(
           `Failed to fetch teams for player ${playerId} in league ${league}: ${response.statusText}`
         );
-        // Continue to next league instead of throwing, so partial results are still returned.
+        // Continue to next league to allow partial results
         continue;
       }
 
       const data: ApiResponse<TeamResponseItem> = await response.json();
-      const teamsForThisLeague =
-        data.data?.map((item) => ({
-          name: item.team.name,
-          leagueLevel: item.team.league?.leagueLevel || null,
-        })) || [];
+      if (!data.data || data.data.length === 0) {
+        console.log(`No team data found for league=${league} and player=${playerId}`);
+        continue;
+      }
 
-      // Merge/union with previously fetched teams
+      // We use `Promise.all` so we can run the "leagueLevel fallback fetch" in parallel for each item.
+      const teamsForThisLeague = await Promise.all(
+        data.data.map(async (item) => {
+          const { team } = item;
+          const { id: teamId, league } = team;
+          let leagueLevel = league?.leagueLevel || null;
+
+          // If leagueLevel is null, fetch from /team-stats to get the fallback
+          if (!leagueLevel && teamId) {
+            try {
+              // Example: /v1/team-stats?offset=0&limit=100&sort=-season&team=95&apiKey=XYZ
+              const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}`;
+              console.log(`Fetching leagueLevel from fallback for teamId=${teamId}\nURL => ${fallbackUrl}`);
+
+              const fallbackResp = await fetch(fallbackUrl);
+              if (fallbackResp.ok) {
+                const teamStatsData: ApiResponse<any> = await fallbackResp.json();
+                // If there's at least one record, grab that leagueLevel
+                if (teamStatsData.data && teamStatsData.data.length > 0) {
+                  leagueLevel = teamStatsData.data[0]?.league?.leagueLevel ?? null;
+                }
+              } else {
+                console.error(`Failed to fetch fallback team-stats for teamId=${teamId}: ${fallbackResp.statusText}`);
+              }
+            } catch (error) {
+              console.error(`Error fetching fallback team-stats for teamId=${teamId}:`, error);
+            }
+          }
+
+          return {
+            name: team.name,
+            leagueLevel: leagueLevel ?? 'unknown',
+          };
+        })
+      );
+
+      // Merge with previously fetched teams
       allTeams = allTeams.concat(teamsForThisLeague);
     }
 
