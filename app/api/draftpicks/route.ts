@@ -54,7 +54,7 @@ const fetchDraftPick = async (playerId: string): Promise<string> => {
 // 2. Fetch teams from multiple leagues for a single player
 //    => "OR" logic by calling the API once per league and combining results.
 //
-export const fetchTeamsByLeagues = async (
+const fetchTeamsByLeagues = async (
   playerId: string,
   leagues: string[] | null
 ): Promise<{ name: string; leagueLevel: string | null }[]> => {
