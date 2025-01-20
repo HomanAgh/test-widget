@@ -8,8 +8,8 @@ interface LeagueWidgetSetupProps {
 }
 
 const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({ leagueSlug }) => {
-  const [bgColor, setBgColor] = useState("#FFFFFF");
-  const [textColor, setTextColor] = useState("#000000");
+  const [bgColor] = useState("#FFFFFF");
+  const [textColor] = useState("#000000");
   const [showPreview, setShowPreview] = useState(false);
 
   // Build the final embed URL
