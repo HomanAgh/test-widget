@@ -11,6 +11,7 @@ interface Player {
   id: number;
   name?: string;
   dateOfBirth?: string;
+  gender?: string;
 }
 
 export async function GET(request: Request) {
@@ -115,6 +116,7 @@ export async function GET(request: Request) {
       birthYear: player.dateOfBirth
         ? new Date(player.dateOfBirth).getFullYear()
         : null,
+      gender: player.gender || null,
     }));
 
     //
@@ -141,7 +143,8 @@ function buildTeamUrl(teamId: number, singleLeague: string | null) {
   } else {
     url += `&fetchAllLeagues=true`;
   }
-  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
+  // Now request gender too
+  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth,gender')}`;
   return url;
 }
 
@@ -155,7 +158,7 @@ function buildYouthUrl(teamsParam: string, singleLeague: string | null) {
   } else {
     url += `&fetchAllLeagues=true`;
   }
-  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth')}`;
+  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth, gender')}`;
   return url;
 }
 

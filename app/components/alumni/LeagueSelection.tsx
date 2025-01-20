@@ -4,6 +4,7 @@ import { League } from '@/app/types/league';
 interface LeagueSelectionDropdownProps {
   professionalLeagues: League[];
   juniorLeagues: League[];
+  collegeLeagues: League[]; // Add this line
   selectedLeagues: string[];
   onChange: (selected: string[]) => void;
 }
@@ -11,6 +12,7 @@ interface LeagueSelectionDropdownProps {
 const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
   professionalLeagues,
   juniorLeagues,
+  collegeLeagues,
   selectedLeagues,
   onChange,
 }) => {
@@ -65,6 +67,25 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
             <h3 className="font-bold mb-2">Junior Leagues</h3>
             <div className="grid grid-cols-2 gap-2">
               {juniorLeagues.map((league) => (
+                <label key={league.slug} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedLeagues.includes(league.slug)}
+                    onChange={() => handleCheckboxChange(league.slug)}
+                  />
+                  <span>{league.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <hr className="my-4" />
+
+          {/* College Leagues */}
+          <div>
+            <h3 className="font-bold mb-2">College Leagues</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {collegeLeagues.map((league) => (
                 <label key={league.slug} className="flex items-center space-x-2">
                   <input
                     type="checkbox"

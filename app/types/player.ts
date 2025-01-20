@@ -91,10 +91,11 @@ export interface AlumniPlayer {
   name: string;
   birthYear: number | null;
   draftPick?: string;
+  gender?: string | null;  // Allow null if necessary
   teams: {
     name: string;
     leagueLevel: string | null;
-  }[]; // Updated to reflect array of objects with name and leagueLevel
+  }[];
 }
 
 
@@ -103,6 +104,7 @@ export interface AlumniAPIResponse { // nytt interface, kolla om det funkar
     id: number;
     name: string;
     birthYear: number;
+    gender?: string; // Or 'gender' with the correct type
   }[];
 }
 
@@ -118,4 +120,3 @@ export interface DraftPickAPIResponse { // nytt interface, kolla om det funkar
 
 
   
-
