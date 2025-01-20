@@ -28,7 +28,7 @@ const fetchDraftPick = async (playerId: string): Promise<string> => {
   try {
     console.log(`Fetching draft pick for player ${playerId}`);
     const response = await fetch(
-      `${apiBaseUrl}/players/${playerId}/draft-selections?offset=0&limit=1&sort=-year&fields=year,round,overall&apiKey=${apiKey}`
+      `${apiBaseUrl}/players/${playerId}/draft-selections?offset=0&limit=100&sort=-year&fields=year,round,overall,draftType.league.slug&apiKey=${apiKey}`
     );
 
     if (!response.ok) {
@@ -36,13 +36,30 @@ const fetchDraftPick = async (playerId: string): Promise<string> => {
       return 'N/A';
     }
 
-    const data: ApiResponse<DraftSelection> = await response.json();
+    const data: ApiResponse<DraftSelection & { draftType?: { league?: { slug?: string } } }> =
+      await response.json();
+
     if (!data.data || data.data.length === 0) {
-      console.log(`No draft pick data found for player ${playerId}`);
+      console.log(`No draft data found for player ${playerId}`);
       return 'N/A';
     }
 
-    const draft = data.data[0];
+    // 1) Filter only NHL picks
+    const nhlDrafts = data.data.filter(
+      (draft) => draft?.draftType?.league?.slug === 'nhl'
+    );
+
+    // 2) If there are no NHL picks, return 'N/A'
+    if (nhlDrafts.length === 0) {
+      console.log(`No NHL draft pick found for player ${playerId}`);
+      return 'N/A';
+    }
+
+    // 3) Decide if you want the first item or some other logic
+    //    e.g. the most recent one, which is typically the first if you sorted by -year
+    const draft = nhlDrafts[0];
+
+    // 4) Return the formatted string
     return `${draft.year} Round ${draft.round}, Overall ${draft.overall}`;
   } catch (error) {
     console.error(`Error fetching draft pick for player ${playerId}:`, error);
