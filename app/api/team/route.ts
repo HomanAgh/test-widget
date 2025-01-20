@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const teamColorField = [
+  const teamField = [
     "id",
     "name",
     "league.name",
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     "logo.colors",
   ].join(",")
 
-  const teamUrl = `${apiBaseUrl}/teams/${teamId}?apiKey=${apiKey}&fields=${encodeURIComponent(teamColorField)}`;
+  const teamUrl = `${apiBaseUrl}/teams/${teamId}?apiKey=${apiKey}&fields=${encodeURIComponent(teamField)}`;
   console.log("Fetching team data from URL:", teamUrl);
 
   try {

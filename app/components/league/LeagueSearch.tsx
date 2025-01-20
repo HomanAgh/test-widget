@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { League, LeaguesAPIResponse } from "@/app/types/league"; // Assume a Team type is defined
+import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 
 interface LeagueSearchBarProps {
   onSelect: (leagueSlug: string) => void;
@@ -95,34 +96,31 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
   };
 
   return (
-    <div className="relative w-full">
-      <input
+    <SearchBarContainer>
+      <SearchInput
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={"Search for League..."}
-        className="border p-2 rounded-md w-full"
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(Leagues.length > 0)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
       />
       {showDropdown && (
-        <ul className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10">
+        <Dropdown>
           {Leagues.map((Leagues, index) => (
-            <li
+            <DropdownItem
               key={Leagues.slug}
               onClick={() => handleSelect(Leagues.slug)}
-              className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                highlightedIndex === index ? "bg-gray-200" : ""
-              }`}
+              isHighlighted={highlightedIndex === index}
             >
               {`${Leagues.name} - ${Leagues.fullName} (${Leagues.country})`}
-            </li>
+            </DropdownItem>
           ))}
-          {isLoading && <li className="p-2 text-gray-500">{"Loading..."}</li>}
-        </ul>
+          {isLoading && <LoadingItem />}
+        </Dropdown>
       )}
-    </div>
+    </SearchBarContainer>
   );
 };
 

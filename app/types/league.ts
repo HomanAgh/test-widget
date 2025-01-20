@@ -30,6 +30,8 @@ export interface LeaguesAPIResponse {
           GP?: number;
           W?: number;
           L?: number;
+          OTW?: number;
+          OTL?: number;
           PTS?: number;
         };
       }[];

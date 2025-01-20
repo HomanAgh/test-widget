@@ -23,12 +23,21 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const leagueField = [
+    "team.league.name",
+    "team.name",
+    "team.links.eliteprospectsUrl",
+    "stats.GP",
+    "stats.W",
+    "stats.L",
+    "stats.OTW",
+    "stats.OTL",
+    "stats.PTS",
+    "season.slug",
+    "group",
+  ].join(",")
 
-  // Include only the required fields
-  const fields = "team.league.name,team.name,team.links.eliteprospectsUrl,stats.GP,stats.W,stats.L,stats.PTS,season.slug,group";
-  const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?fields=${fields}&apiKey=${apiKey}`;
-
-
+  const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?fields=${leagueField}&apiKey=${apiKey}`;
   console.log("Fetching league standings from:", standingsUrl);
 
   try {

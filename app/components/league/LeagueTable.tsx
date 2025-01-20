@@ -49,6 +49,8 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
               <TableHeader align="center">{"GP"}</TableHeader>
               <TableHeader align="center">{"W"}</TableHeader>
               <TableHeader align="center">{"L"}</TableHeader>
+              <TableHeader align="center">{"OTW"}</TableHeader>
+              <TableHeader align="center">{"OTL"}</TableHeader>
               <TableHeader align="center">{"TP"}</TableHeader>
             </tr>
           </thead>
@@ -60,17 +62,15 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
               >
                 <Table align="center">{index + 1}</Table>
                 <Table align="left">
-                  <a
-                    href={team.team.links?.eliteprospectsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {team.team.name || "Unknown Team"}
-                  </a>
+                <Link href={team.team.links?.eliteprospectsUrl}>
+                          {team.team.name || "Unknown Team"}
+                      </Link>
                 </Table>
                 <Table align="center">{team.stats?.GP || 0}</Table>
                 <Table align="center">{team.stats?.W || 0}</Table>
                 <Table align="center">{team.stats?.L || 0}</Table>
+                <Table align="center">{team.stats?.OTW || 0}</Table>
+                <Table align="center">{team.stats?.OTL || 0}</Table>
                 <Table align="center">{team.stats?.PTS || 0}</Table>
               </tr>
             ))}
@@ -91,6 +91,8 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                   <TableHeader align="center">{"GP"}</TableHeader>
                   <TableHeader align="center">{"W"}</TableHeader>
                   <TableHeader align="center">{"L"}</TableHeader>
+                  <TableHeader align="center">{"OTW"}</TableHeader>
+                  <TableHeader align="center">{"OTL"}</TableHeader>
                   <TableHeader align="center">{"TP"}</TableHeader>
                 </tr>
               </thead>
@@ -109,6 +111,8 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
                     <Table align="center">{team.stats?.GP || 0}</Table>
                     <Table align="center">{team.stats?.W || 0}</Table>
                     <Table align="center">{team.stats?.L || 0}</Table>
+                    <Table align="center">{team.stats?.OTW || 0}</Table>
+                    <Table align="center">{team.stats?.OTL || 0}</Table>
                     <Table align="center">{team.stats?.PTS || 0}</Table>
                   </tr>
                 ))}

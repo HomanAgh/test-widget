@@ -40,9 +40,17 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Update the roster fetch URL to include nationality slug and dateOfBirth
-    const fields = "player.id,player.firstName,player.lastName,player.position,jerseyNumber,player.nationality.slug,player.dateOfBirth";
-    const rosterUrl = `${apiBaseUrl}/teams/${teamId}/roster?fields=${fields}&apiKey=${apiKey}`;
+    const teamField = [
+      "player.id",
+      "player.firstName",
+      "player.lastName",
+      "player.position",
+      "jerseyNumber",
+      "player.nationality.slug",
+      "player.dateOfBirth",
+    ].join(",")
+  
+    const rosterUrl = `${apiBaseUrl}/teams/${teamId}/roster?fields=${teamField}&apiKey=${apiKey}`;
     console.log("Fetching roster from URL:", rosterUrl);
 
     const response = await fetch(rosterUrl);
