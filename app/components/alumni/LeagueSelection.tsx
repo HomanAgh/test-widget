@@ -59,14 +59,14 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
               ))}
             </div>
           </div>
-
+     
           <hr className="my-4" />
 
-          {/* Junior Leagues */}
+          {/* College Leagues */}
           <div>
-            <h3 className="font-bold mb-2">Junior Leagues</h3>
+            <h3 className="font-bold mb-2">College Leagues</h3>
             <div className="grid grid-cols-2 gap-2">
-              {juniorLeagues.map((league) => (
+              {collegeLeagues.map((league) => (
                 <label key={league.slug} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -81,11 +81,11 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
 
           <hr className="my-4" />
 
-          {/* College Leagues */}
+          {/* Junior Leagues */}
           <div>
-            <h3 className="font-bold mb-2">College Leagues</h3>
+            <h3 className="font-bold mb-2">Junior Leagues</h3>
             <div className="grid grid-cols-2 gap-2">
-              {collegeLeagues.map((league) => (
+              {juniorLeagues.map((league) => (
                 <label key={league.slug} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
