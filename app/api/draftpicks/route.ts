@@ -52,8 +52,6 @@ async function fetchDraftPick(playerId: string): Promise<string> {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const playerIds = searchParams.get('playerIds'); // e.g. ?playerIds=123,456
-  const leagueParam = searchParams.get('league');  // unused now (or you could remove this param if not needed)
-  const fetchAllLeagues = searchParams.get('fetchAllLeagues') === 'true'; // likewise
 
   if (!playerIds) {
     return NextResponse.json(

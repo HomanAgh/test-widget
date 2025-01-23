@@ -163,7 +163,7 @@ function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
  * fetch data in increments of pageSize, repeating until we've collected all data.
  */
 async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
-  let allItems: T[] = [];
+  const allItems: T[] = [];
   let offset = 0;
   let totalRecords = 0;
 
