@@ -48,7 +48,7 @@ async function fetchDraftPick(playerId: string): Promise<string> {
     return 'N/A';
   }
 }
-
+//hej
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const playerIds = searchParams.get('playerIds'); // e.g. ?playerIds=123,456
