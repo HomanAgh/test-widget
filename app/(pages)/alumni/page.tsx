@@ -9,7 +9,7 @@ import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
 import { useFetchPlayers } from "@/app/components/alumni/hooks/useFetchPlayers";
 import TeamBackgroundColorSelector from "@/app/components/common/TeamBackgroundColorSelector";
 
-const SearchPlayers = () => {
+const SearchPlayers: React.FC = () => {
   const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
   const [teamColors, setTeamColors] = useState<string[]>([]);
   const [useTeamColor, setUseTeamColor] = useState<boolean>(false);
@@ -17,16 +17,22 @@ const SearchPlayers = () => {
   const [includeYouth, setIncludeYouth] = useState<boolean>(false);
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
 
+  // If men => "male", if women => "female"
   const genderParam = activeGenderTab === "men" ? "male" : "female";
 
-  const { customLeagues, customJunLeagues, customCollegeLeagues} = useFetchLeagues();
-  
+  // Custom leagues from your hook (professional, junior, college)
+  const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
 
-
+  // Convert selectedTeams => number[]
   const selectedTeamIds = selectedTeams.map((t) => t.id);
+  // For youth, we might just pick the first team's name as "youthTeam"
   const youthTeam = selectedTeams.length > 0 ? selectedTeams[0].name : null;
 
-  const { results, loading, error, hasMore, fetchPlayers } = useFetchPlayers(
+  const {
+    results,
+    loading,
+    error,
+  } = useFetchPlayers(
     selectedTeamIds,
     "customLeague",
     selectedLeagues.join(","),
@@ -52,7 +58,7 @@ const SearchPlayers = () => {
         <LeagueSelectionDropdown
           professionalLeagues={customLeagues}
           juniorLeagues={customJunLeagues}
-          collegeLeagues={customCollegeLeagues} // Pass college leagues
+          collegeLeagues={customCollegeLeagues}
           selectedLeagues={selectedLeagues}
           onChange={setSelectedLeagues}
         />
@@ -83,6 +89,7 @@ const SearchPlayers = () => {
         {loading && <p className="text-center mt-4">Loading...</p>}
         {error && <p className="text-red-500 text-center mt-4">{error}</p>}
 
+        {/* Gender Tabs */}
         <div className="flex justify-center space-x-4 mb-6">
           <button
             className={`px-4 py-2 border rounded ${
@@ -105,11 +112,9 @@ const SearchPlayers = () => {
         <div className="mt-6 rounded-lg shadow-md">
           <PlayerTable
             players={results}
-            genderFilter={activeGenderTab} // Pass gender filter to PlayerTable
+            genderFilter={activeGenderTab}
             teamColors={useTeamColor ? teamColors : []}
-            hasMore={hasMore}
-            loading={loading}
-            fetchMore={() => fetchPlayers(false)}
+            pageSize={50}
           />
         </div>
       </div>
@@ -118,5 +123,3 @@ const SearchPlayers = () => {
 };
 
 export default SearchPlayers;
-
-

@@ -89,24 +89,22 @@ export interface CareerStats {
 export interface AlumniPlayer {
   id: number;
   name: string;
-  birthYear: number | null;
+  birthYear?: number | null;
+  gender?: string | null;
   draftPick?: string;
-  gender?: string | null;  // Allow null if necessary
   teams: {
     name: string;
     leagueLevel: string | null;
   }[];
 }
 
-
-export interface AlumniAPIResponse { // nytt interface, kolla om det funkar
-  players: {
-    id: number;
-    name: string;
-    birthYear: number;
-    gender?: string; // Or 'gender' with the correct type
-  }[];
+export interface AlumniAPIResponse {
+  players: AlumniPlayer[];
+  total: number;
+  nextOffset: number | null;
+  error?: string;
 }
+
 
 export interface DraftPickAPIResponse { // nytt interface, kolla om det funkar
   players: {
