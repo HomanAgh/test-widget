@@ -3,194 +3,362 @@ import { NextResponse } from 'next/server';
 const apiKey = process.env.API_KEY;
 const apiBaseUrl = process.env.API_BASE_URL;
 
-// Minimal interfaces
 interface ApiResponse<T> {
   data?: T[];
-}
-interface Player {
-  id: number;
-  name?: string;
-  dateOfBirth?: string;
-  gender?: string;
+  _meta?: {
+    totalRecords?: number;
+    [key: string]: any;
+  };
 }
 
+interface PlayerStatsItem {
+  player: {
+    id: number;
+    name?: string;
+    dateOfBirth?: string;
+    gender?: string;
+  };
+  team: {
+    id?: number;
+    name?: string;
+    league?: {
+      slug?: string;
+      leagueLevel?: string;
+    };
+  };
+}
+
+interface TeamStatsItem {
+  league?: {
+    leagueLevel?: string;
+  };
+}
+
+interface DraftSelection {
+  year: number;
+  round: number;
+  overall: number;
+  draftType?: {
+    league?: {
+      slug?: string;
+    };
+  };
+}
+
+interface CombinedPlayer {
+  id: number;
+  name: string;
+  dateOfBirth: string | null;
+  gender: string | null;
+  teams: {
+    name: string;
+    leagueLevel: string | null;
+  }[];
+  draftPick?: string;
+}
+
+/**
+ * Helper to fetch leagueLevel if missing.
+ */
+async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> {
+  try {
+    // We'll fetch up to 1 item from team-stats to find a fallback leagueLevel
+    const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}`;
+    console.log(`Alumni: fetching fallback leagueLevel => ${fallbackUrl}`);
+
+    const resp = await fetch(fallbackUrl);
+    if (!resp.ok) {
+      console.error(`Failed to fetch fallback leagueLevel for teamId=${teamId}: ${resp.statusText}`);
+      return null;
+    }
+
+    const fallbackData: ApiResponse<TeamStatsItem> = await resp.json();
+    if (fallbackData.data && fallbackData.data.length > 0) {
+      return fallbackData.data[0].league?.leagueLevel ?? null;
+    }
+    return null;
+  } catch (error) {
+    console.error(`Error fetching fallback leagueLevel for teamId=${teamId}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Helper to fetch the NHL draft pick for a player (if any).
+ */
+async function fetchDraftPick(playerId: number): Promise<string> {
+  try {
+    const url = `${apiBaseUrl}/players/${playerId}/draft-selections?offset=0&limit=100&sort=-year&fields=year,round,overall,draftType.league.slug&apiKey=${apiKey}`;
+    console.log(`Alumni: fetching draft pick => ${url}`);
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`Error fetching draft pick for playerId ${playerId}: ${response.statusText}`);
+      return 'N/A';
+    }
+
+    const data: ApiResponse<DraftSelection> = await response.json();
+    if (!data.data || data.data.length === 0) {
+      return 'N/A';
+    }
+
+    // Filter to only NHL picks
+    const nhlDrafts = data.data.filter((d) => d.draftType?.league?.slug === 'nhl');
+    if (nhlDrafts.length === 0) {
+      return 'N/A';
+    }
+
+    const draft = nhlDrafts[0];
+    return `${draft.year} Round ${draft.round}, Overall ${draft.overall}`;
+  } catch (error) {
+    console.error(`Error fetching draft pick for playerId=${playerId}:`, error);
+    return 'N/A';
+  }
+}
+
+/**
+ * Build the "base" URL for a single team & (optional) single league,
+ * EXCLUDING offset & limit, since we will handle pagination ourselves in fetchAllPages.
+ */
+function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
+  // Let each function omit offset & limit from the final URL
+  // We'll add them dynamically in fetchAllPages.
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&player.hasPlayedInTeam=${teamId}`;
+
+  if (singleLeague) {
+    url += `&league=${singleLeague}`;
+  } else {
+    url += `&fetchAllLeagues=true`;
+  }
+
+  // fields
+  url += `&fields=${encodeURIComponent(
+    'player.id,player.name,player.dateOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+  )}`;
+
+  return url;
+}
+
+/**
+ * Build a "base" URL for fetching players by youthTeam name (if supported by your API).
+ */
+function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
+
+  if (singleLeague) {
+    url += `&league=${singleLeague}`;
+  } else {
+    url += `&fetchAllLeagues=true`;
+  }
+
+  url += `&fields=${encodeURIComponent(
+    'player.id,player.name,player.dateOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+  )}`;
+
+  return url;
+}
+
+/**
+ * fetchAllPages: given a baseUrl (that does NOT contain offset/limit),
+ * fetch data in increments of pageSize, repeating until we've collected all data.
+ */
+async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
+  let allItems: T[] = [];
+  let offset = 0;
+  let totalRecords = 0;
+
+  do {
+    const urlWithPagination = `${baseUrl}&offset=${offset}&limit=${pageSize}`;
+    console.log('Fetching paginated => ', urlWithPagination);
+
+    const res = await fetch(urlWithPagination);
+    if (!res.ok) {
+      console.error('Paginated fetch failed:', res.statusText);
+      break;
+    }
+
+    const data: ApiResponse<T> & { _meta?: { totalRecords?: number } } = await res.json();
+    if (data.data) {
+      allItems.push(...data.data);
+    }
+    // Update totalRecords if available
+    const metaTotal = data._meta?.totalRecords ?? 0;
+    if (metaTotal > 0) {
+      totalRecords = metaTotal;
+    }
+
+    offset += pageSize;
+  } while (offset < totalRecords);
+
+  return allItems;
+}
+
+/**
+ * Helper to fetch from a single "baseUrl" (player-stats) across multiple pages
+ * and merge into our global playerMap so we accumulate teams for each player.
+ */
+async function fetchAndMergePlayerStats(
+  baseUrl: string,
+  playerMap: Map<number, CombinedPlayer>
+) {
+  try {
+    // fetchAllPages will handle looping through offsets
+    const items = await fetchAllPages<PlayerStatsItem>(baseUrl, 1000);
+
+    for (const item of items) {
+      const playerId = item.player.id;
+      if (!playerMap.has(playerId)) {
+        playerMap.set(playerId, {
+          id: playerId,
+          name: item.player.name || '',
+          dateOfBirth: item.player.dateOfBirth || null,
+          gender: item.player.gender || null,
+          teams: [],
+        });
+      }
+      const existing = playerMap.get(playerId)!;
+
+      // Determine leagueLevel, with fallback
+      let leagueLevel = item.team.league?.leagueLevel || null;
+      const teamId = item.team.id;
+
+      // If leagueLevel is null, attempt fallback fetch
+      if (!leagueLevel && teamId) {
+        leagueLevel = await fetchLeagueLevelFallback(teamId);
+      }
+
+      // Insert the new team if not already present
+      const teamObj = {
+        name: item.team.name || 'Unknown Team',
+        leagueLevel: leagueLevel ?? 'unknown',
+      };
+
+      const alreadyExists = existing.teams.find(
+        (t) => t.name === teamObj.name && t.leagueLevel === teamObj.leagueLevel
+      );
+      if (!alreadyExists) {
+        existing.teams.push(teamObj);
+      }
+    }
+  } catch (err) {
+    console.error('Error in fetchAndMergePlayerStats:', err);
+  }
+}
+
+/**
+ * Main GET => /api/alumni
+ */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  // Parse team IDs
+  // Query params
   const teamIdsParam = searchParams.get('teamIds'); // e.g. "21240,33613"
-  // e.g. "nhl,shl,ohl" => should be an OR
-  const leagueParam = searchParams.get('league');
+  const leagueParam = searchParams.get('league');   // e.g. "nhl,shl"
+  const fetchAllLeagues = searchParams.get('fetchAllLeagues') === 'true';
   const includeYouth = searchParams.get('includeYouth') === 'true';
-  const offset = parseInt(searchParams.get('offset') || '0', 10);
-  const limit = parseInt(searchParams.get('limit') || '20', 10);
-  const teamsParam = searchParams.get('teams'); // for youth team name
+  const teamsParam = searchParams.get('teams');     // e.g. "Some Youth Team Name"
+  const genderParam = searchParams.get('gender');   // e.g. "male" or "female"
 
-  console.log('Alumni Route: Received query params =>');
+  console.log('Alumni: Query params =>');
   console.log('  teamIdsParam =', teamIdsParam);
-  console.log('  leagueParam =', leagueParam);
+  console.log('  leagueParam =', leagueParam, 'fetchAllLeagues =', fetchAllLeagues);
   console.log('  includeYouth =', includeYouth);
   console.log('  teamsParam =', teamsParam);
-  console.log('  offset =', offset, 'limit =', limit);
+  console.log('  gender =', genderParam);
 
   // Convert teamIds => number[]
   const teamIds = teamIdsParam
     ? teamIdsParam.split(',').map((idStr) => parseInt(idStr.trim(), 10))
     : [];
-  // Convert league => string[]
-  const leagues = leagueParam
-    ? leagueParam.split(',').map((l) => l.trim().toLowerCase())
-    : [];
 
-  const allPlayers: Player[] = [];
+  // Convert league => string[]
+  let leagues: string[] = [];
+  if (leagueParam) {
+    leagues = leagueParam.split(',').map((l) => l.trim());
+  } else if (fetchAllLeagues) {
+    leagues = []; // "no leagueParam but fetchAllLeagues=true" => interpret "all leagues"
+  }
+
+  // A container to accumulate data for each player (by ID)
+  const playerMap: Map<number, CombinedPlayer> = new Map();
 
   try {
     //
-    // 1) Fetch players for each numeric team ID, BUT do multiple fetches
-    //    for each league => OR logic.
+    // 1) For each team, fetch player-stats across all pages (and each league).
     //
     for (const id of teamIds) {
       if (leagues.length === 0) {
-        // If no league specified, or user wants "all leagues", do a single fetch
-        const url = buildTeamUrl(id, null);
-        console.log(`Alumni Route: fetching all leagues for teamId=${id} => ${url}`);
-        await fetchAndCombinePlayers(url, allPlayers, id);
+        // no specific leagues => fetch all
+        const baseUrl = buildTeamBaseUrl(id, null);
+        await fetchAndMergePlayerStats(baseUrl, playerMap);
       } else {
-        // leagues array => do 1 fetch per league => OR
+        // fetch for each league in "OR" logic
         for (const singleLeague of leagues) {
-          const url = buildTeamUrl(id, singleLeague);
-          console.log(
-            `Alumni Route: fetching teamId=${id}, singleLeague=${singleLeague} => ${url}`
-          );
-          await fetchAndCombinePlayers(url, allPlayers, id);
+          const baseUrl = buildTeamBaseUrl(id, singleLeague);
+          await fetchAndMergePlayerStats(baseUrl, playerMap);
         }
       }
     }
 
     //
-    // 2) If includeYouth=true && teamsParam present => fetch youthTeam with OR logic for leagues
+    // 2) If includeYouth => do the same for youthTeam
     //
     if (includeYouth && teamsParam) {
       if (leagues.length === 0) {
-        // No specific league => fetchAllLeagues for youthTeam
-        const url = buildYouthUrl(teamsParam, null);
-        console.log(`Alumni Route: fetching youthTeam (all leagues) => ${url}`);
-        await fetchAndCombinePlayers(url, allPlayers, /*teamId=*/-1);
+        const baseUrl = buildYouthBaseUrl(teamsParam, null);
+        await fetchAndMergePlayerStats(baseUrl, playerMap);
       } else {
-        // OR logic for each league
         for (const singleLeague of leagues) {
-          const url = buildYouthUrl(teamsParam, singleLeague);
-          console.log(
-            `Alumni Route: fetching youthTeam (league=${singleLeague}) => ${url}`
-          );
-          await fetchAndCombinePlayers(url, allPlayers, /*teamId=*/-1);
+          const baseUrl = buildYouthBaseUrl(teamsParam, singleLeague);
+          await fetchAndMergePlayerStats(baseUrl, playerMap);
         }
       }
     }
 
     //
-    // 3) Deduplicate
+    // 3) Convert map to array
     //
-    const uniquePlayers = deduplicatePlayersById(allPlayers);
-    console.log(
-      'Alumni Route: total unique players before pagination =',
-      uniquePlayers.length
-    );
+    let allPlayers = Array.from(playerMap.values());
 
     //
-    // 4) Paginate
+    // 4) Optional: filter by gender
     //
-    const paginatedPlayers = uniquePlayers.slice(offset, offset + limit);
-    console.log(
-      `Alumni Route: returning players from index ${offset} to ${
-        offset + limit
-      }, final count = ${paginatedPlayers.length}`
-    );
+    if (genderParam) {
+      allPlayers = allPlayers.filter((p) => p.gender?.toLowerCase() === genderParam.toLowerCase());
+    }
 
     //
-    // 5) Convert dateOfBirth => birthYear
+    // 5) Fetch draft picks for each player
     //
-    const minimalPlayers = paginatedPlayers.map((player) => ({
-      id: player.id,
-      name: player.name || '',
-      birthYear: player.dateOfBirth
-        ? new Date(player.dateOfBirth).getFullYear()
-        : null,
-      gender: player.gender || null,
+    const draftPickPromises = allPlayers.map(async (p) => {
+      const dp = await fetchDraftPick(p.id);
+      p.draftPick = dp;
+    });
+    await Promise.all(draftPickPromises);
+
+    //
+    // 6) Transform dateOfBirth => birthYear
+    //
+    //    (You can do this client-side if you prefer.)
+    //
+    const finalPlayers = allPlayers.map((p) => ({
+      id: p.id,
+      name: p.name,
+      birthYear: p.dateOfBirth ? new Date(p.dateOfBirth).getFullYear() : null,
+      gender: p.gender,
+      draftPick: p.draftPick ?? 'N/A',
+      teams: p.teams,
     }));
 
-    //
-    // 6) Return
-    //
+    // Return all players at once. 
+    // (No more offset/limit pagination here.)
     return NextResponse.json({
-      players: minimalPlayers,
-      total: uniquePlayers.length,
-      nextOffset: offset + limit < uniquePlayers.length ? offset + limit : null,
+      players: finalPlayers,
+      total: finalPlayers.length,
     });
   } catch (error) {
-    console.error('Alumni Route: Error in fetching data:', error);
+    console.error('Alumni: Error in fetching data:', error);
     return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
   }
 }
 
-/**
- * Helper function: Build a URL for players from a single team and league (or no league).
- */
-function buildTeamUrl(teamId: number, singleLeague: string | null) {
-  let url = `${apiBaseUrl}/players?hasPlayedInTeam=${teamId}`;
-  if (singleLeague) {
-    url += `&hasPlayedInLeague=${singleLeague}`;
-  } else {
-    url += `&fetchAllLeagues=true`;
-  }
-  // Now request gender too
-  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth,gender')}`;
-  return url;
-}
-
-/**
- * Helper function: Build a URL for youthTeam with a single league (or none).
- */
-function buildYouthUrl(teamsParam: string, singleLeague: string | null) {
-  let url = `${apiBaseUrl}/players?youthTeam=${encodeURIComponent(teamsParam)}`;
-  if (singleLeague) {
-    url += `&hasPlayedInLeague=${singleLeague}`;
-  } else {
-    url += `&fetchAllLeagues=true`;
-  }
-  url += `&apiKey=${apiKey}&fields=${encodeURIComponent('id,name,dateOfBirth, gender')}`;
-  return url;
-}
-
-/**
- * Helper: fetch, parse, and push results into the allPlayers array.
- */
-async function fetchAndCombinePlayers(
-  url: string,
-  allPlayers: Player[],
-  teamId: number
-) {
-  const res = await fetch(url);
-  console.log(`Alumni Route: response status for teamId=${teamId} =>`, res.status);
-
-  if (!res.ok) {
-    console.error(`Alumni Route: failed to fetch players for teamId=${teamId}: ${res.statusText}`);
-    return;
-  }
-
-  const json: ApiResponse<Player> = await res.json();
-  const players = json.data || [];
-  console.log(`Alumni Route: Team ID ${teamId} => fetched ${players.length} players.`);
-  allPlayers.push(...players);
-}
-
-/**
- * Helper: deduplicate players by their ID.
- */
-function deduplicatePlayersById(players: Player[]): Player[] {
-  const uniqueMap = new Map<number, Player>();
-  for (const p of players) {
-    uniqueMap.set(p.id, p);
-  }
-  return Array.from(uniqueMap.values());
-}

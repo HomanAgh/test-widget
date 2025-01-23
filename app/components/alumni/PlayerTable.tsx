@@ -6,83 +6,71 @@ import TableHeader from '../common/style/TableHeader';
 interface PlayerTableProps {
   players: AlumniPlayer[];
   teamColors?: string[];
-  hasMore: boolean;
-  fetchMore: () => void;
-  genderFilter: 'men' | 'women';
-  loading: boolean;
+  genderFilter: 'men' | 'women' | 'all';
+  pageSize?: number;  // default number of players per page, e.g. 50
 }
 
 const PlayerTable: React.FC<PlayerTableProps> = ({
   players,
   teamColors,
-  hasMore,
-  fetchMore,
   genderFilter,
+  pageSize = 50,
 }) => {
   const [sortColumn, setSortColumn] = React.useState<string>('');
   const [sortDirection, setSortDirection] = React.useState<'asc' | 'desc' | 'none'>('none');
+  const [currentPage, setCurrentPage] = React.useState(0);
 
   // For styling
   const backgroundColor = teamColors?.[0] || 'white';
   const textColor = teamColors?.[1] || 'black';
+  const tableBackgroundColor = teamColors?.[2] || 'white';
 
-  // Filter players based on gender
+  // 1) Filter by gender
   const filteredPlayers = React.useMemo(() => {
-    return players.filter((p) => {
-      if (genderFilter === 'men') {
-        return p.gender === 'male';
-      }
-      if (genderFilter === 'women') {
-        return p.gender === 'female';
-      }
-      return true; // Show all if no filter
-    });
+    if (genderFilter === 'men') {
+      return players.filter((p) => p.gender === 'male');
+    } else if (genderFilter === 'women') {
+      return players.filter((p) => p.gender === 'female');
+    }
+    return players; // 'all'
   }, [players, genderFilter]);
 
-  // Helper to parse the "Overall" from a draftPick string like "2007 Round 1, Overall 5"
+  // 2) Sorting
+  // Helper: parse "Overall 5" from "2007 Round 1, Overall 5"
   function extractOverall(draftPick: string | undefined): number {
-    if (!draftPick) return Number.MAX_SAFE_INTEGER; // "N/A" => push to end
+    if (!draftPick) return Number.MAX_SAFE_INTEGER;
     const match = draftPick.match(/Overall\s+(\d+)/i);
     return match ? parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
   }
 
-  // Cycle the sort direction: asc -> desc -> none -> asc...
   function handleSort(column: string) {
-    // If switching columns, start fresh
+    // cycle the sort direction
     if (sortColumn !== column) {
       setSortColumn(column);
       setSortDirection('asc');
       return;
     }
-
-    // Same column => cycle
     if (sortDirection === 'asc') {
       setSortDirection('desc');
     } else if (sortDirection === 'desc') {
-      // Third click => no sort
       setSortDirection('none');
       setSortColumn('');
     } else {
-      // from 'none' => 'asc'
       setSortDirection('asc');
       setSortColumn(column);
     }
   }
 
-  // Sorting logic
   const sortedPlayers = React.useMemo(() => {
     if (sortDirection === 'none') {
       return filteredPlayers;
     }
-
     const sorted = [...filteredPlayers];
 
     switch (sortColumn) {
       case 'name':
         sorted.sort((a, b) =>
-          sortDirection === 'asc'
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name)
+          sortDirection === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
         );
         break;
       case 'birthYear':
@@ -102,27 +90,29 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
       default:
         break;
     }
-
     return sorted;
   }, [filteredPlayers, sortColumn, sortDirection]);
 
-  // Helper to render the appropriate symbol for each column
+  // 3) Local Pagination
+  const totalPlayers = sortedPlayers.length;
+  const totalPages = Math.ceil(totalPlayers / pageSize);
+
+  const startIndex = currentPage * pageSize;
+  const endIndex = startIndex + pageSize;
+  const pagePlayers = sortedPlayers.slice(startIndex, endIndex);
+
+  // Render sort symbol
   function renderSortSymbol(column: string) {
-    if (sortColumn !== column) {
-      return ''; // Not currently sorting by this column => no symbol
-    }
+    if (sortColumn !== column) return '';
     if (sortDirection === 'asc') return ' ↑';
     if (sortDirection === 'desc') return ' ↓';
-    return ' -'; // "none" case => a simple dash
+    return ' -';
   }
 
   return (
     <div
       className="overflow-x-auto bg-white shadow-lg rounded-lg"
-      style={{
-        padding: '1rem',
-        backgroundColor: teamColors?.[2] || 'white',
-      }}
+      style={{ padding: '1rem', backgroundColor: tableBackgroundColor }}
     >
       <table className="min-w-full table-auto border-collapse">
         <thead className="bg-blue-700 text-white">
@@ -141,37 +131,38 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
             <TableHeader align="center">Professional</TableHeader>
           </tr>
         </thead>
-
         <tbody className="divide-y divide-gray-200">
-          {sortedPlayers.map((player) => {
-            const juniorTeams = player.teams.filter(
-              (team) =>
-                team.leagueLevel?.toLowerCase().includes('junior') ||
-                team.leagueLevel?.toLowerCase().includes('18')
-            );
-            const collegeTeams = player.teams.filter((team) =>
-              team.leagueLevel?.toLowerCase().includes("college")
-            );
-            const professionalTeams = player.teams.filter((team) =>
-              team.leagueLevel?.toLowerCase().includes('professional')
-            );
+          {pagePlayers.map((player) => {
+            // Example: separate teams into categories
+            const juniorTeams = player.teams?.filter((t) => {
+              const ll = t.leagueLevel?.toLowerCase() || '';
+              return ll.includes('junior') || ll.includes('u18') || ll.includes('u20');
+            }) || [];
+
+            const collegeTeams = player.teams?.filter((t) =>
+              (t.leagueLevel ?? '').toLowerCase().includes('college')
+            ) || [];
+
+            const professionalTeams = player.teams?.filter((t) =>
+              (t.leagueLevel ?? '').toLowerCase().includes('professional')
+            ) || [];
 
             return (
               <tr
                 key={player.id}
                 style={{
-                  backgroundColor,
+                  backgroundColor: backgroundColor,
                   color: textColor,
                 }}
               >
                 <Table align="center">{player.name}</Table>
-                <Table align="center">{player.birthYear || 'N/A'}</Table>
-                <Table align="center">{player.draftPick || 'N/A'}</Table>
+                <Table align="center">{player.birthYear ?? 'N/A'}</Table>
+                <Table align="center">{player.draftPick ?? 'N/A'}</Table>
                 <Table align="center">
                   {juniorTeams.length > 0
-                    ? juniorTeams.map((team, idx) => (
+                    ? juniorTeams.map((t, idx) => (
                         <React.Fragment key={idx}>
-                          {team.name}
+                          {t.name}
                           {idx < juniorTeams.length - 1 && ', '}
                         </React.Fragment>
                       ))
@@ -179,9 +170,9 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 </Table>
                 <Table align="center">
                   {collegeTeams.length > 0
-                    ? collegeTeams.map((team, idx) => (
+                    ? collegeTeams.map((t, idx) => (
                         <React.Fragment key={idx}>
-                          {team.name}
+                          {t.name}
                           {idx < collegeTeams.length - 1 && ', '}
                         </React.Fragment>
                       ))
@@ -189,9 +180,9 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 </Table>
                 <Table align="center">
                   {professionalTeams.length > 0
-                    ? professionalTeams.map((team, idx) => (
+                    ? professionalTeams.map((t, idx) => (
                         <React.Fragment key={idx}>
-                          {team.name}
+                          {t.name}
                           {idx < professionalTeams.length - 1 && ', '}
                         </React.Fragment>
                       ))
@@ -203,19 +194,50 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
         </tbody>
       </table>
 
-      {hasMore && (
+     {/* Pagination controls */}
+     <div className="flex justify-center items-center mt-4 space-x-2">
+        {/* 1) First Page */}
         <button
-          onClick={fetchMore}
-          className="mt-4 px-4 py-2 bg-blue-700 text-white font-bold rounded"
+          disabled={currentPage === 0}
+          onClick={() => setCurrentPage(0)}
+          className="px-4 py-2 bg-blue-700 text-white font-bold rounded disabled:opacity-50"
         >
-          Show More
+          First
         </button>
-      )}
+
+        {/* 2) Prev Page */}
+        <button
+          disabled={currentPage === 0}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-4 py-2 bg-blue-700 text-white font-bold rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+
+        <span>
+          Page {currentPage + 1} of {totalPages}
+        </span>
+
+        {/* 3) Next Page */}
+        <button
+          disabled={currentPage >= totalPages - 1}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-4 py-2 bg-blue-700 text-white font-bold rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+
+        {/* 4) Last Page */}
+        <button
+          disabled={currentPage >= totalPages - 1}
+          onClick={() => setCurrentPage(totalPages - 1)}
+          className="px-4 py-2 bg-blue-700 text-white font-bold rounded disabled:opacity-50"
+        >
+          Last
+        </button>
+      </div>
     </div>
   );
 };
 
 export default PlayerTable;
-
-
-

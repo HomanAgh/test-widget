@@ -6,39 +6,59 @@ export const useFetchLeagues = () => {
   const [customLeagues, setCustomLeagues] = useState<League[]>([]);
   const [junLeagues, setJunLeagues] = useState<League[]>([]);
   const [customJunLeagues, setCustomJunLeagues] = useState<League[]>([]);
-  const [collegeLeagues, setCollegeLeagues] = useState<League[]>([]); // New State
-  const [customCollegeLeagues, setCustomCollegeLeagues] = useState<League[]>([]); // New State
+  const [collegeLeagues, setCollegeLeagues] = useState<League[]>([]);
+  const [customCollegeLeagues, setCustomCollegeLeagues] = useState<League[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchLeagues = async () => {
       try {
-        const proResponse = await fetch('/api/ProfLeague'); // Professional leagues endpoint
-        const junResponse = await fetch('/api/JunLeague'); // Junior leagues endpoint
-        const collegeResponse = await fetch("/api/CollLeague"); // College leagues endpoint
+        // Fetch all in parallel
+        const [proResponse, junResponse, collegeResponse] = await Promise.all([
+          fetch('/api/ProfLeague'),  // Professional leagues endpoint
+          fetch('/api/JunLeague'),   // Junior leagues endpoint
+          fetch('/api/CollLeague'),  // College leagues endpoint
+        ]);
 
-        if (!proResponse.ok || !junResponse.ok) throw new Error('Failed to fetch leagues.');
+        // Check any failed responses
+        if (!proResponse.ok || !junResponse.ok || !collegeResponse.ok) {
+          throw new Error('Failed to fetch one or more league endpoints.');
+        }
 
-        const proData = await proResponse.json();
-        const junData = await junResponse.json();
-        const collegeData = await collegeResponse.json();
+        // Parse all as JSON
+        const [proData, junData, collegeData] = await Promise.all([
+          proResponse.json(),
+          junResponse.json(),
+          collegeResponse.json(),
+        ]);
 
-        // Professional leagues
+        // 1) Professional Leagues
         const customLeagueSlugs = ['pwhl-w', 'nhl', 'ahl', 'shl', 'khl', 'liiga', 'nl', 'del'];
         setProLeagues(proData.leagues || []);
-        setCustomLeagues(proData.leagues.filter((league: League) => customLeagueSlugs.includes(league.slug)));
-        setCollegeLeagues(collegeData.leagues || []); // Set College Leagues
+        setCustomLeagues(
+          (proData.leagues || []).filter((league: League) =>
+            customLeagueSlugs.includes(league.slug)
+          )
+        );
 
-        // Junior leagues
+        // 2) Junior Leagues
         const customJuniorLeagueSlugs = ['jwhl-w', 'ushl', 'cchl', 'ohl', 'whl', 'qmjhl'];
-        setJunLeagues(junData.leagues || []); // Set all junior leagues
-        setCustomJunLeagues(junData.leagues.filter((league: League) => customJuniorLeagueSlugs.includes(league.slug)));
+        setJunLeagues(junData.leagues || []);
+        setCustomJunLeagues(
+          (junData.leagues || []).filter((league: League) =>
+            customJuniorLeagueSlugs.includes(league.slug)
+          )
+        );
 
-        // College leagues
-        const customCollegeLeagueSlugs = ['ncaa', 'acac', 'usports', 'acha']; // Add your custom league slugs here
+        // 3) College Leagues
+        const customCollegeLeagueSlugs = ['ncaa', 'acac', 'usports', 'acha'];
         setCollegeLeagues(collegeData.leagues || []);
-        setCustomCollegeLeagues(collegeData.leagues.filter((league: League) => customCollegeLeagueSlugs.includes(league.slug)));
-      } catch (err: unknown) {
+        setCustomCollegeLeagues(
+          (collegeData.leagues || []).filter((league: League) =>
+            customCollegeLeagueSlugs.includes(league.slug)
+          )
+        );
+      } catch (err) {
         setError('Failed to fetch leagues.');
         console.error('Error fetching leagues:', err);
       }
@@ -47,5 +67,13 @@ export const useFetchLeagues = () => {
     fetchLeagues();
   }, []);
 
-  return { proLeagues, customLeagues, junLeagues, customJunLeagues, collegeLeagues, customCollegeLeagues, error };
+  return {
+    proLeagues,
+    customLeagues,
+    junLeagues,
+    customJunLeagues,
+    collegeLeagues,
+    customCollegeLeagues,
+    error,
+  };
 };
