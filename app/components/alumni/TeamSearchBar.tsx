@@ -1,6 +1,4 @@
 "use client";
-// The TeamSearchBar does an auto-search with 500ms debounce (like before).
-// The final "Search" for players is done in the parent container, after picking leagues & teams.
 
 import React, { useState, useEffect, useRef } from "react";
 
@@ -17,13 +15,9 @@ export interface SelectedTeam {
 
 interface TeamSearchBarProps {
   placeholder: string;
-  // Called when the user single-selects a team by pressing Enter (optional usage)
-  onSelect: (teamObj: SelectedTeam) => void;
-  // Error callback
+  onSelect: (teamObj: SelectedTeam) => void; // optional single-select usage
   onError: (err: string) => void;
-  // The currently selected teams
   selectedTeams: SelectedTeam[];
-  // Called when the user toggles the checkboxes or removes teams
   onCheckedTeamsChange: (teams: SelectedTeam[]) => void;
 }
 
@@ -34,32 +28,17 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   selectedTeams,
   onCheckedTeamsChange,
 }) => {
-  // The raw text the user is typing
   const [query, setQuery] = useState<string>("");
-
-  // The debounced version of `query` (updated after 500ms of no typing)
   const [debouncedQuery, setDebouncedQuery] = useState<string>("");
-
-  // The list of teams returned by the API
   const [teams, setTeams] = useState<TeamItem[]>([]);
-
-  // Whether the dropdown is currently shown
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
-
-  // Index for arrow-key highlight
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
-
-  // Loading state while fetching
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Refs for outside-click detection
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLUListElement>(null);
 
-  /**
-   * 1) Debounce the user input by 500ms. 
-   *    We'll do the actual fetch in a useEffect when 'debouncedQuery' changes.
-   */
+  // Debounce
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
@@ -67,18 +46,13 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
     return () => clearTimeout(handler);
   }, [query]);
 
-  /**
-   * 2) Fetch teams from the API whenever debouncedQuery changes
-   *    (like before).
-   */
+  // Fetch
   useEffect(() => {
-    // If user cleared the input, remove old results
     if (!debouncedQuery.trim()) {
       setTeams([]);
       setShowDropdown(false);
       return;
     }
-
     const fetchTeams = async () => {
       setIsLoading(true);
       try {
@@ -92,7 +66,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         setTeams(data.teams || []);
         setShowDropdown(true);
 
-        // Reset highlight & scroll
+        // Reset highlight ONLY after new search
         setHighlightedIndex(-1);
         if (dropdownRef.current) {
           dropdownRef.current.scrollTop = 0;
@@ -103,16 +77,16 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         setIsLoading(false);
       }
     };
-
     fetchTeams();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery]);
 
-  /**
-   * 3) Hide dropdown if user clicks outside
-   */
+  // Outside click => hide dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setShowDropdown(false);
       }
     };
@@ -120,11 +94,8 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /**
-   * 4) Keyboard events for arrow up/down + Enter
-   */
+  // Keyboard nav
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // If the dropdown isn't open or we have no teams, ignore
     if (!showDropdown || teams.length === 0) return;
 
     if (e.key === "ArrowDown") {
@@ -135,25 +106,19 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
       setHighlightedIndex((prev) => (prev - 1 + teams.length) % teams.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      // Single select if the user presses Enter on a highlighted item
+      // Single-select usage if you want that on Enter:
       if (highlightedIndex >= 0 && highlightedIndex < teams.length) {
-        handleSelect(teams[highlightedIndex]);
+        // If you want multi-select on Enter instead, just call handleCheckboxChange
+        const highlightedTeam = teams[highlightedIndex];
+        onSelect({ id: highlightedTeam.id, name: highlightedTeam.name });
+        // Optionally keep the dropdown open for further multi-selections
+        // setShowDropdown(false);
+        // setQuery("");
       }
     }
   };
 
-  /**
-   * Single-select: Press Enter or click on the row
-   */
-  const handleSelect = (team: TeamItem) => {
-    setShowDropdown(false);
-    setQuery("");
-    onSelect({ id: team.id, name: team.name });
-  };
-
-  /**
-   * Multi-select: toggling the checkboxes for each item
-   */
+  // Multi-select
   const handleCheckboxChange = (team: TeamItem) => {
     const isSelected = selectedTeams.some((t) => t.id === team.id);
     if (isSelected) {
@@ -163,23 +128,17 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
     }
   };
 
-  /**
-   * Remove a single selected team (by clicking 'x')
-   */
+  // Remove one
   const removeTeam = (teamId: number) => {
     onCheckedTeamsChange(selectedTeams.filter((t) => t.id !== teamId));
   };
 
-  /**
-   * Clear all selected teams
-   */
+  // Clear all
   const clearAllTeams = () => {
     onCheckedTeamsChange([]);
   };
 
-  /**
-   * If user focuses in the input and we already have some teams, show dropdown
-   */
+  // Show dropdown if we have results
   const handleInputFocus = () => {
     if (teams.length > 0) {
       setShowDropdown(true);
@@ -188,7 +147,6 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
 
   return (
     <div className="relative w-full" ref={containerRef}>
-      {/* Text input */}
       <input
         type="text"
         value={query}
@@ -199,15 +157,12 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         onKeyDown={handleKeyDown}
       />
 
-      {/* The dropdown of search results */}
       {showDropdown && (
         <ul
           ref={dropdownRef}
           className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10"
         >
-          {isLoading && (
-            <li className="p-2 text-gray-500">Loading...</li>
-          )}
+          {isLoading && <li className="p-2 text-gray-500">Loading...</li>}
           {!isLoading && teams.length === 0 && (
             <li className="p-2 text-gray-500">No results found</li>
           )}
@@ -218,30 +173,28 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
               return (
                 <li
                   key={team.id}
-                  onMouseDown={(e) => e.preventDefault()} 
-                  // prevent blur from focusing input
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handleCheckboxChange(team)} // move onClick here
                   className={`p-2 hover:bg-gray-100 ${
                     isHighlighted ? "bg-gray-200" : ""
-                  }`}
-                  // single-click on the label area => check the box
+                  } cursor-pointer`} // ensure cursor is pointer
                 >
-                  <label className="flex items-center space-x-2 cursor-pointer">
+                  <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       checked={isChecked}
-                      onChange={() => handleCheckboxChange(team)}
+                      readOnly
                     />
-                    <span onClick={() => handleSelect(team)}>
+                    <span>
                       {team.name} - {team.league}
                     </span>
-                  </label>
+                  </div>
                 </li>
               );
             })}
         </ul>
       )}
 
-      {/* Display chosen teams with 'X' remove and "Clear All" */}
       {selectedTeams.length > 0 && (
         <div className="mt-2 bg-gray-100 p-2 rounded">
           <strong>Selected Teams:</strong>
