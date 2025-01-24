@@ -39,9 +39,7 @@ interface DraftSelection {
   round: number;
   overall: number;
   draftType?: {
-    league?: {
       slug?: string;
-    };
   };
 }
 
@@ -88,7 +86,7 @@ async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> 
  */
 async function fetchDraftPick(playerId: number): Promise<string> {
   try {
-    const url = `${apiBaseUrl}/players/${playerId}/draft-selections?offset=0&limit=100&sort=-year&fields=year,round,overall,draftType.league.slug&apiKey=${apiKey}`;
+    const url = `${apiBaseUrl}/players/${playerId}/draft-selections?offset=0&limit=100&sort=-year&fields=year,round,overall,draftType.slug&apiKey=${apiKey}`;
     console.log(`Alumni: fetching draft pick => ${url}`);
 
     const response = await fetch(url);
@@ -103,7 +101,7 @@ async function fetchDraftPick(playerId: number): Promise<string> {
     }
 
     // Filter to only NHL picks
-    const nhlDrafts = data.data.filter((d) => d.draftType?.league?.slug === 'nhl');
+    const nhlDrafts = data.data.filter((d) => d.draftType?.slug === 'nhl-entry-draft');
     if (nhlDrafts.length === 0) {
       return 'N/A';
     }
