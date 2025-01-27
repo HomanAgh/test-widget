@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { AlumniPlayer } from "@/app/types/player";
 import Table from "../common/style/Table";
 import TableHeader from "../common/style/TableHeader";
+
 interface PlayerTableProps {
   players: AlumniPlayer[];
   teamColors?: string[];
   genderFilter: "men" | "women" | "all";
   pageSize?: number; // default number of players per page, e.g., 50
 }
+
 const PlayerTable: React.FC<PlayerTableProps> = ({
   players,
   teamColors = [],
@@ -17,6 +19,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   const [sortColumn, setSortColumn] = React.useState<string>("");
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("none");
   const [currentPage, setCurrentPage] = React.useState(0);
+
   const handleSort = (column: string) => {
     if (sortColumn !== column) {
       setSortColumn(column);
@@ -33,18 +36,21 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
       setSortColumn(column);
     }
   };
+
   // Added: Local state for dynamic color mapping
   const [colorMapping, setColorMapping] = useState([
     "backgroundColor",
     "textColor",
     "tableBackgroundColor",
   ]);
+
   // Added: Dynamically map colors based on the current mapping
   const mappedColors = {
     backgroundColor: teamColors[colorMapping.indexOf("backgroundColor")] || "white",
     textColor: teamColors[colorMapping.indexOf("textColor")] || "black",
     tableBackgroundColor: teamColors[colorMapping.indexOf("tableBackgroundColor")] || "white",
   };
+
   // Filter players by gender
   const filteredPlayers = React.useMemo(() => {
     if (genderFilter === "men") {
@@ -54,6 +60,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     }
     return players; // "all"
   }, [players, genderFilter]);
+
   // Sorting logic
   const sortedPlayers = React.useMemo(() => {
     if (sortDirection === "none") {
@@ -90,12 +97,14 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     }
     return sorted;
   }, [filteredPlayers, sortColumn, sortDirection]);
+
   // Pagination logic
   const totalPlayers = sortedPlayers.length;
   const totalPages = Math.ceil(totalPlayers / pageSize);
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const pagePlayers = sortedPlayers.slice(startIndex, endIndex);
+
   // Render sort symbol
   function renderSortSymbol(column: string) {
     if (sortColumn !== column) return "";
@@ -103,6 +112,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     if (sortDirection === "desc") return " ↓";
     return " -";
   }
+
   return (
     <div
       className="overflow-x-auto bg-white shadow-lg rounded-lg"
@@ -132,6 +142,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
           </div>
         ))}
       </div>
+
       <table
         className="min-w-full table-auto border-collapse"
         style={{
@@ -166,6 +177,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
             const professionalTeams = player.teams?.filter((t) =>
               (t.leagueLevel ?? "").toLowerCase().includes("professional")
             ) || [];
+
             return (
               <tr
                 key={player.id}
@@ -191,6 +203,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
           })}
         </tbody>
       </table>
+
       {/* Pagination controls */}
       <div className="flex justify-center items-center mt-4 space-x-2">
         <button
@@ -228,4 +241,5 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     </div>
   );
 };
+
 export default PlayerTable;
