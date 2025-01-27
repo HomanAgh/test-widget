@@ -243,4 +243,3 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 };
 
 export default PlayerTable;
-

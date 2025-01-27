@@ -14,22 +14,30 @@ interface LeagueApiResponse {
 
 export async function GET() {
   try {
+    const leagueLevels = ['professional','semi-professional'];
     // Fetch all professional leagues
-    const response = await fetch(
-      `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=professional&apiKey=${apiKey}`
+    const leaguePromises = leagueLevels.map(async (level) => {
+      const res = await fetch(
+        `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${apiKey}`
+      );
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch leagues for level ${level}: ${res.statusText}`);
+      }
+
+      const json: LeagueApiResponse = await res.json();
+      return json;
+    });
+
+    const leagueResponses: LeagueApiResponse[] = await Promise.all(leaguePromises);
+
+    // Combine and format the league data
+    const leagues = leagueResponses.flatMap((response) =>
+      (response.data || []).map((league: LeagueDetails) => ({
+        slug: league.slug, // Unique identifier for the league
+        name: league.name, // Human-readable name for the league
+      }))
     );
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch leagues: ${response.statusText}`);
-    }
-
-    const leaguesData: LeagueApiResponse = await response.json();
-
-    // Extract and return the relevant league information
-    const leagues = (leaguesData.data || []).map((league: LeagueDetails) => ({
-      slug: league.slug,
-      name: league.name,
-    }));
 
     return NextResponse.json({ leagues });
   } catch (error: unknown) {

@@ -33,7 +33,12 @@ export const useFetchLeagues = () => {
         ]);
 
         // 1) Professional Leagues
-        const customLeagueSlugs = ['pwhl-w', 'nhl', 'ahl', 'shl', 'khl', 'liiga', 'nl', 'del'];
+        const customLeagueSlugs = [
+        //Womens Leagues
+        'pwhl-w', 'nwhl-ca-w', 'sdhl-w', 'phf-w',
+        //Mens Leagues
+        'nhl', 'ahl', 'shl', 'khl', 'liiga', 'nl', 'del', 'hockeyallsvenskan', 'liiga'
+        ];
         setProLeagues(proData.leagues || []);
         setCustomLeagues(
           (proData.leagues || []).filter((league: League) =>
@@ -41,21 +46,31 @@ export const useFetchLeagues = () => {
           )
         );
 
-        // 2) Junior Leagues
-        const customJuniorLeagueSlugs = ['jwhl-w', 'ushl', 'cchl', 'ohl', 'whl', 'qmjhl'];
-        setJunLeagues(junData.leagues || []);
-        setCustomJunLeagues(
-          (junData.leagues || []).filter((league: League) =>
-            customJuniorLeagueSlugs.includes(league.slug)
-          )
-        );
-
-        // 3) College Leagues
-        const customCollegeLeagueSlugs = ['ncaa', 'acac', 'usports', 'acha'];
+        // 2) College Leagues
+        const customCollegeLeagueSlugs = [
+        //Womens Leagues
+        'ncaa-iii-w', 'ncaa-w','acha-w', 'acha-d2-w',
+        //Mens Leagues
+        'ncaa', 'acac', 'usports', 'acha'
+        ];
         setCollegeLeagues(collegeData.leagues || []);
         setCustomCollegeLeagues(
           (collegeData.leagues || []).filter((league: League) =>
             customCollegeLeagueSlugs.includes(league.slug)
+          )
+        );
+
+        // 3) Junior Leagues
+        const customJuniorLeagueSlugs = [
+        //Womens Leagues
+        'jwhl-w',
+        //Mens Leagues
+        'ushl', 'cchl', 'ohl', 'whl', 'qmjhl', 'j20-nationell', 'mhl'
+        ];
+        setJunLeagues(junData.leagues || []);
+        setCustomJunLeagues(
+          (junData.leagues || []).filter((league: League) =>
+            customJuniorLeagueSlugs.includes(league.slug)
           )
         );
       } catch (err) {
