@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AlumniPlayer } from "@/app/types/player";
 import Table from "../common/style/Table";
 import TableHeader from "../common/style/TableHeader";
+import Link from "../common/style/Link"
 
 interface PlayerTableProps {
   players: AlumniPlayer[];
@@ -186,7 +187,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   color: mappedColors.textColor, // Updated: Dynamically mapped text color
                 }}
               >
-                <Table align="center">{player.name}</Table>
+                <Table align="center">
+                  <Link href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}>
+                  {player.name}
+                  </Link>
+                </Table>
                 <Table align="center">{player.birthYear ?? "N/A"}</Table>
                 <Table align="center">{player.draftPick ?? "N/A"}</Table>
                 <Table align="center">
