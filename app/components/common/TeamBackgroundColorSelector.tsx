@@ -4,39 +4,16 @@ import React, { useState, useEffect } from "react";
 import ToggleableColorPicker from "../common/color-picker/ToggleableColorPicker";
 
 interface TeamBackgroundColorSelectorProps {
-  /** 
-   * If you have just a playerId, we'll fetch the player's team color from /api/player
-   * Then fetch the team colors from /api/team
-   */
   playerId?: string;
-
-  /**
-   * If you have a direct teamName, you can pass that instead of playerId.
-   */
   teamName?: string;
-
-  /**
-   * If you already have a known teamId, pass it here
-   */
   teamId?: string;
-
-  /**
-   * Should we start with team colors enabled by default?
-   */
   defaultEnabled?: boolean;
-
-  /**
-   * Called whenever we get either the team color array or the custom color
-   */
   onTeamColorsChange?: (colors: string[]) => void;
   onUseTeamColorChange?: (useTeamColor: boolean) => void;
   onCustomColorChange?: (color: string) => void;
-
-  /**
-   * Custom button labels
-   */
   enableText?: string;
   disableText?: string;
+  showColorPicker?: boolean; //nytt för att den inte ska dyka upp på alumnipage
 }
 
 const TeamBackgroundColorSelector: React.FC<TeamBackgroundColorSelectorProps> = ({
@@ -49,6 +26,7 @@ const TeamBackgroundColorSelector: React.FC<TeamBackgroundColorSelectorProps> = 
   onCustomColorChange,
   enableText = "Enable Team Colors",
   disableText = "Disable Team Colors",
+  showColorPicker = true, // Default to true
 }) => {
   const [resolvedTeamId, setResolvedTeamId] = useState<string | null>(teamId ?? null);
   const [teamColors, setTeamColors] = useState<string[]>([]);
@@ -172,7 +150,7 @@ const TeamBackgroundColorSelector: React.FC<TeamBackgroundColorSelectorProps> = 
       )}
 
       {/* If not using team color, show a color picker */}
-      {!useTeamColor && (
+      {!useTeamColor && showColorPicker && (
         <div className="flex justify-center mt-4">
           <ToggleableColorPicker
             onColorSelect={(color) => {
