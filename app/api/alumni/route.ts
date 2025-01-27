@@ -15,7 +15,7 @@ interface PlayerStatsItem {
   player: {
     id: number;
     name?: string;
-    dateOfBirth?: string;
+    yearOfBirth?: string;
     gender?: string;
   };
   team: {
@@ -46,7 +46,7 @@ interface DraftSelection {
 interface CombinedPlayer {
   id: number;
   name: string;
-  dateOfBirth: string | null;
+  yearOfBirth: string | null;
   gender: string | null;
   teams: {
     name: string;
@@ -131,7 +131,7 @@ function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
 
   // fields
   url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.dateOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+    'player.id,player.name,player.yearOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
   return url;
@@ -150,7 +150,7 @@ function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
   }
 
   url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.dateOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+    'player.id,player.name,player.yearOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
   return url;
@@ -209,7 +209,7 @@ async function fetchAndMergePlayerStats(
         playerMap.set(playerId, {
           id: playerId,
           name: item.player.name || '',
-          dateOfBirth: item.player.dateOfBirth || null,
+          yearOfBirth: item.player.yearOfBirth || null,
           gender: item.player.gender || null,
           teams: [],
         });
@@ -342,7 +342,7 @@ export async function GET(request: Request) {
     const finalPlayers = allPlayers.map((p) => ({
       id: p.id,
       name: p.name,
-      birthYear: p.dateOfBirth ? new Date(p.dateOfBirth).getFullYear() : null,
+      birthYear: p.yearOfBirth,
       gender: p.gender,
       draftPick: p.draftPick ?? 'N/A',
       teams: p.teams,

@@ -15,7 +15,7 @@ interface LeagueApiResponse {
 export async function GET() {
   try {
     // Define league levels you want to fetch
-    const leagueLevels = ['major-junior', 'junior', 'junior-a'];
+    const leagueLevels = ['major-junior', 'junior', 'junior-a', 'junior-u20'];
 
     // Fetch leagues for each league level
     const leaguePromises = leagueLevels.map(async (level) => {
