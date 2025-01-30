@@ -10,9 +10,11 @@ module.exports = {
       colors: {
         customGray: "rgba(246, 249, 252, 1)",
         customGrayDark: "rgba(113, 113, 113, 1)",
+        customGrayMedium: "rgba(163, 163, 163, 1)",
       },
       fontFamily: {
-        sans: ["Open Sans", "sans-serif"],
+        sans: ["var(--font-open-sans)", "sans-serif"],
+        robotoMono: ["var(--font-roboto-mono)", "monospace"],
       },
     },
   },
