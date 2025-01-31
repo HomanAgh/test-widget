@@ -1,0 +1,123 @@
+"use client";
+
+import React, { useState, useMemo } from "react";
+import { SelectedTeam } from "@/app/components/alumni/TeamSearchBar";
+import SearchBar from "@/app/components/alumni/TeamSearchBar";
+import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
+import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
+import ErrorMessage from "@/app/components/common/ErrorMessage";
+import Alumni from "@/app/components/alumni/Alumni";
+import HexColors from "@/app/components/common/color-picker/HexColors";
+
+const AlumniWidgetSetup: React.FC = () => {
+  const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
+  const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [includeYouth, setIncludeYouth] = useState<boolean>(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [customColors, setCustomColors] = useState({
+    backgroundColor: "#FFFFFF",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+  });
+  const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
+
+  const embedUrl = useMemo(() => {
+    const teamIds = selectedTeams.map((t) => t.id).join(",");
+    const leagues = selectedLeagues.join(",");
+
+    return (
+      `http://localhost:3000/embed/alumni?teamIds=${encodeURIComponent(teamIds)}` +
+      `&leagues=${encodeURIComponent(leagues)}` +
+      `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
+      `&textColor=${encodeURIComponent(customColors.textColor)}` +
+      `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&includeYouth=${encodeURIComponent(includeYouth)}`
+    );
+  }, [selectedTeams, selectedLeagues, customColors, includeYouth]);
+
+  const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-4">Alumni Widget Setup</h2>
+
+      {/* Search for one or more teams */}
+      <SearchBar
+        placeholder="Search for a team..."
+        onSelect={(team) => setSelectedTeams([team])} 
+        onError={(errMsg) => setError(errMsg)}
+        selectedTeams={selectedTeams}
+        onCheckedTeamsChange={setSelectedTeams} 
+      />
+
+      {/* Error handling */}
+      {error && <ErrorMessage error={error} onClose={() => setError(null)} />}
+
+      {/* League selection */}
+      <LeagueSelectionDropdown
+        professionalLeagues={customLeagues}
+        juniorLeagues={customJunLeagues}
+        collegeLeagues={customCollegeLeagues}
+        selectedLeagues={selectedLeagues}
+        onChange={setSelectedLeagues}
+      />
+
+      {/* Colors & "Include Youth" in one row */}
+      <div className="flex items-center space-x-8 mt-4">
+        <HexColors
+          customColors={customColors}
+          setCustomColors={setCustomColors}
+        />
+
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={includeYouth}
+            onChange={(e) => setIncludeYouth(e.target.checked)}
+          />
+          <label className="font-medium">Include Youth Team</label>
+        </div>
+      </div>
+
+      {/* Preview the Alumni table (optional) */}
+      {selectedTeams.length > 0 && (
+        <div className="mt-6">
+          <Alumni
+            selectedTeams={selectedTeams}
+            selectedLeagues={selectedLeagues}
+            customColors={customColors}
+            includeYouth={includeYouth}
+          />
+        </div>
+      )}
+
+      {/* Embed code output */}
+      <div className="mt-6">
+        <h3 className="text-lg font-medium mb-2">Embed Code</h3>
+        <textarea
+          readOnly
+          value={iframeCode}
+          rows={3}
+          className="w-full p-2 border border-gray-300 rounded-md"
+        />
+        <button
+          onClick={() => setShowPreview(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 mt-2"
+        >
+          Preview
+        </button>
+      </div>
+
+      <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
+      {showPreview && (
+        <iframe
+          src={embedUrl}
+          style={{ width: "100%", height: "500px", border: "none" }}
+        />
+      )}
+    </div>
+  );
+};
+
+export default AlumniWidgetSetup;
