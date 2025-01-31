@@ -134,7 +134,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
             color: teamColors[1] || "black", // Text color from teamColors
           }}
         >
-          <thead className="bg-[#052D41] text-white pr-[12px] pl-[12px]">
+          <thead className="bg-[#052D41] text-white pr-[12px] pl-[12px] font-montserrat">
             <tr className="rounded-t-lg">
               <th
                 className="py-2 px-4 text-center font-bold whitespace-nowrap rounded-tl-lg"

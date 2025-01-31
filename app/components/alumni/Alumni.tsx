@@ -70,7 +70,7 @@ const Alumni: React.FC<AlumniProps> = ({
   const finalColors = customColors;
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mt-4">
+    <div className="bg-white shadow-md rounded-lg p-6 mt-4 ">
       {/* Search Field */}
       <input
         type="text"
@@ -84,26 +84,26 @@ const Alumni: React.FC<AlumniProps> = ({
       {error && <p>{error}</p>}
 
             {/* Men/Women Tabs */}
-            <div className="flex justify-center space-x-4 my-6">
+            <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center gap-[8px] font-montserrat font-semibold">
         <button
-          className={`px-4 py-2 border rounded ${
+          className={`flex items-center justify-center w-1/2 px-4 py-2 rounded-lg text-[14px] leading-[18px]${
             activeGenderTab === "men"
-              ? "bg-blue-600 text-white"
-              : "bg-white text-blue-600"
+              ? "bg-white text-[#010A0E]"
+              : "bg-white text-[#010A0E]"
           }`}
           onClick={() => setActiveGenderTab("men")}
         >
-          Men
+          MEN'S LEAGUE
         </button>
         <button
-          className={`px-4 py-2 border rounded ${
+          className={`flex items-center justify-center w-1/2 px-4 py-2 rounded-lg text-[14px] leading-[18px] ${
             activeGenderTab === "women"
-              ? "bg-blue-600 text-white"
-              : "bg-white text-blue-600"
+              ? "bg-white text-[#010A0E]"
+              : "bg-white text-[#010A0E]"
           }`}
           onClick={() => setActiveGenderTab("women")}
         >
-          Women
+          WOMEN'S LEAGUE
         </button>
       </div>
 
