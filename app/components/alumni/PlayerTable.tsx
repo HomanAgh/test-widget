@@ -207,70 +207,131 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
           </tbody>
         </table>
       </div>
-
       {/* Pagination Section */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-4 w-full">
         {/* Left: Pagination Controls */}
         <div className="flex items-center space-x-4">
+          {/* Previous Button */}
           <button
             disabled={currentPage === 0}
             onClick={() => setCurrentPage((p) => p - 1)}
+            className="p-2 disabled:opacity-50"
           >
-            <FaChevronLeft
-              className="w-[6px] h-[10px] top-[5px] bottom-[7px] text-black"
-            />
+            <FaChevronLeft className="w-[6px] h-[10px] text-black" />
           </button>
 
-          <div className="flex items-center gap-[16px]">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`w-[32px] h-[32px] border-[1px] rounded-[8px] border-green-600 ${
-                  currentPage === index
-                    ? "bg-[#0B9D52] text-white font-sans"
-                    : "bg-customGray text-blue-950 font-sans"
-                }`}
-                onClick={() => setCurrentPage(index)}
-              >
-                {index + 1}
-              </button>
-            ))}
+          {/* Page Numbers */}
+          <div className="flex items-center gap-[12px]">
+            {/* Always show first page */}
+            <button
+              className={`w-[32px] h-[32px] border-[1px] rounded-[8px] border-green-600 ${
+                currentPage === 0
+                  ? "bg-[#0B9D52] text-white font-sans" // Active Page (Green)
+                  : "bg-gray-100 text-blue-950 hover:bg-gray-300" // Inactive Page (Gray)
+              }`}
+              onClick={() => setCurrentPage(0)}
+            >
+              1
+            </button>
+
+            {/* Ellipsis if currentPage is greater than 3 */}
+            {currentPage > 3 && <span className="text-gray-500">...</span>}
+
+            {/* Dynamic 5 page buttons */}
+            {Array.from({ length: totalPages }, (_, index) => index)
+              .filter((index) => {
+                if (index === 0 || index === totalPages - 1) return false;
+                if (currentPage < 3) return index >= 1 && index <= 4; // Show 1-5 when at the start
+                if (currentPage > totalPages - 4) return index >= totalPages - 5; // Show last 5 when near the end
+                return index >= currentPage - 1 && index <= currentPage + 3; // Centered pagination logic
+              })
+              .map((index) => (
+                <button
+                  key={index}
+                  className={`w-[32px] h-[32px] border-[1px] rounded-[8px] border-green-600 ${
+                    currentPage === index
+                      ? "bg-[#0B9D52] text-white font-sans" // Active Page (Green)
+                      : "bg-gray-100 text-blue-950 hover:bg-gray-300" // Inactive Page (Gray)
+                  }`}
+                  onClick={() => setCurrentPage(index)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+
+            {/* Ellipsis before last page */}
+            {currentPage < totalPages - 4 && <span className="text-gray-500">...</span>}
+
+            {/* Always show last page */}
+            <button
+              className={`w-[32px] h-[32px] border-[1px] rounded-[8px] border-green-600 ${
+                currentPage === totalPages - 1
+                  ? "bg-[#0B9D52] text-white font-sans" // Active Page (Green)
+                  : "bg-gray-100 text-blue-950 hover:bg-gray-300" // Inactive Page (Gray)
+              }`}
+              onClick={() => setCurrentPage(totalPages - 1)}
+            >
+              {totalPages}
+            </button>
           </div>
 
+          {/* Next Button */}
           <button
             disabled={currentPage >= totalPages - 1}
             onClick={() => setCurrentPage((p) => p + 1)}
-            className=""
+            className="p-2 disabled:opacity-50"
           >
-            <FaChevronRight
-              className="w-[6px] h-[10px] top-[5px] bottom-[7px] text-black"
-            />
+            <FaChevronRight className="w-[6px] h-[10px] text-black" />
           </button>
         </div>
 
-        {/* Right: Go To Page */}
-        <div className="flex items-center space-x-2 gap-[6px]">
+        {/* Right: Go to Page Section */}
+        <div className="flex items-center space-x-2">
           <span className="text-sm text-customGrayDark">Go to page</span>
           <input
             value={goToPageInput}
             onChange={(e) => setGoToPageInput(e.target.value)}
-            className="border p-1 w-[38px] h-[32px] gap-[8px] text-center rounded placeholder-blue-950"
+            className="border p-1 w-[38px] h-[32px] text-center rounded placeholder-blue-950"
             placeholder="#"
             min={1}
             max={totalPages}
           />
           <button
             onClick={handleGoToPage}
-            className="text-[16px] font-bold px-[12px] py-[4px] gap-[4px] bg-[#0B9D52] text-white rounded-lg"
+            className="text-[16px] font-bold px-[12px] py-[4px] bg-[#0B9D52] text-white rounded-lg"
           >
             Go
           </button>
         </div>
       </div>
 
-      <Image className="flex h-[24px] py-[8px] pl-[12px] justify-center items-center gap-[4px] self-stretch"
-       alt="test" src={"/images/Group.svg"} width={97.075} height={14}></Image>
+      {/* "Powered by EliteProspects" Logo & Legend */}
+      <div className="flex flex-col items-center justify-center mt-4">
+        {/* Powered by + Logo */}
+        <div className="flex items-center space-x-1">
+          <span className="text-[12px] font-montserrat font-medium text-black lowercase">
+            powered by
+          </span>
+          <a href="https://www.eliteprospects.com/" target="_blank" rel="noopener noreferrer">
+            <Image
+              className="h-[14px] w-[97.075px] cursor-pointer"
+              alt="EliteProspects"
+              src={"/images/Group.svg"}
+              width={97.075}
+              height={14}
+            />
+          </a>
+        </div>
 
+        {/* Legend */}
+        <div className="flex justify-center items-center text-gray-600 mt-2 text-[12px] font-montserrat">
+          <span className="font-semibold">Legend: </span>
+          <span className="mx-2 text-[#000] font-bold">BY</span>
+          <span className="text-[#000]">Birth Year</span>
+          <span className="mx-2 text-[#000] font-bold">NHL DP</span>
+          <span className="text-[#000]">Draft Pick</span>
+        </div>
+      </div>
     </div>
   );
 };
