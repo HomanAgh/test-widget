@@ -3,6 +3,8 @@ import { AlumniPlayer } from "@/app/types/player";
 import Table from "../common/style/Table";
 import TableHeader from "../common/style/TableHeader";
 import Link from "../common/style/Link";
+// import img from "../public/images/bird.jpeg";
+import Image from "next/image";
 
 import {FaChevronLeft, FaChevronRight} from "react-icons/fa";
 
@@ -177,7 +179,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
               return (
                 <tr
                   key={player.id}
-                  className="h-[56px] odd:bg-gray-100 even:bg-white font-semibold text-sm leading-[21px]" 
+                  className="h-[56px] odd:bg-gray-100 even:bg-white font-medium text-sm leading-[21px]" 
                   style={{
                     /* backgroundColor: teamColors[0] || "white",  */
                     color: teamColors[1] || "black", // Text color from teamColors
@@ -206,8 +208,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
         </table>
       </div>
 
-
-
       {/* Pagination Section */}
       <div className="flex justify-between items-center mt-4">
         {/* Left: Pagination Controls */}
@@ -215,20 +215,19 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
           <button
             disabled={currentPage === 0}
             onClick={() => setCurrentPage((p) => p - 1)}
-            className=""
           >
             <FaChevronLeft
               className="w-[6px] h-[10px] top-[5px] bottom-[7px] text-black"
             />
           </button>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-[16px]">
             {Array.from({ length: totalPages }, (_, index) => (
               <button
                 key={index}
-                className={`w-[32px] h-[32px] border-[1px] rounded-[8px] gap-2.5 border-green-600 ${
+                className={`w-[32px] h-[32px] border-[1px] rounded-[8px] border-green-600 ${
                   currentPage === index
-                    ? "bg-green-600 text-white font-sans"
+                    ? "bg-[#0B9D52] text-white font-sans"
                     : "bg-customGray text-blue-950 font-sans"
                 }`}
                 onClick={() => setCurrentPage(index)}
@@ -250,8 +249,8 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
         </div>
 
         {/* Right: Go To Page */}
-        <div className="flex items-center space-x-2">
-          <span className="text-sm font-sans text-customGrayDark">Go to page</span>
+        <div className="flex items-center space-x-2 gap-[6px]">
+          <span className="text-sm text-customGrayDark">Go to page</span>
           <input
             value={goToPageInput}
             onChange={(e) => setGoToPageInput(e.target.value)}
@@ -262,12 +261,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
           />
           <button
             onClick={handleGoToPage}
-            className="text-[16px] font-bold px-[12px] py-[4px] gap-[4px] bg-green-600 text-white rounded-lg"
+            className="text-[16px] font-bold px-[12px] py-[4px] gap-[4px] bg-[#0B9D52] text-white rounded-lg"
           >
             Go
           </button>
         </div>
       </div>
+
+      <Image className="flex h-[24px] py-[8px] pl-[12px] justify-center items-center gap-[4px] self-stretch"
+       alt="test" src={"/images/Group.svg"} width={97.075} height={14}></Image>
+
     </div>
   );
 };

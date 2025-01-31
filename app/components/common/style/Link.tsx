@@ -11,7 +11,7 @@ const Link: React.FC<LinkProps> = ({ href, children }) => {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-blue-500 hover:underline"
+      className="text-[#0D73A6] hover:underline"
     >
       {children}
     </a>
