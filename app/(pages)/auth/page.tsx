@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import EliteProspectsLogo from "@/app/components/common/EliteProspectsLogo";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -26,7 +27,7 @@ const LoginPage = () => {
 
       localStorage.setItem("isLoggedIn", "true");
       console.log("[DEBUG] Redirecting to /home");
-      router.push("/home"); // Redirect to HomePage after login
+      router.push("/home");
     } catch (err) {
       const errorMessage = (err as Error).message || "Unknown Error";
       console.error("[DEBUG] Login error:", errorMessage);
@@ -35,32 +36,58 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <h1>{"Login"}</h1>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>{"Username"}</label>
-          <input
-            type="text"
-            value={username}
-            placeholder={"Username"}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>{"Password"}</label>
-          <input
-            type="password"
-            value={password}
-            placeholder={"Password"}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">{"Submit"}</button>
-      </form>
+    <div className="min-h-screen flex flex-col items-center pt-[56px] pb-[24px]">
+      {/* Logo & Widget Title - Left-Aligned */}
+      <div className="w-[320px] md:w-[768px] flex items-center mb-6">
+        <EliteProspectsLogo />
+        <span className="text-[18px] font-montserrat font-bold ml-2 text-gray-800">
+          Widget
+        </span>
+      </div>
+
+      {/* Login Form */}
+      <div className="bg-white p-6 rounded-lg w-[320px] md:w-[768px] pb-[56px]">
+        <h1 className="text-[28px] font-bold font-montserrat text-left ">Login</h1>
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          {/* Username Field */}
+          <div className="flex flex-col pt-[24px] pb-[24px]">
+            <label className="text-sm font-semibold pb-[8px]">Username*</label>
+            <input
+              type="text"
+              value={username}
+              placeholder="Enter your username"
+              onChange={(e) => setUsername(e.target.value)}
+              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Password Field */}
+          <div className="flex flex-col pb-[56px]">
+            <label className="text-sm font-semibold pb-[8px]">Password*</label>
+            <input
+              type="password"
+              value={password}
+              placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="font-montserrat text-[12px] flex justify-center items-center w-[100px] min-w-[80px] h-[28px] px-[12px] py-[8px] bg-[#0B9D52] text-white font-bold rounded-md hover:bg-green-700 transition-all"
+          >
+            SUBMIT
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default LoginPage

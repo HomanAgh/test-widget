@@ -2,9 +2,8 @@
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import HomeButton from "@/app/components/common/HomeButton";
-import LogoutButton from "@/app/components/common/LogoutButton";
 import AlumniWidgetSetup from "@/app/components/widget/AlumniWidgetSetup";
+import Header from "@/app/components/Header";
 
 const AlumniPage: React.FC = () => {
   const router = useRouter();
@@ -18,20 +17,14 @@ const AlumniPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="max-w-4xl mx-auto relative w-[768px]">
-      {/* Top bar: Home & Logout */}
-      <div className="flex justify-between items-center mb-4">
-        <HomeButton />
-        <LogoutButton />
-      </div>
-
-      {/* Page Title */}
-      <h1 className="text-2xl font-bold mb-4 text-center">Alumni Page</h1>
+    <div className="max-w-4xl mx-auto relative w-[768px] pt-[48px] pb-[24px]">
+      {/* Reusable Header */}
+      <Header />
 
       {/* Show the widget setup */}
       <AlumniWidgetSetup />
     </div>
-  );
+  );  
 };
 
 export default AlumniPage;
