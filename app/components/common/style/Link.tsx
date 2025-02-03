@@ -1,17 +1,28 @@
 import React from "react";
 
-interface LinkProps {
+interface CustomLinkProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
   children: React.ReactNode;
 }
 
-const Link: React.FC<LinkProps> = ({ href, children }) => {
+const Link: React.FC<CustomLinkProps> = ({
+  href,
+  children,
+  target = "_blank",
+  rel = "noopener noreferrer",
+  className,
+  ...rest
+}) => {
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-[#0D73A6] hover:underline"
+      // Provide default target & rel but allow overrides
+      target={target}
+      rel={rel}
+      // Use the incoming className or fallback
+      className={className ?? "text-[#0D73A6] hover:underline"}
+      {...rest}
     >
       {children}
     </a>

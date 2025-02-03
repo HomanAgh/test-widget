@@ -13,7 +13,7 @@ const AlumniWidgetSetup: React.FC = () => {
   const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [includeYouth, setIncludeYouth] = useState<boolean>(false);
+  const [includeYouth, setIncludeYouth] = useState<boolean>(true);
   const [showPreview, setShowPreview] = useState(false);
   const [customColors, setCustomColors] = useState({
     backgroundColor: "#FFFFFF",
@@ -45,13 +45,12 @@ const AlumniWidgetSetup: React.FC = () => {
       {/* Search for one or more teams */}
       <SearchBar
         placeholder="Search for a team..."
-        onSelect={(team) => setSelectedTeams([team])} 
+        onSelect={(team) => setSelectedTeams([team])}
         onError={(errMsg) => setError(errMsg)}
         selectedTeams={selectedTeams}
-        onCheckedTeamsChange={setSelectedTeams} 
+        onCheckedTeamsChange={setSelectedTeams}
       />
 
-      {/* Error handling */}
       {error && <ErrorMessage error={error} onClose={() => setError(null)} />}
 
       {/* League selection */}
@@ -63,22 +62,11 @@ const AlumniWidgetSetup: React.FC = () => {
         onChange={setSelectedLeagues}
       />
 
-      {/* Colors & "Include Youth" in one row */}
-      <div className="flex items-center space-x-8 mt-4">
-        <HexColors
-          customColors={customColors}
-          setCustomColors={setCustomColors}
-        />
-
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={includeYouth}
-            onChange={(e) => setIncludeYouth(e.target.checked)}
-          />
-          <label className="font-medium">Include Youth Team</label>
-        </div>
+      {/* Colors only, without checkbox */}
+      <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
+        <HexColors customColors={customColors} setCustomColors={setCustomColors} />
       </div>
+
 
       {/* Preview the Alumni table (optional) */}
       {selectedTeams.length > 0 && (

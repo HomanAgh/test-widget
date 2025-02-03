@@ -87,6 +87,7 @@ export interface CareerStats {
 }
 
 export interface AlumniPlayer {
+  position: string;
   id: number;
   name: string;
   birthYear?: number | null;

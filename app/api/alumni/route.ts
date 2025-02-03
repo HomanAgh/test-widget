@@ -13,6 +13,7 @@ interface ApiResponse<T> {
 
 interface PlayerStatsItem {
   player: {
+    position: string;
     id: number;
     name?: string;
     yearOfBirth?: string;
@@ -48,6 +49,7 @@ interface CombinedPlayer {
   name: string;
   yearOfBirth: string | null;
   gender: string | null;
+  position: string;
   teams: {
     name: string;
     leagueLevel: string | null;
@@ -112,7 +114,7 @@ function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
 
   // Specify the fields we want
   url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.yearOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+    'player.id,player.name,player.position,player.yearOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
   return url;
@@ -191,6 +193,7 @@ async function fetchAndMergePlayerStats(
           name: item.player.name || '',
           yearOfBirth: item.player.yearOfBirth || null,
           gender: item.player.gender || null,
+          position: item.player.position, 
           teams: [],
         });
       }
@@ -374,6 +377,7 @@ export async function GET(request: Request) {
       name: p.name,
       birthYear: p.yearOfBirth,
       gender: p.gender,
+      position: p.position,
       draftPick: p.draftPick ?? 'N/A',
       teams: p.teams,
     }));
