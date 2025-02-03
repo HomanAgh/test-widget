@@ -18,7 +18,7 @@ const AlumniPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 relative">
+    <div className="max-w-4xl mx-auto relative w-[768px]">
       {/* Top bar: Home & Logout */}
       <div className="flex justify-between items-center mb-4">
         <HomeButton />

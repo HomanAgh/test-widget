@@ -70,7 +70,7 @@ const Alumni: React.FC<AlumniProps> = ({
   const finalColors = customColors;
 
   return (
-    <div className="bg-white shadow-md flex flex-col rounded-lg p-6 mt-4 w-[768px]">
+    <div className="bg-white  flex flex-col rounded-lg py-6 mt-4 w-[768px]">
       {/* Search Field */}
       <input
         type="text"
