@@ -113,7 +113,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 
   return (
     <div
-      className="bg-white shadow-lg rounded-lg w-full"
+      className="bg-white rounded-lg w-full"
       style={{
         backgroundColor: teamColors[2] || "white",
         WebkitOverflowScrolling: "touch",
@@ -122,11 +122,11 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     >
       {/* Table Wrapper for horizontal scroll */}
       <div
-        className="overflow-x-auto rounded-lg overflow-hidden shadow-lg border border-customGrayMedium"
+        className="overflow-x-auto rounded-lg overflow-hidden  border border-customGrayMedium"
         style={{ backgroundColor: teamColors[2] || "white" }}
       >
         <table
-          className="min-w-[800px] table-auto border-collapse"
+          className="min-w-[718px] table-auto border-collapse"
           style={{
             backgroundColor: teamColors[0] || "white",
             color: teamColors[1] || "black",

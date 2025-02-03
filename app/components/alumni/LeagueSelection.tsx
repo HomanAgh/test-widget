@@ -82,7 +82,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute bg-white border rounded shadow-lg w-full mt-2 z-10 p-4">
+        <div className="absolute bg-white border rounded w-full mt-2 z-10 p-4">
           {/* Professional Leagues */}
           <div>
             <h3 className="font-bold mb-2">Professional Leagues</h3>
