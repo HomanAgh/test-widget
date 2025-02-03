@@ -22,7 +22,8 @@ const HexColors: React.FC<HexColorsProps> = ({
   setCustomColors,
 }) => {
   return (
-    <div className="my-4 flex items-center space-x-4">
+    // On mobile (default) use flex-col (stacked vertically) and on md (desktop) use flex-row
+    <div className="my-4 flex flex-col md:flex-row items-left md:space-x-4 space-y-4 md:space-y-0">
       {/* Background Color */}
       <label className="flex items-center space-x-2">
         <span className="font-medium">Background:</span>
