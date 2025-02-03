@@ -70,12 +70,12 @@ const Alumni: React.FC<AlumniProps> = ({
   const finalColors = customColors;
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mt-4 ">
+    <div className="bg-white shadow-md flex flex-col rounded-lg p-6 mt-4 w-[768px]">
       {/* Search Field */}
       <input
         type="text"
-        placeholder="Search players..."
-        className="border p-2 mb-4 w-full"
+        placeholder=""
+        className="w-full border rounded-lg mb-4 h-[36px]"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
@@ -84,22 +84,22 @@ const Alumni: React.FC<AlumniProps> = ({
       {error && <p>{error}</p>}
 
             {/* Men/Women Tabs */}
-            <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center gap-[8px] font-montserrat font-semibold">
+            <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold">
         <button
-          className={`flex items-center justify-center w-1/2 px-4 py-2 rounded-lg text-[14px] leading-[18px]${
+          className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
             activeGenderTab === "men"
-              ? "bg-white text-[#010A0E]"
-              : "bg-white text-[#010A0E]"
+              ? "bg-white text-[#010A0E] border-b-2 border-[#0D73A6]"
+              : "bg-white text-[#010A0E] border-b-2 border-[#E7E7E7]"
           }`}
           onClick={() => setActiveGenderTab("men")}
         >
           MEN'S LEAGUE
         </button>
         <button
-          className={`flex items-center justify-center w-1/2 px-4 py-2 rounded-lg text-[14px] leading-[18px] ${
+          className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
             activeGenderTab === "women"
-              ? "bg-white text-[#010A0E]"
-              : "bg-white text-[#010A0E]"
+              ? "bg-white text-[#010A0E] border-b-2 border-[#0D73A6]"
+              : "bg-white text-[#010A0E] border-b-2 border-[#E7E7E7]"
           }`}
           onClick={() => setActiveGenderTab("women")}
         >
