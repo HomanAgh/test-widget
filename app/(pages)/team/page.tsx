@@ -4,10 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SearchBar from '@/app/components/team/TeamSearch';
 import ErrorMessage from '@/app/components/common/ErrorMessage';
-import LogoutButton from '@/app/components/common/LogoutButton';
-import HomeButton from '@/app/components/common/HomeButton';
 import WidgetSetup from '@/app/components/widget/TeamWidgetSetup'; 
 import Header from '@/app/components/Header';
+import { PageWrapper, PageTitle } from "@/app/components/common/style";
 
 const TeamPage: React.FC = () => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
@@ -28,14 +27,9 @@ const TeamPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 relative">
-
-      {/* Reusable Header */}
+    <PageWrapper>
       <Header />
-      {/* Page Title */}
-      <h1 className="text-2xl font-bold mb-4 text-center">{'Team Search'}</h1>
-
-      {/* Search Bar for Team Selection */}
+      <PageTitle title="Search team" />
       <SearchBar
         onSelect={handleTeamSelect}
         onError={(error) => setError(error)}
@@ -43,7 +37,7 @@ const TeamPage: React.FC = () => {
       {error && <ErrorMessage error={error} onClose={() => setError("")} />}
    
       {selectedTeamId && <WidgetSetup teamId={selectedTeamId} />}
-    </div>
+    </PageWrapper>
   );
 };
 

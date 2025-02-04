@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AlumniWidgetSetup from "@/app/components/widget/AlumniWidgetSetup";
 import Header from "@/app/components/Header";
+import { PageWrapper, PageTitle } from "@/app/components/common/style";
 
 const AlumniPage: React.FC = () => {
   const router = useRouter();
@@ -17,14 +18,15 @@ const AlumniPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="max-w-4xl mx-auto relative w-[768px] pt-[48px] pb-[24px]">
-      {/* Reusable Header */}
-      <Header />
-
-      {/* Show the widget setup */}
-      <AlumniWidgetSetup />
-    </div>
-  );  
-};
-
+    <PageWrapper>
+      <div>
+        <Header />
+        <PageTitle title="Search team" />
+        <AlumniWidgetSetup />
+      </div>
+    </PageWrapper>
+  );
+}
+  
 export default AlumniPage;
+  

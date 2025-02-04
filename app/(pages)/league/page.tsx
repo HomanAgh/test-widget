@@ -4,9 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "@/app/components/league/LeagueSearch";
 import LeagueWidgetSetup from "@/app/components/widget/LeagueWidgetSetup";
-import LogoutButton from "@/app/components/common/LogoutButton";
-import HomeButton from "@/app/components/common/HomeButton";
 import Header from "@/app/components/Header";
+import { PageWrapper, PageTitle } from "@/app/components/common/style";
 
 const LeaguePage: React.FC = () => {
   const [selectedLeagueSlug, setSelectedLeagueSlug] = useState<string | null>(null);
@@ -27,15 +26,9 @@ const LeaguePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 relative">
-
-      {/* Reusable Header */}
-      <Header />
-      
-      {/* Page Title */}
-      <h1 className="text-2xl font-bold mb-4 text-center">{"League Search"}</h1>
-
-      {/* Search Bar for League Selection */}
+    <PageWrapper>
+      <Header />  
+      <PageTitle title="Search league" />
       <SearchBar 
         onSelect={handleLeagueSelect} 
         onError={setError} 
@@ -50,7 +43,7 @@ const LeaguePage: React.FC = () => {
           <LeagueWidgetSetup leagueSlug={selectedLeagueSlug} />
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 };
 

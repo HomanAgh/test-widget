@@ -4,9 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "@/app/components/player/PlayerSearch";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
-import LogoutButton from "@/app/components/common/LogoutButton";
-import HomeButton from "@/app/components/common/HomeButton";
 import Header from "@/app/components/Header";
+import { PageWrapper, PageTitle } from "@/app/components/common/style";
 
 const PlayerSearchPage = () => {
   const [error, setError] = useState("");
@@ -24,22 +23,16 @@ const PlayerSearchPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 relative">
-      
-      {/* Reusable Header */}
+    <PageWrapper> 
       <Header />
-
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        {"Player Search"}
-      </h1>
-
+      <PageTitle title="Search player" />
       <SearchBar
         onSelect={handlePlayerSelect}
         onError={(error) => setError(error)}
       />
       {error && <ErrorMessage error={error} onClose={() => setError("")} />}
 
-    </div>
+    </PageWrapper>
   );
 };
 
