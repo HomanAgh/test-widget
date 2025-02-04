@@ -42,8 +42,9 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   };
 
   const embedUrl = useMemo(() => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     return (
-      `http://localhost:3000/embed/player?playerId=${playerId}` +
+      `${baseUrl}/embed/player?playerId=${playerId}` +
       `&backgroundColor=${encodeURIComponent(finalBackgroundColor)}` +
       `&textColor=${encodeURIComponent(finalTextColor)}` +
       `&gameLimit=${gameLimit}&viewMode=${viewMode}` +

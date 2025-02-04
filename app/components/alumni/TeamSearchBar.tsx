@@ -145,9 +145,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   };
 
   return (
-    <div className=" pb-[48px]">
-      {/* Title */}
-      <h1 className="text-[28px] font-bold font-montserrat text-left pb-[24px]">Search team</h1>
+    <div className="pb-[48px]">
   
       {/* Search Bar Container */}
       <div className="relative w-full" ref={containerRef}>

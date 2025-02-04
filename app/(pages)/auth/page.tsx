@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import EliteProspectsLogo from "@/app/components/common/EliteProspectsLogo";
+import PageWrapper from "@/app/components/common/style/PageWrapper";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -36,19 +37,15 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center pt-[56px] pb-[24px]">
-      {/* Logo & Widget Title - Left-Aligned */}
-      <div className="w-[320px] md:w-[768px] flex items-center mb-6">
+    <PageWrapper>
+      <div className="flex items-center mb-6">
         <EliteProspectsLogo />
-        <span className="text-[18px] font-montserrat font-bold ml-2 text-gray-800">
-          Widget
-        </span>
       </div>
-
+  
       {/* Login Form */}
       <div className="bg-white p-6 rounded-lg w-[320px] md:w-[768px] pb-[56px]">
-        <h1 className="text-[28px] font-bold font-montserrat text-left ">Login</h1>
-
+        <h1 className="text-[28px] font-bold font-montserrat text-left">Login</h1>
+  
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Username Field */}
           <div className="flex flex-col pt-[24px] pb-[24px]">
@@ -61,7 +58,7 @@ const LoginPage = () => {
               className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
+  
           {/* Password Field */}
           <div className="flex flex-col pb-[56px]">
             <label className="text-sm font-semibold pb-[8px]">Password*</label>
@@ -73,10 +70,10 @@ const LoginPage = () => {
               className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
+  
           {/* Error Message */}
           {error && <p className="text-red-500 text-sm">{error}</p>}
-
+  
           {/* Submit Button */}
           <button
             type="submit"
@@ -86,8 +83,9 @@ const LoginPage = () => {
           </button>
         </form>
       </div>
-    </div>
+    </PageWrapper>
   );
-};
-
-export default LoginPage
+}
+  
+export default LoginPage;
+  

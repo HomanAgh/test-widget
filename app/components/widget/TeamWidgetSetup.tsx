@@ -31,8 +31,9 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   }, [useTeamColor, teamColors]);
 
   const embedUrl = useMemo(() => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     return (
-      `http://localhost:3000/embed/team?teamId=${encodeURIComponent(teamId)}` +
+      `${baseUrl}/embed/team?teamId=${encodeURIComponent(teamId)}` +
       `&backgroundColor=${encodeURIComponent(finalBackgroundColor)}` +
       `&textColor=${encodeURIComponent(finalTextColor)}`
     );

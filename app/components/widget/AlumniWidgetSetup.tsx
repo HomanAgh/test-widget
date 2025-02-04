@@ -13,7 +13,7 @@ const AlumniWidgetSetup: React.FC = () => {
   const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [includeYouth, setIncludeYouth] = useState<boolean>(true);
+  const [includeYouth] = useState<boolean>(true);
   const [showPreview, setShowPreview] = useState(false);
   const [customColors, setCustomColors] = useState({
     backgroundColor: "#FFFFFF",
@@ -25,9 +25,10 @@ const AlumniWidgetSetup: React.FC = () => {
   const embedUrl = useMemo(() => {
     const teamIds = selectedTeams.map((t) => t.id).join(",");
     const leagues = selectedLeagues.join(",");
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
     return (
-      `http://localhost:3000/embed/alumni?teamIds=${encodeURIComponent(teamIds)}` +
+      `${baseUrl}/embed/alumni?teamIds=${encodeURIComponent(teamIds)}` +
       `&leagues=${encodeURIComponent(leagues)}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +

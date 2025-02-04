@@ -103,7 +103,6 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for Team..."
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(teams.length > 0)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 200)}

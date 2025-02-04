@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold } from "react-icons/pi"; // Importing icons
 import Header from "@/app/components/Header";
+import { PageWrapper, PageTitle } from "@/app/components/common/style";
 
 const HomePage = () => {
   const router = useRouter();
@@ -23,27 +24,32 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-4 relative pt-[56px] pb-[24px]">
+    <PageWrapper>
       <Header />
-
-      {/* Page Title */}
-      <h1 className="text-[28px] font-montserrat font-bold text-left mb-6 pb-[24px]">Choose an option</h1>
-
-      {/* Menu Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> {/* 16px gap across all screen sizes */}
+      <PageTitle title="Choose an option" />
+  
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-[16px]">
         {menuItems.map((item) => (
           <button
             key={item.path}
             onClick={() => router.push(item.path)}
-            className="w-[180px] flex flex-col items-center justify-center p-[24px] border border-green-600 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all"
+            className="flex flex-col items-center justify-center pb-[24px] pt-[24px] pl-[16px] pr-[16px] 
+                       border border-green-600 bg-white rounded-lg shadow-md 
+                       hover:bg-green-600 transition-all group"
           >
-            <div className="text-green-600 mb-2">{item.icon}</div>
-            <span className="text-sm font-semibold text-center whitespace-pre-line">{item.label}</span>
+            <div className="text-black pb-[16px] transition-all group-hover:text-white">
+              {item.icon}
+            </div>
+  
+            <span className="text-sm font-semibold text-center whitespace-pre-line transition-all group-hover:text-white">
+              {item.label}
+            </span>
           </button>
         ))}
       </div>
-    </div>
+    </PageWrapper>
   );
+  
 };
 
 export default HomePage;

@@ -101,7 +101,6 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={"Search for League..."}
         onKeyDown={handleKeyDown}
         onFocus={() => setShowDropdown(Leagues.length > 0)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 200)}

@@ -12,9 +12,9 @@ const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({ leagueSlug }) => 
   const [textColor] = useState("#000000");
   const [showPreview, setShowPreview] = useState(false);
 
-  // Build the final embed URL
   const embedUrl = useMemo(() => {
-    const base = "http://localhost:3000/embed/league";
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const base = `${baseUrl}/embed/league`;
     const params = new URLSearchParams({
       leagueSlug: leagueSlug,
       backgroundColor: bgColor,
