@@ -120,20 +120,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     tableBgColor.toLowerCase() !== "#ffffff" && tableBgColor.toLowerCase() !== "#fff";
 
   return (
-    <div
-      className="bg-white rounded-lg w-full pt-[16px]"
-      style={{
-        WebkitOverflowScrolling: "touch",
-        touchAction: "pan-x",
-      }}
-    >
+    <div>
       {/* Table Wrapper for horizontal scroll */}
-      <div className="overflow-x-auto rounded-lg overflow-hidden  border border-customGrayMedium">
-        <table
-          className="min-w-[718px] table-auto border-collapse"
+      <div className="overflow-x-auto overflow-hidden  border border-customGrayMedium bg-white rounded-lg w-full">
+        <table className="w-full"
+    
           style={{
             backgroundColor: tableBgColor,
             color: tableTextColor,
+            WebkitOverflowScrolling: "touch",
+            touchAction: "pan-x",
           }}
         >
           <thead
