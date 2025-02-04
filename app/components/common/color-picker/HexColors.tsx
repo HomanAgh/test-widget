@@ -23,13 +23,13 @@ const HexColors: React.FC<HexColorsProps> = ({
 }) => {
   return (
     // On mobile (default) use flex-col (stacked vertically) and on md (desktop) use flex-row
-    <div className="my-4 flex flex-col md:flex-row items-left md:space-x-4 space-y-4 md:space-y-0 ">
+    <div className="my-4 flex flex-col md:flex-row items-left md:space-x-4 space-y-4 md:space-y-0">
       {/* Background Color */}
       <label className="flex items-center space-x-2">
         <span className="font-medium">Background:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[180px]"
+          className="border p-1 rounded"
           value={customColors.backgroundColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -46,7 +46,7 @@ const HexColors: React.FC<HexColorsProps> = ({
         <span className="font-medium">Text:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[180px]"
+          className="border p-1 rounded"
           value={customColors.textColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -63,7 +63,7 @@ const HexColors: React.FC<HexColorsProps> = ({
         <span className="font-medium">Table BG:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[180px]"
+          className="border p-1 rounded"
           value={customColors.tableBackgroundColor}
           onChange={(e) =>
             setCustomColors((prev) => ({

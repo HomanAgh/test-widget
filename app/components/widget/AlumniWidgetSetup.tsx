@@ -16,8 +16,8 @@ const AlumniWidgetSetup: React.FC = () => {
   const [includeYouth, setIncludeYouth] = useState<boolean>(true);
   const [showPreview, setShowPreview] = useState(false);
   const [customColors, setCustomColors] = useState({
-    backgroundColor: "#FFFFFF",
-    textColor: "#000000",
+    backgroundColor: "#052D41",
+    textColor: "#FFFFFF",
     tableBackgroundColor: "#FFFFFF",
   });
   const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();

@@ -111,11 +111,10 @@ const Alumni: React.FC<AlumniProps> = ({
       <PlayerTable
         players={searchedPlayers}
         genderFilter="all"
-        teamColors={[
-          finalColors.backgroundColor,
-          finalColors.textColor,
-          finalColors.tableBackgroundColor,
-        ]}
+        headerBgColor= {customColors.backgroundColor}
+        headerTextColor={customColors.textColor}
+        tableBgColor={customColors.tableBackgroundColor}
+        tableTextColor={customColors.textColor}
       />
     </div>
   );
