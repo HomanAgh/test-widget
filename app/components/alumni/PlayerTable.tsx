@@ -121,7 +121,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 
   return (
     <div
-      className="bg-white rounded-lg w-full"
+      className="bg-white rounded-lg w-full pt-[16px]"
       style={{
         WebkitOverflowScrolling: "touch",
         touchAction: "pan-x",
