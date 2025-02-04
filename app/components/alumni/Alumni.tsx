@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
 import { SelectedTeam } from "./TeamSearchBar";
 import { useFetchPlayers } from "./hooks/useFetchPlayers";
+import TableWrapper from "../common/style/TableWrapper";
 
 type GenderParam = "male" | "female" | null;
 
@@ -70,11 +71,10 @@ const Alumni: React.FC<AlumniProps> = ({
   const finalColors = customColors;
 
   return (
-    <div className="bg-white  flex flex-col rounded-lg py-6 mt-4 w-[768px]">
+    <div className="bg-white  flex flex-col rounded-lg py-6 mt-4">
       {/* Search Field */}
       <input
         type="text"
-        placeholder=""
         className="w-full border rounded-lg mb-4 h-[36px]"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
@@ -84,7 +84,7 @@ const Alumni: React.FC<AlumniProps> = ({
       {error && <p>{error}</p>}
 
             {/* Men/Women Tabs */}
-            <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold">
+            <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold pb-[16px] ">
         <button
           className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
             activeGenderTab === "men"
@@ -96,7 +96,7 @@ const Alumni: React.FC<AlumniProps> = ({
           MEN'S LEAGUE
         </button>
         <button
-          className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
+          className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px] ${
             activeGenderTab === "women"
               ? "bg-white text-[#010A0E] border-b-2 border-[#0D73A6]"
               : "bg-white text-[#010A0E] border-b-2 border-[#E7E7E7]"
@@ -117,6 +117,7 @@ const Alumni: React.FC<AlumniProps> = ({
         tableTextColor={customColors.textColor}
       />
     </div>
+
   );
 };
 

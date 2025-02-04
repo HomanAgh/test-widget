@@ -47,7 +47,7 @@ const League: React.FC<LeagueProps> = ({
   // Render the League Table
   return (
     <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
+      className="max-w-4xl mx-auto my-8 p-6 rounded-lg"
       style={{
         backgroundColor,
         color: textColor,
