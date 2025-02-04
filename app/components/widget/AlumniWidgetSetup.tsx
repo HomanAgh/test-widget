@@ -40,11 +40,8 @@ const AlumniWidgetSetup: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Alumni Widget Setup</h2>
-
       {/* Search for one or more teams */}
       <SearchBar
-        placeholder="Search for a team..."
         onSelect={(team) => setSelectedTeams([team])}
         onError={(errMsg) => setError(errMsg)}
         selectedTeams={selectedTeams}

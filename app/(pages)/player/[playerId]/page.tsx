@@ -7,6 +7,7 @@ import ErrorMessage from "@/app/components/common/ErrorMessage";
 import WidgetSetup from "@/app/components/widget/PlayerWidgetSetup";
 import LogoutButton from "@/app/components/common/LogoutButton";
 import HomeButton from "@/app/components/common/HomeButton";
+import Header from "@/app/components/Header";
 
 const PlayerPage = () => {
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
@@ -36,11 +37,9 @@ const PlayerPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 relative">
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <HomeButton />
-        </div>
-      </div>
+
+      {/* Reusable Header */}
+      <Header />
 
       <h1 className="text-2xl font-bold mb-4 text-center">
         {"Player Search"}
@@ -53,10 +52,6 @@ const PlayerPage = () => {
       {error && <ErrorMessage error={error} onClose={() => setError("")} />}
 
       {selectedPlayerId && <WidgetSetup playerId={selectedPlayerId} />}
-
-      <div className="mt-6">
-        <LogoutButton />
-      </div>
     </div>
   );
 };

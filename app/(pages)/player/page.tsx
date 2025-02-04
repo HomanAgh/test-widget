@@ -6,6 +6,7 @@ import SearchBar from "@/app/components/player/PlayerSearch";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
 import LogoutButton from "@/app/components/common/LogoutButton";
 import HomeButton from "@/app/components/common/HomeButton";
+import Header from "@/app/components/Header";
 
 const PlayerSearchPage = () => {
   const [error, setError] = useState("");
@@ -24,11 +25,9 @@ const PlayerSearchPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 relative">
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <HomeButton />
-        </div>
-      </div>
+      
+      {/* Reusable Header */}
+      <Header />
 
       <h1 className="text-2xl font-bold mb-4 text-center">
         {"Player Search"}
@@ -40,9 +39,6 @@ const PlayerSearchPage = () => {
       />
       {error && <ErrorMessage error={error} onClose={() => setError("")} />}
 
-      <div className="mt-6">
-        <LogoutButton />
-      </div>
     </div>
   );
 };

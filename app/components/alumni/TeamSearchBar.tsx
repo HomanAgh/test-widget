@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 export interface TeamItem {
   id: number;
@@ -14,7 +15,6 @@ export interface SelectedTeam {
 }
 
 interface TeamSearchBarProps {
-  placeholder: string;
   onSelect: (teamObj: SelectedTeam) => void; // optional single-select usage
   onError: (err: string) => void;
   selectedTeams: SelectedTeam[];
@@ -22,7 +22,6 @@ interface TeamSearchBarProps {
 }
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
-  placeholder,
   onSelect,
   onError,
   selectedTeams,
@@ -146,84 +145,91 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   };
 
   return (
-    <div className="relative w-full" ref={containerRef}>
+    <div className=" pb-[48px]">
+      {/* Title */}
+      <h1 className="text-[28px] font-bold font-montserrat text-left pb-[24px]">Search team</h1>
+  
+      {/* Search Bar Container */}
+      <div className="relative w-full" ref={containerRef}>
+      {/* Search Icon (inside input) */}
+      <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-[20px] h-[20px]" />
+
+      {/* Search Input */}
       <input
         type="text"
         value={query}
         onFocus={handleInputFocus}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={placeholder}
-        className="border p-2 rounded-md w-full"
+        className="border p-2 pl-10 rounded-md w-full"
         onKeyDown={handleKeyDown}
       />
-
-      {showDropdown && (
-        <ul
-          ref={dropdownRef}
-          className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10"
-        >
-          {isLoading && <li className="p-2 text-gray-500">Loading...</li>}
-          {!isLoading && teams.length === 0 && (
-            <li className="p-2 text-gray-500">No results found</li>
-          )}
-          {!isLoading &&
-            teams.map((team, index) => {
-              const isHighlighted = highlightedIndex === index;
-              const isChecked = selectedTeams.some((t) => t.id === team.id);
-              return (
-                <li
-                  key={team.id}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => handleCheckboxChange(team)} // move onClick here
-                  className={`p-2 hover:bg-gray-100 ${
-                    isHighlighted ? "bg-gray-200" : ""
-                  } cursor-pointer`} // ensure cursor is pointer
-                >
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      readOnly
-                    />
-                    <span>
-                      {team.name} - {team.league}
-                    </span>
-                  </div>
-                </li>
-              );
-            })}
-        </ul>
-      )}
-
-      {selectedTeams.length > 0 && (
-        <div className="mt-2 bg-gray-100 p-2 rounded">
-          <strong>Selected Teams:</strong>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {selectedTeams.map((team) => (
-              <span
-                key={team.id}
-                className="inline-flex items-center bg-blue-200 px-2 py-1 rounded text-sm"
-              >
-                {team.name}
-                <button
-                  onClick={() => removeTeam(team.id)}
-                  className="ml-2 text-red-600 font-bold"
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-          <button
-            onClick={clearAllTeams}
-            className="text-sm text-blue-500 mt-2 underline"
+  
+        {/* Dropdown */}
+        {showDropdown && (
+          <ul
+            ref={dropdownRef}
+            className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10"
           >
-            Clear All
-          </button>
-        </div>
-      )}
+            {isLoading && <li className="p-2 text-gray-500">Loading...</li>}
+            {!isLoading && teams.length === 0 && (
+              <li className="p-2 text-gray-500">No results found</li>
+            )}
+            {!isLoading &&
+              teams.map((team, index) => {
+                const isHighlighted = highlightedIndex === index;
+                const isChecked = selectedTeams.some((t) => t.id === team.id);
+                return (
+                  <li
+                    key={team.id}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => handleCheckboxChange(team)}
+                    className={`p-2 hover:bg-gray-100 ${
+                      isHighlighted ? "bg-gray-200" : ""
+                    } cursor-pointer`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" checked={isChecked} readOnly />
+                      <span>
+                        {team.name} - {team.league}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+          </ul>
+        )}
+  
+        {/* Selected Teams Display */}
+        {selectedTeams.length > 0 && (
+          <div className="mt-2 bg-gray-100 p-2 rounded">
+            <strong>Selected Teams:</strong>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {selectedTeams.map((team) => (
+                <span
+                  key={team.id}
+                  className="inline-flex items-center bg-blue-200 px-2 py-1 rounded text-sm"
+                >
+                  {team.name}
+                  <button
+                    onClick={() => removeTeam(team.id)}
+                    className="ml-2 text-red-600 font-bold"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+            <button
+              onClick={clearAllTeams}
+              className="text-sm text-blue-500 mt-2 underline"
+            >
+              Clear All
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-  );
+  );  
 };
 
 export default TeamSearchBar;
