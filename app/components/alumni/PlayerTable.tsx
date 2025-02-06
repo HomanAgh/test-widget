@@ -3,6 +3,7 @@ import { AlumniPlayer } from "@/app/types/player";
 import Link from "../common/style/Link";
 import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import ToggleTeamList from "./ToggleTeamList";
 
 interface PlayerTableProps {
   players: AlumniPlayer[];
@@ -168,7 +169,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="py-2 px-4 text-center font-bold whitespace-nowrap cursor-pointer"
                 onClick={() => handleSort("draftPick")}
               >
-                DP{" "}
+                NHL DP{" "}
                 {sortColumn === "draftPick" &&
                   (sortDirection === "asc"
                     ? " ↑"
@@ -241,13 +242,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   <td align="center">{player.birthYear ?? "N/A"}</td>
                   <td align="center">{player.draftPick ?? "N/A"}</td>
                   <td align="center">
-                    {juniorTeams.map((t) => t.name).join(", ") || "N/A"}
+                    <ToggleTeamList teams={juniorTeams} />
+                    {/* {juniorTeams.map((t) => t.name).join(", ") || "N/A"} */}
                   </td>
                   <td align="center">
-                    {collegeTeams.map((t) => t.name).join(", ") || "N/A"}
+                    <ToggleTeamList teams={collegeTeams} />
+                    {/* {collegeTeams.map((t) => t.name).join(", ") || "N/A"} */}
                   </td>
                   <td align="center">
-                    {professionalTeams.map((t) => t.name).join(", ") || "N/A"}
+                    <ToggleTeamList teams={professionalTeams} />
+                    {/* {professionalTeams.map((t) => t.name).join(", ") || "N/A"} */}
                   </td>
                 </tr>
               );
@@ -378,9 +382,9 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
         <div className="flex justify-center items-center text-gray-600 mt-2 text-[12px] font-montserrat">
           <span className="font-semibold">Legend: </span>
           <span className="mx-2 text-[#000] font-bold">BY</span>
-          <span className="text-[#000]">Birth Year</span>
+          <span className="text-[#000]">Birth year</span>
           <span className="mx-2 text-[#000] font-bold">NHL DP</span>
-          <span className="text-[#000]">Draft Pick</span>
+          <span className="text-[#000]">Draft pick</span>
         </div>
       </div>
     </div>
