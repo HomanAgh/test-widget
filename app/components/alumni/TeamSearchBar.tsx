@@ -77,7 +77,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
       }
     };
     fetchTeams();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery]);
 
   // Outside click => hide dropdown
   useEffect(() => {
