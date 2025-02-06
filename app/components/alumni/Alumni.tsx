@@ -91,7 +91,7 @@ const Alumni: React.FC<AlumniProps> = ({
           }`}
           onClick={() => setActiveGenderTab("men")}
         >
-          MEN'S LEAGUE
+          MEN&apos;S LEAGUE
         </button>
         <button
           className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
@@ -101,7 +101,7 @@ const Alumni: React.FC<AlumniProps> = ({
           }`}
           onClick={() => setActiveGenderTab("women")}
         >
-          WOMEN'S LEAGUE
+          WOMEN&apos;S LEAGUE
         </button>
       </div>
 
