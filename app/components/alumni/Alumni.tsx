@@ -4,7 +4,6 @@ import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
 import { SelectedTeam } from "./TeamSearchBar";
 import { useFetchPlayers } from "./hooks/useFetchPlayers";
-import TableWrapper from "../common/style/TableWrapper";
 
 type GenderParam = "male" | "female" | null;
 
@@ -68,9 +67,6 @@ const Alumni: React.FC<AlumniProps> = ({
       player.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [filteredPlayers, searchQuery]);
-
-  // The final colors come from props.customColors
-  const finalColors = customColors;
 
   return (
     <div className="bg-white  flex flex-col rounded-lg py-6 mt-4">
