@@ -11,13 +11,57 @@ interface LeagueSelectionDropdownProps {
   onChange: (selected: string[]) => void;
 }
 
-/**
- * Example of a single league object:
- * interface League {
- *   slug: string;
- *   name: string;
- * }
- */
+// Predefined league rankings
+const leagueRankings: Record<string, number> = {
+  // Professional Leagues
+  nhl: 1,
+  shl: 2,
+  ahl: 3,
+  khl: 4,
+  nl: 5,
+  liiga: 6,
+  czechia: 7,
+  del: 8,
+  echl: 9,
+  icehl: 10,
+  slovakia: 11,
+  hockeyallsvenskan: 12,
+  // College Leagues
+  ncaa: 13,
+  usports: 14,
+  acac: 15,
+  acha: 16,
+  // Junior Leagues
+  ohl: 17,
+  whl: 18,
+  ushl: 19,
+  qmjhl: 20,
+  j20_nationell: 21,
+  mhl: 22,
+  cchl: 23,
+  //Womens Professional Leagues
+  pwhl_w: 24,
+  sdhl_w: 25,
+  nwhl_ca_w: 26,
+  phf_w: 27,
+  //Womens College Leagues
+  ncaa_w: 28,
+  ncaa_iii_w: 29,
+  acha_w: 30,
+  acha_d2_w: 31,
+  //Womens Junior Leagues
+  jwhl_w: 32,
+};
+
+// Function to sort league slugs based on rankings
+const sortLeaguesByRank = (slugs: string[]): string[] => {
+  return [...slugs].sort(
+    (a, b) =>
+      (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
+      (leagueRankings[b] ?? Number.MAX_SAFE_INTEGER)
+  );
+};
+
 const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
   professionalLeagues,
   juniorLeagues,
@@ -31,31 +75,28 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
 
   const handleCheckboxChange = (leagueSlug: string) => {
     const isSelected = selectedLeagues.includes(leagueSlug);
-    const updatedLeagues = isSelected
+    let updatedLeagues = isSelected
       ? selectedLeagues.filter((slug) => slug !== leagueSlug)
       : [...selectedLeagues, leagueSlug];
+
+    // Automatically sort the updated leagues
+    updatedLeagues = sortLeaguesByRank(updatedLeagues);
+
     onChange(updatedLeagues);
   };
 
-  /**
-   * Remove one league from selected
-   */
   const removeLeagueSlug = (slug: string) => {
-    onChange(selectedLeagues.filter((s) => s !== slug));
+    const updatedLeagues = selectedLeagues.filter((s) => s !== slug);
+
+    // Automatically sort after removal
+    onChange(sortLeaguesByRank(updatedLeagues));
   };
 
-  /**
-   * Clear all selected leagues
-   */
   const clearAllLeagues = () => {
     onChange([]);
   };
 
-  /**
-   * Helper to find a league by slug, so we can display the name
-   */
   const findLeagueName = (slug: string): string => {
-    // Search in all arrays combined
     const allLeagues = [
       ...professionalLeagues,
       ...juniorLeagues,
@@ -140,7 +181,6 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
         </div>
       )}
 
-      {/* Show currently selected leagues below, with 'x' and clearAll */}
       {selectedLeagues.length > 0 && (
         <div className="mt-2 bg-gray-100 p-2 rounded">
           <strong>Selected Leagues:</strong>

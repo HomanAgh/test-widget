@@ -35,9 +35,9 @@ export const useFetchLeagues = () => {
         // 1) Professional Leagues
         const customLeagueSlugs = [
         //Womens Leagues
-        'pwhl-w', 'nwhl-ca-w', 'sdhl-w', 'phf-w',
+        'pwhl-w', 'sdhl-w', 'nwhl-ca-w', 'phf-w',
         //Mens Leagues
-        'nhl', 'ahl', 'shl', 'khl', 'liiga', 'nl', 'del', 'hockeyallsvenskan', 'liiga'
+        'nhl', 'shl', 'ahl', 'khl','nl', 'liiga', 'czechia', 'del', 'echl', 'icehl', 'slovakia', 'hockeyallsvenskan'
         ];
         setProLeagues(proData.leagues || []);
         setCustomLeagues(
@@ -49,9 +49,9 @@ export const useFetchLeagues = () => {
         // 2) College Leagues
         const customCollegeLeagueSlugs = [
         //Womens Leagues
-        'ncaa-iii-w', 'ncaa-w','acha-w', 'acha-d2-w',
+        'ncaa-w', 'ncaa-iii-w', 'acha-w', 'acha-d2-w',
         //Mens Leagues
-        'ncaa', 'acac', 'usports', 'acha'
+        'ncaa', 'usports', 'acac', 'acha'
         ];
         setCollegeLeagues(collegeData.leagues || []);
         setCustomCollegeLeagues(
@@ -65,7 +65,7 @@ export const useFetchLeagues = () => {
         //Womens Leagues
         'jwhl-w',
         //Mens Leagues
-        'ushl', 'cchl', 'ohl', 'whl', 'qmjhl', 'j20-nationell', 'mhl'
+        'ohl', 'whl', 'ushl', 'qmjhl', 'j20-nationell', 'mhl', 'cchl'    
         ];
         setJunLeagues(junData.leagues || []);
         setCustomJunLeagues(

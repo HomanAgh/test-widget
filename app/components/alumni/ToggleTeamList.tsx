@@ -17,11 +17,8 @@ const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
   shortCount = 1,
 }) => {
   const [expanded, setExpanded] = useState(false);
-
   const visibleTeams = expanded ? teams : teams.slice(0, shortCount);
-
   const canExpand = teams.length > shortCount;
-
   const toggleExpand = () => setExpanded((prev) => !prev);
 
   if (!teams || teams.length === 0) {
