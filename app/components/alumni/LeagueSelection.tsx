@@ -14,52 +14,59 @@ interface LeagueSelectionDropdownProps {
 // Predefined league rankings
 const leagueRankings: Record<string, number> = {
   // Professional Leagues
-  nhl: 1,
-  shl: 2,
-  ahl: 3,
-  khl: 4,
-  nl: 5,
-  liiga: 6,
-  czechia: 7,
-  del: 8,
-  echl: 9,
-  icehl: 10,
-  slovakia: 11,
-  hockeyallsvenskan: 12,
+  "nhl": 1,
+  "shl": 2,
+  "ahl": 3,
+  "khl": 4,
+  "nl": 5,
+  "liiga": 6,
+  "czechia": 7,
+  "del": 8,
+  "echl": 9,
+  "icehl": 10,
+  "slovakia": 11,
+  "hockeyallsvenskan": 12,
   // College Leagues
-  ncaa: 13,
-  usports: 14,
-  acac: 15,
-  acha: 16,
+  "ncaa": 13,
+  "usports": 14,
+  "acac": 15,
+  "acha": 16,
   // Junior Leagues
-  ohl: 17,
-  whl: 18,
-  ushl: 19,
-  qmjhl: 20,
-  j20_nationell: 21,
-  mhl: 22,
-  cchl: 23,
+  "ohl": 17,
+  "whl": 18,
+  "ushl": 19,
+  "qmjhl": 20,
+  "j20-nationell": 21,
+  "mhl": 22,
+  "cchl": 23,
   //Womens Professional Leagues
-  pwhl_w: 24,
-  sdhl_w: 25,
-  nwhl_ca_w: 26,
-  phf_w: 27,
+  "pwhl-w": 24,
+  "sdhl-w": 25,
+  "nwhl-ca-w": 26,
+  "phf-w": 27,
   //Womens College Leagues
-  ncaa_w: 28,
-  ncaa_iii_w: 29,
-  acha_w: 30,
-  acha_d2_w: 31,
+  "ncaa-w": 28,
+  "ncaa-iii-w": 29,
+  "acha-w": 30,
+  "acha-d2-w": 31,
   //Womens Junior Leagues
-  jwhl_w: 32,
+  "jwhl-w": 32,
 };
 
 // Function to sort league slugs based on rankings
 const sortLeaguesByRank = (slugs: string[]): string[] => {
-  return [...slugs].sort(
-    (a, b) =>
-      (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
-      (leagueRankings[b] ?? Number.MAX_SAFE_INTEGER)
-  );
+  slugs.forEach((slug) => {
+    if (!(slug in leagueRankings)) {
+      console.warn(`League slug "${slug}" not found in leagueRankings`);
+    }
+  });
+
+  return [...slugs]
+    .sort(
+      (a, b) =>
+        (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
+        (leagueRankings[b] ?? Number.MAX_SAFE_INTEGER)
+    );
 };
 
 const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
@@ -74,16 +81,17 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
   const toggleDropdown = () => setIsOpen((prev) => !prev);
 
   const handleCheckboxChange = (leagueSlug: string) => {
-    const isSelected = selectedLeagues.includes(leagueSlug);
+    const normalizedSlug = leagueSlug.toLowerCase(); // Normalize slug
+    const isSelected = selectedLeagues.includes(normalizedSlug);
+  
     let updatedLeagues = isSelected
-      ? selectedLeagues.filter((slug) => slug !== leagueSlug)
-      : [...selectedLeagues, leagueSlug];
-
-    // Automatically sort the updated leagues
+      ? selectedLeagues.filter((slug) => slug !== normalizedSlug)
+      : [...selectedLeagues, normalizedSlug];
+  
     updatedLeagues = sortLeaguesByRank(updatedLeagues);
-
     onChange(updatedLeagues);
   };
+  
 
   const removeLeagueSlug = (slug: string) => {
     const updatedLeagues = selectedLeagues.filter((s) => s !== slug);
