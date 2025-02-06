@@ -5,13 +5,11 @@ interface SearchBarStylesProps {
   children: React.ReactNode;
 }
 
-interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
 export const SearchBarContainer: React.FC<SearchBarStylesProps> = ({ children }) => (
   <div className="relative w-full pb-[48px]">{children}</div>
 );
 
-export const SearchInput: React.FC<SearchInputProps> = (props) => {
+export const SearchInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (props) => {
   return (
     <div className="relative w-full">
       {/* Search Icon */}
