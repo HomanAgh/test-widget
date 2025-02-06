@@ -8,13 +8,13 @@ import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
 import Alumni from "@/app/components/alumni/Alumni";
 import HexColors from "@/app/components/common/color-picker/HexColors";
+import EmbedCodeBlock from "../iframe/IframePreview";
 
 const AlumniWidgetSetup: React.FC = () => {
   const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [includeYouth] = useState<boolean>(true);
-  const [showPreview, setShowPreview] = useState(false);
   const [customColors, setCustomColors] = useState({
     headerTextColor: "#FFFFFF",
     backgroundColor: "#052D41",
@@ -38,7 +38,7 @@ const AlumniWidgetSetup: React.FC = () => {
     );
   }, [selectedTeams, selectedLeagues, customColors, includeYouth]);
 
-  const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
 
   return (
     <div>
@@ -78,31 +78,7 @@ const AlumniWidgetSetup: React.FC = () => {
           />
         </div>
       )}
-
-      {/* Embed code output */}
-      <div className="mt-6">
-        <h3 className="text-lg font-medium mb-2">Embed Code</h3>
-        <textarea
-          readOnly
-          value={iframeCode}
-          rows={3}
-          className="w-full p-2 border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={() => setShowPreview(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500 mt-2"
-        >
-          Preview
-        </button>
-      </div>
-
-      <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
-      {showPreview && (
-        <iframe
-          src={embedUrl}
-          style={{ width: "100%", height: "500px", border: "none" }}
-        />
-      )}
+       <EmbedCodeBlock iframeCode={iframeCode} embedUrl={embedUrl} />
     </div>
   );
 };
