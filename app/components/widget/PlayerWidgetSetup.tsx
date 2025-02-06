@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Player from "../player/Player";
 import TeamBackgroundColorSelector from "../common/TeamBackgroundColorSelector";
+import EmbedCodeBlock from "../iframe/IframePreview";
 
 interface WidgetSetupProps {
   playerId: string;
@@ -15,7 +16,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
   const [gameLimit, setGameLimit] = useState(5);
   const [viewMode, setViewMode] = useState<"stats" | "seasons" | "career" | "games">("stats");
-  const [showPreview, setShowPreview] = useState(false);
+  const [,setShowPreview] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
 
   // 1) If user enables team colors and we have at least 1 color, use that as background
@@ -52,7 +53,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     );
   }, [playerId, finalBackgroundColor, finalTextColor, gameLimit, viewMode, showSummary]);
 
-  const iframeCode = `<iframe src="${embedUrl}" style="width: 100%; height: 500px; border: none;"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
 
   return (
     <div>
@@ -158,31 +159,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         />
       </div>
 
-      <div className="mt-8">
-        <h3 className="text-lg font-medium mb-2">Embed Code</h3>
-        <div className="flex items-center space-x-4">
-          <textarea
-            readOnly
-            value={iframeCode}
-            rows={3}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          />
-          <button
-            onClick={() => setShowPreview(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
-          >
-            Preview
-          </button>
-        </div>
-
-        <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
-        {showPreview && (
-          <iframe
-            src={embedUrl}
-            style={{ width: "100%", height: "500px", border: "none" }}
-          />
-        )}
-      </div>
+      <EmbedCodeBlock iframeCode={iframeCode} embedUrl={embedUrl} />
     </div>
   );
 };
