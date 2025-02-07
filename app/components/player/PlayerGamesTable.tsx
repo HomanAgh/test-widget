@@ -21,8 +21,6 @@ interface GamesTableProps {
 const GamesTable: React.FC<GamesTableProps> = ({
   lastFiveGames,
   playerType,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
   gameLimit,
   showSummary,
 }) => {

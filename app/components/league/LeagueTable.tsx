@@ -12,8 +12,6 @@ interface LeagueTablePropsWithColors extends LeagueTableProps {
 
 const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
   standings,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
 }) => {
   if (!standings || !standings.data) return null;
 
