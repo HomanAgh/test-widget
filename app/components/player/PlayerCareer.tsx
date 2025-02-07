@@ -69,7 +69,7 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
 
   return (
     <div
-      className="max-w-6xl mx-auto my-8 p-6 rounded-lg shadow-lg"
+      className="max-w-6xl mx-auto my-8 p-6 rounded-lg"
       style={{ backgroundColor, color: textColor }}
     >
       {careers && (

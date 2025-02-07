@@ -70,55 +70,50 @@ const Team: React.FC<TeamProps> = ({
 
   return (
     <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
+      className="max-w-4xl mx-auto my-8 p-6 rounded-lg "
       style={{ 
         backgroundColor, 
         color: textColor,
       }}
-    >
-      {teamStats && (
-        <div>
-          {/* Team Name and Logo */}
-          <div className="mb-6 flex items-center justify-center space-x-4">
-            {/* Medium Team Logo */}
-            {teamStats.team.logoM && (
-              <Image
-                src={teamStats.team.logoM}
-                alt={`${teamStats.team.name} Logo`}
-                layout="intrinsic" // Automatically calculates height based on the original aspect ratio
-                width={48} // Set a base width
-                height={48} // Optional, as `layout="intrinsic"` handles aspect ratio
-              />
-            )}
-            {/* Team Name */}
-            <h2 className="text-2xl font-bold" style={{ color: textColor }}>
-              <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
-                {teamStats.team.name}
-              </Link>
-            </h2>
+      >
+        {teamStats && (
+          <div className="font-montserrat">
+            {/* Team Name and Logo */}
+            <div className="mb-6 flex items-center space-x-4 pb-[24px]">
+              {/* Medium Team Logo */}
+              {teamStats.team.logoM && (
+                <Image
+                  src={teamStats.team.logoM}
+                  alt={`${teamStats.team.name} Logo`}
+                  layout="intrinsic"
+                  width={48}
+                  height={48}
+                />
+              )}
+              {/* Team Name & League (Stacked Vertically) */}
+              <div className="flex flex-col">
+                <h2 
+                  className="text-[24px] font-bold leading-[26px]" 
+                  style={{ color: textColor }}
+                >
+                  <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
+                    {teamStats.team.name}
+                  </Link>
+                </h2>
+                <p 
+                  className="text-[16px] font-semibold " 
+                  style={{ color: textColor }}
+                >
+                  <Link href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}>
+                    {teamStats.team.league}
+                  </Link>
+                </p>
+              </div>
+            </div>
+            {/* Roster Table */}
+            <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} textColor={textColor} />
           </div>
-
-          {/* League and Country */}
-          <p className="text-center text-gray-600" style={{ color: textColor }}>
-            <span>
-              {"League"}:{" "}
-              <Link href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}>
-                {teamStats.team.league}
-              </Link>
-            </span>{" "}
-            |{" "}
-            <span>
-              {"Country"}:{" "}
-              <Link href={`https://www.eliteprospects.com/nation/${teamStats.team.country}`}>
-                {teamStats.team.country}
-              </Link>
-            </span>
-          </p>
-
-          {/* Roster Table */}
-          <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} textColor={textColor} />
-        </div>
-      )}
+        )}
     </div>
   );
 };

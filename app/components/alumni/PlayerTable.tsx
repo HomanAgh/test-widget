@@ -175,6 +175,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 
           <TableBody>
             {pagePlayers.map((player, index) => {
+
               const rowBackground = isCustomColor
                 ? tableBgColor
                 : index % 2 === 0
