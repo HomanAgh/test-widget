@@ -220,7 +220,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   <TableCell align="center">
                     {player.draftPick && player.draftPick.team ? (
                       <>
-                        {"Round " + player.draftPick.year} {player.draftPick.round} {"Overall " + player.draftPick.overall}
+                        {player.draftPick.year} {"Round " +player.draftPick.round} {"Overall " + player.draftPick.overall}
                         <br />
                         By {player.draftPick.team.name}
                       </>
