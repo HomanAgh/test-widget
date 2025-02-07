@@ -83,19 +83,17 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
             : (b.birthYear || 0) - (a.birthYear || 0)
         );
         break;
-      case "draftPick":
-        sorted.sort((a, b) => {
-          const extractOverall = (draftPick: string | undefined) => {
-            if (!draftPick) return Number.MAX_SAFE_INTEGER;
-            const match = draftPick.match(/Overall\s+(\d+)/i);
-            return match ? parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
-          };
-          return sortDirection === "asc"
-            ? extractOverall(a.draftPick) - extractOverall(b.draftPick)
-            : extractOverall(b.draftPick) - extractOverall(a.draftPick);
-        });
-        break;
-      default:
+        case "draftPick":
+          sorted.sort((a, b) => {
+            // If either player lacks a draftPick or 'overall', set to a big number so it sorts last
+            const overallA = a.draftPick?.overall ?? Number.MAX_SAFE_INTEGER;
+            const overallB = b.draftPick?.overall ?? Number.MAX_SAFE_INTEGER;
+            return sortDirection === "asc"
+              ? overallA - overallB
+              : overallB - overallA;
+          });
+          break;        
+        default:
         break;
     }
     return sorted;
@@ -220,7 +218,15 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                     {player.birthYear ?? "N/A"}
                   </TableCell>
                   <TableCell align="center">
-                    {player.draftPick ?? "N/A"}
+                    {player.draftPick && player.draftPick.team ? (
+                      <>
+                        {"Round " + player.draftPick.year} {player.draftPick.round} {"Overall " + player.draftPick.overall}
+                        <br />
+                        By {player.draftPick.team.name}
+                      </>
+                    ) : (
+                      <span>-</span>
+                    )}
                   </TableCell>
                   <TableCell align="center">
                     <ToggleTeamList teams={juniorTeams} />

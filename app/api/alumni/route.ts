@@ -36,11 +36,11 @@ interface TeamStatsItem {
 }
 
 interface DraftSelection {
-  year: number;
-  round: number;
-  overall: number;
+  year?: number;
+  round?: number;
+  overall?: number;
   team?:{
-    name: string;
+    name?: string;
   }
   draftType?: {
     slug?: string;
@@ -57,7 +57,7 @@ interface CombinedPlayer {
     name: string;
     leagueLevel: string | null;
   }[];
-  draftPick?: string;
+  draftPick?: DraftSelection | null; 
 }
 
 /**
@@ -196,7 +196,7 @@ async function fetchAndMergePlayerStats(
           name: item.player.name || '',
           yearOfBirth: item.player.yearOfBirth || null,
           gender: item.player.gender || null,
-          position: item.player.position, 
+          position: item.player.position , 
           teams: [],
         });
       }
@@ -233,49 +233,69 @@ async function fetchAndMergePlayerStats(
  * Example URL:
  *   /draft-selections?draftType=nhl-entry-draft&player=597559,38703,6146&apiKey=...
  */
-async function fetchBatchDraftPicks(playerIds: number[]): Promise<Map<number, string>> {
-  const resultMap = new Map<number, string>();
+/**
+ * Batch-fetch NHL draft picks for multiple players at once,
+ * but chunk the playerIds to avoid "Request Entity Too Large."
+ */
+async function fetchBatchDraftPicks(
+  playerIds: number[],
+  chunkSize = 500
+): Promise<Map<number, DraftSelection>> {
+  const resultMap = new Map<number, DraftSelection>();
+
   if (!playerIds.length) return resultMap;
 
-  // Build comma-separated IDs
-  const joinedIds = playerIds.join(',');
-  // Build final URL
-  const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}`;
-  console.log('Batch fetching draft picks =>', url);
+  let startIndex = 0;
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      console.error('Error fetching batch draft picks:', response.statusText);
-      return resultMap; // return empty if fail
-    }
+  while (startIndex < playerIds.length) {
+    const chunk = playerIds.slice(startIndex, startIndex + chunkSize);
+    const joinedIds = chunk.join(",");
+    const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}`;
+    console.log("Batch fetching draft picks =>", url);
 
-    interface DraftSelectionWithPlayer extends DraftSelection {
-      player?: { id: number; name?: string };
-    }
-    const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
-    if (!data.data) {
-      return resultMap;
-    }
-
-    // For each returned selection, store something like: "2020 Round 2, Overall 35"
-    for (const ds of data.data) {
-      const pid = ds.player?.id;
-      if (!pid) continue; // skip if missing
-
-      // If you only want the first or the latest, you can decide your logic.
-      // For simplicity, let's just store the first time we see it (likely sorted).
-      if (!resultMap.has(pid)) {
-        const pickStr = `${ds.year} Round ${ds.round}, Overall ${ds.overall}, By ${ds.team?.name}`;
-        resultMap.set(pid, pickStr);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error("Error fetching batch draft picks:", response.statusText);
+        startIndex += chunkSize;
+        continue;
       }
+
+      interface DraftSelectionWithPlayer extends DraftSelection {
+        player?: { id: number; name?: string };
+      }
+      const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
+      if (!data.data) {
+        startIndex += chunkSize;
+        continue;
+      }
+
+      // Merge results into our resultMap as objects
+      for (const ds of data.data) {
+        const pid = ds.player?.id;
+        if (!pid) continue;
+        if (!resultMap.has(pid)) {
+          // Store the draft selection as an object
+          resultMap.set(pid, {
+            year: ds.year,
+            round: ds.round,
+            overall: ds.overall,
+            team: ds.team, // this should be an object with a "name" property
+            draftType: ds.draftType,
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error in fetchBatchDraftPicks chunk:", err);
     }
-  } catch (err) {
-    console.error('Error in fetchBatchDraftPicks:', err);
+
+    startIndex += chunkSize;
   }
 
   return resultMap;
 }
+
+
 
 /**
  * Main GET => /api/alumni
@@ -368,9 +388,11 @@ export async function GET(request: Request) {
     const draftPickMap = await fetchBatchDraftPicks(allPlayerIds);
 
     // Merge the draftPick into each player
+   // Merge the draftPick into each player
     for (const p of allPlayers) {
-      p.draftPick = draftPickMap.get(p.id) ?? '-';
+      p.draftPick = draftPickMap.get(p.id) ?? null;
     }
+
 
     //
     // 6) Final transformation: rename yearOfBirth => birthYear, etc.
