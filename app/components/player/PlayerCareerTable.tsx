@@ -10,8 +10,6 @@ interface CareerTableProps {
 
 const PlayerCareerTable: React.FC<CareerTableProps> = ({
   careers,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
 }) => {
   // Determine if this player is a goalie (to show GAA, SV%, SO)
   const isGoalie = careers.some((career) => career.goalsAgainstAverage !== undefined);

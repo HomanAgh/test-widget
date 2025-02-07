@@ -3,11 +3,7 @@
 import React, { useState, CSSProperties } from "react";
 import Image from "next/image";
 import { RosterPlayer } from "@/app/types/team";
-
-// 1) Import the icons from react-icons
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-
-// Example styled components from your code
 import {
   TableContainer,
   Table,
@@ -19,16 +15,13 @@ import {
   PoweredBy,
 } from "@/app/components/common/style";
 
-/**
- * Utility function for age calculation
- */
+// Utility function for age calculation
 const calculateAge = (dateOfBirth: string): number | "-" => {
   if (!dateOfBirth) return "-";
   const birthDate = new Date(dateOfBirth);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
 
-  // Decrement age if the birth month/day hasn't been reached yet this year
   const hasHadBirthday =
     today.getMonth() > birthDate.getMonth() ||
     (today.getMonth() === birthDate.getMonth() &&
@@ -41,8 +34,6 @@ const calculateAge = (dateOfBirth: string): number | "-" => {
 
 interface RosterTableProps {
   roster: RosterPlayer[];
-  backgroundColor?: string;
-  textColor?: string;
 }
 
 const collapsibleContainerStyle: CSSProperties = {
@@ -56,11 +47,14 @@ const collapsibleContainerStyle: CSSProperties = {
 
 type SectionKey = "goaltenders" | "defensemen" | "forwards";
 
-const RosterTable: React.FC<RosterTableProps> = ({
-  roster,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
-}) => {
+const RosterTable: React.FC<RosterTableProps> = ({ roster }) => {
+  // Initialize state at the top level
+  const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
+    goaltenders: false,
+    defensemen: false,
+    forwards: false,
+  });
+
   // Early return if no roster
   if (!roster || roster.length === 0) {
     return <p>No Roster</p>;
@@ -79,13 +73,6 @@ const RosterTable: React.FC<RosterTableProps> = ({
     .filter((player) => player.position !== "G" && player.position !== "D")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
 
-  // Track open/closed state per section
-  const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
-    goaltenders: false,
-    defensemen: false,
-    forwards: false,
-  });
-
   // Toggle a section by key
   const toggleSection = (section: SectionKey) => {
     setOpenSections((prev) => ({
@@ -94,14 +81,10 @@ const RosterTable: React.FC<RosterTableProps> = ({
     }));
   };
 
-  // Renders a single player's row
   const renderPlayerRow = (player: RosterPlayer, index: number) => (
     <TableRow
       key={player.id}
-      className={
-        (index % 2 === 0 ? "bg-gray-100" : "bg-white") 
-      
-      }
+      className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
     >
       <TableCell align="left">#{player.jerseyNumber}</TableCell>
       <TableCell align="left">
@@ -131,30 +114,22 @@ const RosterTable: React.FC<RosterTableProps> = ({
     </TableRow>
   );
 
-  /**
-   * Renders a collapsible block for a given position group.
-   * - "title": string for the label (e.g. "Goaltenders")
-   * - "sectionKey": used to toggle open/closed
-   * - "players": array of players for that position
-   */
   const renderCollapsibleSection = (
     title: string,
     sectionKey: SectionKey,
     players: RosterPlayer[]
   ) => {
-    if (players.length === 0) return null; // skip if no players in that group
+    if (players.length === 0) return null;
 
     const isOpen = openSections[sectionKey];
 
     return (
       <div key={sectionKey} style={collapsibleContainerStyle}>
-        {/* The "header" row that toggles the section */}
         <div
           onClick={() => toggleSection(sectionKey)}
-           className="cursor-pointer flex items-center gap-2 border-b border-gray-300 pb-[24px] w-full"
+          className="cursor-pointer flex items-center gap-2 border-b border-gray-300 pb-[24px] w-full"
         >
           <span className="font-bold uppercase">{title}</span>
-          {/* 2) Use FaChevronUp and FaChevronDown */}
           {isOpen ? (
             <FaChevronUp className="w-4 h-4" />
           ) : (
@@ -162,10 +137,9 @@ const RosterTable: React.FC<RosterTableProps> = ({
           )}
         </div>
 
-       
         {isOpen && (
           <Table
-          className="
+            className="
             border-separate 
             border-spacing-0 
             w-full 
@@ -173,15 +147,23 @@ const RosterTable: React.FC<RosterTableProps> = ({
             border 
             border-customGrayMedium
           "
-        >
-          <TableHead className="bg-blue-600 text-white">
-            <TableRow>
-              <TableCell isHeader align="left" className="rounded-tl-lg">#</TableCell>
-              <TableCell isHeader align="left">PLAYER</TableCell>
-              <TableCell isHeader align="center">A</TableCell>
-              <TableCell isHeader align="center" className="rounded-tr-lg">BY</TableCell>
-            </TableRow>
-          </TableHead>
+          >
+            <TableHead className="bg-blue-600 text-white">
+              <TableRow>
+                <TableCell isHeader align="left" className="rounded-tl-lg">
+                  #
+                </TableCell>
+                <TableCell isHeader align="left">PLAYER</TableCell>
+                <TableCell isHeader align="center">A</TableCell>
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="rounded-tr-lg"
+                >
+                  BY
+                </TableCell>
+              </TableRow>
+            </TableHead>
             <TableBody>{players.map(renderPlayerRow)}</TableBody>
           </Table>
         )}
@@ -191,13 +173,13 @@ const RosterTable: React.FC<RosterTableProps> = ({
 
   return (
     <>
-    <TableContainer noBorder>
-      {renderCollapsibleSection("Goaltenders", "goaltenders", goaltenders)}
-      {renderCollapsibleSection("Defensemen", "defensemen", defensemen)}
-      {renderCollapsibleSection("Forwards", "forwards", forwards)}
-    </TableContainer>
-    <PoweredBy/>
-  </>
+      <TableContainer noBorder>
+        {renderCollapsibleSection("Goaltenders", "goaltenders", goaltenders)}
+        {renderCollapsibleSection("Defensemen", "defensemen", defensemen)}
+        {renderCollapsibleSection("Forwards", "forwards", forwards)}
+      </TableContainer>
+      <PoweredBy />
+    </>
   );
 };
 

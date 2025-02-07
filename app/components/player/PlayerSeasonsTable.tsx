@@ -12,8 +12,6 @@ interface SeasonsTableProps {
 const SeasonsTable: React.FC<SeasonsTableProps> = ({
   playerType,
   seasons,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
 }) => {
   // Track displayed years so we can merge repeated years into one cell
   const displayedYears: Set<string> = new Set();
