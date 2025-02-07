@@ -78,6 +78,7 @@ const Alumni: React.FC<AlumniProps> = ({
             className="w-full border rounded-lg h-[36px] pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search player"
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
         </div>
