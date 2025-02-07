@@ -1,9 +1,9 @@
 import React from "react";
 import { AlumniPlayer } from "@/app/types/player";
-import Image from "next/image";
 import Link from "../common/style/Link";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,PaginationControls } from "@/app/components/common/style";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,PaginationControls, PoweredBy } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
+
 
 interface PlayerTableProps {
   players: AlumniPlayer[];
@@ -249,24 +249,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 
       {/* Powered By & Legend */}
       <div className="flex flex-col items-center justify-center mt-4">
-        <div className="flex items-center space-x-1">
-          <span className="text-[12px] font-montserrat font-medium text-black lowercase">
-            powered by
-          </span>
-          <a
-            href="https://www.eliteprospects.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="h-[14px] w-[97.075px] cursor-pointer"
-              alt="EliteProspects"
-              src={"/images/Group.svg"}
-              width={97.075}
-              height={14}
-            />
-          </a>
-        </div>
+        <PoweredBy/>
         <div className="flex justify-center items-center text-gray-600 mt-2 text-[12px] font-montserrat">
           <span className="font-semibold">Legend: </span>
           <span className="mx-2 text-[#000] font-bold">BY</span>

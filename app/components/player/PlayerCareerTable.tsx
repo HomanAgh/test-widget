@@ -1,6 +1,6 @@
 import React from "react";
 import type { CareerStats } from "@/app/types/player";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link } from "@/app/components/common/style";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link, PoweredBy } from "@/app/components/common/style";
 
 interface CareerTableProps {
   careers: CareerStats[];
@@ -86,6 +86,7 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
+      <PoweredBy/>
     </div>
   );
 };

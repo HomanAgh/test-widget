@@ -1,6 +1,6 @@
 import React from "react";
 import { PlayerType, Goalie, Skater } from "@/app/types/player";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell } from "@/app/components/common/style";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy } from "@/app/components/common/style";
 
 interface PlayerStatsTableProps {
   playerType: PlayerType;
@@ -91,6 +91,7 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
+      <PoweredBy/>
     </div>
   );
 };
