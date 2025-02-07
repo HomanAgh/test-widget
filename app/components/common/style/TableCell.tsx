@@ -1,10 +1,5 @@
 import React from "react";
 
-/**
- * TableCell can serve as <td> or <th>, but typically you'll
- * create separate components if you need them. 
- * For simplicity, let's do one for data cells. 
- */
 interface TableCellProps {
   children: React.ReactNode;
   isHeader?: boolean;

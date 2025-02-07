@@ -8,3 +8,4 @@ export { default as TableHead } from "./TableHead";
 export { default as TableRow } from "./TableRow";
 export { default as PaginationControls } from "./PaginationControls";
 export { default as Link } from "./Link";
+export { default as PoweredBy } from "./PoweredBy";

@@ -7,7 +7,7 @@ import {
   GoaltenderSummary,
   SkaterSummary,
 } from "@/app/types/player";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell } from "@/app/components/common/style";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy } from "@/app/components/common/style";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
@@ -163,6 +163,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
+      <PoweredBy/>
     </div>
   );
 };
