@@ -366,7 +366,7 @@ export async function GET(request: Request) {
 
     // Merge the draftPick into each player
     for (const p of allPlayers) {
-      p.draftPick = draftPickMap.get(p.id) ?? 'N/A';
+      p.draftPick = draftPickMap.get(p.id) ?? '-';
     }
 
     //
