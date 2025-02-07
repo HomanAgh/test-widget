@@ -15,7 +15,7 @@ const ToggleableColorPicker: React.FC<ToggleableColorPickerProps> = ({ onColorSe
       {/* Toggle Button */}
       <button
         onClick={() => setPickerVisible(!isPickerVisible)}
-        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition"
+        className="px-4 py-2 bg-blue-500 text-white rounded-md  hover:bg-blue-600 transition"
       >
         {isPickerVisible ? "Hide Color Picker" : "Show Color Picker"}
       </button>

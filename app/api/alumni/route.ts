@@ -39,6 +39,9 @@ interface DraftSelection {
   year: number;
   round: number;
   overall: number;
+  team?:{
+    name: string;
+  }
   draftType?: {
     slug?: string;
   };
@@ -263,7 +266,7 @@ async function fetchBatchDraftPicks(playerIds: number[]): Promise<Map<number, st
       // If you only want the first or the latest, you can decide your logic.
       // For simplicity, let's just store the first time we see it (likely sorted).
       if (!resultMap.has(pid)) {
-        const pickStr = `${ds.year} Round ${ds.round}, Overall ${ds.overall}`;
+        const pickStr = `${ds.year} Round ${ds.round}, Overall ${ds.overall}, By ${ds.team?.name}`;
         resultMap.set(pid, pickStr);
       }
     }

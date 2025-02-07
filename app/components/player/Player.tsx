@@ -71,7 +71,7 @@ const Player: React.FC<PlayerProps> = ({
 
   return (
     <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg shadow-lg"
+      className="max-w-4xl mx-auto my-8 p-6 rounded-lg "
       style={{
         backgroundColor,
         color: textColor, // children will inherit this color unless overridden
