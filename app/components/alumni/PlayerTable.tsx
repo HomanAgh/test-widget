@@ -119,7 +119,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
             <TableRow>
               <TableCell
                 isHeader
-                align="center"
+                align="left"
                 className="font-bold"
                 onClick={() => handleSort("name")}
               >
@@ -205,10 +205,10 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                         player?.id || ""
                       )}/${encodeURIComponent(fullName)}`}
                     >
-                      <span className="block font-medium text-blue-600">
+                      <span className="block font-medium text-blue-600 text-left">
                         {firstName || "Unknown"}
                       </span>
-                      <span className="block text-blue-600">
+                      <span className="block text-blue-600 text-left">
                         {lastName}
                         {player?.position ? ` (${player.position})` : ""}
                       </span>

@@ -33,7 +33,7 @@ const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
       {visibleTeams.map((team, index) => (
         <div
           key={index}
-          className={`flex items-center ${
+          className={`flex items-center justify-center ${
             index === 0 ? "gap-1" : ""
           } py-1`}
         >
