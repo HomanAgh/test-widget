@@ -111,7 +111,7 @@ const Team: React.FC<TeamProps> = ({
               </div>
             </div>
             {/* Roster Table */}
-            <RosterTable roster={teamStats.roster} backgroundColor={backgroundColor} textColor={textColor} />
+            <RosterTable roster={teamStats.roster}/>
           </div>
         )}
     </div>
