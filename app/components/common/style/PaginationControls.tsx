@@ -36,22 +36,22 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
   return (
     <div className="flex flex-col md:flex-row items-center justify-between mt-4 w-full gap-2 md:gap-4">
       {/* Left side - Pagination Controls */}
-      <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2">
+      <div className="flex flex-wrap justify-center items-center gap-1 md:gap-3">
         {/* Previous Button */}
         <button
           disabled={currentPage === 0}
           onClick={handlePrev}
           className="p-2 disabled:opacity-50"
         >
-          <FaChevronLeft className="w-3 h-3 md:w-4 md:h-4 text-black" />
+          <FaChevronLeft className="w-3 h-3 md:w-3 md:h-3 text-black" />
         </button>
 
         {/* First Page */}
         <button
           className={`w-8 h-8 border rounded-lg ${
             currentPage === 0
-              ? "bg-green-600 text-white"
-              : "bg-gray-100 hover:bg-gray-300"
+              ? "bg-green-600 text-white font-bold"
+              : "bg-customLightBlue border-green-600 hover:bg-blue-100"
           }`}
           onClick={() => onPageChange(0)}
         >
@@ -59,7 +59,7 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
         </button>
 
         {/* Ellipsis for larger page ranges */}
-        {currentPage > 3 && <span className="text-gray-500">...</span>}
+        {currentPage > 3 && <span className="flex justify-center items-center w-8 h-8 border rounded-lg bg-blue-50 border-green-600">...</span>}
 
         {/* Dynamic Middle Page Numbers */}
         {Array.from({ length: totalPages }, (_, index) => index)
@@ -69,15 +69,15 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
             if (index === 0 || index === totalPages - 1) return false;
             if (currentPage < 3) return index >= 1 && index <= 4;
             if (currentPage > totalPages - 4) return index >= totalPages - 5;
-            return index >= currentPage - 1 && index <= currentPage + 3;
+            return index >= currentPage - 1 && index <= currentPage + 1;
           })
           .map((index) => (
             <button
               key={index}
               className={`w-8 h-8 border rounded-lg ${
                 currentPage === index
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-100 hover:bg-gray-300"
+                  ? "bg-green-600 text-white font-bold"
+                  : "bg-customLightBlue border-green-600 hover:bg-blue-100"
               }`}
               onClick={() => onPageChange(index)}
             >
@@ -86,15 +86,15 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
           ))}
 
         {/* Ellipsis before last page */}
-        {currentPage < totalPages - 4 && <span className="text-gray-500">...</span>}
+        {currentPage < totalPages - 4 && <span className="flex justify-center items-center w-8 h-8 border rounded-lg bg-customLightBlue border-green-600">...</span>}
 
         {/* Last Page */}
         {totalPages > 1 && (
           <button
             className={`w-8 h-8 border rounded-lg ${
               currentPage === totalPages - 1
-                ? "bg-green-600 text-white"
-                : "bg-gray-100 hover:bg-gray-300"
+                ? "bg-green-600 text-white font-bold"
+                : "bg-customLightBlue border-green-600 hover:bg-blue-100"
             }`}
             onClick={() => onPageChange(totalPages - 1)}
           >
@@ -108,17 +108,17 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
           onClick={handleNext}
           className="p-2 disabled:opacity-50"
         >
-          <FaChevronRight className="w-3 h-3 md:w-4 md:h-4 text-black" />
+          <FaChevronRight className="w-3 h-3 md:w-3 md:h-3 text-black" />
         </button>
       </div>
 
       {/* Right Side - "Go to Page" */}
       <div className="flex items-center space-x-2 justify-center md:justify-start">
-        <span className="text-sm md:text-base text-gray-700">Go to page</span>
+        <span className="text-sm text-neutral-500">Go to page</span>
         <input
           value={goToPageInput}
           onChange={(e) => setGoToPageInput(e.target.value)}
-          className="border p-1 w-10 h-8 text-center rounded text-sm"
+          className="border p-1 w-10 h-8 text-center rounded text-sm placeholder-black"
           placeholder="#"
           min={1}
           max={totalPages}

@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
 import { SelectedTeam } from "./TeamSearchBar";
 import { useFetchPlayers } from "./hooks/useFetchPlayers";
+import { RxMagnifyingGlass } from "react-icons/rx";
 
 type GenderParam = "male" | "female" | null;
 
@@ -70,16 +71,19 @@ const Alumni: React.FC<AlumniProps> = ({
 
   return (
     <div className="bg-white  flex flex-col rounded-lg py-6 mt-4">
-      {/* Search Field */}
-      <input
-        type="text"
-        className="w-full border rounded-lg mb-4 h-[36px]"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      {/* Results */}
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
+        <div className="relative w-full">
+          <input
+            type="text"
+            className="w-full border rounded-lg h-[36px] pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
+        </div>
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+      </div>
 
             {/* Men/Women Tabs */}
             <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold pb-[32px] pt-[32px]">
