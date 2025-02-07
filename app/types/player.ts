@@ -92,7 +92,14 @@ export interface AlumniPlayer {
   name: string;
   birthYear?: number | null;
   gender?: string | null;
-  draftPick?: string;
+  draftPick: {
+    year: number;
+    round: number;
+    overall: number;
+    team?:{
+      name: string;
+    }
+  }
   teams: {
     name: string;
     leagueLevel: string | null;
