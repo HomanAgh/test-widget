@@ -229,7 +229,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                     <ToggleTeamList teams={collegeTeams} />
                   </TableCell>
                   <TableCell align="center">
-                    <ToggleTeamList teams={professionalTeams} />
+                    <ToggleTeamList teams= { professionalTeams} />
                   </TableCell>
                 </TableRow>
               );
