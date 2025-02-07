@@ -24,7 +24,7 @@ const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
   const toggleExpand = () => setExpanded((prev) => !prev);
 
   if (!teams || teams.length === 0) {
-    return <span>N/A</span>;
+    return <span>-</span>;
   }
 
   return (
