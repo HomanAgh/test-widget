@@ -3,41 +3,61 @@
 import React from "react";
 import Image from "next/image";
 import { RosterPlayer } from "@/app/types/team";
-import Table from "../common/style/Table";
-import TableHeader from "../common/style/TableHeader";
-import Link from "../common/style/Link"; // Import the Link component
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link } from "@/app/components/common/style";
 
-const calculateAge = (dateOfBirth: string): number | "N/A" => {
-  if (!dateOfBirth) return "N/A";
+
+// Utility function for age calculation
+const calculateAge = (dateOfBirth: string): number | "-" => {
+  if (!dateOfBirth) return "-";
   const birthDate = new Date(dateOfBirth);
   const today = new Date();
-  const age = today.getFullYear() - birthDate.getFullYear();
-  return today.getMonth() > birthDate.getMonth() ||
-    (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate())
-    ? age
-    : age - 1;
+  let age = today.getFullYear() - birthDate.getFullYear();
+  // Decrement age if the birth month/day hasn't been reached yet this year
+  const hasHadBirthday =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() &&
+      today.getDate() >= birthDate.getDate());
+  if (!hasHadBirthday) {
+    age -= 1;
+  }
+  return age;
 };
 
-const RosterTable: React.FC<{ roster: RosterPlayer[], backgroundColor?: string, textColor?: string }> = ({ 
-  roster, 
+interface RosterTableProps {
+  roster: RosterPlayer[];
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+const RosterTable: React.FC<RosterTableProps> = ({
+  roster,
   backgroundColor = "#FFFFFF",
-  textColor = "#000000", 
+  textColor = "#000000",
 }) => {
   if (!roster || roster.length === 0) {
     return <p>{"No Roster"}</p>;
   }
 
-  // Group players into Goaltenders, Defensemen, and Forwards
-  const goaltenders = roster.filter((player) => player.position === "G").sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
-  const defensemen = roster.filter((player) => player.position === "D").sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
+  // Group players by position
+  const goaltenders = roster
+    .filter((player) => player.position === "G")
+    .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
+
+  const defensemen = roster
+    .filter((player) => player.position === "D")
+    .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
+
   const forwards = roster
     .filter((player) => player.position !== "G" && player.position !== "D")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
 
-  const renderPlayerRow = (player: RosterPlayer) => (
-    <tr key={player.id}>
-      <Table align="center">#{player.jerseyNumber}</Table>
-      <Table align="left">
+  // Renders one player's row
+  const renderPlayerRow = (player: RosterPlayer, index: number) => (
+    <TableRow key={player.id} 
+    className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+    >
+      <TableCell align="left">#{player.jerseyNumber}</TableCell>
+      <TableCell align="left">
         {player.flagUrl && (
           <Image
             src={player.flagUrl}
@@ -47,70 +67,66 @@ const RosterTable: React.FC<{ roster: RosterPlayer[], backgroundColor?: string, 
             className="inline-block mr-2"
           />
         )}
-        {/* Replace anchor tag with Link component */}
-        <Link href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}>
+        <Link
+          href={`https://www.eliteprospects.com/player/${player.id}/${player.firstName} ${player.lastName}`}
+        >
           {`${player.firstName} ${player.lastName} (${player.position})`}
         </Link>
-      </Table>
-      <Table align="center">{calculateAge(player.dateOfBirth)}</Table>
-      <Table align="center">{player.dateOfBirth ? new Date(player.dateOfBirth).getFullYear() : "N/A"}</Table>
-    </tr>
+      </TableCell>
+      <TableCell align="center">{calculateAge(player.dateOfBirth)}</TableCell>
+      <TableCell align="center">
+        {player.dateOfBirth
+          ? new Date(player.dateOfBirth).getFullYear()
+          : "N/A"}
+      </TableCell>
+    </TableRow>
+  );
+
+  // Renders a header row for a position group (e.g. "GOALTENDERS")
+  const renderPositionHeader = (label: string) => (
+    <TableRow>
+      <TableCell
+        className="bg-blue-200 text-left px-2 py-1 font-bold uppercase"
+      >
+        {label}
+      </TableCell>
+    </TableRow>
   );
 
   return (
-    <table
-      className="table-auto border-collapse border border-gray-300 w-full text-sm"
-      style={{ 
-        backgroundColor,
-        color: textColor, 
-      }}
-    >
-      <thead >
-        <tr className="bg-blue-600 text-white" style={{ color: textColor }}>
-          <TableHeader align="center">{"#"}</TableHeader>
-          <TableHeader align="left">{"PLAYER"}</TableHeader>
-          <TableHeader align="center">{"A"}</TableHeader>
-          <TableHeader align="center">{"BORN"}</TableHeader>
-        </tr>
-      </thead>
-      <tbody>
-        {/* GOALTENDERS */}
-        {goaltenders.length > 0 && (
-          <>
-            <tr>
-              <td colSpan={4} className="bg-blue-200 text-left px-2 py-1 font-bold uppercase">
-                {"GOALTENDERS"}
-              </td>
-            </tr>
-            {goaltenders.map(renderPlayerRow)}
-          </>
-        )}
-
-        {/* DEFENSEMEN */}
-        {defensemen.length > 0 && (
-          <>
-            <tr>
-              <td colSpan={4} className="bg-blue-200 text-left px-2 py-1 font-bold uppercase">
-                {"DEFENSEMEN"}
-              </td>
-            </tr>
-            {defensemen.map(renderPlayerRow)}
-          </>
-        )}
-
-        {/* FORWARDS */}
-        {forwards.length > 0 && (
-          <>
-            <tr>
-              <td colSpan={4} className="bg-blue-200 text-left px-2 py-1 font-bold uppercase" >
-                {"FORWARDS"}
-              </td>
-            </tr>
-            {forwards.map(renderPlayerRow)}
-          </>
-        )}
-      </tbody>
-    </table>
+    <TableContainer>
+      <Table className="table-auto border-collapse border border-gray-300 w-full text-sm">
+        {/* TableHead replaces <thead> */}
+        <TableHead className="bg-blue-600">
+          <TableRow>
+            <TableCell isHeader align="left">#</TableCell>
+            <TableCell isHeader align="left">PLAYER</TableCell>
+            <TableCell isHeader align="center">A</TableCell>
+            <TableCell isHeader align="center">BORN</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {goaltenders.length > 0 && (
+            <>
+              {renderPositionHeader("Goaltenders")}
+              {goaltenders.map(renderPlayerRow)}
+            </>
+          )}
+          {defensemen.length > 0 && (
+            <>
+              {renderPositionHeader("Defensemen")}
+              {defensemen.map(renderPlayerRow)}
+            </>
+          )}
+          {forwards.length > 0 && (
+            <>
+              {renderPositionHeader("Forwards")}
+              {forwards.map(renderPlayerRow)}
+            </>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

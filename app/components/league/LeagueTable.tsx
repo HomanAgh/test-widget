@@ -2,13 +2,19 @@
 
 import React from "react";
 import { LeagueTableProps } from "@/app/types/league";
-import Table from "../common/style/Table";
-import TableHeader from "../common/style/TableHeader";
-import TableTitel from "../common/style/TableTitle";
-import Link from "../common/style/Link";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link } from "@/app/components/common/style";
 
-const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor }) => {
 
+interface LeagueTablePropsWithColors extends LeagueTableProps {
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
+  standings,
+  backgroundColor = "#FFFFFF",
+  textColor = "#000000",
+}) => {
   if (!standings || !standings.data) return null;
 
   // Extract league name and season title
@@ -31,96 +37,74 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ standings, backgroundColor })
     {}
   );
 
+  // A helper to render the table rows (shared by grouped & ungrouped modes)
+  const renderTeamRow = (team: any, index: number) => (
+    <TableRow
+      key={team.id || `team-${index}`}
+      // Use Tailwind classes for striped rows; use inline style for text color
+      className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+    >
+      <TableCell align="center">{index + 1}</TableCell>
+      <TableCell align="left">
+        <Link
+          href={team.team.links?.eliteprospectsUrl}
+        >
+          {team.team.name || "Unknown Team"}
+        </Link>
+      </TableCell>
+      <TableCell align="center">{team.stats?.GP || 0}</TableCell>
+      <TableCell align="center">{team.stats?.W || 0}</TableCell>
+      <TableCell align="center">{team.stats?.L || 0}</TableCell>
+      <TableCell align="center">{team.stats?.OTW || 0}</TableCell>
+      <TableCell align="center">{team.stats?.OTL || 0}</TableCell>
+      <TableCell align="center">{team.stats?.PTS || 0}</TableCell>
+    </TableRow>
+  );
+
+  // A reusable function that renders a single table (for either all teams or a group)
+  const renderTable = (teams: any[]) => (
+    <Table className="table-auto border-collapse border border-gray-300 w-full text-sm">
+      <TableHead>
+        <TableRow className="bg-red-600">
+          <TableCell isHeader align="center">#</TableCell>
+          <TableCell isHeader align="left">Team</TableCell>
+          <TableCell isHeader align="center">GP</TableCell>
+          <TableCell isHeader align="center">W</TableCell>
+          <TableCell isHeader align="center">L</TableCell>
+          <TableCell isHeader align="center">OTW</TableCell>
+          <TableCell isHeader align="center">OTL</TableCell>
+          <TableCell isHeader align="center">TP</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {teams.map((team: any, index: number) => renderTeamRow(team, index))}
+      </TableBody>
+    </Table>
+  );
+
   return (
     <div>
-      {/* League Title */}
-      <TableTitel align="center">{leagueName} {"Season"}: {seasonTitle}</TableTitel>
+      {/* League + Season Title */}
+      <h2 className="text-lg font-bold text-center mb-2">
+        {leagueName} Season: {seasonTitle}
+      </h2>
 
-      {/* Render without groups if no team has group data */}
-      {!hasGroups ? (
-        <table
-          className="table-auto border-collapse border border-gray-300 w-full text-sm"
-          style={{ backgroundColor }}
-        >
-          <thead>
-            <tr className="bg-red-600 text-white">
-              <TableHeader align="center">{"#"}</TableHeader>
-              <TableHeader align="center">{"Team"}</TableHeader>
-              <TableHeader align="center">{"GP"}</TableHeader>
-              <TableHeader align="center">{"W"}</TableHeader>
-              <TableHeader align="center">{"L"}</TableHeader>
-              <TableHeader align="center">{"OTW"}</TableHeader>
-              <TableHeader align="center">{"OTL"}</TableHeader>
-              <TableHeader align="center">{"TP"}</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {standings.data.map((team: any, index: number) => (
-              <tr
-                key={team.id || `team-${index}`}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-              >
-                <Table align="center">{index + 1}</Table>
-                <Table align="left">
-                <Link href={team.team.links?.eliteprospectsUrl}>
-                          {team.team.name || "Unknown Team"}
-                      </Link>
-                </Table>
-                <Table align="center">{team.stats?.GP || 0}</Table>
-                <Table align="center">{team.stats?.W || 0}</Table>
-                <Table align="center">{team.stats?.L || 0}</Table>
-                <Table align="center">{team.stats?.OTW || 0}</Table>
-                <Table align="center">{team.stats?.OTL || 0}</Table>
-                <Table align="center">{team.stats?.PTS || 0}</Table>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        Object.entries(groups).map(([groupName, teams]: [string, any[]]) => (
-          <div key={groupName} className="mb-6">
-            <h2 className="text-md font-bold bg-blue-600 text-white p-2">{groupName}</h2>
-            <table
-              className="table-auto border-collapse border border-gray-300 w-full text-sm"
-              style={{ backgroundColor }}
-            >
-              <thead>
-                <tr className="bg-red-600 text-white">
-                  <TableHeader align="center">{"#"}</TableHeader>
-                  <TableHeader align="left">{"Team"}</TableHeader>
-                  <TableHeader align="center">{"GP"}</TableHeader>
-                  <TableHeader align="center">{"W"}</TableHeader>
-                  <TableHeader align="center">{"L"}</TableHeader>
-                  <TableHeader align="center">{"OTW"}</TableHeader>
-                  <TableHeader align="center">{"OTL"}</TableHeader>
-                  <TableHeader align="center">{"TP"}</TableHeader>
-                </tr>
-              </thead>
-              <tbody>
-                {teams.map((team: any, index: number) => (
-                  <tr
-                    key={team.id || `team-${index}`}
-                    className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-                  >
-                    <Table align="center">{index + 1}</Table>
-                    <Table align="left">
-                      <Link href={team.team.links?.eliteprospectsUrl}>
-                          {team.team.name || "Unknown Team"}
-                      </Link>
-                    </Table>
-                    <Table align="center">{team.stats?.GP || 0}</Table>
-                    <Table align="center">{team.stats?.W || 0}</Table>
-                    <Table align="center">{team.stats?.L || 0}</Table>
-                    <Table align="center">{team.stats?.OTW || 0}</Table>
-                    <Table align="center">{team.stats?.OTL || 0}</Table>
-                    <Table align="center">{team.stats?.PTS || 0}</Table>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))
-      )}
+      {/* TableContainer applies background + text color to everything within */}
+      <TableContainer>
+        {/* If no groups, just one table. Otherwise, one table per group. */}
+        {!hasGroups ? (
+          renderTable(standings.data)
+        ) : (
+          Object.entries(groups).map(([groupName, teams]: [string, any[]]) => (
+            <div key={groupName} className="mb-6">
+              <h3 className="text-md font-bold bg-blue-600 text-white p-2">
+                {groupName}
+              </h3>
+              {renderTable(teams)}
+            </div>
+          ))
+        )}
+      </TableContainer>
     </div>
   );
 };
