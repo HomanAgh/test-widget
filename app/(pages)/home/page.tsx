@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold } from "react-icons/pi"; // Importing icons
 import Header from "@/app/components/Header";
-import { PageWrapper, PageTitle } from "@/app/components/common/style";
+import { PageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";
 
 const HomePage = () => {
   const router = useRouter();
@@ -47,6 +47,7 @@ const HomePage = () => {
           </button>
         ))}
       </div>
+      <PoweredBy/>
     </PageWrapper>
   );
   
