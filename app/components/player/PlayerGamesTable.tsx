@@ -1,17 +1,19 @@
-"use client"; // Use this if you're in Next.js 13+ with server-side rendering
+"use client"; // For Next.js 13+ client components
 
 import React from "react";
-import { GameLog, PlayerType, GoaltenderSummary, SkaterSummary } from "@/app/types/player";
-import Table from "../common/style/Table";
-import TableHeader from "../common/style/TableHeader";
-import TableTitel from "../common/style/TableTitle";
-import TableWrapper from "../common/style/TableWrapper";
+import {
+  GameLog,
+  PlayerType,
+  GoaltenderSummary,
+  SkaterSummary,
+} from "@/app/types/player";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell } from "@/app/components/common/style";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
   playerType: PlayerType;
   backgroundColor?: string;
-  textColor?: string;  
+  textColor?: string;
   gameLimit: number;
   showSummary: boolean;
 }
@@ -24,9 +26,11 @@ const GamesTable: React.FC<GamesTableProps> = ({
   gameLimit,
   showSummary,
 }) => {
+  // Summaries for skaters or goaltenders
   let summary: GoaltenderSummary | SkaterSummary;
 
   if (playerType === "GOALTENDER") {
+    // Calculate goaltender summary stats
     summary = lastFiveGames.reduce<GoaltenderSummary>(
       (acc, game) => {
         acc.shotsAgainst += game.shotsAgainst || 0;
@@ -38,10 +42,12 @@ const GamesTable: React.FC<GamesTableProps> = ({
       { shotsAgainst: 0, saves: 0, goalsAgainst: 0, savePercentage: 0 }
     );
 
+    // Average out the save percentage
     if (lastFiveGames.length > 0) {
       summary.savePercentage /= lastFiveGames.length;
     }
   } else {
+    // Calculate skater summary stats
     summary = lastFiveGames.reduce<SkaterSummary>(
       (acc, game) => {
         acc.goals += game.goals || 0;
@@ -54,90 +60,109 @@ const GamesTable: React.FC<GamesTableProps> = ({
     );
   }
 
+  const titleText = showSummary
+    ? `Summary Last ${gameLimit} Games`
+    : `Last ${gameLimit} Games`;
+
   return (
     <div>
-      <TableTitel align="left">{showSummary ? `Summary Last ${gameLimit} Games` : `Last ${gameLimit} Games`}</TableTitel>
-      <TableWrapper backgroundColor={backgroundColor} textColor={textColor}>
-        <table className="min-w-full shadow-md rounded-lg overflow-hidden mt-4">
-          <thead style={{ filter: "brightness(90%)" }}>
-            <tr>
-              <TableHeader align="center">Date</TableHeader>
+      {/* Title */}
+      <h2 className="text-xl font-bold mb-2">{titleText}</h2>
+
+      {/* Outer container for background/text color */}
+      <TableContainer>
+        {/* The main table wrapper */}
+        <Table>
+          {/* Head (replaces <thead>) */}
+          <TableHead className="filter brightness-90">
+            <TableRow>
+              {/* Example: use `isHeader` or `header` prop if your TableCell supports it */}
+              <TableCell isHeader align="center">Date</TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
-                  <TableHeader align="center">GA</TableHeader>
-                  <TableHeader align="center">SA</TableHeader>
-                  <TableHeader align="center">SV</TableHeader>
-                  <TableHeader align="center">SV%</TableHeader>
+                  <TableCell isHeader align="center">GA</TableCell>
+                  <TableCell isHeader align="center">SA</TableCell>
+                  <TableCell isHeader align="center">SV</TableCell>
+                  <TableCell isHeader align="center">SV%</TableCell>
                 </>
               ) : (
                 <>
-                  <TableHeader align="center">G</TableHeader>
-                  <TableHeader align="center">A</TableHeader>
-                  <TableHeader align="center">TP</TableHeader>
-                  <TableHeader align="center">+/-</TableHeader>
+                  <TableCell isHeader align="center">G</TableCell>
+                  <TableCell isHeader align="center">A</TableCell>
+                  <TableCell isHeader align="center">TP</TableCell>
+                  <TableCell isHeader align="center">+/-</TableCell>
                 </>
               )}
-            </tr>
-          </thead>
+            </TableRow>
+          </TableHead>
 
-          <tbody>
+          {/* Body (replaces <tbody>) */}
+          <TableBody>
             {showSummary ? (
-              <tr
-                style={{
-                  backgroundColor,
-                  color: textColor,
-                  border: "1px solid #ccc",
-                }}
-              >
-                <Table align="center">Summary</Table>
+              // Render a single summary row
+              <TableRow>
+                <TableCell align="center">Summary</TableCell>
                 {playerType === "GOALTENDER" ? (
                   <>
-                    <Table align="center">{(summary as GoaltenderSummary).goalsAgainst}</Table>
-                    <Table align="center">{(summary as GoaltenderSummary).shotsAgainst}</Table>
-                    <Table align="center">{(summary as GoaltenderSummary).saves}</Table>
-                    <Table align="center">{(summary as GoaltenderSummary).savePercentage.toFixed(2)}%</Table>
+                    <TableCell align="center">
+                      {(summary as GoaltenderSummary).goalsAgainst}
+                    </TableCell>
+                    <TableCell align="center">
+                      {(summary as GoaltenderSummary).shotsAgainst}
+                    </TableCell>
+                    <TableCell align="center">
+                      {(summary as GoaltenderSummary).saves}
+                    </TableCell>
+                    <TableCell align="center">
+                      {(summary as GoaltenderSummary).savePercentage.toFixed(2)}%
+                    </TableCell>
                   </>
                 ) : (
                   <>
-                    <Table align="center">{(summary as SkaterSummary).goals}</Table>
-                    <Table align="center">{(summary as SkaterSummary).assists}</Table>
-                    <Table align="center">{(summary as SkaterSummary).points}</Table>
-                    <Table align="center">{(summary as SkaterSummary).plusMinusRating}</Table>
+                    <TableCell align="center">
+                      {(summary as SkaterSummary).goals}
+                    </TableCell>
+                    <TableCell align="center">
+                      {(summary as SkaterSummary).assists}
+                    </TableCell>
+                    <TableCell align="center">
+                      {(summary as SkaterSummary).points}
+                    </TableCell>
+                    <TableCell align="center">
+                      {(summary as SkaterSummary).plusMinusRating}
+                    </TableCell>
                   </>
                 )}
-              </tr>
+              </TableRow>
             ) : (
+              // Render a row for each game
               lastFiveGames.map((game, index) => (
-                <tr
-                  key={index}
-                  style={{
-                    backgroundColor: index % 2 === 0 ? "rgba(0,0,255,0.1)" : backgroundColor,
-                    color: textColor,
-                    border: "1px solid #ccc",
-                  }}
-                >
-                  <Table align="center">{game.date}</Table>
+                <TableRow
+                  key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                  <TableCell align="center">{game.date}</TableCell>
                   {playerType === "GOALTENDER" ? (
                     <>
-                      <Table align="center">{game.goalsAgainst || 0}</Table>
-                      <Table align="center">{game.shotsAgainst || 0}</Table>
-                      <Table align="center">{game.saves || 0}</Table>
-                      <Table align="center">{game.savePercentage?.toFixed(2) || "0.00"}%</Table>
+                      <TableCell align="center">{game.goalsAgainst || 0}</TableCell>
+                      <TableCell align="center">{game.shotsAgainst || 0}</TableCell>
+                      <TableCell align="center">{game.saves || 0}</TableCell>
+                      <TableCell align="center">
+                        {game.savePercentage?.toFixed(2) || "0.00"}%
+                      </TableCell>
                     </>
                   ) : (
                     <>
-                      <Table align="center">{game.goals || 0}</Table>
-                      <Table align="center">{game.assists || 0}</Table>
-                      <Table align="center">{game.points || 0}</Table>
-                      <Table align="center">{game.plusMinusRating || 0}</Table>
+                      <TableCell align="center">{game.goals || 0}</TableCell>
+                      <TableCell align="center">{game.assists || 0}</TableCell>
+                      <TableCell align="center">{game.points || 0}</TableCell>
+                      <TableCell align="center">{game.plusMinusRating || 0}</TableCell>
                     </>
                   )}
-                </tr>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </TableWrapper>
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

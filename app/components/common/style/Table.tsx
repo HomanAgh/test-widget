@@ -1,20 +1,35 @@
-import React from 'react';
+import React from "react";
 
+/**
+ * Table is the <table> element. 
+ * Props let you override background and text colors or add classes.
+ */
 interface TableProps {
-  align: 'left' | 'center' | 'right';
   children: React.ReactNode;
+  tableBgColor?: string;
+  tableTextColor?: string;
+  className?: string;
 }
 
-const Table: React.FC<TableProps> = ({ align, children }) => {
+const Table: React.FC<TableProps> = ({
+  children,
+  tableBgColor = "#ffffff",
+  tableTextColor = "#000000",
+  className = "",
+}) => {
   return (
-    <td
-    className={`py-1 px-4 text-${align} border border-black-500 px-2 py-1 rounded-md`}
+    <table
+      className={`w-full ${className}`}
+      style={{
+        backgroundColor: tableBgColor,
+        color: tableTextColor,
+        WebkitOverflowScrolling: "touch",
+        touchAction: "pan-x",
+      }}
     >
       {children}
-    </td>
+    </table>
   );
 };
 
 export default Table;
-
-
