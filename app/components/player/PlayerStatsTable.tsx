@@ -12,8 +12,6 @@ interface PlayerStatsTableProps {
 const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
   playerType,
   stats,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
 }) => {
   const isGoaltender = playerType === "GOALTENDER";
 

@@ -77,7 +77,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
       }
     };
     fetchTeams();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, onError]);
 
   // Outside click => hide dropdown
   useEffect(() => {
@@ -154,7 +154,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
 
       {/* Search Input */}
       <input
-        type="text"
+        type=""
         value={query}
         onFocus={handleInputFocus}
         onChange={(e) => setQuery(e.target.value)}
