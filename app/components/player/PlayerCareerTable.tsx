@@ -1,9 +1,6 @@
 import React from "react";
 import type { CareerStats } from "@/app/types/player";
-import Table from "../common/style/Table";
-import TableHeader from "../common/style/TableHeader";
-import TableTitel from "../common/style/TableTitle";
-import TableWrapper from "../common/style/TableWrapper"; 
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link } from "@/app/components/common/style";
 
 interface CareerTableProps {
   careers: CareerStats[];
@@ -16,69 +13,79 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({
   backgroundColor = "#FFFFFF",
   textColor = "#000000",
 }) => {
+  // Determine if this player is a goalie (to show GAA, SV%, SO)
   const isGoalie = careers.some((career) => career.goalsAgainstAverage !== undefined);
 
   return (
     <div>
-      <TableTitel align="left">Career Statistics</TableTitel>
-      <TableWrapper backgroundColor={backgroundColor} textColor={textColor}>
-        <table className="min-w-full">
-          <thead style={{ filter: "brightness(90%)" }}>
-            <tr>
-              <TableHeader align="left">League</TableHeader>
-              <TableHeader align="center">Years</TableHeader>
-              <TableHeader align="center">GP</TableHeader>
+      {/* If you have a custom title component, you can still use it here, 
+          or just use a simple <h2> / <h3>. */}
+      <h2 className="text-xl font-bold mb-2">Career Statistics</h2>
+
+      <TableContainer>
+        <Table>
+          {/* You can pass className to TableHead if you want the brightness filter */}
+          <TableHead className="filter brightness-90">
+            <TableRow>
+              <TableCell isHeader align="left">League</TableCell>
+              <TableCell isHeader align="center">Years</TableCell>
+              <TableCell isHeader align="center">GP</TableCell>
               {isGoalie ? (
                 <>
-                  <TableHeader align="center">GAA</TableHeader>
-                  <TableHeader align="center">SV%</TableHeader>
-                  <TableHeader align="center">SO</TableHeader>
+                  <TableCell isHeader align="center">GAA</TableCell>
+                  <TableCell isHeader align="center">SV%</TableCell>
+                  <TableCell isHeader align="center">SO</TableCell>
                 </>
               ) : (
                 <>
-                  <TableHeader align="center">G</TableHeader>
-                  <TableHeader align="center">A</TableHeader>
-                  <TableHeader align="center">TP</TableHeader>
+                  <TableCell isHeader align="center">G</TableCell>
+                  <TableCell isHeader align="center">A</TableCell>
+                  <TableCell isHeader align="center">TP</TableCell>
                 </>
               )}
-            </tr>
-          </thead>
+            </TableRow>
+          </TableHead>
 
-          <tbody>
+          <TableBody>
             {careers.map((career, index) => (
-              <tr key={index} className="border-t">
-                <Table align="left">
-                  <a
+              <TableRow key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                <TableCell align="left">
+                  <Link
                     href={`https://www.eliteprospects.com/league/${career.league
                       .toLowerCase()
                       .replace(/\s+/g, "-")}/stats/all-time`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: textColor, textDecoration: "underline" }}
                   >
                     {career.league}
-                  </a>
-                </Table>
-                <Table align="center">{career.numberOfSeasons}</Table>
-                <Table align="center">{career.gamesPlayed}</Table>
+                  </Link>
+                </TableCell>
+
+                <TableCell align="center">{career.numberOfSeasons}</TableCell>
+                <TableCell align="center">{career.gamesPlayed}</TableCell>
+
                 {isGoalie ? (
                   <>
-                    <Table align="center">{career.goalsAgainstAverage ?? "N/A"}</Table>
-                    <Table align="center">{career.savePercentage ?? "N/A"}</Table>
-                    <Table align="center">{career.shutouts ?? 0}</Table>
+                    <TableCell align="center">
+                      {career.goalsAgainstAverage ?? "N/A"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {career.savePercentage ?? "N/A"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {career.shutouts ?? 0}
+                    </TableCell>
                   </>
                 ) : (
                   <>
-                    <Table align="center">{career.goals ?? 0}</Table>
-                    <Table align="center">{career.assists ?? 0}</Table>
-                    <Table align="center">{career.points ?? 0}</Table>
+                    <TableCell align="center">{career.goals ?? 0}</TableCell>
+                    <TableCell align="center">{career.assists ?? 0}</TableCell>
+                    <TableCell align="center">{career.points ?? 0}</TableCell>
                   </>
                 )}
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </TableWrapper>
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 };

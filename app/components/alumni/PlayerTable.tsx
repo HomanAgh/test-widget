@@ -1,14 +1,16 @@
 import React from "react";
 import { AlumniPlayer } from "@/app/types/player";
-import Link from "../common/style/Link";
 import Image from "next/image";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import Link from "../common/style/Link";
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,PaginationControls } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
 
 interface PlayerTableProps {
   players: AlumniPlayer[];
   genderFilter: "men" | "women" | "all";
   pageSize?: number; // default number of players per page, e.g., 15
+
+  // color overrides
   headerBgColor?: string;
   headerTextColor?: string;
   tableBgColor?: string;
@@ -31,9 +33,8 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   const [sortColumn, setSortColumn] = React.useState<string>("");
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("none");
   const [currentPage, setCurrentPage] = React.useState(0);
-  const [goToPageInput, setGoToPageInput] = React.useState<string>("");
 
-  // Handle table sorting
+  // Sorting logic
   const handleSort = (column: string) => {
     if (sortColumn !== column) {
       setSortColumn(column);
@@ -107,98 +108,79 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   const endIndex = startIndex + pageSize;
   const pagePlayers = sortedPlayers.slice(startIndex, endIndex);
 
-  // Handle go to page
-  const handleGoToPage = () => {
-    const page = parseInt(goToPageInput, 10);
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page - 1);
-      setGoToPageInput("");
-    }
-  };
-
   // Decide if tableBgColor is truly "custom" or not
   const isCustomColor =
     tableBgColor.toLowerCase() !== "#ffffff" && tableBgColor.toLowerCase() !== "#fff";
 
   return (
     <div>
-      {/* Table Wrapper for horizontal scroll */}
-      <div className="overflow-x-auto overflow-hidden  border border-customGrayMedium bg-white rounded-lg w-full">
-        <table className="w-full"
-    
-          style={{
-            backgroundColor: tableBgColor,
-            color: tableTextColor,
-            WebkitOverflowScrolling: "touch",
-            touchAction: "pan-x",
-          }}
-        >
-          <thead
-            className="pr-[12px] pl-[12px] font-montserrat"
-            style={{
-              backgroundColor: headerBgColor,
-              color: headerTextColor,
-            }}
-          >
-            <tr className="rounded-t-lg">
-              <th
-                className="py-2 px-4 text-center font-bold whitespace-nowrap rounded-tl-lg cursor-pointer"
+      {/* Table + Scroll Container */}
+      <TableContainer>
+        <Table tableBgColor={tableBgColor} tableTextColor={tableTextColor}>
+          <TableHead bgColor={headerBgColor} textColor={headerTextColor}>
+            <TableRow>
+              <TableCell
+                isHeader
+                align="center"
+                className="font-bold"
                 onClick={() => handleSort("name")}
               >
                 NAME{" "}
                 {sortColumn === "name" &&
                   (sortDirection === "asc"
-                    ? " ↑"
+                    ? "↑"
                     : sortDirection === "desc"
-                    ? " ↓"
-                    : " -")}
-              </th>
-              <th
-                className="py-2 px-4 text-center font-bold whitespace-nowrap cursor-pointer"
+                    ? "↓"
+                    : "-")}
+              </TableCell>
+              <TableCell
+                isHeader
+                align="center"
+                className="font-bold"
                 onClick={() => handleSort("birthYear")}
               >
                 BY{" "}
                 {sortColumn === "birthYear" &&
                   (sortDirection === "asc"
-                    ? " ↑"
+                    ? "↑"
                     : sortDirection === "desc"
-                    ? " ↓"
-                    : " -")}
-              </th>
-              <th
-                className="py-2 px-4 text-center font-bold whitespace-nowrap cursor-pointer"
+                    ? "↓"
+                    : "-")}
+              </TableCell>
+              <TableCell
+                isHeader
+                align="center"
+                className="font-bold"
                 onClick={() => handleSort("draftPick")}
               >
                 NHL DP{" "}
                 {sortColumn === "draftPick" &&
                   (sortDirection === "asc"
-                    ? " ↑"
+                    ? "↑"
                     : sortDirection === "desc"
-                    ? " ↓"
-                    : " -")}
-              </th>
-              <th className="py-2 px-4 text-center font-bold whitespace-nowrap">
+                    ? "↓"
+                    : "-")}
+              </TableCell>
+              <TableCell isHeader align="center" className="font-bold">
                 JUNIOR
-              </th>
-              <th className="py-2 px-4 text-center font-bold whitespace-nowrap">
+              </TableCell>
+              <TableCell isHeader align="center" className="font-bold">
                 COLLEGE
-              </th>
-              <th className="py-2 px-4 text-center font-bold whitespace-nowrap rounded-tr-lg">
+              </TableCell>
+              <TableCell isHeader align="center" className="font-bold">
                 PROFESSIONAL
-              </th>
-            </tr>
-          </thead>
+              </TableCell>
+            </TableRow>
+          </TableHead>
 
-          <tbody className="pl-[12px] pr-[12px] text-[14px]">
+          <TableBody>
             {pagePlayers.map((player, index) => {
-              // Decide the background color for this row
               const rowBackground = isCustomColor
-                ? tableBgColor // user-chosen color
+                ? tableBgColor
                 : index % 2 === 0
-                ? evenRowColor // even row
-                : oddRowColor; // odd row
+                ? evenRowColor
+                : oddRowColor;
 
-              // Player data
               const juniorTeams =
                 player.teams?.filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("junior")
@@ -217,149 +199,54 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
               const lastName = rest.join(" ");
 
               return (
-                <tr
-                  key={player.id}
-                  className="h-[56px] font-medium text-sm leading-[21px]"
-                  style={{ backgroundColor: rowBackground }}
-                >
-                  <td className="flex justify-center">
+                <TableRow key={player.id} bgColor={rowBackground}>
+                  <TableCell align="center">
                     <Link
                       href={`https://www.eliteprospects.com/player/${encodeURIComponent(
                         player?.id || ""
                       )}/${encodeURIComponent(fullName)}`}
                     >
-                      <a className="block">
-                        <span className="block font-medium text-blue-600">
-                          {firstName || "Unknown"}
-                        </span>
-                        <span className="block text-blue-600">
-                          {lastName}
-                          {player?.position ? ` (${player.position})` : ""}
-                        </span>
-                      </a>
+                      <span className="block font-medium text-blue-600">
+                        {firstName || "Unknown"}
+                      </span>
+                      <span className="block text-blue-600">
+                        {lastName}
+                        {player?.position ? ` (${player.position})` : ""}
+                      </span>
                     </Link>
-                  </td>
-                  <td align="center">{player.birthYear ?? "N/A"}</td>
-                  <td align="center">{player.draftPick ?? "N/A"}</td>
-                  <td align="center">
+                  </TableCell>
+                  <TableCell align="center">
+                    {player.birthYear ?? "N/A"}
+                  </TableCell>
+                  <TableCell align="center">
+                    {player.draftPick ?? "N/A"}
+                  </TableCell>
+                  <TableCell align="center">
                     <ToggleTeamList teams={juniorTeams} />
-                    {/* {juniorTeams.map((t) => t.name).join(", ") || "N/A"} */}
-                  </td>
-                  <td align="center">
+                  </TableCell>
+                  <TableCell align="center">
                     <ToggleTeamList teams={collegeTeams} />
-                    {/* {collegeTeams.map((t) => t.name).join(", ") || "N/A"} */}
-                  </td>
-                  <td align="center">
+                  </TableCell>
+                  <TableCell align="center">
                     <ToggleTeamList teams={professionalTeams} />
-                    {/* {professionalTeams.map((t) => t.name).join(", ") || "N/A"} */}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-center mt-4 w-full">
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page: React.SetStateAction<number>) => setCurrentPage(page)}
+        />
       </div>
 
-      {/* Pagination Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between mt-4 w-full gap-2 md:gap-4">
-        {/* Left side - Pagination Controls */}
-        <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2">
-          {/* Previous Button */}
-          <button
-            disabled={currentPage === 0}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="p-2 disabled:opacity-50"
-          >
-            <FaChevronLeft className="w-3 h-3 md:w-4 md:h-4 text-black" />
-          </button>
-
-          {/* First Page */}
-          <button
-            className={`w-8 h-8 border rounded-lg ${
-              currentPage === 0
-                ? "bg-green-600 text-white"
-                : "bg-gray-100 hover:bg-gray-300"
-            }`}
-            onClick={() => setCurrentPage(0)}
-          >
-            1
-          </button>
-
-          {/* Ellipsis for larger page ranges */}
-          {currentPage > 3 && <span className="text-gray-500">...</span>}
-
-          {/* Dynamic Page Numbers */}
-          {Array.from({ length: totalPages }, (_, index) => index)
-            .filter((index) => {
-              if (index === 0 || index === totalPages - 1) return false;
-              if (currentPage < 3) return index >= 1 && index <= 4;
-              if (currentPage > totalPages - 4) return index >= totalPages - 5;
-              return index >= currentPage - 1 && index <= currentPage + 3;
-            })
-            .map((index) => (
-              <button
-                key={index}
-                className={`w-8 h-8 border rounded-lg ${
-                  currentPage === index
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-100 hover:bg-gray-300"
-                }`}
-                onClick={() => setCurrentPage(index)}
-              >
-                {index + 1}
-              </button>
-            ))}
-
-          {/* Ellipsis before last page */}
-          {currentPage < totalPages - 4 && (
-            <span className="text-gray-500">...</span>
-          )}
-
-          {/* Last Page */}
-          {totalPages > 1 && (
-            <button
-              className={`w-8 h-8 border rounded-lg ${
-                currentPage === totalPages - 1
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-100 hover:bg-gray-300"
-              }`}
-              onClick={() => setCurrentPage(totalPages - 1)}
-            >
-              {totalPages}
-            </button>
-          )}
-
-          {/* Next Button */}
-          <button
-            disabled={currentPage >= totalPages - 1}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="p-2 disabled:opacity-50"
-          >
-            <FaChevronRight className="w-3 h-3 md:w-4 md:h-4 text-black" />
-          </button>
-        </div>
-
-        {/* Right Side - Go to Page Input */}
-        <div className="flex items-center space-x-2 justify-center md:justify-start">
-          <span className="text-sm md:text-base text-gray-700">Go to page</span>
-          <input
-            value={goToPageInput}
-            onChange={(e) => setGoToPageInput(e.target.value)}
-            className="border p-1 w-10 h-8 text-center rounded text-sm"
-            placeholder="#"
-            min={1}
-            max={totalPages}
-          />
-          <button
-            onClick={handleGoToPage}
-            className="text-sm md:text-base font-bold px-3 py-1 bg-green-600 text-white rounded-lg"
-          >
-            Go
-          </button>
-        </div>
-      </div>
-
-      {/* "Powered by EliteProspects" Logo & Legend */}
+      {/* Powered By & Legend */}
       <div className="flex flex-col items-center justify-center mt-4">
         <div className="flex items-center space-x-1">
           <span className="text-[12px] font-montserrat font-medium text-black lowercase">

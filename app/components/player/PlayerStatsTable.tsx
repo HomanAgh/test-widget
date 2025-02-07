@@ -1,15 +1,12 @@
 import React from "react";
 import { PlayerType, Goalie, Skater } from "@/app/types/player";
-import Table from "../common/style/Table";
-import TableHeader from "../common/style/TableHeader";
-import TableTitel from "../common/style/TableTitle";
-import TableWrapper from "../common/style/TableWrapper"; // Import TableWrapper
+import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell } from "@/app/components/common/style";
 
 interface PlayerStatsTableProps {
   playerType: PlayerType;
   stats: Goalie | Skater;
-  backgroundColor?: string; // NEW
-  textColor?: string;       // NEW
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
@@ -18,56 +15,83 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
   backgroundColor = "#FFFFFF",
   textColor = "#000000",
 }) => {
-  const isGoaltender = playerType === "GOALTENDER"; 
+  const isGoaltender = playerType === "GOALTENDER";
 
   return (
-   <div>
-     <TableTitel align="left">Statistics</TableTitel>
-     <TableWrapper backgroundColor={backgroundColor} textColor={textColor}>
-      <table className="min-w-full shadow-md rounded-lg overflow-hidden">
-        <thead style={{ filter: "brightness(90%)" }}>
-          <tr>
-            <TableHeader align="center">GP</TableHeader>
-            {isGoaltender ? (
-              <>
-                <TableHeader align="center">GA</TableHeader>
-                <TableHeader align="center">SA</TableHeader>
-                <TableHeader align="center">SV</TableHeader>
-                <TableHeader align="center">SV%</TableHeader>
-              </>
-            ) : (
-              <>
-                <TableHeader align="center">G</TableHeader>
-                <TableHeader align="center">A</TableHeader>
-                <TableHeader align="center">TP</TableHeader>
-                <TableHeader align="center">+/-</TableHeader>
-              </>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <Table align="center">{(stats as Goalie).gamesPlayed}</Table>
-            {isGoaltender ? (
-              <>
-                <Table align="center">{(stats as Goalie).goalsAgainst}</Table>
-                <Table align="center">{(stats as Goalie).shotsAgainst}</Table>
-                <Table align="center">{(stats as Goalie).saves}</Table>
-                <Table align="center">{((stats as Goalie).savePercentage || 0).toFixed(2)}%</Table>
-              </>
-            ) : (
-              <>
-                <Table align="center">{(stats as Skater).goals}</Table>
-                <Table align="center">{(stats as Skater).assists}</Table>
-                <Table align="center">{(stats as Skater).points}</Table>
-                <Table align="center">{(stats as Skater).plusMinusRating}</Table>
-              </>
-            )}
-          </tr>
-        </tbody>
-      </table>
-    </TableWrapper>
-   </div>
+    <div>
+      {/* Replace your old TableTitle with a simple heading or your new Title component */}
+      <h2 className="text-xl font-bold mb-2">Statistics</h2>
+
+      {/* TableContainer replaces TableWrapper, applying your background/text colors */}
+      <TableContainer>
+        {/* Table replaces the <table> tag */}
+        <Table>
+          {/* TableHead replaces <thead> */}
+          <TableHead className="filter brightness-90">
+            <TableRow>
+              {/* TableCell with isHeader replaces TableHeader */}
+              <TableCell isHeader align="center">GP</TableCell>
+              {isGoaltender ? (
+                <>
+                  <TableCell isHeader align="center">GA</TableCell>
+                  <TableCell isHeader align="center">SA</TableCell>
+                  <TableCell isHeader align="center">SV</TableCell>
+                  <TableCell isHeader align="center">SV%</TableCell>
+                </>
+              ) : (
+                <>
+                  <TableCell isHeader align="center">G</TableCell>
+                  <TableCell isHeader align="center">A</TableCell>
+                  <TableCell isHeader align="center">TP</TableCell>
+                  <TableCell isHeader align="center">+/-</TableCell>
+                </>
+              )}
+            </TableRow>
+          </TableHead>
+
+          {/* TableBody replaces <tbody> */}
+          <TableBody>
+            {/* One row showing either goalie stats or skater stats */}
+            <TableRow>
+              <TableCell align="center">
+                {(stats as Goalie).gamesPlayed}
+              </TableCell>
+              {isGoaltender ? (
+                <>
+                  <TableCell align="center">
+                    {(stats as Goalie).goalsAgainst}
+                  </TableCell>
+                  <TableCell align="center">
+                    {(stats as Goalie).shotsAgainst}
+                  </TableCell>
+                  <TableCell align="center">
+                    {(stats as Goalie).saves}
+                  </TableCell>
+                  <TableCell align="center">
+                    {((stats as Goalie).savePercentage || 0).toFixed(2)}%
+                  </TableCell>
+                </>
+              ) : (
+                <>
+                  <TableCell align="center">
+                    {(stats as Skater).goals}
+                  </TableCell>
+                  <TableCell align="center">
+                    {(stats as Skater).assists}
+                  </TableCell>
+                  <TableCell align="center">
+                    {(stats as Skater).points}
+                  </TableCell>
+                  <TableCell align="center">
+                    {(stats as Skater).plusMinusRating}
+                  </TableCell>
+                </>
+              )}
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 };
 
