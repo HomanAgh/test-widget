@@ -70,7 +70,7 @@ const Alumni: React.FC<AlumniProps> = ({
   }, [filteredPlayers, searchQuery]);
 
   return (
-    <div className="bg-white  flex flex-col rounded-lg py-6 mt-4">
+    <div className="bg-white  flex flex-col rounded-lg py-6 mt-4 ">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
         <div className="relative w-full">
           <input

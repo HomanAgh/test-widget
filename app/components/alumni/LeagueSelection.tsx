@@ -11,7 +11,7 @@ interface LeagueSelectionDropdownProps {
   onChange: (selected: string[]) => void;
 }
 
-// Predefined league rankings
+// Predefined league rankings (all keys in lower-case for consistency)
 const leagueRankings: Record<string, number> = {
   // Professional Leagues
   "nhl": 1,
@@ -39,21 +39,21 @@ const leagueRankings: Record<string, number> = {
   "j20-nationell": 21,
   "mhl": 22,
   "cchl": 23,
-  //Womens Professional Leagues
+  // Womens Professional Leagues
   "pwhl-w": 24,
   "sdhl-w": 25,
   "nwhl-ca-w": 26,
   "phf-w": 27,
-  //Womens College Leagues
+  // Womens College Leagues
   "ncaa-w": 28,
   "ncaa-iii-w": 29,
   "acha-w": 30,
   "acha-d2-w": 31,
-  //Womens Junior Leagues
+  // Womens Junior Leagues
   "jwhl-w": 32,
 };
 
-// Function to sort league slugs based on rankings
+// This function sorts an array of league slugs (for selected leagues)
 const sortLeaguesByRank = (slugs: string[]): string[] => {
   slugs.forEach((slug) => {
     if (!(slug in leagueRankings)) {
@@ -61,12 +61,20 @@ const sortLeaguesByRank = (slugs: string[]): string[] => {
     }
   });
 
-  return [...slugs]
-    .sort(
-      (a, b) =>
-        (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
-        (leagueRankings[b] ?? Number.MAX_SAFE_INTEGER)
-    );
+  return [...slugs].sort(
+    (a, b) =>
+      (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
+      (leagueRankings[b] ?? Number.MAX_SAFE_INTEGER)
+  );
+};
+
+// New helper: sorts an array of League objects based on the ranking map
+const sortLeagueObjectsByRank = (leagues: League[]): League[] => {
+  return [...leagues].sort((a, b) => {
+    const rankA = leagueRankings[a.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    const rankB = leagueRankings[b.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    return rankA - rankB;
+  });
 };
 
 const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
@@ -83,20 +91,17 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
   const handleCheckboxChange = (leagueSlug: string) => {
     const normalizedSlug = leagueSlug.toLowerCase(); // Normalize slug
     const isSelected = selectedLeagues.includes(normalizedSlug);
-  
+
     let updatedLeagues = isSelected
       ? selectedLeagues.filter((slug) => slug !== normalizedSlug)
       : [...selectedLeagues, normalizedSlug];
-  
+
     updatedLeagues = sortLeaguesByRank(updatedLeagues);
     onChange(updatedLeagues);
   };
-  
 
   const removeLeagueSlug = (slug: string) => {
     const updatedLeagues = selectedLeagues.filter((s) => s !== slug);
-
-    // Automatically sort after removal
     onChange(sortLeaguesByRank(updatedLeagues));
   };
 
@@ -110,8 +115,29 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
       ...juniorLeagues,
       ...collegeLeagues,
     ];
-    const found = allLeagues.find((l) => l.slug === slug);
+    const found = allLeagues.find((l) => l.slug.toLowerCase() === slug);
     return found ? found.name : slug;
+  };
+
+  // Combine all league slugs and sort them (used for the "Select All" button)
+  const allLeagueSlugs = sortLeaguesByRank(
+    [...professionalLeagues, ...collegeLeagues, ...juniorLeagues].map((league) =>
+      league.slug.toLowerCase()
+    )
+  );
+
+  // Check if all leagues are selected
+  const allSelected = allLeagueSlugs.every((slug) =>
+    selectedLeagues.includes(slug)
+  );
+
+  // Toggle function for select all / deselect all
+  const handleSelectAllToggle = () => {
+    if (allSelected) {
+      onChange([]);
+    } else {
+      onChange(allLeagueSlugs);
+    }
   };
 
   return (
@@ -122,25 +148,31 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
       >
         Select Leagues
         <span
-          className={`transform transition-transform ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          className={`transform transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
         >
           ▼
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute bg-white border rounded w-full mt-2 z-10 p-4">
+        <div className="absolute bg-white border rounded w-full mt-2 z-10 p-4 relative">
+          {/* Select All / Deselect All Button */}
+          <button
+            onClick={handleSelectAllToggle}
+            className="absolute top-2 right-2 text-blue-500 text-sm underline"
+          >
+            {allSelected ? "Deselect All" : "Select All"}
+          </button>
+
           {/* Professional Leagues */}
-          <div>
+          <div className="mt-6">
             <h3 className="font-bold mb-2">Professional Leagues</h3>
             <div className="grid grid-cols-2 gap-2 mb-4">
-              {professionalLeagues.map((league) => (
+              {sortLeagueObjectsByRank(professionalLeagues).map((league) => (
                 <label key={league.slug} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={selectedLeagues.includes(league.slug)}
+                    checked={selectedLeagues.includes(league.slug.toLowerCase())}
                     onChange={() => handleCheckboxChange(league.slug)}
                   />
                   <span>{league.name}</span>
@@ -155,11 +187,11 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
           <div>
             <h3 className="font-bold mb-2">College Leagues</h3>
             <div className="grid grid-cols-2 gap-2 mb-4">
-              {collegeLeagues.map((league) => (
+              {sortLeagueObjectsByRank(collegeLeagues).map((league) => (
                 <label key={league.slug} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={selectedLeagues.includes(league.slug)}
+                    checked={selectedLeagues.includes(league.slug.toLowerCase())}
                     onChange={() => handleCheckboxChange(league.slug)}
                   />
                   <span>{league.name}</span>
@@ -174,11 +206,11 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
           <div>
             <h3 className="font-bold mb-2">Junior Leagues</h3>
             <div className="grid grid-cols-2 gap-2">
-              {juniorLeagues.map((league) => (
+              {sortLeagueObjectsByRank(juniorLeagues).map((league) => (
                 <label key={league.slug} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={selectedLeagues.includes(league.slug)}
+                    checked={selectedLeagues.includes(league.slug.toLowerCase())}
                     onChange={() => handleCheckboxChange(league.slug)}
                   />
                   <span>{league.name}</span>

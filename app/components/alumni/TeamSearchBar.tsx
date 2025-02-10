@@ -77,7 +77,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
       }
     };
     fetchTeams();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery]);
 
   // Outside click => hide dropdown
   useEffect(() => {
@@ -146,21 +146,22 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
 
   return (
     <div className="pb-[48px]">
-  
-      {/* Search Bar Container */}
-      <div className="relative w-full" ref={containerRef}>
-      {/* Search Icon (inside input) */}
-      <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-[20px] h-[20px]" />
-
-      {/* Search Input */}
-      <input
-        type=""
-        value={query}
-        onFocus={handleInputFocus}
-        onChange={(e) => setQuery(e.target.value)}
-        className="border p-2 pl-10 rounded-md w-full"
-        onKeyDown={handleKeyDown}
-      />
+      {/* Main Container */}
+      <div className="w-full" ref={containerRef}>
+        {/* Search Bar (isolated container for icon + input) */}
+        <div className="relative">
+          {/* Search Icon */}
+          <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-[20px] h-[20px]" />
+          {/* Search Input */}
+          <input
+            type="text"
+            value={query}
+            onFocus={handleInputFocus}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="border p-2 pl-10 rounded-md w-full"
+          />
+        </div>
   
         {/* Dropdown */}
         {showDropdown && (
@@ -227,7 +228,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         )}
       </div>
     </div>
-  );  
+  );   
 };
 
 export default TeamSearchBar;

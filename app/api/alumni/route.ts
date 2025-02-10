@@ -41,6 +41,7 @@ interface DraftSelection {
   overall?: number;
   team?:{
     name?: string;
+    logo?: string
   }
   draftType?: {
     slug?: string;
@@ -227,16 +228,6 @@ async function fetchAndMergePlayerStats(
   }
 }
 
-/**
- * NEW: Batch-fetch NHL draft picks for multiple players at once.
- *
- * Example URL:
- *   /draft-selections?draftType=nhl-entry-draft&player=597559,38703,6146&apiKey=...
- */
-/**
- * Batch-fetch NHL draft picks for multiple players at once,
- * but chunk the playerIds to avoid "Request Entity Too Large."
- */
 async function fetchBatchDraftPicks(
   playerIds: number[],
   chunkSize = 500
@@ -250,8 +241,11 @@ async function fetchBatchDraftPicks(
   while (startIndex < playerIds.length) {
     const chunk = playerIds.slice(startIndex, startIndex + chunkSize);
     const joinedIds = chunk.join(",");
-    const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}`;
-    console.log("Batch fetching draft picks =>", url);
+    const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}&fields=${encodeURIComponent(
+      "player.id,year,round,overall,team.name,team.logo.small,draftType.slug"
+    )}`;    
+
+    console.log("Fetching Draft Picks from:", url);
 
     try {
       const response = await fetch(url);
@@ -265,25 +259,33 @@ async function fetchBatchDraftPicks(
         player?: { id: number; name?: string };
       }
       const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
+
+      console.log("Draft API Response:", JSON.stringify(data, null, 2)); // 🔍 Debug Response
+
       if (!data.data) {
         startIndex += chunkSize;
         continue;
       }
 
-      // Merge results into our resultMap as objects
+      // ✅ Merge draft picks correctly into `resultMap`
       for (const ds of data.data) {
         const pid = ds.player?.id;
         if (!pid) continue;
-        if (!resultMap.has(pid)) {
-          // Store the draft selection as an object
-          resultMap.set(pid, {
-            year: ds.year,
-            round: ds.round,
-            overall: ds.overall,
-            team: ds.team, // this should be an object with a "name" property
-            draftType: ds.draftType,
-          });
-        }
+
+        console.log(`Processing Draft Pick for Player ID: ${pid}`, ds); // 🔍 Debug Each Entry
+
+        resultMap.set(pid, {
+          year: ds.year,
+          round: ds.round,
+          overall: ds.overall,
+          team: ds.team
+            ? {
+                name: ds.team.name ?? "Unknown Team",
+                logo: ds.team.logo ?? "Unkown Logo",
+              }
+            : undefined,
+          draftType: ds.draftType,
+        });
       }
     } catch (err) {
       console.error("Error in fetchBatchDraftPicks chunk:", err);
@@ -291,6 +293,8 @@ async function fetchBatchDraftPicks(
 
     startIndex += chunkSize;
   }
+
+  console.log("Final DraftPick Map:", resultMap); // 🔍 Debug Final Map
 
   return resultMap;
 }
@@ -386,12 +390,14 @@ export async function GET(request: Request) {
     //
     const allPlayerIds = allPlayers.map((p) => p.id);
     const draftPickMap = await fetchBatchDraftPicks(allPlayerIds);
+    console.log("DraftPick Map:", draftPickMap);
 
     // Merge the draftPick into each player
    // Merge the draftPick into each player
     for (const p of allPlayers) {
       p.draftPick = draftPickMap.get(p.id) ?? null;
     }
+    console.log("Final Players Data:", allPlayers);
 
 
     //
@@ -403,9 +409,20 @@ export async function GET(request: Request) {
       birthYear: p.yearOfBirth,
       gender: p.gender,
       position: p.position,
-      draftPick: p.draftPick ?? 'N/A',
+      draftPick: p.draftPick
+        ? {
+            year: p.draftPick.year,
+            round: p.draftPick.round,
+            overall: p.draftPick.overall,
+            team: {
+              name: p.draftPick.team?.name ?? "N/A",
+              logo: p.draftPick.team?.logo?.small ?? null, // Ensure team logo is included
+            },
+            draftType: p.draftPick.draftType,
+          }
+        : "N/A",
       teams: p.teams,
-    }));
+    }));    
 
     return NextResponse.json({
       players: finalPlayers,

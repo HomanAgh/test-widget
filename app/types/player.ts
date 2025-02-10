@@ -98,6 +98,7 @@ export interface AlumniPlayer {
     overall: number;
     team?:{
       name: string;
+      logo:string;
     }
   }
   teams: {

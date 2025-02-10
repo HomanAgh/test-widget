@@ -3,6 +3,7 @@ import { AlumniPlayer } from "@/app/types/player";
 import Link from "../common/style/Link";
 import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,PaginationControls, PoweredBy } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
+import Tooltip from "../common/Tooltip";
 
 
 interface PlayerTableProps {
@@ -166,7 +167,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 COLLEGE
               </TableCell>
               <TableCell isHeader align="center" className="font-bold">
-                PROFESSIONAL
+                PRO
               </TableCell>
             </TableRow>
           </TableHead>
@@ -220,9 +221,21 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   <TableCell align="center">
                     {player.draftPick && player.draftPick.team ? (
                       <>
-                        {player.draftPick.year} {"Round " +player.draftPick.round} {"Overall " + player.draftPick.overall}
-                        <br />
-                        By {player.draftPick.team.name}
+                        <div>
+                          {player.draftPick.team.logo ? (
+                            <Tooltip 
+                              tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall by ${player.draftPick.team.name}`}>
+                              <img 
+                                src={player.draftPick.team.logo} 
+                                alt={player.draftPick.team.name} 
+                                width={20} 
+                                height={20} 
+                                style={{ marginRight: "4px" }}
+                              />
+                            </Tooltip>
+                          ) : null}
+                          {"#" + player.draftPick.overall} 
+                        </div>
                       </>
                     ) : (
                       <span>-</span>
