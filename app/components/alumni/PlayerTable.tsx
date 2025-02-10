@@ -224,7 +224,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                         <div>
                           {player.draftPick.team.logo ? (
                             <Tooltip 
-                              tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall by ${player.draftPick.team.name}`}>
+                              tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}>
                               <img 
                                 src={player.draftPick.team.logo} 
                                 alt={player.draftPick.team.name} 
