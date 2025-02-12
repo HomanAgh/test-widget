@@ -250,7 +250,6 @@ async function fetchBatchDraftPicks(
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        console.error("Error fetching batch draft picks:", response.statusText);
         startIndex += chunkSize;
         continue;
       }
@@ -259,8 +258,6 @@ async function fetchBatchDraftPicks(
         player?: { id: number; name?: string };
       }
       const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
-
-      console.log("Draft API Response:", JSON.stringify(data, null, 2)); // 🔍 Debug Response
 
       if (!data.data) {
         startIndex += chunkSize;
@@ -272,7 +269,6 @@ async function fetchBatchDraftPicks(
         const pid = ds.player?.id;
         if (!pid) continue;
 
-        console.log(`Processing Draft Pick for Player ID: ${pid}`, ds); // 🔍 Debug Each Entry
 
         resultMap.set(pid, {
           year: ds.year,
@@ -293,8 +289,6 @@ async function fetchBatchDraftPicks(
 
     startIndex += chunkSize;
   }
-
-  console.log("Final DraftPick Map:", resultMap); // 🔍 Debug Final Map
 
   return resultMap;
 }
@@ -390,14 +384,12 @@ export async function GET(request: Request) {
     //
     const allPlayerIds = allPlayers.map((p) => p.id);
     const draftPickMap = await fetchBatchDraftPicks(allPlayerIds);
-    console.log("DraftPick Map:", draftPickMap);
 
     // Merge the draftPick into each player
    // Merge the draftPick into each player
     for (const p of allPlayers) {
       p.draftPick = draftPickMap.get(p.id) ?? null;
     }
-    console.log("Final Players Data:", allPlayers);
 
 
     //

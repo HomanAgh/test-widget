@@ -110,6 +110,13 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   // Decide if tableBgColor is truly "custom" or not
   const isCustomColor =
     tableBgColor.toLowerCase() !== "#ffffff" && tableBgColor.toLowerCase() !== "#fff";
+  
+  const renderSortArrow = (column: string) => {
+    if (sortColumn !== column) return "-";
+    if (sortDirection === "asc") return "↑";
+    if (sortDirection === "desc") return "↓";
+    return "-";
+  };
 
   return (
     <div>
@@ -124,13 +131,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="font-bold"
                 onClick={() => handleSort("name")}
               >
-                NAME{" "}
-                {sortColumn === "name" &&
-                  (sortDirection === "asc"
-                    ? "↑"
-                    : sortDirection === "desc"
-                    ? "↓"
-                    : "-")}
+                NAME {renderSortArrow("name")}
               </TableCell>
               <TableCell
                 isHeader
@@ -138,13 +139,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="font-bold"
                 onClick={() => handleSort("birthYear")}
               >
-                BY{" "}
-                {sortColumn === "birthYear" &&
-                  (sortDirection === "asc"
-                    ? "↑"
-                    : sortDirection === "desc"
-                    ? "↓"
-                    : "-")}
+                BY {renderSortArrow("birthYear")}
               </TableCell>
               <TableCell
                 isHeader
@@ -152,22 +147,31 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="font-bold"
                 onClick={() => handleSort("draftPick")}
               >
-                NHL DP{" "}
-                {sortColumn === "draftPick" &&
-                  (sortDirection === "asc"
-                    ? "↑"
-                    : sortDirection === "desc"
-                    ? "↓"
-                    : "-")}
+                NHL DP {renderSortArrow("draftPick")}
               </TableCell>
-              <TableCell isHeader align="center" className="font-bold">
-                JUNIOR
+              <TableCell 
+                isHeader
+                align="center"
+                className="font-bold"
+                onClick={() => handleSort("junior")}
+              >
+                JUNIOR {renderSortArrow("junior")}
               </TableCell>
-              <TableCell isHeader align="center" className="font-bold">
-                COLLEGE
+              <TableCell 
+                isHeader
+                align="center"
+                className="font-bold"
+                onClick={() => handleSort("college")}
+              >
+                COLLEGE {renderSortArrow("college")}
               </TableCell>
-              <TableCell isHeader align="center" className="font-bold">
-                PRO
+              <TableCell 
+                isHeader
+                align="center"
+                className="font-bold"
+                onClick={() => handleSort("professional")}
+              >
+                PRO {renderSortArrow("professional")}
               </TableCell>
             </TableRow>
           </TableHead>
