@@ -14,6 +14,7 @@ export async function GET(request: Request) {
   try {
     const url = `${apiBaseUrl}/teams?q=${encodeURIComponent(query)}&offset=0&limit=30&sort=name&apiKey=${apiKey}`;
     const response = await fetch(url);
+    console.log(url)
 
     if (!response.ok) {
       throw new Error(`Failed to fetch teams: ${response.statusText}`);

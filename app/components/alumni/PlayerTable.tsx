@@ -3,6 +3,7 @@ import { AlumniPlayer } from "@/app/types/player";
 import Link from "../common/style/Link";
 import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,PaginationControls, PoweredBy } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
+import Tooltip from "../common/Tooltip";
 
 
 interface PlayerTableProps {
@@ -109,6 +110,13 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   // Decide if tableBgColor is truly "custom" or not
   const isCustomColor =
     tableBgColor.toLowerCase() !== "#ffffff" && tableBgColor.toLowerCase() !== "#fff";
+  
+  const renderSortArrow = (column: string) => {
+    if (sortColumn !== column) return "-";
+    if (sortDirection === "asc") return "↑";
+    if (sortDirection === "desc") return "↓";
+    return "-";
+  };
 
   return (
     <div>
@@ -123,13 +131,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="font-bold"
                 onClick={() => handleSort("name")}
               >
-                NAME{" "}
-                {sortColumn === "name" &&
-                  (sortDirection === "asc"
-                    ? "↑"
-                    : sortDirection === "desc"
-                    ? "↓"
-                    : "-")}
+                NAME {renderSortArrow("name")}
               </TableCell>
               <TableCell
                 isHeader
@@ -137,13 +139,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="font-bold"
                 onClick={() => handleSort("birthYear")}
               >
-                BY{" "}
-                {sortColumn === "birthYear" &&
-                  (sortDirection === "asc"
-                    ? "↑"
-                    : sortDirection === "desc"
-                    ? "↓"
-                    : "-")}
+                BY {renderSortArrow("birthYear")}
               </TableCell>
               <TableCell
                 isHeader
@@ -151,22 +147,31 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 className="font-bold"
                 onClick={() => handleSort("draftPick")}
               >
-                NHL DP{" "}
-                {sortColumn === "draftPick" &&
-                  (sortDirection === "asc"
-                    ? "↑"
-                    : sortDirection === "desc"
-                    ? "↓"
-                    : "-")}
+                NHL DP {renderSortArrow("draftPick")}
               </TableCell>
-              <TableCell isHeader align="center" className="font-bold">
-                JUNIOR
+              <TableCell 
+                isHeader
+                align="center"
+                className="font-bold"
+                onClick={() => handleSort("junior")}
+              >
+                JUNIOR {renderSortArrow("junior")}
               </TableCell>
-              <TableCell isHeader align="center" className="font-bold">
-                COLLEGE
+              <TableCell 
+                isHeader
+                align="center"
+                className="font-bold"
+                onClick={() => handleSort("college")}
+              >
+                COLLEGE {renderSortArrow("college")}
               </TableCell>
-              <TableCell isHeader align="center" className="font-bold">
-                PROFESSIONAL
+              <TableCell 
+                isHeader
+                align="center"
+                className="font-bold"
+                onClick={() => handleSort("professional")}
+              >
+                PRO {renderSortArrow("professional")}
               </TableCell>
             </TableRow>
           </TableHead>
@@ -220,9 +225,21 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   <TableCell align="center">
                     {player.draftPick && player.draftPick.team ? (
                       <>
-                        {player.draftPick.year} {"Round " +player.draftPick.round} {"Overall " + player.draftPick.overall}
-                        <br />
-                        By {player.draftPick.team.name}
+                        <div>
+                          {player.draftPick.team.logo ? (
+                            <Tooltip 
+                              tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}>
+                              <img 
+                                src={player.draftPick.team.logo} 
+                                alt={player.draftPick.team.name} 
+                                width={20} 
+                                height={20} 
+                                style={{ marginRight: "4px" }}
+                              />
+                            </Tooltip>
+                          ) : null}
+                          {"#" + player.draftPick.overall} 
+                        </div>
                       </>
                     ) : (
                       <span>-</span>
