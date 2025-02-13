@@ -13,6 +13,7 @@ interface ApiResponse<T> {
 
 interface PlayerStatsItem {
   player: {
+    youthTeam: null;
     position: string;
     id: number;
     name?: string;
@@ -54,6 +55,7 @@ interface CombinedPlayer {
   yearOfBirth: string | null;
   gender: string | null;
   position: string;
+  youthTeam?: string | null;
   teams: {
     name: string;
     leagueLevel: string | null;
@@ -112,13 +114,12 @@ function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
 
   if (singleLeague) {
     url += `&league=${singleLeague}`;
-  } else {
-    url += `&fetchAllLeagues=true`;
-  }
+  } 
 
   // Specify the fields we want
   url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.position,player.yearOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+    'player.id,player.name,player.position,player.yearOfBirth,player.gender,' + 
+    'player.youthTeam,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
   return url;
@@ -132,12 +133,11 @@ function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
 
   if (singleLeague) {
     url += `&league=${singleLeague}`;
-  } else {
-    url += `&fetchAllLeagues=true`;
   }
 
   url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.yearOfBirth,player.gender,team.id,team.name,team.league.slug,team.league.leagueLevel'
+    'player.id,player.name,player.position,player.yearOfBirth,player.gender,' + 
+    'player.youthTeam,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
   return url;
@@ -198,6 +198,7 @@ async function fetchAndMergePlayerStats(
           yearOfBirth: item.player.yearOfBirth || null,
           gender: item.player.gender || null,
           position: item.player.position , 
+          youthTeam: item.player.youthTeam || null,
           teams: [],
         });
       }
@@ -304,14 +305,13 @@ export async function GET(request: Request) {
   // Query params
   const teamIdsParam = searchParams.get('teamIds'); 
   const leagueParam = searchParams.get('league');   
-  const fetchAllLeagues = searchParams.get('fetchAllLeagues') === 'true';
   const includeYouth = searchParams.get('includeYouth') === 'true';
   const teamsParam = searchParams.get('teams');     
   const genderParam = searchParams.get('gender');   
 
   console.log('Alumni: Query params =>');
   console.log('  teamIdsParam =', teamIdsParam);
-  console.log('  leagueParam =', leagueParam, 'fetchAllLeagues =', fetchAllLeagues);
+  console.log('  leagueParam =', leagueParam);
   console.log('  includeYouth =', includeYouth);
   console.log('  teamsParam =', teamsParam);
   console.log('  gender =', genderParam);
@@ -325,9 +325,7 @@ export async function GET(request: Request) {
   let leagues: string[] = [];
   if (leagueParam) {
     leagues = leagueParam.split(',').map((l) => l.trim());
-  } else if (fetchAllLeagues) {
-    leagues = []; // interpret "all leagues"
-  }
+  } 
 
   // A container to accumulate data for each player (by ID)
   const playerMap: Map<number, CombinedPlayer> = new Map();
@@ -401,6 +399,7 @@ export async function GET(request: Request) {
       birthYear: p.yearOfBirth,
       gender: p.gender,
       position: p.position,
+      youthTeam: p.youthTeam,
       draftPick: p.draftPick
         ? {
             year: p.draftPick.year,
