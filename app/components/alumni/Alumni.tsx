@@ -5,7 +5,6 @@ import PlayerTable from "./PlayerTable";
 import { SelectedTeam } from "./TeamSearchBar";
 import { useFetchPlayers } from "./hooks/useFetchPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import BlurredLoadingScreen from "../common/BlurredLoadingScreen";
 
 type GenderParam = "male" | "female" | null;
 
