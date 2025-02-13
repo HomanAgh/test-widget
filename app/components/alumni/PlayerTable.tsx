@@ -16,6 +16,7 @@ interface PlayerTableProps {
   headerTextColor?: string;
   tableBgColor?: string;
   tableTextColor?: string;
+  nameTextColor?: string;
   oddRowColor?: string;
   evenRowColor?: string;
 }
@@ -28,6 +29,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   headerTextColor = "#ffffff",
   tableBgColor = "#ffffff",
   tableTextColor = "#000000",
+  nameTextColor = "#0D73A6",
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
 }) => {
@@ -204,16 +206,16 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 
               return (
                 <TableRow key={player.id} bgColor={rowBackground}>
-                  <TableCell align="center">
+                  <TableCell align="center" style={{ color: nameTextColor }}>
                     <Link
                       href={`https://www.eliteprospects.com/player/${encodeURIComponent(
                         player?.id || ""
                       )}/${encodeURIComponent(fullName)}`}
                     >
-                      <span className="block font-medium text-blue-600 text-left">
+                      <span className="block font-medium text-left">
                         {firstName || "Unknown"}
                       </span>
-                      <span className="block text-blue-600 text-left">
+                      <span className="block text-left">
                         {lastName}
                         {player?.position ? ` (${player.position})` : ""}
                       </span>

@@ -8,6 +8,7 @@ interface HexColorsProps {
     backgroundColor: string;
     textColor: string;
     tableBackgroundColor: string;
+    nameTextColor: string;
   };
   setCustomColors: Dispatch<
     SetStateAction<{
@@ -15,6 +16,7 @@ interface HexColorsProps {
       backgroundColor: string;
       textColor: string;
       tableBackgroundColor: string;
+      nameTextColor: string;
     }>
   >;
 }
@@ -27,7 +29,7 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
         <span className="font-medium">Header BG:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[141px]"
+          className="border p-1 rounded w-[110px]"
           value={customColors.backgroundColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -44,7 +46,7 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
         <span className="font-medium">Header Text:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[141px]"
+          className="border p-1 rounded w-[110px]"
           value={customColors.headerTextColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -61,7 +63,7 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
         <span className="font-medium">Table BG:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[141px]"
+          className="border p-1 rounded w-[110px]"
           value={customColors.tableBackgroundColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -78,7 +80,7 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
         <span className="font-medium">Table Text:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[141px]"
+          className="border p-1 rounded w-[110px]"
           value={customColors.textColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -89,6 +91,23 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
           placeholder="#000000"
         />
       </label>
+
+      <label className="flex items-center space-x-2">
+        <span className="font-medium">Name Text:</span>
+        <input
+          type="text"
+          className="border p-1 rounded w-[110px]"
+          value={customColors.nameTextColor}
+          onChange={(e) =>
+            setCustomColors((prev) => ({
+              ...prev,
+              nameTextColor: e.target.value,
+            }))
+          }
+          placeholder="#0D73A6"
+        />
+      </label>
+
     </div>
   );
 };

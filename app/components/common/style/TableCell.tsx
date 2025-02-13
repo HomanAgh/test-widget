@@ -6,6 +6,7 @@ interface TableCellProps {
   align?: "left" | "center" | "right";
   className?: string;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
 const TableCell: React.FC<TableCellProps> = ({
@@ -14,6 +15,7 @@ const TableCell: React.FC<TableCellProps> = ({
   align = "left",
   className = "font bold",
   onClick,
+  style,
 }) => {
   const Component = isHeader ? "th" : "td";
   return (
@@ -22,6 +24,7 @@ const TableCell: React.FC<TableCellProps> = ({
         onClick ? " cursor-pointer" : ""
       }`}
       onClick={onClick}
+      style={style}
     >
       {children}
     </Component>

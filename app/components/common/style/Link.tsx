@@ -21,7 +21,7 @@ const Link: React.FC<CustomLinkProps> = ({
       target={target}
       rel={rel}
       // Use the incoming className or fallback
-      className={className ?? "text-[#0D73A6] hover:underline"}
+      className={className ?? "hover:underline"}
       {...rest}
     >
       {children}

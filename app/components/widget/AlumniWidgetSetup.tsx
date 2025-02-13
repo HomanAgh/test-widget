@@ -20,6 +20,7 @@ const AlumniWidgetSetup: React.FC = () => {
     backgroundColor: "#052D41",
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
+    nameTextColor: "#0D73A6",
   });
   const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
 
@@ -34,6 +35,7 @@ const AlumniWidgetSetup: React.FC = () => {
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
       `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&includeYouth=${encodeURIComponent(includeYouth)}`
     );
   }, [selectedTeams, selectedLeagues, customColors, includeYouth]);
