@@ -5,6 +5,7 @@ import PlayerTable from "./PlayerTable";
 import { SelectedTeam } from "./TeamSearchBar";
 import { useFetchPlayers } from "./hooks/useFetchPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
+import BlurredLoadingScreen from "../common/BlurredLoadingScreen";
 
 type GenderParam = "male" | "female" | null;
 
@@ -83,7 +84,7 @@ const Alumni: React.FC<AlumniProps> = ({
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
         </div>
-        {loading && <p>Loading...</p>}
+        {loading && <p className="flex justify-center pt-3 font-montserrat font-semibold">Loading...</p>}
         {error && <p>{error}</p>}
       </div>
 
