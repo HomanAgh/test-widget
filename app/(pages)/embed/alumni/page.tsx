@@ -21,6 +21,7 @@ const AlumniEmbedContent = () => {
   const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
   const textColor = searchParams.get("textColor") || "#000000";
   const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
+  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
   const includeYouthStr = searchParams.get("includeYouth");
   const includeYouth = includeYouthStr === "true";
 
@@ -51,6 +52,7 @@ const AlumniEmbedContent = () => {
           backgroundColor,
           textColor,
           tableBackgroundColor,
+          nameTextColor
         }}
         includeYouth={includeYouth}
       />

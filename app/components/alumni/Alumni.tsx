@@ -16,6 +16,7 @@ interface AlumniProps {
     textColor: string;
     tableBackgroundColor: string;
     headerTextColor?: string;
+    nameTextColor?: string;
   };
   includeYouth?: boolean; 
 }
@@ -118,6 +119,7 @@ const Alumni: React.FC<AlumniProps> = ({
         headerTextColor={customColors.headerTextColor}
         tableBgColor={customColors.tableBackgroundColor}
         tableTextColor={customColors.textColor}
+        nameTextColor={customColors.nameTextColor}
       />
     </div>
 
