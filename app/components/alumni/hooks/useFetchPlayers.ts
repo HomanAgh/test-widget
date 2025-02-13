@@ -51,10 +51,7 @@ export function useFetchPlayers(
       // League
       if (leagueParam) {
         url += `&league=${leagueParam}`;
-      } else {
-        // If we rely on fetchAllLeagues
-        url += `&fetchAllLeagues=true`;
-      }
+      } 
 
       // Youth
       if (includeYouth && youthTeam) {
@@ -127,7 +124,7 @@ export function useFetchPlayers(
       prevYouthTeamRef.current = youthTeam;
       prevGenderRef.current = genderParam;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [selectedTeamIds, leagueParam, activeFilter, includeYouth, youthTeam, genderParam]);
 
   return { results, loading, error, hasMore, fetchPlayers };
