@@ -13,14 +13,10 @@ interface TeamStats {
 
 interface TeamProps {
   teamId: string;
-  backgroundColor: string;
-  textColor?: string;
 }
 
 const Team: React.FC<TeamProps> = ({ 
   teamId, 
-  backgroundColor,
-  textColor = "0000000",
 }) => {
 
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
@@ -69,13 +65,7 @@ const Team: React.FC<TeamProps> = ({
   if (error) return <div className="text-center text-red-600">{"An error occurred"}: {error}</div>;
 
   return (
-    <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg "
-      style={{ 
-        backgroundColor, 
-        color: textColor,
-      }}
-      >
+    <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg ">
         {teamStats && (
           <div className="font-montserrat">
             {/* Team Name and Logo */}
@@ -92,18 +82,12 @@ const Team: React.FC<TeamProps> = ({
               )}
               {/* Team Name & League (Stacked Vertically) */}
               <div className="flex flex-col">
-                <h2 
-                  className="text-[24px] font-bold leading-[26px]" 
-                  style={{ color: textColor }}
-                >
+                <h2 className="text-[24px] font-bold leading-[26px]" >
                   <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
                     {teamStats.team.name}
                   </Link>
                 </h2>
-                <p 
-                  className="text-[16px] font-semibold " 
-                  style={{ color: textColor }}
-                >
+                <p className="text-[16px] font-semibold " >
                   <Link href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}>
                     {teamStats.team.league}
                   </Link>

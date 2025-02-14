@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from "react";
 import Player from "../player/Player";
-import TeamBackgroundColorSelector from "../common/TeamBackgroundColorSelector";
 import EmbedCodeBlock from "../iframe/IframePreview";
 
 interface WidgetSetupProps {
@@ -57,16 +56,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
   return (
     <div>
-      <TeamBackgroundColorSelector
-        playerId={playerId}
-        defaultEnabled={false}
-        onTeamColorsChange={setTeamColors}
-        onUseTeamColorChange={setUseTeamColor}
-        onCustomColorChange={setCustomColor}
-        enableText="Enable Team Colors"
-        disableText="Disable Team Colors"
-      />
-
       <div className="text-center my-4">
         <h3 className="text-lg font-medium mb-2">View Mode:</h3>
         <div className="flex justify-center space-x-4">

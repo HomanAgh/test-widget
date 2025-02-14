@@ -22,9 +22,7 @@ const fetcher = (url: string) =>
   });
 
 const PlayerCareers: React.FC<PlayerCareerProps> = ({
-  playerId,
-  backgroundColor = "#FFFFFF", // default if not provided
-  textColor = "#000000",       // default if not provided
+  playerId,       // default if not provided
 }) => {
   // Use SWR to fetch the player's career data
   const { data, error } = useSWR(`/api/playerCareer?playerId=${playerId}`, fetcher);
@@ -68,12 +66,9 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
   console.log("Mapped Careers:", careers); // Debug log
 
   return (
-    <div
-      className="max-w-6xl mx-auto my-8 p-6 rounded-lg"
-      style={{ backgroundColor, color: textColor }}
-    >
+    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
       {careers && (
-        <CareerTable careers={careers} backgroundColor={backgroundColor} textColor={textColor}/>
+        <CareerTable careers={careers}/>
       )}
     </div>
   );

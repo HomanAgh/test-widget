@@ -25,7 +25,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   players,
   genderFilter,
   pageSize = 15,
-  headerBgColor = "#052D41",
+  headerBgColor,
   headerTextColor = "#ffffff",
   tableBgColor = "#ffffff",
   tableTextColor = "#000000",

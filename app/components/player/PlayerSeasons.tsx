@@ -7,8 +7,6 @@ import type { SeasonStats, PlayerType } from "@/app/types/player";
 
 interface PlayerSeasonsProps {
   playerId: string;
-  backgroundColor?: string; // NEW
-  textColor?: string;       // NEW
 }
 
 const fetcher = (url: string) =>
@@ -22,21 +20,19 @@ const fetcher = (url: string) =>
 
 const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
   playerId,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
 }) => {
   const { data, error } = useSWR(`/api/playerSeasons?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
   if (!data && !error) {
-    return <div style={{ color: textColor }}>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div style={{ color: "red" }}>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   if (!data || !data.stats || data.stats.length === 0) {
-    return <div style={{ color: "red" }}>NoStatsAvailable</div>;
+    return <div>NoStatsAvailable</div>;
   }
 
   const playerType: PlayerType =
@@ -64,11 +60,8 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
   }));
 
   return (
-    <div
-      className="max-w-6xl mx-auto my-8 p-6 rounded-lg"
-      style={{ backgroundColor, color: textColor }}
-    >
-      <SeasonsTable playerType={playerType} seasons={seasons} backgroundColor={backgroundColor} textColor={textColor} />
+    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
+      <SeasonsTable playerType={playerType} seasons={seasons}/>
     </div>
   );
 };

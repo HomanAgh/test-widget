@@ -36,5 +36,4 @@ export interface LeaguesAPIResponse {
         };
       }[];
     };
-    backgroundColor?: string; // Prop for dynamic background color
   }

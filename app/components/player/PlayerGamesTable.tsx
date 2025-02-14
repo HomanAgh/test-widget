@@ -12,8 +12,6 @@ import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy
 interface GamesTableProps {
   lastFiveGames: GameLog[];
   playerType: PlayerType;
-  backgroundColor?: string;
-  textColor?: string;
   gameLimit: number;
   showSummary: boolean;
 }
@@ -67,7 +65,6 @@ const GamesTable: React.FC<GamesTableProps> = ({
       {/* Title */}
       <h2 className="text-xl font-bold mb-2">{titleText}</h2>
 
-      {/* Outer container for background/text color */}
       <TableContainer>
         {/* The main table wrapper */}
         <Table>

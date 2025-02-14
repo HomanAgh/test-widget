@@ -36,8 +36,6 @@ const fetcher = (url: string) =>
 
 const Player: React.FC<PlayerProps> = ({
   playerId,
-  backgroundColor,
-  textColor = "#000000", // default
   gameLimit,
   viewMode,
   showSummary
@@ -70,26 +68,19 @@ const Player: React.FC<PlayerProps> = ({
   };
 
   return (
-    <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg "
-      style={{
-        backgroundColor,
-        color: textColor, // children will inherit this color unless overridden
-      }}
-    >
+    <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg ">
       <PlayerInfo 
         player={playerStats.player}
-        textColor={textColor}
       />
 
       {viewMode === "stats" && (
-        <PlayerStat playerId={playerId} backgroundColor={backgroundColor} textColor={textColor} />
+        <PlayerStat playerId={playerId}/>
       )}
       {viewMode === "seasons" && (
-        <PlayerSeasons playerId={playerId} backgroundColor={backgroundColor} textColor={textColor} />
+        <PlayerSeasons playerId={playerId}/>
       )}
       {viewMode === "career" && (
-        <PlayerCareers playerId={playerId} backgroundColor={backgroundColor} textColor={textColor} />
+        <PlayerCareers playerId={playerId}/>
       )}
       {viewMode === "games" && (
         <GamesTable
@@ -97,8 +88,6 @@ const Player: React.FC<PlayerProps> = ({
           playerType={playerStats.playerType}
           gameLimit={gameLimit}
           showSummary={showSummary}
-          backgroundColor={backgroundColor}
-          textColor={textColor}
         />
       )}
     </div>

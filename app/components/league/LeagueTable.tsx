@@ -39,7 +39,7 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
   const renderTeamRow = (team: any, index: number) => (
     <TableRow
       key={team.id || `team-${index}`}
-      // Use Tailwind classes for striped rows; use inline style for text color
+
       className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
     >
       <TableCell align="center">{index + 1}</TableCell>
@@ -87,7 +87,6 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
         {leagueName} Season: {seasonTitle}
       </h2>
 
-      {/* TableContainer applies background + text color to everything within */}
       <TableContainer>
         {/* If no groups, just one table. Otherwise, one table per group. */}
         {!hasGroups ? (
