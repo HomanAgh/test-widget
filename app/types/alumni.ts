@@ -47,3 +47,4 @@ export interface AlumniPlayer {
     oddRowColor?: string;
     evenRowColor?: string;
   }
+  
