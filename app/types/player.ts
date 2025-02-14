@@ -86,42 +86,7 @@ export interface CareerStats {
   plusMinus?: number; // SKATER only
 }
 
-export interface AlumniPlayer {
-  position: string;
-  id: number;
-  name: string;
-  birthYear?: number | null;
-  gender?: string | null;
-  draftPick: {
-    year: number;
-    round: number;
-    overall: number;
-    team?:{
-      name: string;
-      logo:string;
-    }
-  }
-  teams: {
-    name: string;
-    leagueLevel: string | null;
-  }[];
-}
 
-export interface AlumniAPIResponse {
-  players: AlumniPlayer[];
-  total: number;
-  nextOffset: number | null;
-  error?: string;
-}
-
-
-export interface DraftPickAPIResponse { // nytt interface, kolla om det funkar
-  players: {
-    playerId: number;
-    draftPick?: string;
-    teams?: string[];
-  }[];
-}
 
 
 

@@ -1,25 +1,9 @@
 import React from "react";
-import { AlumniPlayer } from "@/app/types/player";
+import { PlayerTableProps } from "@/app/types/alumni";
 import Link from "../common/style/Link";
 import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,PaginationControls, PoweredBy } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
-
-
-interface PlayerTableProps {
-  players: AlumniPlayer[];
-  genderFilter: "men" | "women" | "all";
-  pageSize?: number; // default number of players per page, e.g., 15
-
-  // color overrides
-  headerBgColor?: string;
-  headerTextColor?: string;
-  tableBgColor?: string;
-  tableTextColor?: string;
-  nameTextColor?: string;
-  oddRowColor?: string;
-  evenRowColor?: string;
-}
 
 const PlayerTable: React.FC<PlayerTableProps> = ({
   players,
