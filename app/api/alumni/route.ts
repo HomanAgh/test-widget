@@ -110,11 +110,7 @@ async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> 
  * EXCLUDING offset & limit, since we will handle pagination ourselves in fetchAllPages.
  */
 function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
-  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&player.hasPlayedInTeam=${teamId}`;
-
-  if (singleLeague) {
-    url += `&league=${singleLeague}`;
-  } 
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${singleLeague}&player.hasPlayedInTeam=${teamId}`;
 
   // Specify the fields we want
   url += `&fields=${encodeURIComponent(
@@ -122,24 +118,23 @@ function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
     'player.youthTeam,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
+  console.log(url)
   return url;
+
 }
 
 /**
  * Build a "base" URL for fetching players by youthTeam name (if supported by your API).
  */
 function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
-  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
-
-  if (singleLeague) {
-    url += `&league=${singleLeague}`;
-  }
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${singleLeague}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
 
   url += `&fields=${encodeURIComponent(
     'player.id,player.name,player.position,player.yearOfBirth,player.gender,' + 
     'player.youthTeam,team.id,team.name,team.league.slug,team.league.leagueLevel'
   )}`;
 
+  console.log(url)
   return url;
 }
 
