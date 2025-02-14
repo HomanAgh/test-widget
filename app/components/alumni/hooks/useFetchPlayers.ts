@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import isEqual from 'lodash.isequal';
-import { AlumniPlayer, AlumniAPIResponse } from '@/app/types/player';
+import { AlumniPlayer, AlumniAPIResponse } from '@/app/types/alumni';
 
 /**
  * Custom hook to fetch alumni players from our single /api/alumni route.
