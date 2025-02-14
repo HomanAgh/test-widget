@@ -9,33 +9,11 @@ interface WidgetSetupProps {
 }
 
 const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
-  const [teamColors, setTeamColors] = useState<string[]>([]);
-  const [useTeamColor, setUseTeamColor] = useState(false);
-  const [customColor, setCustomColor] = useState("#FFFFFF");
-
   const [gameLimit, setGameLimit] = useState(5);
   const [viewMode, setViewMode] = useState<"stats" | "seasons" | "career" | "games">("stats");
   const [,setShowPreview] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
 
-  // 1) If user enables team colors and we have at least 1 color, use that as background
-  //    Otherwise, use the customColor from the user’s color picker.
-  const finalBackgroundColor = useMemo(() => {
-    if (useTeamColor && teamColors.length > 0) {
-      return teamColors[0];
-    }
-    return customColor;
-  }, [useTeamColor, teamColors, customColor]);
-
-  // 2) For text color, use teamColors[1] if it exists
-  //    If we don’t have an index [1], default to e.g. black or compute a color
-  const finalTextColor = useMemo(() => {
-    if (useTeamColor && teamColors.length > 1) {
-      return teamColors[1]; // pick the second color from the array
-    }
-    // Fallback if we only have one color or none
-    return "#000000"; 
-  }, [useTeamColor, teamColors]);
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
@@ -45,12 +23,10 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     return (
       `${baseUrl}/embed/player?playerId=${playerId}` +
-      `&backgroundColor=${encodeURIComponent(finalBackgroundColor)}` +
-      `&textColor=${encodeURIComponent(finalTextColor)}` +
       `&gameLimit=${gameLimit}&viewMode=${viewMode}` +
       `&showSummary=${showSummary}`
     );
-  }, [playerId, finalBackgroundColor, finalTextColor, gameLimit, viewMode, showSummary]);
+  }, [playerId, gameLimit, viewMode, showSummary]);
 
   const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
 
@@ -139,9 +115,6 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       <div className="mt-6">
         <Player
           playerId={playerId}
-          // pass both backgroundColor and textColor
-          backgroundColor={finalBackgroundColor}
-          textColor={finalTextColor}
           gameLimit={gameLimit}
           viewMode={viewMode}
           showSummary={showSummary}

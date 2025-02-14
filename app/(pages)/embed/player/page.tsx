@@ -16,8 +16,6 @@ const PlayerPageContent = () => {
   const searchParams = useSearchParams();
 
   const playerId = searchParams.get("playerId") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
-  const textColor = searchParams.get("textColor") || "#000000"; // <-- NEW
   const gameLimit = parseInt(searchParams.get("gameLimit") || "5", 10);
 
   const viewModeParam = searchParams.get("viewMode");
@@ -38,9 +36,7 @@ const PlayerPageContent = () => {
   return (
     <div style={{ height: "100vh", overflow: "auto" }}>
       <Player
-        playerId={playerId}
-        backgroundColor={backgroundColor}
-        textColor={textColor}       
+        playerId={playerId}    
         gameLimit={gameLimit}
         viewMode={viewMode}
         showSummary={showSummary}

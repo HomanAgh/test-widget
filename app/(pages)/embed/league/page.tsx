@@ -16,8 +16,6 @@ const LeagueEmbedContent = () => {
   const searchParams = useSearchParams();
 
   const leagueSlug = searchParams.get("leagueSlug") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
-  const textColor = searchParams.get("textColor") || "#000000";
 
   if (!leagueSlug) {
     return <div>Missing leagueSlug parameter</div>;
@@ -27,8 +25,6 @@ const LeagueEmbedContent = () => {
     <div style={{ height: "100vh", overflow: "auto" }}>
       <League
         leagueSlug={leagueSlug}
-        backgroundColor={backgroundColor}
-        textColor={textColor}
       />
     </div>
   );
