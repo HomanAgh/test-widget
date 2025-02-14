@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import Team from "@/app/components/team/Team"; 
 import EmbedCodeBlock from "../iframe/IframePreview";
 
