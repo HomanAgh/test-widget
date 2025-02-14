@@ -5,8 +5,6 @@ import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link, Powe
 interface SeasonsTableProps {
   playerType: PlayerType;
   seasons: SeasonStats[];
-  backgroundColor?: string;
-  textColor?: string;
 }
 
 const SeasonsTable: React.FC<SeasonsTableProps> = ({
@@ -21,7 +19,6 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
       {/* Replace old TableTitle with a simple heading (or your own styling) */}
       <h2 className="text-xl font-bold mb-2">Season Statistics</h2>
 
-      {/* Use TableContainer to wrap everything, applying background/text color */}
       <TableContainer>
         <Table>
           {/* TableHead replaces <thead> */}

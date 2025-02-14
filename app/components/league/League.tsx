@@ -6,14 +6,10 @@ import type { LeagueTableProps } from "@/app/types/league";
 
 interface LeagueProps {
   leagueSlug: string;
-  backgroundColor: string;
-  textColor?: string;
 }
 
 const League: React.FC<LeagueProps> = ({
   leagueSlug,
-  backgroundColor,
-  textColor = "#000000",
 }) => {
   const [standings, setStandings] = useState<LeagueTableProps["standings"] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,20 +42,13 @@ const League: React.FC<LeagueProps> = ({
 
   // Render the League Table
   return (
-    <div
-      className="max-w-4xl mx-auto my-8 p-6 rounded-lg"
-      style={{
-        backgroundColor,
-        color: textColor,
-      }}
-    >
+    <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg">
       {/* Example: You could display some quick info or league name here if desired */}
-      <h2 className="text-xl font-bold mb-4" style={{ color: textColor }}>
+      <h2 className="text-xl font-bold mb-4">
         {leagueSlug.toUpperCase()} Standings
       </h2>
       <LeagueTable 
         standings={standings} 
-        backgroundColor={backgroundColor} 
       />
     </div>
   );

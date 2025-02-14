@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from "react";
 import Team from "@/app/components/team/Team"; 
-import TeamBackgroundColorSelector from "../common/TeamBackgroundColorSelector"; 
 import EmbedCodeBlock from "../iframe/IframePreview";
 
 interface TeamWidgetSetupProps {
@@ -42,16 +41,6 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
 
   return (
     <div>
-      <TeamBackgroundColorSelector
-        teamId={teamId}
-        defaultEnabled={false}
-        onTeamColorsChange={setTeamColors}
-        onUseTeamColorChange={setUseTeamColor}
-        onCustomColorChange={setCustomColor}
-        enableText="Enable Team Colors"
-        disableText="Disable Team Colors"
-      />
-
       <div className="mt-6">
         <Team 
           teamId={teamId}

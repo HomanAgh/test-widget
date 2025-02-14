@@ -4,8 +4,6 @@ import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link, Powe
 
 interface CareerTableProps {
   careers: CareerStats[];
-  backgroundColor?: string;
-  textColor?: string;
 }
 
 const PlayerCareerTable: React.FC<CareerTableProps> = ({

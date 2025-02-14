@@ -5,8 +5,6 @@ import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy
 interface PlayerStatsTableProps {
   playerType: PlayerType;
   stats: Goalie | Skater;
-  backgroundColor?: string;
-  textColor?: string;
 }
 
 const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
@@ -20,7 +18,6 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
       {/* Replace your old TableTitle with a simple heading or your new Title component */}
       <h2 className="text-xl font-bold mb-2">Statistics</h2>
 
-      {/* TableContainer replaces TableWrapper, applying your background/text colors */}
       <TableContainer>
         {/* Table replaces the <table> tag */}
         <Table>

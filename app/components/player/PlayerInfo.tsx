@@ -5,12 +5,12 @@ import Link from "../common/style/Link"; // Import the Link component
 
 interface PlayerInfoProps {
   player: Player;
-  textColor?: string; // <--- Add
+ // <--- Add
 }
 
-const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, textColor = "#000000" }) => {
+const PlayerInfo: React.FC<PlayerInfoProps> = ({ player}) => {
   return (
-    <div style={{ color: textColor }}>
+    <div>
       <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-6">
         <div className="mt-4 md:mt-0 text-center md:text-left">
           {/* Flags and Player Name */}
@@ -43,7 +43,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player, textColor = "#000000" }
 
           {/* Team and League Info */}
           <div className="mt-2">
-            <p style={{ fontSize: "1rem", fontWeight: "500", color: textColor }}>
+            <p style={{ fontSize: "1rem", fontWeight: "500",}}>
               <span> #{player.jerseyNumber} </span>
               {player.team ? (
                 <Link href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}`}>

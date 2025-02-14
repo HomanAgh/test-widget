@@ -7,8 +7,6 @@ import type { PlayerType, Goalie, Skater } from "@/app/types/player";
 
 interface PlayerStatProps {
   playerId: string;
-  backgroundColor?: string;
-  textColor?: string; // NEW
 }
 
 const fetcher = (url: string) =>
@@ -22,21 +20,19 @@ const fetcher = (url: string) =>
 
 const PlayerStat: React.FC<PlayerStatProps> = ({
   playerId,
-  backgroundColor = "#FFFFFF",
-  textColor = "#000000",
 }) => {
   const { data, error } = useSWR(`/api/playerStats?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
   if (!data && !error) {
-    return <div style={{ color: textColor }}>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div style={{ color: "red" }}>Error: {error.message}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   if (!data || !data.stats || !data.playerInfo) {
-    return <div style={{ color: "red" }}>NoStatsAvailable</div>;
+    return <div>NoStatsAvailable</div>;
   }
 
   const type: PlayerType = data.playerInfo.playerType;
@@ -58,11 +54,8 @@ const PlayerStat: React.FC<PlayerStatProps> = ({
       } as Skater;
 
   return (
-    <div
-      className="max-w-6xl mx-auto my-8 p-6 rounded-lg"
-      style={{ backgroundColor, color: textColor }}
-    >
-      <PlayerStatsTable playerType={type} stats={stats} backgroundColor={backgroundColor} textColor={textColor} />
+    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
+      <PlayerStatsTable playerType={type} stats={stats}/>
     </div>
   );
 };
