@@ -111,7 +111,7 @@ const Alumni: React.FC<AlumniProps> = ({
         </button>
       </div>
 
-      {/* Pass color array to PlayerTable */}
+
       <PlayerTable
         players={searchedPlayers}
         genderFilter="all"

@@ -17,8 +17,6 @@ interface PlayerStats {
 
 interface PlayerProps {
   playerId: string;
-  backgroundColor: string;
-  textColor?: string; // NEW
   gameLimit: number;
   viewMode: "stats" | "seasons" | "career" | "games";
   showSummary: boolean;
