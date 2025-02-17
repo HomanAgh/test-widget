@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { SelectedTeam } from "@/app/components/alumni/TeamSearchBar";
+import { SelectedTeam } from "@/app/types/team";
 import SearchBar from "@/app/components/alumni/TeamSearchBar";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
 import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
