@@ -1,9 +1,10 @@
 export interface AlumniPlayer {
-    position: string;
     id: number;
     name: string;
     birthYear?: number | null;
     gender?: string | null;
+    status: string | null;
+    position: string;
     draftPick: {
       year: number;
       round: number;
@@ -17,6 +18,7 @@ export interface AlumniPlayer {
       name: string;
       leagueLevel: string | null;
     }[];
+    teamName: string;
   }
   
   export interface AlumniAPIResponse {

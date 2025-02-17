@@ -13,12 +13,13 @@ interface ApiResponse<T> {
 
 interface PlayerStatsItem {
   player: {
-    youthTeam: null;
-    position: string;
     id: number;
     name?: string;
     yearOfBirth?: string;
     gender?: string;
+    status?:string;
+    youthTeam: null;
+    position: string;
   };
   team: {
     id?: number;
@@ -50,12 +51,15 @@ interface DraftSelection {
 }
 
 interface CombinedPlayer {
-  id: number;
-  name: string;
-  yearOfBirth: string | null;
-  gender: string | null;
-  position: string;
-  youthTeam?: string | null;
+  player: {
+    id: number;
+    name: string;
+    yearOfBirth: string | null;
+    gender: string | null;
+    status: string | null;
+    position: string;
+    youthTeam?: string | null;
+  }
   teams: {
     name: string;
     leagueLevel: string | null;
@@ -76,7 +80,7 @@ async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> 
   }
 
   try {
-    const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}`;
+    const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}&fields=${encodeURIComponent("league.leagueLevel")}`;
     console.log(`Alumni: fetching fallback leagueLevel => ${fallbackUrl}`);
 
     const resp = await fetch(fallbackUrl);
@@ -104,44 +108,41 @@ async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> 
   }
 }
 
+const fields = [
+  "player.id",
+  "player.name",
+  "isActiveSeason",
+  "player.position",
+  "player.yearOfBirth",
+  "player.gender",
+  "player.status",
+  "player.youthTeam",
+  "team.id",
+  "team.name",
+  "team.league.slug",
+  "team.league.leagueLevel",
+].join(",");
 
-/**
- * Build the "base" URL for a single team & (optional) single league,
- * EXCLUDING offset & limit, since we will handle pagination ourselves in fetchAllPages.
- */
 function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
   let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${singleLeague}&player.hasPlayedInTeam=${teamId}`;
 
-  // Specify the fields we want
-  url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.position,player.yearOfBirth,player.gender,' + 
-    'player.youthTeam,team.id,team.name,team.league.slug,team.league.leagueLevel'
-  )}`;
+  url += `&fields=${encodeURIComponent(fields)}`;
 
-  console.log(url)
+  console.log(url);
   return url;
-
 }
 
-/**
- * Build a "base" URL for fetching players by youthTeam name (if supported by your API).
- */
+
 function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
   let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${singleLeague}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
 
-  url += `&fields=${encodeURIComponent(
-    'player.id,player.name,player.position,player.yearOfBirth,player.gender,' + 
-    'player.youthTeam,team.id,team.name,team.league.slug,team.league.leagueLevel'
-  )}`;
+  url += `&fields=${encodeURIComponent(fields)}`;
+  
 
   console.log(url)
   return url;
 }
 
-/**
- * fetchAllPages: given a baseUrl (that does NOT contain offset/limit),
- * fetch data in increments of pageSize, repeating until we've collected all data.
- */
 async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
   const allItems: T[] = [];
   let offset = 0;
@@ -173,10 +174,6 @@ async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> 
   return allItems;
 }
 
-/**
- * Helper to fetch from a single "baseUrl" (player-stats) across multiple pages
- * and merge into our global playerMap so we accumulate teams for each player.
- */
 async function fetchAndMergePlayerStats(
   baseUrl: string,
   playerMap: Map<number, CombinedPlayer>
@@ -188,14 +185,17 @@ async function fetchAndMergePlayerStats(
       const playerId = item.player.id;
       if (!playerMap.has(playerId)) {
         playerMap.set(playerId, {
-          id: playerId,
-          name: item.player.name || '',
-          yearOfBirth: item.player.yearOfBirth || null,
-          gender: item.player.gender || null,
-          position: item.player.position , 
-          youthTeam: item.player.youthTeam || null,
+          player: {
+            id: playerId,
+            name: item.player.name || "",
+            yearOfBirth: item.player.yearOfBirth || null,
+            gender: item.player.gender || null,
+            status: item.player.status || null,
+            position: item.player.position,
+            youthTeam: item.player.youthTeam || null,
+          },
           teams: [],
-        });
+        } as CombinedPlayer);
       }
 
       const existing = playerMap.get(playerId)!;
@@ -368,20 +368,20 @@ export async function GET(request: Request) {
     //
     if (genderParam) {
       allPlayers = allPlayers.filter(
-        (p) => p.gender?.toLowerCase() === genderParam.toLowerCase()
+        (p) => p.player.gender?.toLowerCase() === genderParam.toLowerCase()
       );
     }
 
     //
     // 5) Batch-fetch draft picks for all players
     //
-    const allPlayerIds = allPlayers.map((p) => p.id);
+    const allPlayerIds = allPlayers.map((p) => p.player.id);
     const draftPickMap = await fetchBatchDraftPicks(allPlayerIds);
 
     // Merge the draftPick into each player
    // Merge the draftPick into each player
     for (const p of allPlayers) {
-      p.draftPick = draftPickMap.get(p.id) ?? null;
+      p.draftPick = draftPickMap.get(p.player.id) ?? null;
     }
 
 
@@ -389,13 +389,16 @@ export async function GET(request: Request) {
     // 6) Final transformation: rename yearOfBirth => birthYear, etc.
     //
     const finalPlayers = allPlayers.map((p) => ({
-      id: p.id,
-      name: p.name,
-      birthYear: p.yearOfBirth,
-      gender: p.gender,
-      position: p.position,
-      youthTeam: p.youthTeam,
+      id: p.player.id,
+      name: p.player.name,
+      birthYear: p.player.yearOfBirth,
+      gender: p.player.gender,
+      position: p.player.position,
+      status: p.player.status,
+      youthTeam: p.player.youthTeam,
+  
       draftPick: p.draftPick
+      
         ? {
             year: p.draftPick.year,
             round: p.draftPick.round,
