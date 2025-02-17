@@ -37,3 +37,13 @@ export interface LeaguesAPIResponse {
       }[];
     };
   }
+
+  export interface LeagueSelectionDropdownProps {
+    professionalLeagues: League[];
+    juniorLeagues: League[];
+    collegeLeagues: League[];
+    selectedLeagues: string[]; // array of slugs
+    onChange: (selected: string[]) => void;
+  }
+
+  

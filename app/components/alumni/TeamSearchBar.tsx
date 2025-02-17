@@ -2,24 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
+import { TeamItem, TeamSearchBarProps } from "@/app/types/team"; 
 
-export interface TeamItem {
-  id: number;
-  name: string;
-  league: string;
-}
-
-export interface SelectedTeam {
-  id: number;
-  name: string;
-}
-
-interface TeamSearchBarProps {
-  onSelect: (teamObj: SelectedTeam) => void; // optional single-select usage
-  onError: (err: string) => void;
-  selectedTeams: SelectedTeam[];
-  onCheckedTeamsChange: (teams: SelectedTeam[]) => void;
-}
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   onSelect,

@@ -2,14 +2,7 @@
 
 import React, { useState } from "react";
 import { League } from "@/app/types/league";
-
-interface LeagueSelectionDropdownProps {
-  professionalLeagues: League[];
-  juniorLeagues: League[];
-  collegeLeagues: League[];
-  selectedLeagues: string[]; // array of slugs
-  onChange: (selected: string[]) => void;
-}
+import { LeagueSelectionDropdownProps } from "@/app/types/league";
 
 // Predefined league rankings (all keys in lower-case for consistency)
 const leagueRankings: Record<string, number> = {
