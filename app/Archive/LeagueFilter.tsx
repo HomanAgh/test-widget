@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { League } from '@/app/types/league';
 
 interface LeagueFilterProps {
@@ -38,4 +38,4 @@ const LeagueFilter: React.FC<LeagueFilterProps> = ({
   );
 };
 
-export default LeagueFilter;
+export default LeagueFilter; */

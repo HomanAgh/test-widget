@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 
 interface FilterToggleOption {
   value: string;
@@ -29,4 +29,4 @@ const FilterToggle: React.FC<FilterToggleProps> = ({ options, activeFilter, onCh
   );
 };
 
-export default FilterToggle;
+export default FilterToggle; */
