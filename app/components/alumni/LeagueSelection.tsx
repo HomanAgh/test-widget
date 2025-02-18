@@ -79,7 +79,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
     const normalizedSlug = leagueSlug.toLowerCase();
     const isSelected = selectedLeagues.includes(normalizedSlug);
 
-    let updatedLeagues = isSelected
+    const updatedLeagues = isSelected
       ? selectedLeagues.filter((slug) => slug !== normalizedSlug)
       : [...selectedLeagues, normalizedSlug];
 
