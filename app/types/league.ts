@@ -1,6 +1,7 @@
 export interface League {
     slug: string;
     name: string;
+    logo?: string; // Optional logo property
     country: {
       name: string;
     }

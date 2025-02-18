@@ -1,16 +1,8 @@
 import { NextResponse } from 'next/server';
+import { LeagueDetails, LeagueApiResponse } from '@/app/types/route';
 
 const apiKey = process.env.API_KEY;
 const apiBaseUrl = process.env.API_BASE_URL;
-
-interface LeagueDetails {
-  slug: string;
-  name: string;
-}
-
-interface LeagueApiResponse {
-  data?: LeagueDetails[];
-}
 
 export async function GET() {
   try {
@@ -20,7 +12,7 @@ export async function GET() {
     // Fetch leagues for each league level
     const leaguePromises = leagueLevels.map(async (level) => {
       const res = await fetch(
-        `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${apiKey}`
+        `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${apiKey}&fields=slug,name,logo.url`
       );
 
       if (!res.ok) {
@@ -39,6 +31,7 @@ export async function GET() {
       (response.data || []).map((league: LeagueDetails) => ({
         slug: league.slug, // Unique identifier for the league
         name: league.name, // Human-readable name for the league
+        logo: league.logo?.url ?? null,
       }))
     );
 
