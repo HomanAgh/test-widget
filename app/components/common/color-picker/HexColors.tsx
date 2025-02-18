@@ -23,13 +23,13 @@ interface HexColorsProps {
 
 const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) => {
   return (
-    <div className="my-4 flex flex-col md:flex-row items-left md:space-x-4 space-y-4 md:space-y-0">
+    <div className="my-4 flex flex-col md:flex-row items-left md:space-x-4 space-y-4 md:space-y-0 font-montserrat text-[#052D41]">
       {/* 1) Header BG */}
       <label className="flex items-center space-x-2">
-        <span className="font-medium">Header BG:</span>
+        <span className="font-semibold">Header BG:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[110px]"
+          className="border p-1 rounded w-[105px]"
           value={customColors.backgroundColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -43,10 +43,10 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
 
       {/* 2) Header Text */}
       <label className="flex items-center space-x-2">
-        <span className="font-medium">Header Text:</span>
+        <span className="font-semibold">Header Text:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[110px]"
+          className="border p-1 rounded w-[105px]"
           value={customColors.headerTextColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -60,10 +60,10 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
 
       {/* 3) Table BG */}
       <label className="flex items-center space-x-2">
-        <span className="font-medium">Table BG:</span>
+        <span className="font-semibold">Table BG:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[110px]"
+          className="border p-1 rounded w-[105px]"
           value={customColors.tableBackgroundColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -77,10 +77,10 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
 
       {/* 4) Table Text */}
       <label className="flex items-center space-x-2">
-        <span className="font-medium">Table Text:</span>
+        <span className="font-semibold">Table Text:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[110px]"
+          className="border p-1 rounded w-[105px]"
           value={customColors.textColor}
           onChange={(e) =>
             setCustomColors((prev) => ({
@@ -93,10 +93,10 @@ const HexColors: React.FC<HexColorsProps> = ({ customColors, setCustomColors }) 
       </label>
 
       <label className="flex items-center space-x-2">
-        <span className="font-medium">Name Text:</span>
+        <span className="font-semibold">Name Text:</span>
         <input
           type="text"
-          className="border p-1 rounded w-[110px]"
+          className="border p-1 rounded w-[105px]"
           value={customColors.nameTextColor}
           onChange={(e) =>
             setCustomColors((prev) => ({

@@ -46,14 +46,8 @@ const leagueRankings: Record<string, number> = {
   "jwhl-w": 32,
 };
 
-// This function sorts an array of league slugs (for selected leagues)
+// Function to sort league slugs based on ranking
 const sortLeaguesByRank = (slugs: string[]): string[] => {
-  slugs.forEach((slug) => {
-    if (!(slug in leagueRankings)) {
-      console.warn(`League slug "${slug}" not found in leagueRankings`);
-    }
-  });
-
   return [...slugs].sort(
     (a, b) =>
       (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
@@ -61,7 +55,7 @@ const sortLeaguesByRank = (slugs: string[]): string[] => {
   );
 };
 
-// New helper: sorts an array of League objects based on the ranking map
+// Function to sort League objects by ranking
 const sortLeagueObjectsByRank = (leagues: League[]): League[] => {
   return [...leagues].sort((a, b) => {
     const rankA = leagueRankings[a.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
@@ -82,15 +76,14 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
   const toggleDropdown = () => setIsOpen((prev) => !prev);
 
   const handleCheckboxChange = (leagueSlug: string) => {
-    const normalizedSlug = leagueSlug.toLowerCase(); // Normalize slug
+    const normalizedSlug = leagueSlug.toLowerCase();
     const isSelected = selectedLeagues.includes(normalizedSlug);
 
     let updatedLeagues = isSelected
       ? selectedLeagues.filter((slug) => slug !== normalizedSlug)
       : [...selectedLeagues, normalizedSlug];
 
-    updatedLeagues = sortLeaguesByRank(updatedLeagues);
-    onChange(updatedLeagues);
+    onChange(sortLeaguesByRank(updatedLeagues));
   };
 
   const removeLeagueSlug = (slug: string) => {
@@ -102,141 +95,102 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
     onChange([]);
   };
 
-  const findLeagueName = (slug: string): string => {
-    const allLeagues = [
-      ...professionalLeagues,
-      ...juniorLeagues,
-      ...collegeLeagues,
-    ];
+  // Get league details (name & logo)
+  const findLeagueDetails = (slug: string): { name: string; logo: string | null } => {
+    const allLeagues = [...professionalLeagues, ...juniorLeagues, ...collegeLeagues];
     const found = allLeagues.find((l) => l.slug.toLowerCase() === slug);
-    return found ? found.name : slug;
+
+    return {
+      name: found ? found.name : slug, // Use name if available
+      logo: found?.logo ?? null, // Use logo if available
+    };
   };
 
-  // Combine all league slugs and sort them (used for the "Select All" button)
+  // Combine and sort all leagues for Select All functionality
   const allLeagueSlugs = sortLeaguesByRank(
     [...professionalLeagues, ...collegeLeagues, ...juniorLeagues].map((league) =>
       league.slug.toLowerCase()
     )
   );
 
-  // Check if all leagues are selected
-  const allSelected = allLeagueSlugs.every((slug) =>
-    selectedLeagues.includes(slug)
-  );
+  const allSelected = allLeagueSlugs.every((slug) => selectedLeagues.includes(slug));
 
-  // Toggle function for select all / deselect all
   const handleSelectAllToggle = () => {
-    if (allSelected) {
-      onChange([]);
-    } else {
-      onChange(allLeagueSlugs);
-    }
+    onChange(allSelected ? [] : allLeagueSlugs);
   };
 
   return (
     <div className="relative">
       <button
         onClick={toggleDropdown}
-        className="w-full bg-blue-500 text-white font-bold p-2 rounded flex justify-between items-center"
+        className="w-full bg-[#052D41] text-white text-sm font-montserrat font-bold p-2 rounded flex justify-between items-center"
       >
-        Select Leagues
-        <span
-          className={`transform transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}
-        >
+        SELECT LEAGUES
+        <span className={`transform transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}>
           ▼
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute bg-white border rounded w-full mt-2 z-10 p-4 relative">
-          {/* Select All / Deselect All Button */}
+        <div className="absolute bg-white border rounded w-full mt-2 z-10 p-4 font-montserrat">
           <button
             onClick={handleSelectAllToggle}
-            className="absolute top-2 right-2 text-blue-500 text-sm underline"
+            className="absolute top-2 right-2 text-[#052D41] text-medium underline"
           >
             {allSelected ? "Deselect All" : "Select All"}
           </button>
 
-          {/* Professional Leagues */}
-          <div className="mt-6">
-            <h3 className="font-bold mb-2">Professional Leagues</h3>
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {sortLeagueObjectsByRank(professionalLeagues).map((league) => (
-                <label key={league.slug} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedLeagues.includes(league.slug.toLowerCase())}
-                    onChange={() => handleCheckboxChange(league.slug)}
-                  />
-                  <span>{league.name}</span>
-                </label>
-              ))}
+          {/* League Categories */}
+          {[
+            { title: "Professional Leagues", leagues: professionalLeagues },
+            { title: "College Leagues", leagues: collegeLeagues },
+            { title: "Junior Leagues", leagues: juniorLeagues },
+          ].map(({ title, leagues }) => (
+            <div key={title} className="mt-6">
+              <h3 className="font-bold mb-2">{title}</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {sortLeagueObjectsByRank(leagues).map((league) => (
+                  <label key={league.slug} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedLeagues.includes(league.slug.toLowerCase())}
+                      onChange={() => handleCheckboxChange(league.slug)}
+                    />
+                    <span>{league.name}</span>
+                  </label>
+                ))}
+              </div>
+              <hr className="my-4" />
             </div>
-          </div>
-
-          <hr className="my-4" />
-
-          {/* College Leagues */}
-          <div>
-            <h3 className="font-bold mb-2">College Leagues</h3>
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              {sortLeagueObjectsByRank(collegeLeagues).map((league) => (
-                <label key={league.slug} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedLeagues.includes(league.slug.toLowerCase())}
-                    onChange={() => handleCheckboxChange(league.slug)}
-                  />
-                  <span>{league.name}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <hr className="my-4" />
-
-          {/* Junior Leagues */}
-          <div>
-            <h3 className="font-bold mb-2">Junior Leagues</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {sortLeagueObjectsByRank(juniorLeagues).map((league) => (
-                <label key={league.slug} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedLeagues.includes(league.slug.toLowerCase())}
-                    onChange={() => handleCheckboxChange(league.slug)}
-                  />
-                  <span>{league.name}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       )}
 
+      {/* Display Selected Leagues with Logos */}
       {selectedLeagues.length > 0 && (
-        <div className="mt-2 bg-gray-100 p-2 rounded">
+        <div className="mt-2 bg-gray-100 p-2 rounded text-[#052D41] font-montserrat">
           <strong>Selected Leagues:</strong>
           <div className="flex flex-wrap gap-2 mt-1">
-            {selectedLeagues.map((slug) => (
-              <span
-                key={slug}
-                className="inline-flex items-center bg-blue-200 px-2 py-1 rounded text-sm"
-              >
-                {findLeagueName(slug)}
-                <button
-                  onClick={() => removeLeagueSlug(slug)}
-                  className="ml-2 text-red-600 font-bold"
-                >
-                  ×
-                </button>
-              </span>
-            ))}
+            {selectedLeagues.map((slug) => {
+              const { name, logo } = findLeagueDetails(slug);
+
+              return (
+                <span key={slug} className="inline-flex items-center bg-white px-2 py-1 rounded text-sm text-[#052D41] border border-[#052D41]">
+                  {logo && (
+                    <img src={logo} alt={`${name} logo`} className="w-6 h-6 mr-2 rounded" />
+                  )}
+                  {name}
+                  <button
+                    onClick={() => removeLeagueSlug(slug)}
+                    className="ml-2 text-red-700 font-bold"
+                  >
+                    ×
+                  </button>
+                </span>
+              );
+            })}
           </div>
-          <button
-            onClick={clearAllLeagues}
-            className="text-sm text-blue-500 mt-2 underline"
-          >
+          <button onClick={clearAllLeagues} className="text-sm mt-2 underline">
             Clear All
           </button>
         </div>

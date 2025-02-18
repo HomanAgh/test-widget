@@ -135,7 +135,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         {/* Search Bar (isolated container for icon + input) */}
         <div className="relative">
           {/* Search Icon */}
-          <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-[20px] h-[20px]" />
+          <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
           {/* Search Input */}
           <input
             type="text"
@@ -143,7 +143,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
             onFocus={handleInputFocus}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="border p-2 pl-10 rounded-md w-full"
+            className="border p-2 pl-10 rounded-md w-full font-montserrat"
           />
         </div>
   
@@ -151,7 +151,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         {showDropdown && (
           <ul
             ref={dropdownRef}
-            className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10"
+            className="absolute left-0 right-0 bg-white border rounded-md mt-1 max-h-40 overflow-y-auto z-10 font-montserrat"
           >
             {isLoading && <li className="p-2 text-gray-500">Loading...</li>}
             {!isLoading && teams.length === 0 && (
@@ -184,18 +184,18 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   
         {/* Selected Teams Display */}
         {selectedTeams.length > 0 && (
-          <div className="mt-2 bg-gray-100 p-2 rounded">
+          <div className="mt-2 bg-gray-100 p-2 rounded font-montserrat">
             <strong>Selected Teams:</strong>
             <div className="flex flex-wrap gap-2 mt-1">
               {selectedTeams.map((team) => (
                 <span
                   key={team.id}
-                  className="inline-flex items-center bg-blue-200 px-2 py-1 rounded text-sm"
+                  className="inline-flex items-center bg-white text-[#052D41] px-2 py-1 rounded text-sm border border-[#052D41]"
                 >
                   {team.name}
                   <button
                     onClick={() => removeTeam(team.id)}
-                    className="ml-2 text-red-600 font-bold"
+                    className="ml-2 text-red-700 font-bold"
                   >
                     ×
                   </button>
@@ -204,7 +204,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
             </div>
             <button
               onClick={clearAllTeams}
-              className="text-sm text-blue-500 mt-2 underline"
+              className="text-sm text-[#052D41] mt-2 underline"
             >
               Clear All
             </button>
