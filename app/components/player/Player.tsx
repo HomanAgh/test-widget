@@ -59,35 +59,41 @@ const Player: React.FC<PlayerProps> = ({
       league: data.playerInfo.league,
       jerseyNumber: data.playerInfo.jerseyNumber || "N/A",
       views: data.playerInfo.views || 0,
-      flagUrls: data.playerInfo.flagUrls || [],
+      weightMet: data.playerInfo.weightMet || "",  
+      weightImp: data.playerInfo.weightImp || "",    
+      heightMet: data.playerInfo.heightMet || "",    
+      heightImp: data.playerInfo.heightImp || "",  
+      capHit: data.playerInfo.capHit,
+      age: data.playerInfo.age || 0,
+      placeOfBirth: data.playerInfo.placeOfBirth,
+      flagUrls: data.playerInfo.flagUrls || { primary: null, secondary: null },
+      teamLogo: data.playerInfo.teamLogo.small || null,
+      season: data.playerInfo.season || { slug: "" },
     },
     lastGames: data.lastGames || [],
     playerType: data.playerInfo.playerType,
   };
 
   return (
-    <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg ">
-      <PlayerInfo 
-        player={playerStats.player}
-      />
+    <div>
+      <div>
+        <PlayerInfo player={playerStats.player} />
+      </div>
 
-      {viewMode === "stats" && (
-        <PlayerStat playerId={playerId}/>
-      )}
-      {viewMode === "seasons" && (
-        <PlayerSeasons playerId={playerId}/>
-      )}
-      {viewMode === "career" && (
-        <PlayerCareers playerId={playerId}/>
-      )}
-      {viewMode === "games" && (
-        <GamesTable
-          lastFiveGames={playerStats.lastGames}
-          playerType={playerStats.playerType}
-          gameLimit={gameLimit}
-          showSummary={showSummary}
-        />
-      )}
+      {/* Player Stats View */}
+      <div>
+        {viewMode === "stats" && <PlayerStat playerId={playerId} />}
+        {viewMode === "seasons" && <PlayerSeasons playerId={playerId} />}
+        {viewMode === "career" && <PlayerCareers playerId={playerId} />}
+        {viewMode === "games" && (
+          <GamesTable
+            lastFiveGames={playerStats.lastGames}
+            playerType={playerStats.playerType}
+            gameLimit={gameLimit}
+            showSummary={showSummary}
+          />
+        )}
+      </div>
     </div>
   );
 };

@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import Iframe from "./Iframe";
 
 interface EmbedCodeBlockProps {
   iframeCode: string;
-  embedUrl: string;
 }
 
-const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode, embedUrl }) => {
+const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
   // Moved from parent into this component
   const [showCode, setShowCode] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
 
   // Copy to clipboard logic (local)
   const copyToClipboard = useCallback(async (text: string) => {
@@ -57,22 +54,12 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode, embedUrl })
       {/* Buttons for "Preview" and "Copy" */}
         <div className="flex space-x-2 mt-2">
         <button
-          onClick={() => setShowPreview(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
-        >
-          Preview
-        </button>
-        <button
           onClick={() => copyToClipboard(iframeCode)}
           className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
         >
           Copy
         </button>
       </div>
-
-      {/* Preview heading & iframe */}
-      <h3 className="text-lg font-medium mt-4 mb-2">Preview</h3>
-      {showPreview && <Iframe src={embedUrl} />}
     </div>
   );
 };

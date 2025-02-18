@@ -48,6 +48,15 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
     "latestStats.league.slug",
     "latestStats.league.name",
     "latestStats.jerseyNumber",
+    "latestStats.teamLogo.small",
+    "latestStats.season.slug",
+    "weight.metrics",
+    "weight.imperial",
+    "height.metrics",
+    "height.imperial",
+    "capHit",
+    "age",
+    "placeOfBirth",
   ].join(",");
 
   const skaterFields = ["game.date", "stats.G", "stats.A", "stats.PTS", "stats.PM"].join(",");
@@ -62,6 +71,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
   const goalieStatsUrl = `${apiBaseUrl}/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
     goalieFields
   )}&limit=${limit}`;
+
+  console.log(playerUrl)
 
   try {
     // Fetch player info
@@ -121,6 +132,17 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
       team: playerData.data.latestStats?.team,
       league: playerData.data.latestStats?.league,
       jerseyNumber: playerData.data.latestStats?.jerseyNumber || "Unknown",
+      weightMet: playerData.data.weight.metrics,
+      weightImp: playerData.data.weight.imperial,
+      heightMet: playerData.data.height.metrics,
+      heightImp: playerData.data.height.imperial,
+      capHit: playerData.data.capHit,
+      teamLogo: playerData.data.latestStats?.teamLogo || null,
+      season: {
+        slug: playerData.data.latestStats?.season?.slug || "",
+      },      
+      age: playerData.data.age,
+      placeOfBirth: playerData.data.placeOfBirth,
       flagUrls: {
         primary: primaryFlagUrl,
         secondary: secondaryFlagUrl,

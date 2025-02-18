@@ -290,7 +290,7 @@ async function fetchBatchDraftPicks(
 }
 
 
-
+export const revalidate = 3000; 
 /**
  * Main GET => /api/alumni
  */
@@ -416,9 +416,17 @@ export async function GET(request: Request) {
     return NextResponse.json({
       players: finalPlayers,
       total: finalPlayers.length,
-    });
+    },
+    {
+      status: 200,
+      headers: {
+        // Cache for 5 minutes, then serve stale while revalidating in background
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=120',
+      },
+    }
+  );
   } catch (error) {
-    console.error('Alumni: Error in fetching data:', error);
-    return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
+  console.error('Alumni: Error in fetching data:', error);
+  return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
   }
 }

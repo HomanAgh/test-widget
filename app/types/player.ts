@@ -1,3 +1,4 @@
+
 export type Player = {
   id: string;
   name: string;
@@ -5,10 +6,21 @@ export type Player = {
   league?: { slug: string; name: string };
   jerseyNumber: string;
   views: number;
+  weightMet: string;
+  weightImp: string;
+  heightMet: string;
+  heightImp: string;
   flagUrls?: {
     primary: string | null;
     secondary: string | null;
   };
+  capHit: string;
+  age: number;
+  teamLogo:string
+  season: {
+    slug: string;
+  }
+  placeOfBirth: string;
 };
 
   export type PlayerType = "SKATER" | "GOALTENDER";
