@@ -15,6 +15,9 @@ const AlumniWidgetSetup: React.FC = () => {
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [includeYouth] = useState<boolean>(true);
+    const youthName = selectedTeams.length > 0
+    ? selectedTeams[0].name
+    : "CHICAGO MISSION U16";
   const [customColors, setCustomColors] = useState({
     headerTextColor: "#FFFFFF",
     backgroundColor: "#052D41",
@@ -29,16 +32,19 @@ const AlumniWidgetSetup: React.FC = () => {
     const leagues = selectedLeagues.join(",");
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
+
     return (
-      `${baseUrl}/embed/alumni?teamIds=${encodeURIComponent(teamIds)}` +
+      `${baseUrl}/embed/alumni` +
+      `?teamIds=${encodeURIComponent(teamIds)}` +
       `&leagues=${encodeURIComponent(leagues)}` +
+      `&teams=${encodeURIComponent(youthName)}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
       `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
-      `&includeYouth=${encodeURIComponent(includeYouth)}`
+      `&includeYouth=${encodeURIComponent(includeYouth)}` 
     );
-  }, [selectedTeams, selectedLeagues, customColors, includeYouth]);
+  }, [selectedTeams, selectedLeagues, customColors, includeYouth, youthName]);
 
   const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
 
@@ -80,7 +86,7 @@ const AlumniWidgetSetup: React.FC = () => {
           />
         </div>
       )}
-       <EmbedCodeBlock iframeCode={iframeCode} embedUrl={embedUrl} />
+       <EmbedCodeBlock iframeCode={iframeCode} />
     </div>
   );
 };

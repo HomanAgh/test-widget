@@ -22,8 +22,7 @@ const AlumniEmbedContent = () => {
   const textColor = searchParams.get("textColor") || "#000000";
   const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
   const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
-  const includeYouthStr = searchParams.get("includeYouth");
-  const includeYouth = includeYouthStr === "true";
+  const youthTeam = searchParams.get("teams") || "";
 
   // Convert "1,2,3" => array of selectedTeams
   const teamIds = teamIdsStr
@@ -34,7 +33,7 @@ const AlumniEmbedContent = () => {
   // Build minimal { id, name } objects if needed
   const selectedTeams = teamIds.map((id) => ({
     id: parseInt(id, 10) || 0,
-    name: "",
+    name: youthTeam,
   }));
 
   // Convert leagues "NHL, AHL" => ["NHL", "AHL"]
@@ -54,7 +53,7 @@ const AlumniEmbedContent = () => {
           tableBackgroundColor,
           nameTextColor
         }}
-        includeYouth={includeYouth}
+        includeYouth={true}
       />
     </div>
   );

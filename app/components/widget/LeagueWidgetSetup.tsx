@@ -30,7 +30,7 @@ const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({ leagueSlug }) => 
           leagueSlug={leagueSlug}
         />
       </div>
-      <EmbedCodeBlock iframeCode={iframeCode} embedUrl={embedUrl} />
+      <EmbedCodeBlock iframeCode={iframeCode}/>
     </div>
   );
 };

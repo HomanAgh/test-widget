@@ -5,17 +5,24 @@ import Link from "../common/style/Link"; // Import the Link component
 
 interface PlayerInfoProps {
   player: Player;
- // <--- Add
 }
 
-const PlayerInfo: React.FC<PlayerInfoProps> = ({ player}) => {
+const formatSeason = (seasonSlug: string) => {
+  const parts = seasonSlug.split("-");
+  if (parts.length !== 2) return seasonSlug;
+  return `${parts[0].replace(/^20/, "")}-${parts[1].replace(/^20/, "")}`;
+};
+
+
+const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
   return (
-    <div>
-      <div className="flex flex-col md:flex-row items-center md:items-start md:space-x-6">
-        <div className="mt-4 md:mt-0 text-center md:text-left">
+    <div className="font-montserrat">
+      {/* Top row: name/flags/team on the left, facts box on the right */}
+      <div className="md:flex md:justify-between items-start p-6">
+        {/* Left side: Name, flags, team/league */}
+        <div className="md:w-2/3">
           {/* Flags and Player Name */}
           <div className="flex items-center space-x-2">
-            {/* Primary Nationality Flag */}
             {player.flagUrls?.primary && (
               <Image
                 src={player.flagUrls.primary}
@@ -25,7 +32,6 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player}) => {
                 height={16}
               />
             )}
-            {/* Secondary Nationality Flag */}
             {player.flagUrls?.secondary && (
               <Image
                 src={player.flagUrls.secondary}
@@ -35,33 +41,87 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player}) => {
                 height={16}
               />
             )}
-            {/* Player Name (Link) */}
-            <Link href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}>
-              <span style={{ fontSize: "1.25rem", fontWeight: "600" }}>{player.name}</span>
+            <Link
+              href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}
+            >
+              <span
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "#0D73A6",
+                }}
+              >
+                {player.name}
+              </span>
             </Link>
           </div>
 
           {/* Team and League Info */}
           <div className="mt-2">
-            <p style={{ fontSize: "1rem", fontWeight: "500",}}>
+            <p style={{ fontSize: "1rem", fontWeight: "500" }}>
               <span> #{player.jerseyNumber} </span>
               {player.team ? (
-                <Link href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}`}>
+                <Link
+                  href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}/${player.season.slug}`}
+                  style={{ color: "#0D73A6" }}
+                >
+                  {player.teamLogo && (
+                    <Image
+                      src={player.teamLogo}
+                      alt={`${player.team.name} Logo`}
+                      layout="intrinsic"
+                      width={20}
+                      height={20}
+                      className="object-contain inline-block mr-1"
+                    />
+                  )}
                   {player.team.name}
                 </Link>
               ) : (
                 "Unknown Team"
               )}
-              {" / "}
+              <span> / </span>
               {player.league ? (
-                <Link href={`https://www.eliteprospects.com/league/${player.league.slug}`}>
-                  {player.league.name}
+                <Link
+                  href={`https://www.eliteprospects.com/league/${player.league.slug}/${player.season.slug}`}
+                  style={{ color: "#0D73A6" }}
+                >
+                  {player.league.name} {formatSeason(player.season.slug)}
                 </Link>
               ) : (
                 "Unknown League"
               )}
             </p>
           </div>
+          {player.capHit !== null && (
+            <div
+              className="col-span-2 pt-2 text-left whitespace-nowrap"
+              style={{ fontSize: "1rem", fontWeight: "500" }}
+            >
+              Cap Hit: {player.capHit}
+            </div>
+          )}
+        </div>
+        <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-800">
+          {/* Age */}
+          <div className="col-span-2 text-left whitespace-nowrap">Age:</div>
+          <div className="col-span-2 text-right whitespace-nowrap">{player.age}</div>
+
+          {/* Height */}
+          <div className="col-span-2 text-left whitespace-nowrap">Height:</div>
+          <div className="col-span-2 text-right whitespace-nowrap">
+            {player.heightMet} cm / {player.heightImp}
+          </div>
+
+          {/* Weight */}
+          <div className="col-span-2 text-left whitespace-nowrap">Weight:</div>
+          <div className="col-span-2 text-right whitespace-nowrap">
+            {player.weightMet} kg / {player.weightImp} lbs
+          </div>
+
+          {/* Cap Hit */}
+          <div className="col-span-2 text-left whitespace-nowrap">Place of birth:</div>
+          <div className="col-span-2 text-right whitespace-nowrap">{player.placeOfBirth || "N/A"}</div>
         </div>
       </div>
     </div>

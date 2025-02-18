@@ -40,7 +40,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
               setViewMode("stats");
               setShowPreview(false);
             }}
-            className={`px-6 py-2 rounded-md ${
+            className={`px-2 py-2 rounded-md ${
               viewMode === "stats" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
             } hover:bg-blue-500`}
           >
@@ -121,7 +121,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         />
       </div>
 
-      <EmbedCodeBlock iframeCode={iframeCode} embedUrl={embedUrl} />
+      <EmbedCodeBlock iframeCode={iframeCode}/>
     </div>
   );
 };

@@ -28,7 +28,7 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
         />
       </div>
 
-      <EmbedCodeBlock iframeCode={iframeCode} embedUrl={embedUrl} />
+      <EmbedCodeBlock iframeCode={iframeCode}/>
     </div>
   );
 };

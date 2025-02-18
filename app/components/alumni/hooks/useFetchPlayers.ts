@@ -2,12 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import isEqual from 'lodash.isequal';
 import { AlumniPlayer, AlumniAPIResponse } from '@/app/types/alumni';
 
-/**
- * Custom hook to fetch alumni players from our single /api/alumni route.
- */
+// Create a module-level cache object
+const playersCache = new Map<string, AlumniPlayer[]>();
+
 export function useFetchPlayers(
   selectedTeamIds: number[],
-  // You had an `activeFilter` in your code; it can still be used if desired.
   activeFilter: string | null,
   leagueParam: string | null,
   includeYouth: boolean,
@@ -20,7 +19,18 @@ export function useFetchPlayers(
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
 
-  // Refs to track if inputs truly changed
+  // Build a cache key representing the current query parameters.
+  // (Sorting team IDs if order doesn't matter can help avoid cache misses.)
+  const cacheKey = JSON.stringify({
+    teamIds: [...selectedTeamIds].sort((a, b) => a - b),
+    leagueParam,
+    activeFilter,
+    includeYouth,
+    youthTeam,
+    genderParam,
+  });
+
+  // Refs to track previous parameter values
   const prevTeamIdsRef = useRef<number[]>([]);
   const prevLeagueRef = useRef<string | null>(null);
   const prevFilterRef = useRef<string | null>(null);
@@ -31,7 +41,7 @@ export function useFetchPlayers(
   const limit = 20;
 
   async function fetchPlayers(reset = false) {
-    // Basic guard: if no team, no league, and no youth => there's nothing to fetch
+    // Basic guard: if no team, league, or youth is selected, nothing to fetch
     if (selectedTeamIds.length === 0 && !leagueParam && !includeYouth) {
       setError('Either a team, a league, or youth team must be selected.');
       return;
@@ -43,22 +53,15 @@ export function useFetchPlayers(
     try {
       let url = `/api/alumni?offset=${reset ? 0 : offset}&limit=${limit}`;
 
-      // Team IDs
       if (selectedTeamIds.length > 0) {
         url += `&teamIds=${encodeURIComponent(selectedTeamIds.join(','))}`;
       }
-
-      // League
       if (leagueParam) {
         url += `&league=${leagueParam}`;
-      } 
-
-      // Youth
+      }
       if (includeYouth && youthTeam) {
         url += `&includeYouth=true&teams=${encodeURIComponent(youthTeam)}`;
       }
-
-      // Gender
       if (genderParam) {
         url += `&gender=${encodeURIComponent(genderParam)}`;
       }
@@ -69,29 +72,28 @@ export function useFetchPlayers(
       if (!response.ok) throw new Error('Failed to fetch players.');
 
       const data = (await response.json()) as AlumniAPIResponse;
-
-      // data.players => has [id, name, birthYear, gender, draftPick, teams...]
       if (!data.players) {
         setError('No players returned from API.');
         setLoading(false);
         return;
       }
 
-      // If we are resetting, start fresh
       const newPlayers = data.players;
       const combined = reset ? newPlayers : [...results, ...newPlayers];
 
-      // De-duplicate by ID if you want:
+      // De-duplicate players by id
       const deduped = Array.from(new Map(combined.map((p) => [p.id, p])).values());
 
       setResults(deduped);
+
+      // Cache the results if this is a fresh query (reset)
+      playersCache.set(cacheKey, deduped);
 
       if (reset) {
         setOffset(newPlayers.length);
       } else {
         setOffset((prev) => prev + newPlayers.length);
       }
-
       setHasMore(newPlayers.length === limit);
     } catch (err) {
       console.error('useFetchPlayers error:', err);
@@ -110,13 +112,27 @@ export function useFetchPlayers(
     const youthTeamChanged = prevYouthTeamRef.current !== youthTeam;
     const genderChanged = prevGenderRef.current !== genderParam;
 
-    if (teamIdsChanged || leagueChanged || filterChanged || youthChanged || youthTeamChanged || genderChanged) {
-      setResults([]);
-      setOffset(0);
-      setHasMore(true);
-      fetchPlayers(true);
+    if (
+      teamIdsChanged ||
+      leagueChanged ||
+      filterChanged ||
+      youthChanged ||
+      youthTeamChanged ||
+      genderChanged
+    ) {
+      // Check the cache first. If we have data, use it and avoid refetching.
+      if (playersCache.has(cacheKey)) {
+        setResults(playersCache.get(cacheKey)!);
+        // Optionally, you could set hasMore to false or cache it as well.
+      } else {
+        // No cache found—reset state and fetch data
+        setResults([]);
+        setOffset(0);
+        setHasMore(true);
+        fetchPlayers(true);
+      }
 
-      // Update "previous" references
+      // Update previous parameter refs
       prevTeamIdsRef.current = [...selectedTeamIds];
       prevLeagueRef.current = leagueParam;
       prevFilterRef.current = activeFilter;
@@ -124,8 +140,15 @@ export function useFetchPlayers(
       prevYouthTeamRef.current = youthTeam;
       prevGenderRef.current = genderParam;
     }
-
-  }, [selectedTeamIds, leagueParam, activeFilter, includeYouth, youthTeam, genderParam]);
+  }, [
+    selectedTeamIds,
+    leagueParam,
+    activeFilter,
+    includeYouth,
+    youthTeam,
+    genderParam,
+    cacheKey,
+  ]);
 
   return { results, loading, error, hasMore, fetchPlayers };
 }

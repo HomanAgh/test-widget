@@ -1,142 +1,120 @@
 {
   "_meta": {
-    "generatedAt": "string",
-    "offset": 0,
-    "limit": 0,
-    "totalRecords": 0
+    "generatedAt": "string"
   },
-  "_links": {
-    "first": "string",
-    "last": "string",
-    "prev": "string",
-    "next": "string"
-  },
-  "data": [
-    {
-      "id": 0,
-      "player": {
-        "id": 0,
-        "firstName": "string",
-        "lastName": "string",
-        "name": "string",
-        "alternativeFirstName": "string",
-        "alternativeLastName": "string",
-        "alternativeName": "string",
-        "initialOfFirstName": "string",
-        "initialOfLastName": "string",
-        "gender": "male",
-        "status": "active",
-        "playerType": "GOALTENDER",
-        "position": "G",
-        "detailedPosition": [
-          "G"
-        ],
-        "shoots": "L",
-        "catches": "L",
-        "yearOfBirth": 0,
-        "dateOfBirth": "string",
-        "age": 0,
-        "placeOfBirth": "string",
-        "youthTeam": "string",
-        "nationality": "string",
-        "secondaryNationality": "string",
-        "weight": {
-          "metrics": 0,
-          "imperial": 0
-        },
-        "height": {
-          "metrics": 0,
-          "imperial": "string"
-        },
-        "contract": "string",
-        "capHit": "string",
-        "gameStatus": "healthy",
-        "gameStatusInfo": "string",
-        "views": 0,
-        "imageUrl": "string",
-        "imageCopyright": "string",
-        "pronunciationUrl": "string",
-        "verified": true,
-        "contactable": true,
-        "staff": "string",
-        "latestStats": "string",
-        "latestGameLogsAggregated": [
-          {
-            "stats": {
-              "TOI": "string",
-              "SOG": 0,
-              "GD": 0,
-              "GP": 0,
-              "G": 0,
-              "A": 0,
-              "PTS": 0,
-              "PIM": 0,
-              "PM": 0,
-              "PPG": 0,
-              "SHG": 0,
-              "SA": 0,
-              "SV": 0,
-              "GA": 0,
-              "SVP": 0,
-              "W": 0,
-              "L": 0,
-              "T": 0
-            },
-            "limit": 0
-          }
-        ],
-        "nhlRights": "string",
-        "agencies": [
-          {
-            "id": 0,
-            "name": "string",
-            "logoUrl": "string",
-            "location": "string",
-            "email": "string",
-            "country": "string",
-            "secondaryCountry": "string",
-            "info": "string",
-            "numberOfClients": 0,
-            "agents": [
-              "string"
-            ],
-            "eliteprospectsUrlPath": "string",
-            "links": {
-              "webUrl": "string",
-              "facebook": "string",
-              "x": "string",
-              "twitter": "string",
-              "instagram": "string"
-            },
-            "updatedAt": "string",
-            "_links": [
-              "string"
-            ]
-          }
-        ],
-        "profileDescriptionAsHTML": "string",
-        "scoutingReportUrl": "string",
-        "scoutingReportThumbnailUrl": "string",
-        "biographyAsHTML": "string",
-        "links": {
-          "eliteprospectsUrl": "string",
-          "officialWebUrl": "string",
-          "x": "string",
-          "twitter": "string",
-          "youtube": "string",
-          "youtubeDescription": "string",
-          "facebook": "string",
-          "linkedin": "string",
-          "instagram": "string",
-          "capHitUrl": "string"
-        },
-        "eliteprospectsUrlPath": "string",
-        "slug": "string",
-        "updatedAt": "string",
-        "_links": [
-          "string"
-        ]
+  "data": {
+    "id": 0,
+    "firstName": "string",
+    "lastName": "string",
+    "name": "string",
+    "alternativeFirstName": "string",
+    "alternativeLastName": "string",
+    "alternativeName": "string",
+    "initialOfFirstName": "string",
+    "initialOfLastName": "string",
+    "gender": "male",
+    "status": "active",
+    "playerType": "GOALTENDER",
+    "position": "G",
+    "detailedPosition": [
+      "G"
+    ],
+    "shoots": "L",
+    "catches": "L",
+    "yearOfBirth": 0,
+    "dateOfBirth": "string",
+    "age": 0,
+    "placeOfBirth": "string",
+    "youthTeam": "string",
+    "nationality": {
+      "slug": "string",
+      "name": "string",
+      "iso_3166_1_alpha_2": "string",
+      "flagUrl": {
+        "small": "string",
+        "medium": "string"
       },
+      "eliteprospectsUrlPath": "string",
+      "updatedAt": "string",
+      "_links": [
+        "string"
+      ]
+    },
+    "secondaryNationality": {
+      "slug": "string",
+      "name": "string",
+      "iso_3166_1_alpha_2": "string",
+      "flagUrl": {
+        "small": "string",
+        "medium": "string"
+      },
+      "eliteprospectsUrlPath": "string",
+      "updatedAt": "string",
+      "_links": [
+        "string"
+      ]
+    },
+    "weight": {
+      "metrics": 0,
+      "imperial": 0
+    },
+    "height": {
+      "metrics": 0,
+      "imperial": "string"
+    },
+    "contract": "string",
+    "capHit": "string",
+    "gameStatus": "healthy",
+    "gameStatusInfo": "string",
+    "views": 0,
+    "imageUrl": "string",
+    "imageCopyright": "string",
+    "pronunciationUrl": "string",
+    "verified": true,
+    "contactable": true,
+    "staff": {
+      "id": 0,
+      "firstName": "string",
+      "lastName": "string",
+      "name": "string",
+      "alternativeName": "string",
+      "initialOfFirstName": "string",
+      "initialOfLastName": "string",
+      "imageUrl": "string",
+      "imageCopyright": "string",
+      "nationality": "string",
+      "secondaryNationality": "string",
+      "status": "active",
+      "yearOfBirth": 0,
+      "dateOfBirth": "string",
+      "age": 0,
+      "placeOfBirth": "string",
+      "verified": true,
+      "contactable": true,
+      "views": 0,
+      "player": "string",
+      "latestStats": "string",
+      "biography": "string",
+      "links": {
+        "eliteprospectsUrl": "string",
+        "officialWebUrl": "string",
+        "x": "string",
+        "twitter": "string",
+        "youtube": "string",
+        "youtubeDescription": "string",
+        "facebook": "string",
+        "linkedin": "string",
+        "instagram": "string"
+      },
+      "eliteprospectsUrlPath": "string",
+      "updatedAt": "string",
+      "_links": [
+        "string"
+      ]
+    },
+    "latestStats": {
+      "id": 0,
+      "player": "string",
       "playerAge": 0,
       "season": {
         "slug": "string",
@@ -145,71 +123,7 @@
       },
       "statsType": "default",
       "status": "rostered",
-      "team": {
-        "id": 0,
-         "name": "string",
-        "extraName": "string",
-        "fullName": "string",
-        "logo": {
-          "small": "string",
-          "medium": "string",
-          "large": "string",
-          "colors": [
-            "string"
-          ],
-          "hasTransparency": true
-        },
-        "logoUrl": "string",
-        "founded": 0,
-        "city": "string",
-        "colors": "string",
-        "status": "active",
-        "league": "string",
-        "secondaryLeague": "string",
-        "teamType": "club",
-        "teamClass": "men",
-        "country": "string",
-        "continent": "INT",
-        "flagUrl": {
-          "small": "string",
-          "medium": "string"
-        },
-        "defaultSeason": {
-          "slug": "string",
-          "startYear": 0,
-          "endYear": 0
-        },
-        "activeSeason": "string",
-        "arena": "string",
-        "secondaryArena": "string",
-        "capHit": "string",
-        "views": 0,
-        "links": {
-          "eliteprospectsUrl": "string",
-          "officialWebUrl": "string",
-          "newsUrl": "string",
-          "newspaperUrl": "string",
-          "tvUrl": "string",
-          "radioUrl": "string",
-          "blogUrl": "string",
-          "forumUrl": "string",
-          "facebook": "string",
-          "x": "string",
-          "twitter": "string",
-          "instagram": "string",
-          "youtube": "string",
-          "capHitUrl": "string",
-          "lineCombinationsUrl": "string",
-          "nationNetworkUrl": "string"
-        },
-        "notes": "string",
-        "eliteprospectsUrlPath": "string",
-        "slug": "string",
-        "updatedAt": "string",
-        "_links": [
-          "string"
-        ]
-      },
+      "team": "string",
       "teamName": "string",
       "teamLogo": {
         "small": "string",
@@ -217,70 +131,7 @@
         "large": "string"
       },
       "teamLogoUrl": "string",
-      "league": {
-        "slug": "string",
-        "name": "string",
-        "fullName": "string",
-        "commonName": "string",
-        "teamClass": "men",
-        "leagueLevel": "string",
-        "scheduleType": "default",
-        "defaultSeason": {
-          "slug": "string",
-          "startYear": 0,
-          "endYear": 0
-        },
-        "activeSeason": "string",
-        "country": "string",
-        "continent": "INT",
-        "region": "string",
-        "flagUrl": {
-          "small": "string",
-          "medium": "string"
-        },
-        "logo": {
-          "url": "string",
-          "colors": [
-            "string"
-          ],
-          "hasTransparency": true
-        },
-        "logoUrl": "string",
-        "imageUrl": "string",
-        "existsInLeagueEndpoint": true,
-        "historicalData": [
-          {
-            "slug": "string",
-            "name": "string",
-            "fullName": "string",
-            "firstSeason": {
-              "slug": "string",
-              "startYear": 0,
-              "endYear": 0
-            },
-            "lastSeason": "string"
-          }
-        ],
-        "links": {
-          "eliteprospectsUrl": "string",
-          "officialWebUrl": "string",
-          "statsUrl": "string",
-          "newsUrls": [
-            "string"
-          ],
-          "forumUrl": "string",
-          "facebook": "string",
-          "x": "string",
-          "twitter": "string",
-          "instagram": "string",
-          "youtube": "string"
-        },
-        "eliteprospectsUrlPath": "string",
-        "updatedAt": "string",
-        "_links": [
-          "string"
-        ]
-      },
+      "league": "string",
       "leagueName": "string",
       "leagueFullName": "string",
       "leagueType": "league",
@@ -479,6 +330,153 @@
         ]
       },
       "updatedAt": "string"
-    }
-  ]
+    },
+    "latestGameLogsAggregated": [
+      {
+        "stats": {
+          "TOI": "string",
+          "SOG": 0,
+          "GD": 0,
+          "GP": 0,
+          "G": 0,
+          "A": 0,
+          "PTS": 0,
+          "PIM": 0,
+          "PM": 0,
+          "PPG": 0,
+          "SHG": 0,
+          "SA": 0,
+          "SV": 0,
+          "GA": 0,
+          "SVP": 0,
+          "W": 0,
+          "L": 0,
+          "T": 0
+        },
+        "limit": 0
+      }
+    ],
+    "nhlRights": {
+      "id": 0,
+      "rights": "unsigned",
+      "position": "G",
+      "player": "string",
+      "team": {
+        "id": 0,
+        "name": "string",
+        "extraName": "string",
+        "fullName": "string",
+        "logo": {
+          "small": "string",
+          "medium": "string",
+          "large": "string",
+          "colors": [
+            "string"
+          ],
+          "hasTransparency": true
+        },
+        "logoUrl": "string",
+        "founded": 0,
+        "city": "string",
+        "colors": "string",
+        "status": "active",
+        "league": "string",
+        "secondaryLeague": "string",
+        "teamType": "club",
+        "teamClass": "men",
+        "country": "string",
+        "continent": "INT",
+        "flagUrl": {
+          "small": "string",
+          "medium": "string"
+        },
+        "defaultSeason": {
+          "slug": "string",
+          "startYear": 0,
+          "endYear": 0
+        },
+        "activeSeason": "string",
+        "arena": "string",
+        "secondaryArena": "string",
+        "capHit": "string",
+        "views": 0,
+        "links": {
+          "eliteprospectsUrl": "string",
+          "officialWebUrl": "string",
+          "newsUrl": "string",
+          "newspaperUrl": "string",
+          "tvUrl": "string",
+          "radioUrl": "string",
+          "blogUrl": "string",
+          "forumUrl": "string",
+          "facebook": "string",
+          "x": "string",
+          "twitter": "string",
+          "instagram": "string",
+          "youtube": "string",
+          "capHitUrl": "string",
+          "lineCombinationsUrl": "string",
+          "nationNetworkUrl": "string"
+        },
+        "notes": "string",
+        "eliteprospectsUrlPath": "string",
+        "slug": "string",
+        "updatedAt": "string",
+        "_links": [
+          "string"
+        ]
+      },
+      "updatedAt": "string"
+    },
+    "agencies": [
+      {
+        "id": 0,
+        "name": "string",
+        "logoUrl": "string",
+        "location": "string",
+        "email": "string",
+        "country": "string",
+        "secondaryCountry": "string",
+        "info": "string",
+        "numberOfClients": 0,
+        "agents": [
+          "string"
+        ],
+        "eliteprospectsUrlPath": "string",
+        "links": {
+          "webUrl": "string",
+          "facebook": "string",
+          "x": "string",
+          "twitter": "string",
+          "instagram": "string"
+        },
+        "updatedAt": "string",
+        "_links": [
+          "string"
+        ]
+      }
+    ],
+    "profileDescriptionAsHTML": "string",
+    "scoutingReportUrl": "string",
+    "scoutingReportThumbnailUrl": "string",
+    "biographyAsHTML": "string",
+    "links": {
+      "eliteprospectsUrl": "string",
+      "officialWebUrl": "string",
+      "x": "string",
+      "twitter": "string",
+      "youtube": "string",
+      "youtubeDescription": "string",
+      "facebook": "string",
+      "linkedin": "string",
+      "instagram": "string",
+      "capHitUrl": "string"
+    },
+    "eliteprospectsUrlPath": "string",
+    "slug": "string",
+    "updatedAt": "string",
+    "_links": [
+      "string"
+    ]
+  }
 }

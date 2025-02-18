@@ -61,7 +61,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
     : `Last ${gameLimit} Games`;
 
   return (
-    <div>
+    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
       {/* Title */}
       <h2 className="text-xl font-bold mb-2">{titleText}</h2>
 
@@ -72,7 +72,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           <TableHead className="filter brightness-90">
             <TableRow>
               {/* Example: use `isHeader` or `header` prop if your TableCell supports it */}
-              <TableCell isHeader align="center">Date</TableCell>
+              <TableCell isHeader align="left">Date</TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
                   <TableCell isHeader align="center">GA</TableCell>
@@ -134,7 +134,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
               lastFiveGames.map((game, index) => (
                 <TableRow
                   key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
-                  <TableCell align="center">{game.date}</TableCell>
+                  <TableCell align="left">{game.date}</TableCell>
                   {playerType === "GOALTENDER" ? (
                     <>
                       <TableCell align="center">{game.goalsAgainst || 0}</TableCell>
