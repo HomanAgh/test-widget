@@ -1,92 +1,39 @@
 import { NextResponse } from 'next/server';
+import { ApiResponse, PlayerStatsItem, TeamStatsItem, DraftSelection, CombinedPlayer } from '@/app/types/route';
 
+const alumniRouteCache = new Map<string, any>();
 const apiKey = process.env.API_KEY;
 const apiBaseUrl = process.env.API_BASE_URL;
-
-interface ApiResponse<T> {
-  data?: T[];
-  _meta?: {
-    totalRecords?: number;
-    [key: string]: any;
-  };
-}
-
-interface PlayerStatsItem {
-  player: {
-    id: number;
-    name?: string;
-    yearOfBirth?: string;
-    gender?: string;
-    status?:string;
-    youthTeam: null;
-    position: string;
-  };
-  team: {
-    id?: number;
-    name?: string;
-    league?: {
-      slug?: string;
-      leagueLevel?: string;
-    };
-  };
-}
-
-interface TeamStatsItem {
-  league?: {
-    leagueLevel?: string;
-  };
-}
-
-interface DraftSelection {
-  year?: number;
-  round?: number;
-  overall?: number;
-  team?:{
-    name?: string;
-    logo?: string
-  }
-  draftType?: {
-    slug?: string;
-  };
-}
-
-interface CombinedPlayer {
-  player: {
-    id: number;
-    name: string;
-    yearOfBirth: string | null;
-    gender: string | null;
-    status: string | null;
-    position: string;
-    youthTeam?: string | null;
-  }
-  teams: {
-    name: string;
-    leagueLevel: string | null;
-  }[];
-  draftPick?: DraftSelection | null; 
-}
-
-/**
- * Add a simple in-memory cache to store fallback league levels
- * (teamId -> leagueLevel).
- */
 const leagueLevelCache: Map<number, string | null> = new Map();
 
+function buildCacheKey(
+  teamIdsParam: string | null,
+  leagueParam: string | null,
+  includeYouth: boolean,
+  teamsParam: string | null,
+  genderParam: string | null
+) {
+  return JSON.stringify({
+    teamIdsParam,
+    leagueParam,
+    includeYouth,
+    teamsParam,
+    genderParam,
+  });
+}
+
 async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> {
-  // If we already have a cached value, return it immediately.
   if (leagueLevelCache.has(teamId)) {
     return leagueLevelCache.get(teamId) || null;
   }
 
   try {
-    const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}&fields=${encodeURIComponent("league.leagueLevel")}`;
+    const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}&fields=league.leagueLevel`;
     console.log(`Alumni: fetching fallback leagueLevel => ${fallbackUrl}`);
 
     const resp = await fetch(fallbackUrl);
     if (!resp.ok) {
-      console.error(`Failed to fetch fallback leagueLevel for teamId=${teamId}: ${resp.statusText}`);
-      // Cache the failure as null so we don't retry repeatedly
+      console.error(`Failed fallback for teamId=${teamId}: ${resp.statusText}`);
       leagueLevelCache.set(teamId, null);
       return null;
     }
@@ -94,7 +41,6 @@ async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> 
     const fallbackData: ApiResponse<TeamStatsItem> = await resp.json();
     if (fallbackData.data && fallbackData.data.length > 0) {
       const level = fallbackData.data[0].league?.leagueLevel ?? null;
-      // Cache the result for future lookups
       leagueLevelCache.set(teamId, level);
       return level;
     }
@@ -102,33 +48,36 @@ async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> 
     leagueLevelCache.set(teamId, null);
     return null;
   } catch (error) {
-    console.error(`Error fetching fallback leagueLevel for teamId=${teamId}:`, error);
+    console.error(`Error in fallback for teamId=${teamId}:`, error);
     leagueLevelCache.set(teamId, null);
     return null;
   }
 }
 
 const fields = [
-  "player.id",
-  "player.name",
-  "isActiveSeason",
-  "player.position",
-  "player.yearOfBirth",
-  "player.gender",
-  "player.status",
-  "player.youthTeam",
-  "team.id",
-  "team.name",
-  "team.league.slug",
-  "team.league.leagueLevel",
-].join(",");
+  'player.id',
+  'player.name',
+  'isActiveSeason',
+  'player.position',
+  'player.yearOfBirth',
+  'player.gender',
+  'player.status',
+  'player.youthTeam',
+  'team.id',
+  'team.name',
+  'team.league.slug',
+  'team.league.leagueLevel',
+].join(',');
 
 function buildTeamBaseUrl(teamId: number, leagues: string[] | string | null) {
   let leagueParam: string | null = null;
   if (leagues) {
     leagueParam = Array.isArray(leagues) ? leagues.join(',') : leagues;
   }
-  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${encodeURIComponent(leagueParam ?? '')}&player.hasPlayedInTeam=${teamId}`;
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${encodeURIComponent(
+    leagueParam ?? ''
+  )}&player.hasPlayedInTeam=${teamId}`;
+
   url += `&fields=${encodeURIComponent(fields)}`;
   console.log(url);
   return url;
@@ -139,12 +88,14 @@ function buildYouthBaseUrl(teamsParam: string, leagues: string[] | string | null
   if (leagues) {
     leagueParam = Array.isArray(leagues) ? leagues.join(',') : leagues;
   }
-  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${encodeURIComponent(leagueParam ?? '')}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${encodeURIComponent(
+    leagueParam ?? ''
+  )}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
+
   url += `&fields=${encodeURIComponent(fields)}`;
   console.log(url);
   return url;
 }
-
 
 async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
   const allItems: T[] = [];
@@ -185,12 +136,12 @@ async function fetchAndMergePlayerStats(
     const items = await fetchAllPages<PlayerStatsItem>(baseUrl, 1000);
 
     for (const item of items) {
-      const playerId = item.player.id;
-      if (!playerMap.has(playerId)) {
-        playerMap.set(playerId, {
+      const pid = item.player.id;
+      if (!playerMap.has(pid)) {
+        playerMap.set(pid, {
           player: {
-            id: playerId,
-            name: item.player.name || "",
+            id: pid,
+            name: item.player.name || '',
             yearOfBirth: item.player.yearOfBirth || null,
             gender: item.player.gender || null,
             status: item.player.status || null,
@@ -198,23 +149,22 @@ async function fetchAndMergePlayerStats(
             youthTeam: item.player.youthTeam || null,
           },
           teams: [],
-        } as CombinedPlayer);
+        });
       }
 
-      const existing = playerMap.get(playerId)!;
+      const existing = playerMap.get(pid)!;
 
-      // Determine leagueLevel, with fallback
       let leagueLevel = item.team.league?.leagueLevel || null;
       const teamId = item.team.id;
       if (!leagueLevel && teamId) {
         leagueLevel = await fetchLeagueLevelFallback(teamId);
       }
 
-      // Insert the new team if not already present
       const teamObj = {
         name: item.team.name || 'Unknown Team',
         leagueLevel: leagueLevel ?? 'unknown',
       };
+
       const alreadyExists = existing.teams.find(
         (t) => t.name === teamObj.name && t.leagueLevel === teamObj.leagueLevel
       );
@@ -232,19 +182,17 @@ async function fetchBatchDraftPicks(
   chunkSize = 500
 ): Promise<Map<number, DraftSelection>> {
   const resultMap = new Map<number, DraftSelection>();
-
   if (!playerIds.length) return resultMap;
 
   let startIndex = 0;
-
   while (startIndex < playerIds.length) {
     const chunk = playerIds.slice(startIndex, startIndex + chunkSize);
-    const joinedIds = chunk.join(",");
+    const joinedIds = chunk.join(',');
     const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}&fields=${encodeURIComponent(
-      "player.id,year,round,overall,team.name,team.logo.small,draftType.slug"
-    )}`;    
+      'player.id,year,round,overall,team.name,team.logo.small,draftType.slug'
+    )}`;
 
-    console.log("Fetching Draft Picks from:", url);
+    console.log('Fetching Draft Picks from:', url);
 
     try {
       const response = await fetch(url);
@@ -254,20 +202,17 @@ async function fetchBatchDraftPicks(
       }
 
       interface DraftSelectionWithPlayer extends DraftSelection {
-        player?: { id: number; name?: string };
+        player?: { id: number };
       }
       const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
-
       if (!data.data) {
         startIndex += chunkSize;
         continue;
       }
 
-      // ✅ Merge draft picks correctly into `resultMap`
       for (const ds of data.data) {
         const pid = ds.player?.id;
         if (!pid) continue;
-
 
         resultMap.set(pid, {
           year: ds.year,
@@ -275,15 +220,15 @@ async function fetchBatchDraftPicks(
           overall: ds.overall,
           team: ds.team
             ? {
-                name: ds.team.name ?? "Unknown Team",
-                logo: ds.team.logo ?? "Unkown Logo",
+                name: ds.team.name ?? 'Unknown Team',
+                logo: ds.team.logo ?? 'Unkown Logo',
               }
             : undefined,
           draftType: ds.draftType,
         });
       }
     } catch (err) {
-      console.error("Error in fetchBatchDraftPicks chunk:", err);
+      console.error('Error in fetchBatchDraftPicks chunk:', err);
     }
 
     startIndex += chunkSize;
@@ -292,46 +237,50 @@ async function fetchBatchDraftPicks(
   return resultMap;
 }
 
+export const revalidate = 3000;
 
-export const revalidate = 3000; 
-/**
- * Main GET => /api/alumni
- */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  // Query params
-  const teamIdsParam = searchParams.get('teamIds'); 
-  const leagueParam = searchParams.get('league');   
+  const teamIdsParam = searchParams.get('teamIds');
+  const leagueParam = searchParams.get('league');
   const includeYouth = searchParams.get('includeYouth') === 'true';
-  const teamsParam = searchParams.get('teams');     
-  const genderParam = searchParams.get('gender');   
+  const teamsParam = searchParams.get('teams');
+  const genderParam = searchParams.get('gender');
 
-  console.log('Alumni: Query params =>');
-  console.log('  teamIdsParam =', teamIdsParam);
-  console.log('  leagueParam =', leagueParam);
-  console.log('  includeYouth =', includeYouth);
-  console.log('  teamsParam =', teamsParam);
-  console.log('  gender =', genderParam);
+  console.log('Alumni: Query params =>', {
+    teamIdsParam,
+    leagueParam,
+    includeYouth,
+    teamsParam,
+    genderParam,
+  });
 
-  // Convert teamIds => number[]
+  const cacheKey = buildCacheKey(teamIdsParam, leagueParam, includeYouth, teamsParam, genderParam);
+
+  if (alumniRouteCache.has(cacheKey)) {
+    console.log('Returning cached /api/alumni response for key:', cacheKey);
+    return NextResponse.json(alumniRouteCache.get(cacheKey), {
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=120',
+      },
+    });
+  }
+
   const teamIds = teamIdsParam
     ? teamIdsParam.split(',').map((idStr) => parseInt(idStr.trim(), 10))
     : [];
 
-  // Convert league => string[]
   let leagues: string[] = [];
   if (leagueParam) {
     leagues = leagueParam.split(',').map((l) => l.trim());
-  } 
+  }
 
-  // A container to accumulate data for each player (by ID)
   const playerMap: Map<number, CombinedPlayer> = new Map();
 
   try {
-    
     for (const id of teamIds) {
-      // If there are leagues specified, pass the entire array; otherwise, pass null.
       const baseUrl = buildTeamBaseUrl(id, leagues.length ? leagues : null);
       await fetchAndMergePlayerStats(baseUrl, playerMap);
     }
@@ -339,36 +288,22 @@ export async function GET(request: Request) {
       const baseUrl = buildYouthBaseUrl(teamsParam, leagues.length ? leagues : null);
       await fetchAndMergePlayerStats(baseUrl, playerMap);
     }
-    //
-    // 3) Convert playerMap to an array
-    //
+
     let allPlayers = Array.from(playerMap.values());
 
-    //
-    // 4) Optional: filter by gender
-    //
     if (genderParam) {
       allPlayers = allPlayers.filter(
         (p) => p.player.gender?.toLowerCase() === genderParam.toLowerCase()
       );
     }
 
-    //
-    // 5) Batch-fetch draft picks for all players
-    //
     const allPlayerIds = allPlayers.map((p) => p.player.id);
     const draftPickMap = await fetchBatchDraftPicks(allPlayerIds);
 
-    // Merge the draftPick into each player
-   // Merge the draftPick into each player
     for (const p of allPlayers) {
       p.draftPick = draftPickMap.get(p.player.id) ?? null;
     }
 
-
-    //
-    // 6) Final transformation: rename yearOfBirth => birthYear, etc.
-    //
     const finalPlayers = allPlayers.map((p) => ({
       id: p.player.id,
       name: p.player.name,
@@ -377,37 +312,37 @@ export async function GET(request: Request) {
       position: p.player.position,
       status: p.player.status,
       youthTeam: p.player.youthTeam,
-  
+
       draftPick: p.draftPick
-      
         ? {
             year: p.draftPick.year,
             round: p.draftPick.round,
             overall: p.draftPick.overall,
             team: {
-              name: p.draftPick.team?.name ?? "N/A",
-              logo: p.draftPick.team?.logo?.small ?? null, // Ensure team logo is included
+              name: p.draftPick.team?.name ?? 'N/A',
+              logo: p.draftPick.team?.logo?.small ?? null,
             },
             draftType: p.draftPick.draftType,
           }
-        : "N/A",
+        : '-',
       teams: p.teams,
-    }));    
+    }));
 
-    return NextResponse.json({
+    const responseData = {
       players: finalPlayers,
       total: finalPlayers.length,
-    },
-    {
+    };
+
+    alumniRouteCache.set(cacheKey, responseData);
+
+    return NextResponse.json(responseData, {
       status: 200,
       headers: {
-        // Cache for 5 minutes, then serve stale while revalidating in background
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=120',
       },
-    }
-  );
+    });
   } catch (error) {
-  console.error('Alumni: Error in fetching data:', error);
-  return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
+    console.error('Alumni: Error in fetching data:', error);
+    return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
   }
 }
