@@ -123,25 +123,28 @@ const fields = [
   "team.league.leagueLevel",
 ].join(",");
 
-function buildTeamBaseUrl(teamId: number, singleLeague: string | null) {
-  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${singleLeague}&player.hasPlayedInTeam=${teamId}`;
-
+function buildTeamBaseUrl(teamId: number, leagues: string[] | string | null) {
+  let leagueParam: string | null = null;
+  if (leagues) {
+    leagueParam = Array.isArray(leagues) ? leagues.join(',') : leagues;
+  }
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${encodeURIComponent(leagueParam ?? '')}&player.hasPlayedInTeam=${teamId}`;
   url += `&fields=${encodeURIComponent(fields)}`;
-
   console.log(url);
   return url;
 }
 
-
-function buildYouthBaseUrl(teamsParam: string, singleLeague: string | null) {
-  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${singleLeague}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
-
+function buildYouthBaseUrl(teamsParam: string, leagues: string[] | string | null) {
+  let leagueParam: string | null = null;
+  if (leagues) {
+    leagueParam = Array.isArray(leagues) ? leagues.join(',') : leagues;
+  }
+  let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&league=${encodeURIComponent(leagueParam ?? '')}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
   url += `&fields=${encodeURIComponent(fields)}`;
-  
-
-  console.log(url)
+  console.log(url);
   return url;
 }
+
 
 async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
   const allItems: T[] = [];
@@ -326,38 +329,16 @@ export async function GET(request: Request) {
   const playerMap: Map<number, CombinedPlayer> = new Map();
 
   try {
-    //
-    // 1) For each team, fetch player-stats across all pages (and each league).
-    //
+    
     for (const id of teamIds) {
-      if (leagues.length === 0) {
-        // no specific leagues => fetch all
-        const baseUrl = buildTeamBaseUrl(id, null);
-        await fetchAndMergePlayerStats(baseUrl, playerMap);
-      } else {
-        // fetch for each league
-        for (const singleLeague of leagues) {
-          const baseUrl = buildTeamBaseUrl(id, singleLeague);
-          await fetchAndMergePlayerStats(baseUrl, playerMap);
-        }
-      }
+      // If there are leagues specified, pass the entire array; otherwise, pass null.
+      const baseUrl = buildTeamBaseUrl(id, leagues.length ? leagues : null);
+      await fetchAndMergePlayerStats(baseUrl, playerMap);
     }
-
-    //
-    // 2) If includeYouth => do the same for youthTeam
-    //
     if (includeYouth && teamsParam) {
-      if (leagues.length === 0) {
-        const baseUrl = buildYouthBaseUrl(teamsParam, null);
-        await fetchAndMergePlayerStats(baseUrl, playerMap);
-      } else {
-        for (const singleLeague of leagues) {
-          const baseUrl = buildYouthBaseUrl(teamsParam, singleLeague);
-          await fetchAndMergePlayerStats(baseUrl, playerMap);
-        }
-      }
+      const baseUrl = buildYouthBaseUrl(teamsParam, leagues.length ? leagues : null);
+      await fetchAndMergePlayerStats(baseUrl, playerMap);
     }
-
     //
     // 3) Convert playerMap to an array
     //
