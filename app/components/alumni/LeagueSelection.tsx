@@ -5,6 +5,7 @@ import { League } from "@/app/types/league";
 import { LeagueSelectionDropdownProps } from "@/app/types/league";
 import { IoIosRemoveCircle } from "react-icons/io";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import Image from "next/image";
 
 // Predefined league rankings (all keys in lower-case for consistency)
 const leagueRankings: Record<string, number> = {
@@ -179,7 +180,13 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
               return (
                 <span key={slug} className="inline-flex items-center bg-white px-2 py-1 rounded text-sm text-[#052D41] border border-[#052D41]">
                   {logo && (
-                    <img src={logo} alt={`${name} logo`} className="w-6 h-6 mr-2 rounded" />
+                    <Image 
+                      src={logo} 
+                      alt={`${name} logo`} 
+                      className="w-6 h-6 mr-2 rounded" 
+                      width={20}
+                      height={20}
+                    />
                   )}
                   {name}
                   <button

@@ -20,6 +20,7 @@ import {
 } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
+import Image from "next/image";
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
@@ -422,7 +423,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                             <Tooltip
                               tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
                             >
-                              <img
+                              <Image
                                 src={player.draftPick.team.logo}
                                 alt={player.draftPick.team.name}
                                 width={20}

@@ -225,6 +225,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { TeamItem, TeamSearchBarProps } from "@/app/types/team"; 
 import { IoIosRemoveCircle } from "react-icons/io";
+import Image from "next/image";
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   onSelect,
@@ -434,10 +435,12 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
                 >
                   {/* ✅ Show logo if available */}
                   {team.logo && (
-                    <img
+                    <Image
                       src={team.logo}
                       alt={`${team.name} logo`}
                       className="w-6 h-6 mr-2 rounded"
+                      width={20}
+                      height={20}
                     />
                   )}
                   {team.name}
