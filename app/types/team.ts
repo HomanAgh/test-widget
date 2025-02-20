@@ -25,11 +25,15 @@ export interface Team {
     id: number;
     name: string;
     league: string;
+    logo?: string | null;
   }
-  
+
+
   export interface SelectedTeam {
     id: number;
     name: string;
+    league : string;
+    logo?: string | null;
   }
   
   export interface TeamSearchBarProps {

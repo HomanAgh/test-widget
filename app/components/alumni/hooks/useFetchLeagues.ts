@@ -15,9 +15,9 @@ export const useFetchLeagues = () => {
       try {
         // Fetch all in parallel
         const [proResponse, junResponse, collegeResponse] = await Promise.all([
-          fetch('/api/ProfLeague'),  // Professional leagues endpoint
-          fetch('/api/JunLeague'),   // Junior leagues endpoint
-          fetch('/api/CollLeague'),  // College leagues endpoint
+          fetch('/api/ProfLeague'),
+          fetch('/api/JunLeague'),
+          fetch('/api/CollLeague'),
         ]);
 
         // Check any failed responses
