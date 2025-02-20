@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { League } from "@/app/types/league";
 import { LeagueSelectionDropdownProps } from "@/app/types/league";
+import { IoIosRemoveCircle } from "react-icons/io";
+import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 
 // Predefined league rankings (all keys in lower-case for consistency)
 const leagueRankings: Record<string, number> = {
@@ -126,8 +128,8 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
         className="w-full bg-[#052D41] text-white text-sm font-montserrat font-bold p-2 rounded flex justify-between items-center"
       >
         SELECT LEAGUES
-        <span className={`transform transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`}>
-          ▼
+        <span>
+          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
         </span>
       </button>
 
@@ -184,7 +186,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
                     onClick={() => removeLeagueSlug(slug)}
                     className="ml-2 text-red-700 font-bold"
                   >
-                    ×
+                    <IoIosRemoveCircle/>
                   </button>
                 </span>
               );
