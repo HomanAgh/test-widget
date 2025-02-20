@@ -49,7 +49,6 @@ export async function GET(req: NextRequest) {
       const leagues = await Promise.all(
         searchData.data.league.map(async (l: any) => {
           const slug = l?.slug || "Unknown Slug";
-  
           const leagueDetailsUrl = `${apiBaseUrl}/leagues/${slug}?apiKey=${apiKey}`;
           try {
             const leagueDetailsResponse = await fetch(leagueDetailsUrl, { method: "GET" });

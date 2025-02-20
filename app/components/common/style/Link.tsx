@@ -17,10 +17,8 @@ const Link: React.FC<CustomLinkProps> = ({
   return (
     <a
       href={href}
-      // Provide default target & rel but allow overrides
       target={target}
       rel={rel}
-      // Use the incoming className or fallback
       className={className ?? "hover:underline"}
       {...rest}
     >

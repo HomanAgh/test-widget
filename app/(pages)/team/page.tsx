@@ -13,7 +13,6 @@ const TeamPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Redirect to login if not logged in
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (!isLoggedIn) {
@@ -23,7 +22,7 @@ const TeamPage: React.FC = () => {
 
   const handleTeamSelect = (teamId: string) => {
     setSelectedTeamId(teamId);
-    setError(null); // Clear previous errors when selecting a new team
+    setError(null); 
   };
 
   return (

@@ -12,7 +12,6 @@ const LeaguePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Example: If you have a login check
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
@@ -37,7 +36,6 @@ const LeaguePage: React.FC = () => {
         <p className="text-center text-red-600 mt-4">{error}</p>
       )}
 
-      {/* Once a league is selected, show the LeagueWidgetSetup */}
       {selectedLeagueSlug && (
         <div className="mt-6">
           <LeagueWidgetSetup leagueSlug={selectedLeagueSlug} />

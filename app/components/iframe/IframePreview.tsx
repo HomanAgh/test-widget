@@ -7,10 +7,8 @@ interface EmbedCodeBlockProps {
 }
 
 const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
-  // Moved from parent into this component
   const [showCode, setShowCode] = useState(false);
 
-  // Copy to clipboard logic (local)
   const copyToClipboard = useCallback(async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -25,9 +23,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       <h3 className="text-lg font-medium mb-2">Embed Code</h3>
       <div
     className="relative"
-    // Put the onClick on the parent container
     onClick={() => {
-        // Only flip to true if it’s still false
         if (!showCode) setShowCode(true);
     }}
     >

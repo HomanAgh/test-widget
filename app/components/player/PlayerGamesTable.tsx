@@ -62,16 +62,12 @@ const GamesTable: React.FC<GamesTableProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      {/* Title */}
       <h2 className="text-xl font-bold mb-2">{titleText}</h2>
 
       <TableContainer>
-        {/* The main table wrapper */}
         <Table>
-          {/* Head (replaces <thead>) */}
           <TableHead className="filter brightness-90">
             <TableRow>
-              {/* Example: use `isHeader` or `header` prop if your TableCell supports it */}
               <TableCell isHeader align="left">Date</TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
@@ -90,11 +86,8 @@ const GamesTable: React.FC<GamesTableProps> = ({
               )}
             </TableRow>
           </TableHead>
-
-          {/* Body (replaces <tbody>) */}
           <TableBody>
             {showSummary ? (
-              // Render a single summary row
               <TableRow>
                 <TableCell align="center">Summary</TableCell>
                 {playerType === "GOALTENDER" ? (
@@ -130,7 +123,6 @@ const GamesTable: React.FC<GamesTableProps> = ({
                 )}
               </TableRow>
             ) : (
-              // Render a row for each game
               lastFiveGames.map((game, index) => (
                 <TableRow
                   key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>

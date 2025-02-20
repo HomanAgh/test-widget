@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Team, TeamsAPIResponse } from "@/app/types/team"; // Assume a Team type is defined
+import { Team, TeamsAPIResponse } from "@/app/types/team"; 
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 
 
@@ -18,16 +18,14 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Debounce the search query
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 500); // Adjust delay as needed
+    }, 500);
 
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Fetch and sort teams by name when the debounced query changes
   useEffect(() => {
     const fetchTeams = async () => {
       if (!debouncedQuery) {
@@ -47,8 +45,6 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         }
 
         const data: TeamsAPIResponse = await res.json();
-
-        // Sort teams alphabetically and limit to top 20
         const sortedTeams = data.teams
           .sort((a, b) => a.name.localeCompare(b.name))
           .slice(0, 20);
@@ -70,7 +66,6 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
     fetchTeams();
   }, [debouncedQuery, onError]);
 
-  // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || teams.length === 0) return;
 

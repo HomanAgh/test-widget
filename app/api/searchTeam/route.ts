@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Specify the fields to fetch for teams
   const searchFields = [
     "team.id",
     "team.name",
@@ -29,7 +28,6 @@ export async function GET(req: NextRequest) {
     "team.country.name",
   ].join(",");
 
-  // Construct the search URL
   const searchUrl = `${apiBaseUrl}/search?q=${encodeURIComponent(query)}&apiKey=${apiKey}&fields=${encodeURIComponent(searchFields)}`;
 
   try {

@@ -46,18 +46,16 @@ export async function GET(req: NextRequest) {
 
     const searchData = await searchResponse.json();
     console.log("External API Response:", searchData);
-
-    // Parse and sort players by views
     const players = searchData.data?.player
       ?.map((p: any) => ({
         id: p.id,
         name: p.name || "Unknown",
         league: p.latestStats?.league?.name || "Unknown League",
         team: p.latestStats?.team?.name || "Unknown Team",
-        views: p.views || 0, // Fallback to 0 if views is missing
+        views: p.views || 0, 
       }))
-      .sort((a: any, b: any) => b.views - a.views) // Sort by views in descending order
-      .slice(0, 20) || []; // Limit to top 20 players
+      .sort((a: any, b: any) => b.views - a.views) 
+      .slice(0, 20) || []; 
 
     console.log("Parsed Players:", players);
 

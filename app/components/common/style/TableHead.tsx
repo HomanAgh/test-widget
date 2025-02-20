@@ -1,9 +1,5 @@
 import React from "react";
 
-/**
- * TableHead for the <thead> section.
- * Allows custom background color, text color, and extra classes.
- */
 interface TableHeadProps {
   children: React.ReactNode;
   bgColor?: string;

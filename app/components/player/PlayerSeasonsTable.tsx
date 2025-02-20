@@ -11,17 +11,14 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
   playerType,
   seasons,
 }) => {
-  // Track displayed years so we can merge repeated years into one cell
   const displayedYears: Set<string> = new Set();
 
   return (
     <div>
-      {/* Replace old TableTitle with a simple heading (or your own styling) */}
       <h2 className="text-xl font-bold mb-2">Season Statistics</h2>
 
       <TableContainer>
         <Table>
-          {/* TableHead replaces <thead> */}
           <TableHead className="filter brightness-90">
             <TableRow>
               <TableCell isHeader align="left">S</TableCell>
@@ -44,28 +41,21 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
               )}
             </TableRow>
           </TableHead>
-
-          {/* TableBody replaces <tbody> */}
           <TableBody>
             {seasons.map((season, index) => {
-              // Only show the season year the first time it appears
               const isYearDisplayed = displayedYears.has(season.season);
               if (!isYearDisplayed) {
                 displayedYears.add(season.season);
               }
 
               return (
-                // TableRow replaces <tr>
                 <TableRow
                   key={index}
                   className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                 >
-                  {/* If we've seen this season year before, show an empty cell */}
                   <TableCell align="left">
                     {isYearDisplayed ? "" : season.season}
                   </TableCell>
-
-                  {/* Team name (optionally use your custom Link) */}
                   <TableCell align="left">
                     <Link
                       href={`https://www.eliteprospects.com/team/${season.teamId}/${encodeURIComponent(
@@ -75,8 +65,6 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
                       {season.teamName}
                     </Link>
                   </TableCell>
-
-                  {/* League (again optionally a custom Link) */}
                   <TableCell align="left">
                     <Link
                       href={`https://www.eliteprospects.com/league/${season.league}/stats/${season.season}`}
@@ -84,11 +72,7 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
                       {season.league}
                     </Link>
                   </TableCell>
-
-                  {/* Games Played */}
                   <TableCell align="center">{season.gamesPlayed}</TableCell>
-
-                  {/* Conditional columns for goalie vs. skater */}
                   {playerType === "GOALTENDER" ? (
                     <>
                       <TableCell align="center">

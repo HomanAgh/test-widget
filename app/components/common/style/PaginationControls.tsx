@@ -2,8 +2,8 @@ import React from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface AdvancedPaginationControlsProps {
-  currentPage: number;           // zero-based current page index
-  totalPages: number;           // total number of pages
+  currentPage: number;           
+  totalPages: number;           
   onPageChange: (page: number) => void; 
 }
 
@@ -12,12 +12,10 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
   totalPages,
   onPageChange,
 }) => {
-  // "Go to page" input state
   const [goToPageInput, setGoToPageInput] = React.useState<string>("");
 
   if (totalPages <= 1) return null;
 
-  // Handlers
   const handlePrev = () => {
     if (currentPage > 0) onPageChange(currentPage - 1);
   };
@@ -27,7 +25,6 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
   const handleGoToPage = () => {
     const page = parseInt(goToPageInput, 10);
     if (!isNaN(page) && page >= 1 && page <= totalPages) {
-      // Convert 1-based input into 0-based index
       onPageChange(page - 1);
       setGoToPageInput("");
     }
@@ -64,8 +61,6 @@ const AdvancedPaginationControls: React.FC<AdvancedPaginationControlsProps> = ({
         {/* Dynamic Middle Page Numbers */}
         {Array.from({ length: totalPages }, (_, index) => index)
           .filter((index) => {
-            // We already show page 1 & last below,
-            // so omit them from the "middle" unless we’re near them
             if (index === 0 || index === totalPages - 1) return false;
             if (currentPage < 3) return index >= 1 && index <= 4;
             if (currentPage > totalPages - 4) return index >= totalPages - 5;

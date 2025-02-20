@@ -13,19 +13,16 @@ export const useFetchLeagues = () => {
   useEffect(() => {
     const fetchLeagues = async () => {
       try {
-        // Fetch all in parallel
         const [proResponse, junResponse, collegeResponse] = await Promise.all([
           fetch('/api/ProfLeague'),
           fetch('/api/JunLeague'),
           fetch('/api/CollLeague'),
         ]);
 
-        // Check any failed responses
         if (!proResponse.ok || !junResponse.ok || !collegeResponse.ok) {
           throw new Error('Failed to fetch one or more league endpoints.');
         }
 
-        // Parse all as JSON
         const [proData, junData, collegeData] = await Promise.all([
           proResponse.json(),
           junResponse.json(),

@@ -15,7 +15,6 @@ import {
   PoweredBy,
 } from "@/app/components/common/style";
 
-// Utility function for age calculation
 const calculateAge = (dateOfBirth: string): number | "-" => {
   if (!dateOfBirth) return "-";
   const birthDate = new Date(dateOfBirth);
@@ -48,32 +47,25 @@ const collapsibleContainerStyle: CSSProperties = {
 type SectionKey = "goaltenders" | "defensemen" | "forwards";
 
 const RosterTable: React.FC<RosterTableProps> = ({ roster }) => {
-  // Initialize state at the top level
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
     goaltenders: false,
     defensemen: false,
     forwards: false,
   });
 
-  // Early return if no roster
   if (!roster || roster.length === 0) {
     return <p>No Roster</p>;
   }
 
-  // Group players by position
   const goaltenders = roster
     .filter((player) => player.position === "G")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
-
   const defensemen = roster
     .filter((player) => player.position === "D")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
-
   const forwards = roster
     .filter((player) => player.position !== "G" && player.position !== "D")
     .sort((a, b) => +a.jerseyNumber - +b.jerseyNumber);
-
-  // Toggle a section by key
   const toggleSection = (section: SectionKey) => {
     setOpenSections((prev) => ({
       ...prev,

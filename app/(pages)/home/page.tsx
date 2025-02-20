@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold } from "react-icons/pi"; // Importing icons
+import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold } from "react-icons/pi"; 
 import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";
 
@@ -12,7 +12,7 @@ const HomePage = () => {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
-      router.replace("/auth"); // Redirect to login if not logged in
+      router.replace("/auth"); 
     }
   }, [router]);
 

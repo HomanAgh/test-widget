@@ -21,19 +21,14 @@ export async function GET(req: NextRequest) {
   const playerStatsUrl = `${apiBaseUrl}/players/${playerId}/stats/all-time-league?apiKey=${apiKey}`;
 
   try {
-    // Fetch player stats
     const response = await fetch(playerStatsUrl, { method: "GET" });
     if (!response.ok) {
       throw new Error(`Failed to fetch player stats: ${response.statusText}`);
     }
 
     const statsData = await response.json();
-
-    // Map the stats to a uniform structure
     const formattedStats = statsData.data.map((entry: any) => {
       const { league, numberOfSeasons, regularStats } = entry;
-
-      // Determine if the entry is for a goalie or a skater
       const isGoalie = regularStats?.GAA !== undefined || regularStats?.SVP !== undefined;
 
       return {

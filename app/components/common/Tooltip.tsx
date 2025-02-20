@@ -6,7 +6,6 @@ interface TooltipProps {
 }
 
 const Tooltip: React.FC<TooltipProps> = ({ tooltip, children }) => {
-  // Split the tooltip string by newline characters
   const lines = tooltip.split('\n');
 
   return (

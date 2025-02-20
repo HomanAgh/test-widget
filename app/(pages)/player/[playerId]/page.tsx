@@ -13,12 +13,9 @@ const PlayerPage = () => {
   const [error, setError] = useState("");
   const router = useRouter();
   const pathname = usePathname();
-
-  // Extract playerId from the URL with a fallback to null
   const playerIdFromURL: string | null = pathname.split("/").pop() || null;
 
   useEffect(() => {
-    // Redirect to login if not logged in
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {
       router.replace("/auth");
@@ -31,7 +28,6 @@ const PlayerPage = () => {
     if (playerId !== playerIdFromURL) {
       router.push(`/player/${playerId}`);
     }
-    // If the same player is selected, you might want to refresh data or do nothing
   };
 
   return (

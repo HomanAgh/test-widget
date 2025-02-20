@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 interface SearchBarProps {
-  type: "team" | "league"; // Determines the type of search
+  type: "team" | "league";
   onSelect: (value: string) => void;
   onError: (error: string) => void;
 }
@@ -14,10 +14,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
 
   const handleSearch = async () => {
     if (!query) {
-      // Error messages based on type
       const errorMessage =
         type === "team"
-          ? "Enter Team Name Error" // Updated for team names
+          ? "Enter Team Name Error" 
           : "Enter League Slug Error";
       onError(errorMessage);
       return;
@@ -34,10 +33,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ type, onSelect, onError }) => {
     }
   };
 
-  // Placeholder text based on type
   const placeholderText =
     type === "team"
-      ? "Enter Team Name" // Updated for team names
+      ? "Enter Team Name" 
       : "Enter League Slug";
 
   return (

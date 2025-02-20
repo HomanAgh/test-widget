@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Common player fields
   const playerFields = [
     "id",
     "name",
@@ -33,7 +32,6 @@ export async function GET(req: NextRequest) {
   ].join(",");
   console.log("Player fields:", playerFields);
 
-  // Skater and goalie-specific fields
   const skaterFields = [
     "latestStats.regularStats.GP",
     "latestStats.regularStats.G",
@@ -60,7 +58,6 @@ export async function GET(req: NextRequest) {
   console.log("Goalie stats URL:", goalieStatsUrl);
 
   try {
-    // Fetch player data
     console.log("Fetching player data...");
     const playerResponse = await fetch(playerUrl, { method: "GET" });
     console.log("Player response status:", playerResponse.status);
@@ -76,7 +73,6 @@ export async function GET(req: NextRequest) {
     const playerType = playerData.data.playerType;
     console.log("Determined player type:", playerType);
 
-    // Determine the URL for stats based on player type
     const statsUrl = playerType === "GOALTENDER" ? goalieStatsUrl : skaterStatsUrl;
     console.log("Stats URL to be used:", statsUrl);
 
@@ -93,7 +89,6 @@ export async function GET(req: NextRequest) {
     const statsData = await statsResponse.json();
     console.log("Fetched stats data:", statsData);
 
-    // Build the response data
     console.log("Building response data...");
     const playerInfo = {
       id: playerData.data.id,

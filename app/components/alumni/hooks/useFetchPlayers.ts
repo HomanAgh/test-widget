@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import isEqual from 'lodash.isequal';
 import { AlumniPlayer, AlumniAPIResponse } from '@/app/types/alumni';
 
@@ -20,7 +20,6 @@ export function useFetchPlayers(
   const [offset, setOffset] = useState(0);
 
   // Build a cache key representing the current query parameters.
-  // (Sorting team IDs if order doesn't matter can help avoid cache misses.)
   const cacheKey = JSON.stringify({
     teamIds: [...selectedTeamIds].sort((a, b) => a - b),
     leagueParam,
@@ -40,7 +39,7 @@ export function useFetchPlayers(
 
   const limit = 20;
 
-  async function fetchPlayers(reset = false) {
+  const fetchPlayers = useCallback(async (reset = false) => {
     // Basic guard: if no team, league, or youth is selected, nothing to fetch
     if (selectedTeamIds.length === 0 && !leagueParam && !includeYouth) {
       setError('Either a team, a league, or youth team must be selected.');
@@ -61,7 +60,7 @@ export function useFetchPlayers(
           ? leagueParam.join(',')
           : leagueParam;
         url += `&league=${encodeURIComponent(leagueString)}`;
-      }      
+      }
       if (includeYouth && youthTeam) {
         url += `&includeYouth=true&teams=${encodeURIComponent(youthTeam)}`;
       }
@@ -88,8 +87,6 @@ export function useFetchPlayers(
       const deduped = Array.from(new Map(combined.map((p) => [p.id, p])).values());
 
       setResults(deduped);
-
-      // Cache the results if this is a fresh query (reset)
       playersCache.set(cacheKey, deduped);
 
       if (reset) {
@@ -104,7 +101,16 @@ export function useFetchPlayers(
     } finally {
       setLoading(false);
     }
-  }
+  }, [
+    selectedTeamIds,
+    leagueParam,
+    includeYouth,
+    youthTeam,
+    genderParam,
+    offset,
+    results,
+    cacheKey,
+  ]);
 
   // Effect to trigger a refetch if relevant inputs changed
   useEffect(() => {
@@ -123,12 +129,9 @@ export function useFetchPlayers(
       youthTeamChanged ||
       genderChanged
     ) {
-      // Check the cache first. If we have data, use it and avoid refetching.
       if (playersCache.has(cacheKey)) {
         setResults(playersCache.get(cacheKey)!);
-        // Optionally, you could set hasMore to false or cache it as well.
       } else {
-        // No cache found—reset state and fetch data
         setResults([]);
         setOffset(0);
         setHasMore(true);
@@ -151,6 +154,7 @@ export function useFetchPlayers(
     youthTeam,
     genderParam,
     cacheKey,
+    fetchPlayers,
   ]);
 
   return { results, loading, error, hasMore, fetchPlayers };

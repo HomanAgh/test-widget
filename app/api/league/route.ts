@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
     const data = await response.json();
     console.log("Fetched Data:", JSON.stringify(data, null, 2));
 
-    return NextResponse.json(data); // Return the filtered standings data
+    return NextResponse.json(data); 
   } catch (error: any) {
     console.error("Error during fetch:", error.message);
     return NextResponse.json(

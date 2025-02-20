@@ -22,7 +22,6 @@ interface PlayerProps {
   showSummary: boolean;
 }
 
-// fetcher for SWR
 const fetcher = (url: string) =>
   fetch(url).then(async (res) => {
     if (!res.ok) {

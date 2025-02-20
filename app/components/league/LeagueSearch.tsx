@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { League, LeaguesAPIResponse } from "@/app/types/league"; // Assume a Team type is defined
+import { League, LeaguesAPIResponse } from "@/app/types/league"; 
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 
 interface LeagueSearchBarProps {
@@ -17,11 +17,10 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Debounce the search query
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 500); // Adjust delay as needed
+    }, 500); 
 
     return () => clearTimeout(handler);
   }, [query]);
@@ -46,7 +45,6 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
 
         const data: LeaguesAPIResponse = await res.json();
 
-        // Sort teams alphabetically and limit to top 20
         const sortedLeagues= data.leagues
           .sort((a, b) => a.name.localeCompare(b.name))
           .slice(0, 20);
@@ -68,7 +66,6 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
     fetchLeagues();
   }, [debouncedQuery, onError]);
 
-  // Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || Leagues.length === 0) return;
 

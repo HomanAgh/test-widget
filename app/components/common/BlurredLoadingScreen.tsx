@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DotLoadingAnimation from "./DotLoadingAnimation"; // Your loading animation component
+import DotLoadingAnimation from "./DotLoadingAnimation"; 
 
 const BlurredLoadingScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);

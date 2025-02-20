@@ -68,9 +68,7 @@ const Team: React.FC<TeamProps> = ({
     <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg ">
         {teamStats && (
           <div className="font-montserrat">
-            {/* Team Name and Logo */}
             <div className="mb-6 flex items-center space-x-4 pb-[24px]">
-              {/* Medium Team Logo */}
               {teamStats.team.logoM && (
                 <Image
                   src={teamStats.team.logoM}
@@ -80,7 +78,6 @@ const Team: React.FC<TeamProps> = ({
                   height={48}
                 />
               )}
-              {/* Team Name & League (Stacked Vertically) */}
               <div className="flex flex-col">
                 <h2 className="text-[24px] font-bold leading-[26px]" >
                   <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
@@ -94,7 +91,6 @@ const Team: React.FC<TeamProps> = ({
                 </p>
               </div>
             </div>
-            {/* Roster Table */}
             <RosterTable roster={teamStats.roster}/>
           </div>
         )}

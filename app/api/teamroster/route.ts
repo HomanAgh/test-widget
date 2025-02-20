@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Helper function to fetch the flag URL based on nationality slug
 const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string) => {
   try {
     const response = await fetch(`${apiBaseUrl}/countries/${slug}?apiKey=${apiKey}`);
     if (response.ok) {
       const countryData = await response.json();
-      return countryData.data.flagUrl?.small || null; // Return the small flag URL
+      return countryData.data.flagUrl?.small || null; 
     }
   } catch {
     console.warn(`Failed to fetch flag for ${slug}`);
@@ -17,11 +16,9 @@ const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const teamId = searchParams.get("teamId");
-
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
 
-  // Validate teamId
   if (!teamId) {
     console.log("Missing teamId query parameter");
     return NextResponse.json(
@@ -30,7 +27,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Validate environment variables
   if (!apiKey || !apiBaseUrl) {
     console.log("Missing API key or base URL");
     return NextResponse.json(
@@ -52,10 +48,8 @@ export async function GET(req: NextRequest) {
   
     const rosterUrl = `${apiBaseUrl}/teams/${teamId}/roster?fields=${teamField}&apiKey=${apiKey}`;
     console.log("Fetching roster from URL:", rosterUrl);
-
     const response = await fetch(rosterUrl);
 
-    // Check response status
     console.log("Roster API Response Status:", response.status);
     if (!response.ok) {
       throw new Error(`Failed to fetch roster: ${response.statusText}`);
@@ -71,7 +65,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Transform roster data with flagUrl and dateOfBirth
     const roster = await Promise.all(
       data.data.map(async (entry: any) => {
         const flagUrl = entry.player?.nationality?.slug
@@ -85,7 +78,7 @@ export async function GET(req: NextRequest) {
           position: entry.player?.position || "Unknown",
           jerseyNumber: entry.jerseyNumber || "N/A",
           dateOfBirth: entry.player?.dateOfBirth || "N/A",
-          flagUrl: flagUrl || null, // Add fetched flag URL
+          flagUrl: flagUrl || null, 
         };
       })
     );

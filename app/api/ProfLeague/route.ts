@@ -7,7 +7,6 @@ const apiBaseUrl = process.env.API_BASE_URL;
 export async function GET() {
   try {
     const leagueLevels = ['professional','semi-professional'];
-    // Fetch all professional leagues
     const leaguePromises = leagueLevels.map(async (level) => {
       const res = await fetch(
         `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${apiKey}&fields=slug,name,logo.url`
@@ -22,12 +21,10 @@ export async function GET() {
     });
 
     const leagueResponses: LeagueApiResponse[] = await Promise.all(leaguePromises);
-
-    // Combine and format the league data
     const leagues = leagueResponses.flatMap((response) =>
       (response.data || []).map((league: LeagueDetails) => ({
-        slug: league.slug, // Unique identifier for the league
-        name: league.name, // Human-readable name for the league
+        slug: league.slug, 
+        name: league.name, 
         logo: league.logo?.url ?? null,
       }))
     );

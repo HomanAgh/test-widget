@@ -1,7 +1,7 @@
 export interface League {
     slug: string;
     name: string;
-    logo?: string; // Optional logo property
+    logo?: string;
     country: {
       name: string;
     }
@@ -16,7 +16,7 @@ export interface LeaguesAPIResponse {
     standings: {
       data: {
         id: number;
-        group?: string; // Optional group field
+        group?: string;
         team: {
           name: string;
           league: {
@@ -43,7 +43,7 @@ export interface LeaguesAPIResponse {
     professionalLeagues: League[];
     juniorLeagues: League[];
     collegeLeagues: League[];
-    selectedLeagues: string[]; // array of slugs
+    selectedLeagues: string[]; 
     onChange: (selected: string[]) => void;
   }
 

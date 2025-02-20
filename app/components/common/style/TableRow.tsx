@@ -1,9 +1,5 @@
 import React from "react";
 
-/**
- * TableRow for <tr>. 
- * Allows you to pass in a background color for striped rows, etc.
- */
 interface TableRowProps {
   children: React.ReactNode;
   bgColor?: string;

@@ -8,8 +8,6 @@ import { PageWrapper, PageTitle } from "@/app/components/common/style";
 
 const AlumniPage: React.FC = () => {
   const router = useRouter();
-
-  // Redirect to login if not logged in
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (!isLoggedIn) {

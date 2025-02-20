@@ -17,8 +17,8 @@ export interface Team {
     lastName: string;
     position: string;
     jerseyNumber: string;
-    dateOfBirth: string; // Added to store player's date of birth
-    flagUrl: string | null; // Added to store the flag URL for the player's nationality
+    dateOfBirth: string; 
+    flagUrl: string | null; 
   }
   
   export interface TeamItem {
@@ -37,7 +37,7 @@ export interface Team {
   }
   
   export interface TeamSearchBarProps {
-    onSelect: (teamObj: SelectedTeam) => void; // optional single-select usage
+    onSelect: (teamObj: SelectedTeam) => void; 
     onError: (err: string) => void;
     selectedTeams: SelectedTeam[];
     onCheckedTeamsChange: (teams: SelectedTeam[]) => void;

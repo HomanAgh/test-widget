@@ -15,14 +15,9 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
 }) => {
   if (!standings || !standings.data) return null;
 
-  // Extract league name and season title
   const leagueName = standings.data[0]?.team.league.name || "Unknown League";
   const seasonTitle = standings.data[0]?.season.slug || "Unknown Season";
-
-  // Check if any team has group data
   const hasGroups = standings.data.some((team) => team.group);
-
-  // Group teams by `group`
   const groups: { [key: string]: any[] } = standings.data.reduce(
     (acc: { [key: string]: any[] }, team: any) => {
       const groupName = team.group || "Unknown Group";
@@ -35,7 +30,6 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
     {}
   );
 
-  // A helper to render the table rows (shared by grouped & ungrouped modes)
   const renderTeamRow = (team: any, index: number) => (
     <TableRow
       key={team.id || `team-${index}`}
@@ -59,7 +53,6 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
     </TableRow>
   );
 
-  // A reusable function that renders a single table (for either all teams or a group)
   const renderTable = (teams: any[]) => (
     <Table className="table-auto border-collapse border border-gray-300 w-full text-sm">
       <TableHead>
