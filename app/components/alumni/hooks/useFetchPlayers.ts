@@ -57,8 +57,11 @@ export function useFetchPlayers(
         url += `&teamIds=${encodeURIComponent(selectedTeamIds.join(','))}`;
       }
       if (leagueParam) {
-        url += `&league=${leagueParam}`;
-      }
+        const leagueString = Array.isArray(leagueParam)
+          ? leagueParam.join(',')
+          : leagueParam;
+        url += `&league=${encodeURIComponent(leagueString)}`;
+      }      
       if (includeYouth && youthTeam) {
         url += `&includeYouth=true&teams=${encodeURIComponent(youthTeam)}`;
       }
