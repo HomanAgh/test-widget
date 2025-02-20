@@ -1,4 +1,4 @@
-"use client";
+// In Alumni.tsx
 
 import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
@@ -32,11 +32,10 @@ const Alumni: React.FC<AlumniProps> = ({
   },
   includeYouth = false,
 }) => {
-  // ---- Filters & state ----
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ---- Prepare IDs for player fetching ----
+  // Prepare IDs for player fetching
   const selectedTeamIds = useMemo(
     () => selectedTeams.map((t) => t.id),
     [selectedTeams]
@@ -53,7 +52,6 @@ const Alumni: React.FC<AlumniProps> = ({
     genderParam
   );
 
-  // ---- Filter by gender ----
   const filteredPlayers = useMemo(() => {
     return results.filter((player) =>
       activeGenderTab === "men"
@@ -62,7 +60,6 @@ const Alumni: React.FC<AlumniProps> = ({
     );
   }, [results, activeGenderTab]);
 
-  // ---- Filter by search query ----
   const searchedPlayers = useMemo(() => {
     if (!searchQuery) return filteredPlayers;
     return filteredPlayers.filter((player) =>
@@ -71,7 +68,7 @@ const Alumni: React.FC<AlumniProps> = ({
   }, [filteredPlayers, searchQuery]);
 
   return (
-    <div className="bg-white  flex flex-col rounded-lg py-6 mt-4 ">
+    <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
         <div className="relative w-full">
           <input
@@ -83,12 +80,16 @@ const Alumni: React.FC<AlumniProps> = ({
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
         </div>
-        {loading && <p className="flex justify-center pt-3 font-montserrat font-semibold">Loading...</p>}
+        {loading && (
+          <p className="flex justify-center pt-3 font-montserrat font-semibold">
+            Loading...
+          </p>
+        )}
         {error && <p>{error}</p>}
       </div>
 
-            {/* Men/Women Tabs */}
-            <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold pb-[32px] pt-[32px]">
+      {/* Men/Women Tabs */}
+      <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold pb-[32px] pt-[32px]">
         <button
           className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
             activeGenderTab === "men"
@@ -111,7 +112,6 @@ const Alumni: React.FC<AlumniProps> = ({
         </button>
       </div>
 
-
       <PlayerTable
         players={searchedPlayers}
         genderFilter="all"
@@ -120,9 +120,9 @@ const Alumni: React.FC<AlumniProps> = ({
         tableBgColor={customColors.tableBackgroundColor}
         tableTextColor={customColors.textColor}
         nameTextColor={customColors.nameTextColor}
+        isWomenLeague={activeGenderTab === "women"}
       />
     </div>
-
   );
 };
 

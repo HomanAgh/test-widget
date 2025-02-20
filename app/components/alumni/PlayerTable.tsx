@@ -1,7 +1,13 @@
+"use client";
+
 import React from "react";
 import { PlayerTableProps } from "@/app/types/alumni";
 import Link from "../common/style/Link";
-import { HiMiniChevronUpDown,HiMiniChevronUp,HiMiniChevronDown  } from "react-icons/hi2";
+import {
+  HiMiniChevronUpDown,
+  HiMiniChevronUp,
+  HiMiniChevronDown,
+} from "react-icons/hi2";
 import {
   TableContainer,
   Table,
@@ -15,7 +21,11 @@ import {
 import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
 
-const PlayerTable: React.FC<PlayerTableProps> = ({
+interface ExtendedPlayerTableProps extends PlayerTableProps {
+  isWomenLeague?: boolean;
+}
+
+const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   players,
   genderFilter,
   pageSize = 15,
@@ -26,9 +36,14 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   nameTextColor = "#0D73A6",
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
+  isWomenLeague = false, // default to false if not provided
 }) => {
-  const [sortColumn, setSortColumn] = React.useState<"name" | "position" | "status" | "birthYear" | "draftPick" | "">("name");
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("asc");
+  const [sortColumn, setSortColumn] = React.useState<
+    "name" | "position" | "status" | "birthYear" | "draftPick" | ""
+  >("name");
+  const [sortDirection, setSortDirection] = React.useState<
+    "asc" | "desc" | "none"
+  >("asc");
   const [showNameMenu, setShowNameMenu] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(0);
   const isInNameGroup = ["name", "position", "status"].includes(sortColumn);
@@ -73,39 +88,38 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
 
   const renderSortArrow = (col: string) => {
     if (col === "nameGroup") {
-      if (!isInNameGroup) return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
-      if (sortDirection === "asc") return <HiMiniChevronDown className="inline-block text-gray-300" />;
-      if (sortDirection === "desc") return <HiMiniChevronUp className="inline-block text-gray-300" />;
+      if (!isInNameGroup)
+        return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
+      if (sortDirection === "asc")
+        return <HiMiniChevronDown className="inline-block text-gray-300" />;
+      if (sortDirection === "desc")
+        return <HiMiniChevronUp className="inline-block text-gray-300" />;
       return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
     }
-  
-    if (sortColumn !== col) return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
-    if (sortDirection === "asc") return <HiMiniChevronDown className="inline-block text-gray-300" />;
-    if (sortDirection === "desc") return <HiMiniChevronUp className="inline-block text-gray-300" />;
-    
+
+    if (sortColumn !== col)
+      return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
+    if (sortDirection === "asc")
+      return <HiMiniChevronDown className="inline-block text-gray-300" />;
+    if (sortDirection === "desc")
+      return <HiMiniChevronUp className="inline-block text-gray-300" />;
+
     return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
   };
-  
 
   const renderNameBlock = (
     firstName: string,
     lastName: string,
     position?: string | null,
     status?: string | null,
-    teamName = "",
+    teamName = ""
   ) => {
-// Example snippet inside your renderNameBlock function
-
     const isActive = status?.toLowerCase() === "active";
     const isRetired = status?.toLowerCase() === "retired";
+    const displayStatus = status ? `[${status.toUpperCase()}]` : "";
 
-    // Uppercase the status inside brackets, e.g. [ACTIVE], [RETIRED]
-    const displayStatus = status ? `[${status}]` : "";
-
-    // Decide which tooltip text to show (or none) based on the status
     let contentForStatus: JSX.Element;
     if (isActive) {
-
       contentForStatus = (
         <Tooltip tooltip={teamName ? `Player is active` : "Player is active"}>
           <span>{displayStatus}</span>
@@ -120,7 +134,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
     } else {
       contentForStatus = <span>{displayStatus}</span>;
     }
-
 
     switch (sortColumn) {
       case "name":
@@ -162,7 +175,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
         );
     }
   };
-  
 
   // 1) Filter players
   const filteredPlayers = React.useMemo(() => {
@@ -187,24 +199,24 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
             : b.name.localeCompare(a.name)
         );
         break;
-        case "position":
-          const positionRank: Record<string, number> = {
-            G: 0, 
-            D: 1, 
-            F: 2, 
-          };
-        
-          arr.sort((a, b) => {
-            const posA = a.position ? positionRank[a.position.toUpperCase()] : 999;
-            const posB = b.position ? positionRank[b.position.toUpperCase()] : 999;
-        
-            if (sortDirection === "asc") {
-              return posA - posB;
-            } else {
-              return posB - posA;
-            }
-          });
-          break;        
+      case "position":
+        const positionRank: Record<string, number> = {
+          G: 0,
+          D: 1,
+          F: 2,
+        };
+
+        arr.sort((a, b) => {
+          const posA = a.position
+            ? positionRank[a.position.toUpperCase()] ?? 999
+            : 999;
+          const posB = b.position
+            ? positionRank[b.position.toUpperCase()] ?? 999
+            : 999;
+
+          return sortDirection === "asc" ? posA - posB : posB - posA;
+        });
+        break;
       case "status":
         arr.sort((a, b) => {
           const sA = a.status ?? "";
@@ -242,7 +254,8 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   const endIndex = startIndex + pageSize;
   const pagePlayers = sortedPlayers.slice(startIndex, endIndex);
   const isCustomColor =
-    tableBgColor.toLowerCase() !== "#ffffff" && tableBgColor.toLowerCase() !== "#fff";
+    tableBgColor.toLowerCase() !== "#ffffff" &&
+    tableBgColor.toLowerCase() !== "#fff";
 
   return (
     <div className="relative">
@@ -302,7 +315,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 )}
               </TableCell>
 
-              {/* BY */}
+              {/* Birth Year */}
               <TableCell
                 isHeader
                 align="center"
@@ -312,53 +325,57 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                 BY {renderSortArrow("birthYear")}
               </TableCell>
 
-              {/* NHL DP */}
-              <TableCell
-                isHeader
-                align="center"
-                className="font-bold cursor-pointer"
-                onClick={() => handleSort("draftPick")}
-              >
-                NHL DP {renderSortArrow("draftPick")}
-              </TableCell>
+              {/* Conditionally render NHL DP column */}
+              {!isWomenLeague && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("draftPick")}
+                >
+                  NHL DP {renderSortArrow("draftPick")}
+                </TableCell>
+              )}
 
-              <TableCell 
+              <TableCell
                 isHeader
                 align="center"
                 className="font-bold cursor-pointer"
                 onClick={() => handleSort("junior")}
               >
-               JUNIOR {renderSortArrow("junior")}
+                JUNIOR {renderSortArrow("junior")}
               </TableCell>
-              <TableCell 
+              <TableCell
                 isHeader
                 align="center"
                 className="font-bold cursor-pointer"
                 onClick={() => handleSort("college")}
               >
-               COLLEGE {renderSortArrow("college")}
+                COLLEGE {renderSortArrow("college")}
               </TableCell>
-              <TableCell 
-                isHeader
-                align="center"
-                className="font-bold cursor-pointer"
-                onClick={() => handleSort("pro")}
-              >
-               PRO {renderSortArrow("pro")}
-              </TableCell>
+
+              {/* Conditionally render PRO column */}
+              {!isWomenLeague && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("pro")}
+                >
+                  PRO {renderSortArrow("pro")}
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
 
           <TableBody>
             {pagePlayers.map((player, idx) => {
-              // Determine background color for striped rows
               const rowBackground = isCustomColor
                 ? tableBgColor
                 : idx % 2 === 0
                 ? evenRowColor
                 : oddRowColor;
 
-              // Filter teams by league level
               const juniorTeams =
                 player.teams?.filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("junior")
@@ -372,7 +389,6 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   (t.leagueLevel ?? "").toLowerCase().includes("professional")
                 ) || [];
 
-              // Name + Position + Status breakdown
               const fullName = player?.name || "";
               const [firstName, ...rest] = fullName.split(" ");
               const lastName = rest.join(" ");
@@ -388,12 +404,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                       )}/${encodeURIComponent(fullName)}`}
                     >
                       <span className="block font-medium text-left">
-                        {renderNameBlock(
-                          firstName,
-                          lastName,
-                          pos,
-                          stat,
-                        )}
+                        {renderNameBlock(firstName, lastName, pos, stat)}
                       </span>
                     </Link>
                   </TableCell>
@@ -401,36 +412,45 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
                   <TableCell align="center">
                     {player.birthYear ?? "N/A"}
                   </TableCell>
-                  <TableCell align="center">
-                    {player.draftPick && player.draftPick.team ? (
-                      <div className="flex items-center justify-center gap-1">
-                        {player.draftPick.team.logo && (
-                          <Tooltip
-                            tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
-                          >
-                            <img
-                              src={player.draftPick.team.logo}
-                              alt={player.draftPick.team.name}
-                              width={20}
-                              height={20}
-                            />
-                          </Tooltip>
-                        )}
-                        <span>{"#" + player.draftPick.overall}</span>
-                      </div>
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </TableCell>
+
+                  {/* Render NHL DP cell only if not women's league */}
+                  {!isWomenLeague && (
+                    <TableCell align="center">
+                      {player.draftPick && player.draftPick.team ? (
+                        <div className="flex items-center justify-center gap-1">
+                          {player.draftPick.team.logo && (
+                            <Tooltip
+                              tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
+                            >
+                              <img
+                                src={player.draftPick.team.logo}
+                                alt={player.draftPick.team.name}
+                                width={20}
+                                height={20}
+                              />
+                            </Tooltip>
+                          )}
+                          <span>{"#" + player.draftPick.overall}</span>
+                        </div>
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </TableCell>
+                  )}
+
                   <TableCell align="center">
                     <ToggleTeamList teams={juniorTeams} />
                   </TableCell>
                   <TableCell align="center">
                     <ToggleTeamList teams={collegeTeams} />
                   </TableCell>
-                  <TableCell align="center">
-                    <ToggleTeamList teams={professionalTeams} />
-                  </TableCell>
+
+                  {/* Render PRO cell only if not women's league */}
+                  {!isWomenLeague && (
+                    <TableCell align="center">
+                      <ToggleTeamList teams={professionalTeams} />
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}
