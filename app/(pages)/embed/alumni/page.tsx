@@ -34,7 +34,9 @@ const AlumniEmbedContent = () => {
   const selectedTeams = teamIds.map((id) => ({
     id: parseInt(id, 10) || 0,
     name: youthTeam,
+    league: selectedLeagues[0] || "", // Use the first league if available
   }));
+  
 
   // Convert leagues "NHL, AHL" => ["NHL", "AHL"]
   const selectedLeagues = leaguesStr
