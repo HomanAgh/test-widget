@@ -438,9 +438,9 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
                     <Image
                       src={team.logo}
                       alt={`${team.name} logo`}
-                      className="w-6 h-6 mr-2 rounded"
-                      width={20}
-                      height={20}
+                      className="mr-2 rounded"
+                      width={24}
+                      height={24}
                     />
                   )}
                   {team.name}

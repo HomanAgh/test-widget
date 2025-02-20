@@ -42,11 +42,16 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   const [sortColumn, setSortColumn] = React.useState<
     "name" | "position" | "status" | "birthYear" | "draftPick" | ""
   >("name");
-  const [sortDirection, setSortDirection] = React.useState<
-    "asc" | "desc" | "none"
-  >("asc");
+  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("asc");
   const [showNameMenu, setShowNameMenu] = React.useState(false);
-  const [currentPage, setCurrentPage] = React.useState(0);
+
+  // Instead of a single currentPage state, we store separate pages for men and women.
+  const [pages, setPages] = React.useState<{ men: number; women: number }>({
+    men: 0,
+    women: 0,
+  });
+  const currentPage = isWomenLeague ? pages.women : pages.men;
+
   const isInNameGroup = ["name", "position", "status"].includes(sortColumn);
 
   const nameGroupLabel = React.useMemo(() => {
@@ -463,7 +468,11 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={(page) =>
+            setPages((prev) =>
+              isWomenLeague ? { ...prev, women: page } : { ...prev, men: page }
+            )
+          }
         />
       </div>
 
