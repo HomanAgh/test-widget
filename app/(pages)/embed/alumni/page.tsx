@@ -30,6 +30,11 @@ const AlumniEmbedContent = () => {
     .map((id) => id.trim())
     .filter(Boolean);
 
+  const selectedLeagues = leaguesStr
+    .split(",")
+    .map((l) => l.trim())
+    .filter(Boolean);
+
   // Build minimal { id, name } objects if needed
   const selectedTeams = teamIds.map((id) => ({
     id: parseInt(id, 10) || 0,
@@ -38,11 +43,6 @@ const AlumniEmbedContent = () => {
   }));
   
 
-  // Convert leagues "NHL, AHL" => ["NHL", "AHL"]
-  const selectedLeagues = leaguesStr
-    .split(",")
-    .map((l) => l.trim())
-    .filter(Boolean);
 
   return (
     <div style={{ height: "100vh", overflow: "auto" }}>
