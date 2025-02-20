@@ -7,21 +7,18 @@ export async function POST(req: Request) {
   try {
     console.log("Request received at /api/auth");
 
-    // Step 1: Parse the request body
     const { username, password } = await req.json();
     console.log("Parsed request body:", { username, password });
 
-    // Step 2: Define the path to users.json
     const usersFilePath = join(process.cwd(), "data/users.json");
     console.log("Resolved users.json path:", usersFilePath);
 
-    // Step 3: Read and parse the users.json file
-    let users: User[]; // ✅ Explicitly define type as an array of User
+    let users: User[]; 
 
     try {
       const fileContents = readFileSync(usersFilePath, "utf-8");
       console.log("Read users.json contents:", fileContents);
-      users = JSON.parse(fileContents) as User[]; // ✅ Cast as User[]
+      users = JSON.parse(fileContents) as User[]; 
     } catch (fileError) {
       console.error("Error reading users.json:", fileError);
       return NextResponse.json(
@@ -30,7 +27,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Step 4: Validate credentials (Now supports multiple users)
     const user = users.find((u: User) => u.username === username && u.password === password);
 
     if (user) {

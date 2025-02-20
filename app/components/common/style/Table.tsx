@@ -1,9 +1,5 @@
 import React from "react";
 
-/**
- * Table is the <table> element. 
- * Props let you override background and text colors or add classes.
- */
 interface TableProps {
   children: React.ReactNode;
   tableBgColor?: string;

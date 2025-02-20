@@ -15,16 +15,11 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
 
   return (
     <div>
-      {/* Replace your old TableTitle with a simple heading or your new Title component */}
       <h2 className="text-xl font-bold mb-2">Statistics</h2>
-
       <TableContainer>
-        {/* Table replaces the <table> tag */}
         <Table>
-          {/* TableHead replaces <thead> */}
           <TableHead className="filter brightness-90">
             <TableRow>
-              {/* TableCell with isHeader replaces TableHeader */}
               <TableCell isHeader align="center">GP</TableCell>
               {isGoaltender ? (
                 <>
@@ -43,10 +38,7 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
               )}
             </TableRow>
           </TableHead>
-
-          {/* TableBody replaces <tbody> */}
           <TableBody>
-            {/* One row showing either goalie stats or skater stats */}
             <TableRow>
               <TableCell align="center">
                 {(stats as Goalie).gamesPlayed}

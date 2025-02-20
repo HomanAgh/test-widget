@@ -29,7 +29,7 @@ export interface AlumniPlayer {
   }
   
   
-  export interface DraftPickAPIResponse { // nytt interface, kolla om det funkar
+  export interface DraftPickAPIResponse {
     players: {
       playerId: number;
       draftPick?: string;
@@ -40,7 +40,7 @@ export interface AlumniPlayer {
   export interface PlayerTableProps {
     players: AlumniPlayer[];
     genderFilter: "men" | "women" | "all";
-    pageSize?: number; // default number of players per page, e.g., 15
+    pageSize?: number;
     headerBgColor?: string;
     headerTextColor?: string;
     tableBgColor?: string;

@@ -63,7 +63,7 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
         }),
   }));
 
-  console.log("Mapped Careers:", careers); // Debug log
+  console.log("Mapped Careers:", careers); 
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">

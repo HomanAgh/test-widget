@@ -49,7 +49,6 @@ const leagueRankings: Record<string, number> = {
   "jwhl-w": 32,
 };
 
-// Function to sort league slugs based on ranking
 const sortLeaguesByRank = (slugs: string[]): string[] => {
   return [...slugs].sort(
     (a, b) =>
@@ -58,7 +57,6 @@ const sortLeaguesByRank = (slugs: string[]): string[] => {
   );
 };
 
-// Function to sort League objects by ranking
 const sortLeagueObjectsByRank = (leagues: League[]): League[] => {
   return [...leagues].sort((a, b) => {
     const rankA = leagueRankings[a.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
@@ -98,18 +96,16 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
     onChange([]);
   };
 
-  // Get league details (name & logo)
   const findLeagueDetails = (slug: string): { name: string; logo: string | null } => {
     const allLeagues = [...professionalLeagues, ...juniorLeagues, ...collegeLeagues];
     const found = allLeagues.find((l) => l.slug.toLowerCase() === slug);
 
     return {
-      name: found ? found.name : slug, // Use name if available
-      logo: found?.logo ?? null, // Use logo if available
+      name: found ? found.name : slug, 
+      logo: found?.logo ?? null, 
     };
   };
 
-  // Combine and sort all leagues for Select All functionality
   const allLeagueSlugs = sortLeaguesByRank(
     [...professionalLeagues, ...collegeLeagues, ...juniorLeagues].map((league) =>
       league.slug.toLowerCase()

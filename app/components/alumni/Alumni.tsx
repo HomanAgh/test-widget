@@ -35,7 +35,6 @@ const Alumni: React.FC<AlumniProps> = ({
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Prepare IDs for player fetching
   const selectedTeamIds = useMemo(
     () => selectedTeams.map((t) => t.id),
     [selectedTeams]

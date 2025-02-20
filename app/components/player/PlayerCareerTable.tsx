@@ -9,13 +9,10 @@ interface CareerTableProps {
 const PlayerCareerTable: React.FC<CareerTableProps> = ({
   careers,
 }) => {
-  // Determine if this player is a goalie (to show GAA, SV%, SO)
   const isGoalie = careers.some((career) => career.goalsAgainstAverage !== undefined);
 
   return (
     <div>
-      {/* If you have a custom title component, you can still use it here, 
-          or just use a simple <h2> / <h3>. */}
       <h2 className="text-xl font-bold mb-2">Career Statistics</h2>
 
       <TableContainer>

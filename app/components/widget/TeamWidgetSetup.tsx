@@ -17,7 +17,6 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
     );
   }, [teamId]);
 
-  // The final <iframe> code that user can copy
   const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
 
   return (

@@ -17,11 +17,8 @@ const formatSeason = (seasonSlug: string) => {
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
   return (
     <div className="font-montserrat">
-      {/* Top row: name/flags/team on the left, facts box on the right */}
       <div className="md:flex md:justify-between items-start p-6">
-        {/* Left side: Name, flags, team/league */}
         <div className="md:w-2/3">
-          {/* Flags and Player Name */}
           <div className="flex items-center space-x-2">
             {player.flagUrls?.primary && (
               <Image
@@ -56,7 +53,6 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
             </Link>
           </div>
 
-          {/* Team and League Info */}
           <div className="mt-2">
             <p style={{ fontSize: "1rem", fontWeight: "500" }}>
               <span> #{player.jerseyNumber} </span>
@@ -106,19 +102,16 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
           {/* Age */}
           <div className="col-span-2 text-left whitespace-nowrap">Age:</div>
           <div className="col-span-2 text-right whitespace-nowrap">{player.age}</div>
-
           {/* Height */}
           <div className="col-span-2 text-left whitespace-nowrap">Height:</div>
           <div className="col-span-2 text-right whitespace-nowrap">
             {player.heightMet} cm / {player.heightImp}
           </div>
-
           {/* Weight */}
           <div className="col-span-2 text-left whitespace-nowrap">Weight:</div>
           <div className="col-span-2 text-right whitespace-nowrap">
             {player.weightMet} kg / {player.weightImp} lbs
           </div>
-
           {/* Cap Hit */}
           <div className="col-span-2 text-left whitespace-nowrap">Place of birth:</div>
           <div className="col-span-2 text-right whitespace-nowrap">{player.placeOfBirth || "N/A"}</div>

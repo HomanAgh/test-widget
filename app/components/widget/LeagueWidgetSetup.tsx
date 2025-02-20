@@ -19,12 +19,10 @@ const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({ leagueSlug }) => 
     return `${base}?${params.toString()}`;
   }, [leagueSlug]);
 
-  // The embed code the user can copy
   const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
 
   return (
     <div>
-      {/* Live Example Render */}
       <div className="mt-4">
         <League
           leagueSlug={leagueSlug}

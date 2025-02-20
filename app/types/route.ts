@@ -1,5 +1,3 @@
-//Interfaces for Alumni route
-
 export interface ApiResponse<T> {
     data?: T[];
     _meta?: {

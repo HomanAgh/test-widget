@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import LeagueTable from "./LeagueTable"; // Re-use your existing LeagueTable
+import LeagueTable from "./LeagueTable"; 
 import type { LeagueTableProps } from "@/app/types/league";
 
 interface LeagueProps {
@@ -18,7 +18,6 @@ const League: React.FC<LeagueProps> = ({
   useEffect(() => {
     const fetchLeagueStandings = async () => {
       try {
-        // Fetch the league standings from your API route
         const response = await fetch(`/api/league?league=${encodeURIComponent(leagueSlug)}`);
         if (!response.ok) {
           throw new Error("Failed to fetch league data");
@@ -35,12 +34,10 @@ const League: React.FC<LeagueProps> = ({
     fetchLeagueStandings();
   }, [leagueSlug]);
 
-  // Loading / Error states
   if (loading) return <div className="text-center text-gray-600">{"Loading..."}</div>;
   if (error) return <div className="text-center text-red-600">{"Error:"} {error}</div>;
   if (!standings) return <div className="text-center">{"No standings available"}</div>;
 
-  // Render the League Table
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg">
       {/* Example: You could display some quick info or league name here if desired */}

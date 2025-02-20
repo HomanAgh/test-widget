@@ -37,7 +37,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   nameTextColor = "#0D73A6",
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
-  isWomenLeague = false, // default to false if not provided
+  isWomenLeague = false, 
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     "name" | "position" | "status" | "birthYear" | "draftPick" | ""
@@ -45,7 +45,6 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("asc");
   const [showNameMenu, setShowNameMenu] = React.useState(false);
 
-  // Instead of a single currentPage state, we store separate pages for men and women.
   const [pages, setPages] = React.useState<{ men: number; women: number }>({
     men: 0,
     women: 0,
@@ -57,7 +56,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   const nameGroupLabel = React.useMemo(() => {
     if (sortColumn === "position") return "POSITION";
     if (sortColumn === "status") return "STATUS";
-    return "NAME"; // default
+    return "NAME";
   }, [sortColumn]);
 
   const handleSort = (col: string) => {
@@ -182,7 +181,6 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     }
   };
 
-  // 1) Filter players
   const filteredPlayers = React.useMemo(() => {
     if (genderFilter === "men") {
       return players.filter((p) => p.gender === "male");
@@ -192,7 +190,6 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     return players;
   }, [players, genderFilter]);
 
-  // 2) Sort players
   const sortedPlayers = React.useMemo(() => {
     if (sortDirection === "none" || !sortColumn) return filteredPlayers;
     const arr = [...filteredPlayers];

@@ -3,13 +3,13 @@ import React from "react";
 interface TableContainerProps {
   children: React.ReactNode;
   className?: string;
-  noBorder?: boolean; // New prop to remove border
+  noBorder?: boolean;
 }
 
 const TableContainer: React.FC<TableContainerProps> = ({
   children,
   className = "",
-  noBorder = false, // Default is false (border applied)
+  noBorder = false, 
 }) => {
   return (
     <div
