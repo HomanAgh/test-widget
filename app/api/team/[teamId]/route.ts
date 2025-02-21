@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import {NextResponse } from "next/server";
 
 export async function GET(
-  req: NextRequest,
+  request: Request,
   { params }: { params: { teamId: string } }
 ) {
   const { teamId } = params; 
