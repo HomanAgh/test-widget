@@ -1,10 +1,9 @@
 import {NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { teamId: string } }
-) {
-  const { teamId } = params; 
+export async function GET(props: { params: Promise<{ teamId: string }> }) {
+  
+  const params = await props.params;
+  const teamId: string = await params.teamId;
 
   if (!teamId) {
     return NextResponse.json(

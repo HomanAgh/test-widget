@@ -1,12 +1,11 @@
-import {NextResponse } from "next/server";
+import {NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { leagueSlug: string } }
-) {
-  const leagueSlug = params.leagueSlug;
+export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlug: string }> }) {
 
-  const { searchParams } = new URL(request.url);
+  const params = await props.params;
+  const leagueSlug: string = await params.leagueSlug;
+
+  const { searchParams } = new URL(req.url);
   const season = searchParams.get("season");
 
   const apiKey = process.env.API_KEY;
