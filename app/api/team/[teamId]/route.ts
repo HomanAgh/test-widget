@@ -1,6 +1,6 @@
-import {NextResponse } from "next/server";
+import {NextRequest, NextResponse } from "next/server";
 
-export async function GET(props: { params: Promise<{ teamId: string }> }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ teamId: string }> }) {
   
   const params = await props.params;
   const teamId: string = await params.teamId;
