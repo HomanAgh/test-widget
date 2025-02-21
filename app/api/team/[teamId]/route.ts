@@ -4,7 +4,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { teamId: string } }
 ) {
-  const { teamId } = params; // e.g., "12345"
+  const { teamId } = params; 
 
   if (!teamId) {
     return NextResponse.json(

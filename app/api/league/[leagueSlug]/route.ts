@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  req: NextRequest,
+  request: Request,
   { params }: { params: { leagueSlug: string } }
 ) {
   const leagueSlug = params.leagueSlug;
-  const { searchParams } = new URL(req.url);
+
+  const { searchParams } = new URL(request.url);
   const season = searchParams.get("season");
 
   const apiKey = process.env.API_KEY;
@@ -51,7 +52,6 @@ export async function GET(
     "team.league.logo.url",
   ].join(",");
 
-  // Construct your external API URL
   const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?season=${season}&fields=${leagueField}&apiKey=${apiKey}`;
   console.log("Fetching league standings from:", standingsUrl);
 
