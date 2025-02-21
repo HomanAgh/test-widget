@@ -38,7 +38,7 @@ const LeaguePage: React.FC = () => {
 
       {selectedLeagueSlug && (
         <div className="mt-6">
-          <LeagueWidgetSetup leagueSlug={selectedLeagueSlug} />
+          <LeagueWidgetSetup leagueSlug={selectedLeagueSlug} season="" />
         </div>
       )}
     </PageWrapper>
