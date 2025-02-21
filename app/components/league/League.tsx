@@ -37,7 +37,7 @@ const League: React.FC<LeagueProps> = ({ leagueSlug }) => {
 
       try {
         const response = await fetch(
-          `/api/league?league=${encodeURIComponent(leagueSlug)}&season=${encodeURIComponent(season)}`
+          `/api/league/${leagueSlug}?season=${encodeURIComponent(season)}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch league data");

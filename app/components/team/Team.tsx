@@ -26,7 +26,7 @@ const Team: React.FC<TeamProps> = ({
   useEffect(() => {
     const fetchTeamStats = async () => {
       try {
-        const teamInfoResponse = await fetch(`/api/team?teamId=${encodeURIComponent(teamId)}`);
+        const teamInfoResponse = await fetch(`/api/team/${encodeURIComponent(teamId)}`);
         if (!teamInfoResponse.ok) {
           throw new Error("Failed to fetch team information");
         }

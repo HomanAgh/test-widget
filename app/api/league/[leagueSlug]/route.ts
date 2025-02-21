@@ -1,23 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { leagueSlug: string } }
+) {
+  const leagueSlug = params.leagueSlug;
   const { searchParams } = new URL(req.url);
-  const leagueSlug = searchParams.get("league");
-  // 1) Grab the season from query params
   const season = searchParams.get("season");
 
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
 
   if (!leagueSlug) {
-    console.log("Missing leagueSlug query parameter");
+    console.log("Missing leagueSlug param");
     return NextResponse.json(
-      { error: "League slug is required" },
+      { error: "League slug is required in the path" },
       { status: 400 }
     );
   }
 
-  // 2) Make sure we actually have a season
   if (!season) {
     console.log("Missing season query parameter");
     return NextResponse.json(
@@ -50,8 +51,7 @@ export async function GET(req: NextRequest) {
     "team.league.logo.url",
   ].join(",");
 
-  // 3) Pass season in your API call (assuming the external API supports it)
-  //    Adjust query parameters to match your actual backend format
+  // Construct your external API URL
   const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?season=${season}&fields=${leagueField}&apiKey=${apiKey}`;
   console.log("Fetching league standings from:", standingsUrl);
 
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data); 
+    return NextResponse.json(data);
   } catch (error: any) {
     console.error("Error during fetch:", error.message);
     return NextResponse.json(

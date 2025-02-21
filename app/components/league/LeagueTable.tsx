@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { LeagueTableProps } from "@/app/types/league";
+import { LeagueTableProps, ExtendedTeam } from "@/app/types/league";
 import Image from "next/image";
 
 import {
@@ -43,36 +43,6 @@ function groupBy<T extends object>(arr: T[], key: keyof T) {
     acc[groupName].push(item);
     return acc;
   }, {} as Record<string, T[]>);
-}
-
-interface ExtendedTeam {
-  id: number | string;
-  team: {
-    name: string;
-    league: {
-      name: string;
-      logo?: {
-        url?: string;
-      };
-    };
-    links?: {
-      eliteprospectsUrl?: string;
-    };
-  };
-  season: {
-    slug: string;
-  };
-  stats?: {
-    GP: number;
-    W: number;
-    L: number;
-    OTW?: number;
-    OTL?: number;
-    PTS: number;
-  };
-  logo?: string;
-  conference: string;
-  division: string | null;
 }
 
 interface LeagueTablePropsWithColors extends LeagueTableProps {
