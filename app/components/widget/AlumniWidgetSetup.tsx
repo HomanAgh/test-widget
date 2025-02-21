@@ -46,11 +46,10 @@ const AlumniWidgetSetup: React.FC = () => {
     );
   }, [selectedTeams, selectedLeagues, customColors, includeYouth, youthName]);
 
-  const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
 
   return (
     <div>
-      {/* Search for one or more teams */}
       <SearchBar
         onSelect={(team) => setSelectedTeams([team])}
         onError={(errMsg) => setError(errMsg)}
@@ -60,7 +59,6 @@ const AlumniWidgetSetup: React.FC = () => {
 
       {error && <ErrorMessage error={error} onClose={() => setError(null)} />}
 
-      {/* League selection */}
       <LeagueSelectionDropdown
         professionalLeagues={customLeagues}
         juniorLeagues={customJunLeagues}
@@ -69,13 +67,10 @@ const AlumniWidgetSetup: React.FC = () => {
         onChange={setSelectedLeagues}
       />
 
-      {/* Colors only, without checkbox */}
       <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
         <HexColors customColors={customColors} setCustomColors={setCustomColors} />
       </div>
 
-
-      {/* Preview the Alumni table (optional) */}
       {selectedTeams.length > 0 && (
         <div className="mt-6">
           <Alumni

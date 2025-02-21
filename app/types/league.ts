@@ -37,6 +37,7 @@ export interface LeaguesAPIResponse {
         };
       }[];
     };
+    logoS: string;
   }
 
   export interface LeagueSelectionDropdownProps {

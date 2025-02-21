@@ -17,7 +17,7 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
     );
   }, [teamId]);
 
-  const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
 
   return (
     <div>

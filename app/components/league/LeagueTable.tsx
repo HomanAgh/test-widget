@@ -2,61 +2,122 @@
 
 import React from "react";
 import { LeagueTableProps } from "@/app/types/league";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link } from "@/app/components/common/style";
+import Image from "next/image";
 
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Link,
+} from "@/app/components/common/style";
+
+import Collapsible from "@/app/components/league/Collapsible";
+
+function parseGroupString(groupString: string) {
+  if (!groupString) {
+    return { conference: "Unknown", division: null };
+  }
+  const parts = groupString.split("/");
+  if (parts.length === 2) {
+    return {
+      conference: parts[0].trim(),
+      division: parts[1].trim(),
+    };
+  }
+  return {
+    conference: groupString.trim(),
+    division: null,
+  };
+}
+
+function groupBy<T extends object>(arr: T[], key: keyof T) {
+  return arr.reduce((acc, item) => {
+    const groupValue = item[key] || "Unknown Group";
+    const groupName = String(groupValue);
+    if (!acc[groupName]) {
+      acc[groupName] = [];
+    }
+    acc[groupName].push(item);
+    return acc;
+  }, {} as Record<string, T[]>);
+}
+
+interface ExtendedTeam {
+  id: number | string;
+  team: {
+    name: string;
+    league: {
+      name: string;
+      logo?: {
+        url?: string;
+      };
+    };
+    links?: {
+      eliteprospectsUrl?: string;
+    };
+  };
+  season: {
+    slug: string;
+  };
+  stats?: {
+    GP: number;
+    W: number;
+    L: number;
+    OTW?: number;
+    OTL?: number;
+    PTS: number;
+  };
+  logo?: string;
+  conference: string;
+  division: string | null;
+}
 
 interface LeagueTablePropsWithColors extends LeagueTableProps {
   backgroundColor?: string;
   textColor?: string;
 }
 
-const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
-  standings,
-}) => {
+const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
   if (!standings || !standings.data) return null;
 
-  const leagueName = standings.data[0]?.team.league.name || "Unknown League";
-  const seasonTitle = standings.data[0]?.season.slug || "Unknown Season";
-  const hasGroups = standings.data.some((team) => team.group);
-  const groups: { [key: string]: any[] } = standings.data.reduce(
-    (acc: { [key: string]: any[] }, team: any) => {
-      const groupName = team.group || "Unknown Group";
-      if (!acc[groupName]) {
-        acc[groupName] = [];
-      }
-      acc[groupName].push(team);
-      return acc;
-    },
-    {}
-  );
+  const rawTeams = standings.data;
+  if (!rawTeams || rawTeams.length === 0) return null;
 
-  const renderTeamRow = (team: any, index: number) => (
-    <TableRow
-      key={team.id || `team-${index}`}
+  const teams: ExtendedTeam[] = rawTeams.map((t: any, index: number) => {
+    const { conference, division } = parseGroupString(t.group || "");
+    return {
+      ...t,
+      id: t.id ?? index,
+      conference,
+      division,
+      logo: t.teamLogo?.small,
+    };
+  });
 
-      className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+  const leagueName = teams[8]?.team.league?.name || "Unknown League";
+  const leagueLogo = teams[8]?.team.league?.logo?.url;
+  const seasonTitle = teams[0]?.season?.slug || "Unknown Season";
+
+  const leagueEpUrl = `https://www.eliteprospects.com/league/${leagueName
+    .toLowerCase()
+    .replace(/\s+/g, "-")}/${seasonTitle}`;
+
+  const renderTable = (teamArray: ExtendedTeam[]) => (
+    <Table
+      className="
+        border-separate 
+        border-spacing-0 
+        w-full 
+        rounded-lg
+        border 
+        border-customGrayMedium
+      "
     >
-      <TableCell align="center">{index + 1}</TableCell>
-      <TableCell align="left">
-        <Link
-          href={team.team.links?.eliteprospectsUrl}
-        >
-          {team.team.name || "Unknown Team"}
-        </Link>
-      </TableCell>
-      <TableCell align="center">{team.stats?.GP || 0}</TableCell>
-      <TableCell align="center">{team.stats?.W || 0}</TableCell>
-      <TableCell align="center">{team.stats?.L || 0}</TableCell>
-      <TableCell align="center">{team.stats?.OTW || 0}</TableCell>
-      <TableCell align="center">{team.stats?.OTL || 0}</TableCell>
-      <TableCell align="center">{team.stats?.PTS || 0}</TableCell>
-    </TableRow>
-  );
-
-  const renderTable = (teams: any[]) => (
-    <Table className="table-auto border-collapse border border-gray-300 w-full text-sm">
       <TableHead>
-        <TableRow className="bg-red-600">
+        <TableRow className="bg-red-600 text-white">
           <TableCell isHeader align="center">#</TableCell>
           <TableCell isHeader align="left">Team</TableCell>
           <TableCell isHeader align="center">GP</TableCell>
@@ -64,36 +125,151 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
           <TableCell isHeader align="center">L</TableCell>
           <TableCell isHeader align="center">OTW</TableCell>
           <TableCell isHeader align="center">OTL</TableCell>
-          <TableCell isHeader align="center">TP</TableCell>
+          <TableCell isHeader align="center">PTS</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {teams.map((team: any, index: number) => renderTeamRow(team, index))}
+        {teamArray.map((team, i) => (
+          <TableRow
+            key={team.id}
+            className={i % 2 === 0 ? "bg-gray-100" : "bg-white"}
+          >
+            <TableCell align="center">{i + 1}</TableCell>
+            <TableCell align="left" style={{ color: "#0D73A6" }}>
+              <Link href={team.team.links?.eliteprospectsUrl ?? "#"}>
+                {team.logo && (
+                  <Image
+                    src={team.logo}
+                    alt={`${team.team.name ?? "Team"} logo`}
+                    width={20}
+                    height={20}
+                    className="inline-block mr-2 align-middle"
+                  />
+                )}
+                {team.team.name ?? "Unknown Team"}
+              </Link>
+            </TableCell>
+            <TableCell align="center">{team.stats?.GP ?? 0}</TableCell>
+            <TableCell align="center">{team.stats?.W ?? 0}</TableCell>
+            <TableCell align="center">{team.stats?.L ?? 0}</TableCell>
+            <TableCell align="center">{team.stats?.OTW ?? 0}</TableCell>
+            <TableCell align="center">{team.stats?.OTL ?? 0}</TableCell>
+            <TableCell align="center">{team.stats?.PTS ?? 0}</TableCell>
+          </TableRow>
+        ))}
       </TableBody>
     </Table>
   );
 
+  const byConference = groupBy(teams, "conference");
+  const conferenceNames = Object.keys(byConference);
+
+  // Main heading
+  const renderHeading = () => (
+    <div
+      className="flex items-center justify-center mb-4"
+      style={{ color: "#0D73A6" }}
+    >
+      {leagueLogo && (
+        <Image
+          src={leagueLogo}
+          alt={`${leagueName} logo`}
+          width={30}
+          height={30}
+          className="mr-2"
+        />
+      )}
+      <Link href={leagueEpUrl} className="text-2xl font-bold hover:underline">
+        {leagueName} Season: {seasonTitle}
+      </Link>
+    </div>
+  );
+
+  if (conferenceNames.length === 1) {
+    const singleConferenceName = conferenceNames[0];
+    const teamsInConf = byConference[singleConferenceName];
+    const byDivision = groupBy(teamsInConf, "division");
+    const divisionNames = Object.keys(byDivision).filter((d) => d !== "null");
+
+    if (divisionNames.length <= 1) {
+      return (
+        <div>
+          {renderHeading()}
+          <TableContainer noBorder>{renderTable(teams)}</TableContainer>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        {renderHeading()}
+        <TableContainer noBorder>
+          <Collapsible
+            title={
+              <span className="text-lg font-semibold">
+                {singleConferenceName}
+              </span>
+            }
+          >
+            {divisionNames.map((divName) => {
+              if (!divName || divName === "null") return null;
+              const teamsDiv = byDivision[divName];
+              return (
+                <Collapsible
+                  key={divName}
+                  title={<span className="text-base ml-4">{divName}</span>}
+                >
+                  {renderTable(teamsDiv)}
+                </Collapsible>
+              );
+            })}
+          </Collapsible>
+        </TableContainer>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/* League + Season Title */}
-      <h2 className="text-lg font-bold text-center mb-2">
-        {leagueName} Season: {seasonTitle}
-      </h2>
+      {renderHeading()}
+      <TableContainer noBorder>
+        {conferenceNames.map((conf) => {
+          const teamsInConf = byConference[conf];
+          const byDivision = groupBy(teamsInConf, "division");
+          const divisionNames = Object.keys(byDivision).filter(
+            (div) => div !== "null" && div !== "Unknown Group"
+          );
 
-      <TableContainer>
-        {/* If no groups, just one table. Otherwise, one table per group. */}
-        {!hasGroups ? (
-          renderTable(standings.data)
-        ) : (
-          Object.entries(groups).map(([groupName, teams]: [string, any[]]) => (
-            <div key={groupName} className="mb-6">
-              <h3 className="text-md font-bold bg-blue-600 text-white p-2">
-                {groupName}
-              </h3>
-              {renderTable(teams)}
-            </div>
-          ))
-        )}
+          if (divisionNames.length === 0) {
+            return (
+              <Collapsible
+                key={conf}
+                title={<span className="text-lg">{conf}</span>}
+              >
+                {renderTable(teamsInConf)}
+              </Collapsible>
+            );
+          }
+
+          return (
+            <Collapsible
+              key={conf}
+              title={<span className="text-lg">{conf}</span>}
+            >
+              {divisionNames.map((divName) => {
+                const teamsDiv = byDivision[divName];
+                return (
+                  <Collapsible
+                    key={divName}
+                    title={<span className="text-base font-medium ml-4">{divName}</span>}
+                  >
+                    {renderTable(teamsDiv)}
+                  </Collapsible>
+                );
+              })}
+            </Collapsible>
+          );
+        })}
       </TableContainer>
     </div>
   );
