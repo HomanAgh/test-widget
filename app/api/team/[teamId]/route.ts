@@ -1,12 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import {NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const teamId = searchParams.get("teamId");
+export async function GET(req: NextRequest, props: { params: Promise<{ teamId: string }> }) {
+  
+  const params = await props.params;
+  const teamId: string = await params.teamId;
 
   if (!teamId) {
     return NextResponse.json(
-      { error: "Team ID is required" },
+      { error: "Team ID is required in the path" },
       { status: 400 }
     );
   }
@@ -30,10 +31,11 @@ export async function GET(req: NextRequest) {
     "logo.medium",
     "logo.large",
     "logo.colors",
-  ].join(",")
+  ].join(",");
 
+  // Construct the external API URL, inserting `teamId`
   const teamUrl = `${apiBaseUrl}/teams/${teamId}?apiKey=${apiKey}&fields=${encodeURIComponent(teamField)}`;
-  console.log("Fetching team data from URL:", teamUrl);
+  console.log("Fetching team data from:", teamUrl);
 
   try {
     const teamResponse = await fetch(teamUrl, { method: "GET" });

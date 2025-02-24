@@ -37,6 +37,7 @@ export interface LeaguesAPIResponse {
         };
       }[];
     };
+    logoS: string;
   }
 
   export interface LeagueSelectionDropdownProps {
@@ -46,5 +47,35 @@ export interface LeaguesAPIResponse {
     selectedLeagues: string[]; 
     onChange: (selected: string[]) => void;
   }
+  export interface ExtendedTeam {
+    id: number | string;
+    team: {
+      name: string;
+      league: {
+        name: string;
+        logo?: {
+          url?: string;
+        };
+      };
+      links?: {
+        eliteprospectsUrl?: string;
+      };
+    };
+    season: {
+      slug: string;
+    };
+    stats?: {
+      GP: number;
+      W: number;
+      L: number;
+      OTW?: number;
+      OTL?: number;
+      PTS: number;
+    };
+    logo?: string;
+    conference: string;
+    division: string | null;
+  }
+  
 
   

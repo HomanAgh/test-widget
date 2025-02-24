@@ -28,7 +28,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     );
   }, [playerId, gameLimit, viewMode, showSummary]);
 
-  const iframeCode = `<iframe src="${embedUrl}" class="alumni-iframe"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
 
   return (
     <div>

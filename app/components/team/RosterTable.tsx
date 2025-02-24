@@ -93,6 +93,7 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster }) => {
           href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
             player.firstName
           )}-${encodeURIComponent(player.lastName)}`}
+          style={{ color: "#0D73A6" }}
         >
           {player.firstName} {player.lastName} ({player.position})
         </Link>

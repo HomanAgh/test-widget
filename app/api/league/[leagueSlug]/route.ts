@@ -1,16 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
+import {NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlug: string }> }) {
+
+  const params = await props.params;
+  const leagueSlug: string = await params.leagueSlug;
+
   const { searchParams } = new URL(req.url);
-  const leagueSlug = searchParams.get("league");
+  const season = searchParams.get("season");
 
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
 
   if (!leagueSlug) {
-    console.log("Missing leagueSlug query parameter");
+    console.log("Missing leagueSlug param");
     return NextResponse.json(
-      { error: "League slug is required" },
+      { error: "League slug is required in the path" },
+      { status: 400 }
+    );
+  }
+
+  if (!season) {
+    console.log("Missing season query parameter");
+    return NextResponse.json(
+      { error: "Season is required" },
       { status: 400 }
     );
   }
@@ -35,23 +47,21 @@ export async function GET(req: NextRequest) {
     "stats.PTS",
     "season.slug",
     "group",
-  ].join(",")
+    "teamLogo.small",
+    "team.league.logo.url",
+  ].join(",");
 
-  const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?fields=${leagueField}&apiKey=${apiKey}`;
+  const standingsUrl = `${apiBaseUrl}/leagues/${leagueSlug}/standings?season=${season}&fields=${leagueField}&apiKey=${apiKey}`;
   console.log("Fetching league standings from:", standingsUrl);
 
   try {
     const response = await fetch(standingsUrl, { method: "GET" });
-
-    console.log("API Response Status:", response.status);
     if (!response.ok) {
       throw new Error(`Failed to fetch standings: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log("Fetched Data:", JSON.stringify(data, null, 2));
-
-    return NextResponse.json(data); 
+    return NextResponse.json(data);
   } catch (error: any) {
     console.error("Error during fetch:", error.message);
     return NextResponse.json(

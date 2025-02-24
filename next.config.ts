@@ -4,13 +4,12 @@ const nextConfig: NextConfig = {
 
   productionBrowserSourceMaps: false,
 
-  // Configuration for server-side runtime
   serverRuntimeConfig: {
-    hostname: 'localhost.st', // Custom hostname
+    hostname: 'localhost.st', 
   },
 
     images: {
-      domains: ['files.eliteprospects.com'], // Add the external domain here
+      domains: ['files.eliteprospects.com'], 
   },
 };
 

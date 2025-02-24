@@ -36,7 +36,6 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
         }`}
     />
     
-    {/* Absolute overlay - no separate click handler */}
     {!showCode && (
         <div className="absolute inset-0 flex items-center justify-center cursor-pointer">
         <span className="bg-white px-4 py-2 rounded-md text-gray-700">
@@ -46,8 +45,6 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     )}
     </div>
 
-
-      {/* Buttons for "Preview" and "Copy" */}
         <div className="flex space-x-2 mt-2">
         <button
           onClick={() => copyToClipboard(iframeCode)}

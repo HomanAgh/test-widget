@@ -26,8 +26,7 @@ const Team: React.FC<TeamProps> = ({
   useEffect(() => {
     const fetchTeamStats = async () => {
       try {
-        // Fetch team information
-        const teamInfoResponse = await fetch(`/api/team?teamId=${encodeURIComponent(teamId)}`);
+        const teamInfoResponse = await fetch(`/api/team/${encodeURIComponent(teamId)}`);
         if (!teamInfoResponse.ok) {
           throw new Error("Failed to fetch team information");
         }
@@ -78,7 +77,8 @@ const Team: React.FC<TeamProps> = ({
                   height={48}
                 />
               )}
-              <div className="flex flex-col">
+              <div className="flex flex-col "
+                   style={{ color: "#0D73A6" }}>
                 <h2 className="text-[24px] font-bold leading-[26px]" >
                   <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
                     {teamStats.team.name}
