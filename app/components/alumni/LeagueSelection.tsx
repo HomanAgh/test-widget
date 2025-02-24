@@ -8,7 +8,7 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
 
 // Predefined league rankings (all keys in lower-case for consistency)
-const leagueRankings: Record<string, number> = {
+export const leagueRankings: Record<string, number> = {
   // Professional Leagues
   "nhl": 1,
   "shl": 2,
@@ -49,7 +49,7 @@ const leagueRankings: Record<string, number> = {
   "jwhl-w": 32,
 };
 
-const sortLeaguesByRank = (slugs: string[]): string[] => {
+export const sortLeaguesByRank = (slugs: string[]): string[] => {
   return [...slugs].sort(
     (a, b) =>
       (leagueRankings[a] ?? Number.MAX_SAFE_INTEGER) -
@@ -57,7 +57,7 @@ const sortLeaguesByRank = (slugs: string[]): string[] => {
   );
 };
 
-const sortLeagueObjectsByRank = (leagues: League[]): League[] => {
+export const sortLeagueObjectsByRank = (leagues: League[]): League[] => {
   return [...leagues].sort((a, b) => {
     const rankA = leagueRankings[a.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
     const rankB = leagueRankings[b.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;

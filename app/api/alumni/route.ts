@@ -163,7 +163,9 @@ async function fetchAndMergePlayerStats(
       const teamObj = {
         name: item.team.name || 'Unknown Team',
         leagueLevel: leagueLevel ?? 'unknown',
+        leagueSlug: item.team.league?.slug ?? 'unknown',
       };
+      console.log(teamObj);
 
       const alreadyExists = existing.teams.find(
         (t) => t.name === teamObj.name && t.leagueLevel === teamObj.leagueLevel
@@ -174,6 +176,7 @@ async function fetchAndMergePlayerStats(
     }
   } catch (err) {
     console.error('Error in fetchAndMergePlayerStats:', err);
+    
   }
 }
 
@@ -263,7 +266,7 @@ export async function GET(request: Request) {
     return NextResponse.json(alumniRouteCache.get(cacheKey), {
       status: 200,
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=120',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
       },
     });
   }
@@ -338,7 +341,7 @@ export async function GET(request: Request) {
     return NextResponse.json(responseData, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=120',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
       },
     });
   } catch (error) {
