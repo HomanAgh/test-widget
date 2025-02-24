@@ -21,6 +21,7 @@ import {
 import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
 import Image from "next/image";
+import { leagueRankings } from "./LeagueSelection";
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
@@ -39,6 +40,16 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   evenRowColor = "#ffffff",
   isWomenLeague = false, 
 }) => {
+  function sortTeamsByLeagueRank(teams: any[]) {
+    return [...teams].sort((a, b) => {
+      const slugA = a.leagueSlug?.toLowerCase() ?? "";
+      const slugB = b.leagueSlug?.toLowerCase() ?? "";
+      const rankA = leagueRankings[slugA] ?? Number.MAX_SAFE_INTEGER;
+      const rankB = leagueRankings[slugB] ?? Number.MAX_SAFE_INTEGER;
+      return rankA - rankB;
+    });
+  }
+
   const [sortColumn, setSortColumn] = React.useState<
     "name" | "position" | "status" | "birthYear" | "draftPick" | ""
   >("name");
@@ -379,18 +390,21 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 ? evenRowColor
                 : oddRowColor;
 
-              const juniorTeams =
-                player.teams?.filter((t) =>
+              const juniorTeams = sortTeamsByLeagueRank(
+                (player.teams ?? []).filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("junior")
-                ) || [];
-              const collegeTeams =
-                player.teams?.filter((t) =>
+                )
+              );
+              const collegeTeams = sortTeamsByLeagueRank(
+                (player.teams ?? []).filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("college")
-                ) || [];
-              const professionalTeams =
-                player.teams?.filter((t) =>
+                )
+              );
+              const professionalTeams = sortTeamsByLeagueRank(
+                (player.teams ?? []).filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("professional")
-                ) || [];
+                )
+              );
 
               const fullName = player?.name || "";
               const [firstName, ...rest] = fullName.split(" ");
@@ -413,7 +427,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                   </TableCell>
 
                   <TableCell align="center">
-                    {player.birthYear ?? "N/A"}
+                    {player.birthYear ?? "-"}
                   </TableCell>
 
                   {/* Render NHL DP cell only if not women's league */}
