@@ -16,9 +16,15 @@ export interface Team {
     firstName: string;
     lastName: string;
     position: string;
+    placeOfBirth: string;
+    shoots: string;
+    catches: string;
+    weight: string
+    height: string;
     jerseyNumber: string;
     dateOfBirth: string; 
     flagUrl: string | null; 
+    playerRole: string;
   }
   
   export interface TeamItem {

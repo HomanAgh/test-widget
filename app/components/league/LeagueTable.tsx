@@ -133,8 +133,6 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
 
   const byConference = groupBy(teams, "conference");
   const conferenceNames = Object.keys(byConference);
-
-  // Main heading
   const renderHeading = () => (
     <div
       className="flex items-center justify-center mb-4"

@@ -11,8 +11,6 @@ const collapsibleContainerStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-  gap: "24px",
-  paddingBottom: "12px",
   alignSelf: "stretch",
 };
 
@@ -22,7 +20,7 @@ interface CollapsibleProps {
 }
 
 const Collapsible: React.FC<CollapsibleProps> = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const toggleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -30,10 +28,9 @@ const Collapsible: React.FC<CollapsibleProps> = ({ title, children }) => {
 
   return (
     <div style={collapsibleContainerStyle}>
-      {/* The clickable header row */}
       <div
         onClick={toggleOpen}
-        className="cursor-pointer flex items-center gap-2 border-b border-gray-300 pb-[24px] w-full"
+        className="cursor-pointer flex items-center gap-2 border-b border-gray-300 w-full pb-[12px] pt-[12px]"
       >
         <span className="font-bold uppercase">{title}</span>
         {isOpen ? (
@@ -42,8 +39,6 @@ const Collapsible: React.FC<CollapsibleProps> = ({ title, children }) => {
           <FaChevronDown className="w-4 h-4" />
         )}
       </div>
-
-      {/* The collapsible content */}
       {isOpen && (
         <div className="w-full">
           {children}
