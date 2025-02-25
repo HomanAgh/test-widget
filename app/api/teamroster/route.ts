@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { platform } from "os";
 
 const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string) => {
   try {
@@ -41,9 +42,15 @@ export async function GET(req: NextRequest) {
       "player.firstName",
       "player.lastName",
       "player.position",
+      "player.placeOfBirth",
+      "player.shoots",
+      "player.catches",
+      "player.weight.metrics",
+      "player.height.metrics",
       "jerseyNumber",
       "player.nationality.slug",
       "player.dateOfBirth",
+      "playerRole",
     ].join(",")
   
     const rosterUrl = `${apiBaseUrl}/teams/${teamId}/roster?fields=${teamField}&apiKey=${apiKey}`;
@@ -76,9 +83,15 @@ export async function GET(req: NextRequest) {
           firstName: entry.player?.firstName || "Unknown",
           lastName: entry.player?.lastName || "Unknown",
           position: entry.player?.position || "Unknown",
+          placeOfBirth: entry.player?.placeOfBirth || "Unknown",
+          shoots: entry.player?.shoots || "Unknown",
+          catches: entry.player?.catches || "Unknown",
+          weight: entry.player?.weight?.metrics || "Unknown",
+          height: entry.player?.height?.metrics || "Unknown",
           jerseyNumber: entry.jerseyNumber || "N/A",
           dateOfBirth: entry.player?.dateOfBirth || "N/A",
           flagUrl: flagUrl || null, 
+          playerRole: entry.playerRole,
         };
       })
     );
