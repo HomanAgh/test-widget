@@ -188,8 +188,6 @@ async function fetchAndMergePlayerStats(
         leagueSlug: leagueSlug ?? 'unknown',
       };
 
-      console.log(teamObj);
-
       const alreadyExists = existing.teams.find(
         (t) =>
           t.name === teamObj.name &&

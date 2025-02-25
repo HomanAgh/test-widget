@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { platform } from "os";
 
 const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string) => {
   try {
