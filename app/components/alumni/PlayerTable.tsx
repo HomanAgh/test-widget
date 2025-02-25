@@ -40,18 +40,61 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   evenRowColor = "#ffffff",
   isWomenLeague = false, 
 }) => {
-  function sortTeamsByLeagueRank(teams: any[]) {
-    return [...teams].sort((a, b) => {
-      const slugA = a.leagueSlug?.toLowerCase() ?? "";
-      const slugB = b.leagueSlug?.toLowerCase() ?? "";
-      const rankA = leagueRankings[slugA] ?? Number.MAX_SAFE_INTEGER;
-      const rankB = leagueRankings[slugB] ?? Number.MAX_SAFE_INTEGER;
-      return rankA - rankB;
-    });
+  function sortTeamsByLeagueRankThenName(teams: any[]) {
+  return [...teams].sort((a, b) => {
+    const slugA = a.leagueSlug?.toLowerCase() ?? "";
+    const slugB = b.leagueSlug?.toLowerCase() ?? "";
+    const rankA = leagueRankings[slugA] ?? Number.MAX_SAFE_INTEGER;
+    const rankB = leagueRankings[slugB] ?? Number.MAX_SAFE_INTEGER;
+
+    // 1) If ranks differ, return the difference
+    if (rankA !== rankB) {
+      return rankA - rankB; 
+    }
+
+    // 2) If ranks are the same, tie-break alphabetically by team name
+    const nameA = a.name ?? "";
+    const nameB = b.name ?? "";
+    return nameA.localeCompare(nameB);
+  });
+}
+
+
+function getBestCategoryRankAndTeam(
+  player: any,
+  category: "junior" | "college" | "professional"
+) {
+  let bestRank = Number.MAX_SAFE_INTEGER;
+  let bestTeamName = "";
+
+  for (const team of player.teams ?? []) {
+    // Only consider teams in the given category
+    if ((team.leagueLevel ?? "").toLowerCase().includes(category)) {
+      // Look up rank from leagueRankings
+      const slug = team.leagueSlug?.toLowerCase() ?? "";
+      const rank = leagueRankings[slug] ?? Number.MAX_SAFE_INTEGER;
+
+      // If this team is better (lower) rank, update
+      if (rank < bestRank) {
+        bestRank = rank;
+        bestTeamName = team.name ?? "";
+      } else if (rank === bestRank) {
+        // If there's a tie in rank, pick whichever team name is alphabetically first
+        const currentName = team.name ?? "";
+        if (currentName.localeCompare(bestTeamName) < 0) {
+          bestTeamName = currentName;
+        }
+      }
+    }
   }
 
+  return { bestRank, bestTeamName };
+}
+
+  
+
   const [sortColumn, setSortColumn] = React.useState<
-    "name" | "position" | "status" | "birthYear" | "draftPick" | ""
+    "name" | "position" | "status" | "birthYear" | "draftPick" | "junior" | "college" | "pro" | ""
   >("name");
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("asc");
   const [showNameMenu, setShowNameMenu] = React.useState(false);
@@ -189,6 +232,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
             <div>{contentForStatus}</div>
           </div>
         );
+        
     }
   };
 
@@ -256,6 +300,64 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
             : overallB - overallA;
         });
         break;
+        case "junior": {
+          arr.sort((a, b) => {
+            const { bestRank: rankA, bestTeamName: nameA } = getBestCategoryRankAndTeam(a, "junior");
+            const { bestRank: rankB, bestTeamName: nameB } = getBestCategoryRankAndTeam(b, "junior");
+        
+            if (rankA === rankB) {
+              // Tie-break alphabetically by bestTeamName
+              return sortDirection === "asc"
+                ? nameA.localeCompare(nameB)
+                : nameB.localeCompare(nameA);
+            } else {
+              // Otherwise, sort by rank
+              return sortDirection === "asc"
+                ? rankA - rankB
+                : rankB - rankA;
+            }
+          });
+          break;
+        }
+        
+    
+        case "college": {
+          arr.sort((a, b) => {
+            const { bestRank: rankA, bestTeamName: nameA } = getBestCategoryRankAndTeam(a, "college");
+            const { bestRank: rankB, bestTeamName: nameB } = getBestCategoryRankAndTeam(b, "college");
+        
+            if (rankA === rankB) {
+              return sortDirection === "asc"
+                ? nameA.localeCompare(nameB)
+                : nameB.localeCompare(nameA);
+            } else {
+              return sortDirection === "asc"
+                ? rankA - rankB
+                : rankB - rankA;
+            }
+          });
+          break;
+        }
+        
+        case "pro": {
+          arr.sort((a, b) => {
+            const { bestRank: rankA, bestTeamName: nameA } = getBestCategoryRankAndTeam(a, "professional");
+            const { bestRank: rankB, bestTeamName: nameB } = getBestCategoryRankAndTeam(b, "professional");
+        
+            if (rankA === rankB) {
+              return sortDirection === "asc"
+                ? nameA.localeCompare(nameB)
+                : nameB.localeCompare(nameA);
+            } else {
+              return sortDirection === "asc"
+                ? rankA - rankB
+                : rankB - rankA;
+            }
+          });
+          break;
+        }
+        
+    
       default:
         break;
     }
@@ -390,17 +492,17 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 ? evenRowColor
                 : oddRowColor;
 
-              const juniorTeams = sortTeamsByLeagueRank(
+              const juniorTeams = sortTeamsByLeagueRankThenName(
                 (player.teams ?? []).filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("junior")
                 )
               );
-              const collegeTeams = sortTeamsByLeagueRank(
+              const collegeTeams = sortTeamsByLeagueRankThenName(
                 (player.teams ?? []).filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("college")
                 )
               );
-              const professionalTeams = sortTeamsByLeagueRank(
+              const professionalTeams = sortTeamsByLeagueRankThenName(
                 (player.teams ?? []).filter((t) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("professional")
                 )
