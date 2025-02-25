@@ -29,6 +29,7 @@ export interface ApiResponse<T> {
   export interface TeamStatsItem {
     league?: {
       leagueLevel?: string;
+      slug?: string;
     };
   }
   
@@ -58,6 +59,7 @@ export interface ApiResponse<T> {
     teams: {
       name: string;
       leagueLevel: string | null;
+      leagueSlug: string | null;
     }[];
     draftPick?: DraftSelection | null; 
   }
