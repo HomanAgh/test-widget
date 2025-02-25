@@ -20,7 +20,7 @@ const Table: React.FC<TableProps> = ({
         backgroundColor: tableBgColor,
         color: tableTextColor,
         WebkitOverflowScrolling: "touch",
-        touchAction: "pan-x",
+        touchAction: "pan-x pan-y",
       }}
     >
       {children}
