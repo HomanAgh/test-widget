@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
-import { ApiResponse, PlayerStatsItem, TeamStatsItem, DraftSelection, CombinedPlayer } from '@/app/types/route';
+import {
+  ApiResponse,
+  PlayerStatsItem,
+  TeamStatsItem,
+  DraftSelection,
+  CombinedPlayer,
+} from '@/app/types/route';
 
 const alumniRouteCache = new Map<string, any>();
 const apiKey = process.env.API_KEY;
 const apiBaseUrl = process.env.API_BASE_URL;
-const leagueLevelCache: Map<number, string | null> = new Map();
+
+type LeagueFallback = {
+  level: string | null;
+  slug: string | null;
+};
+
+const leagueFallbackCache: Map<number, LeagueFallback> = new Map();
 
 function buildCacheKey(
   teamIdsParam: string | null,
@@ -22,35 +34,37 @@ function buildCacheKey(
   });
 }
 
-async function fetchLeagueLevelFallback(teamId: number): Promise<string | null> {
-  if (leagueLevelCache.has(teamId)) {
-    return leagueLevelCache.get(teamId) || null;
+async function fetchLeagueLevelAndSlug(teamId: number): Promise<LeagueFallback> {
+  if (leagueFallbackCache.has(teamId)) {
+    return leagueFallbackCache.get(teamId)!;
   }
 
-  try {
-    const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}&fields=league.leagueLevel`;
-    console.log(`Alumni: fetching fallback leagueLevel => ${fallbackUrl}`);
+  const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}&fields=league.leagueLevel,league.slug`;
+  console.log(`Alumni: fallback => ${fallbackUrl}`);
 
+  try {
     const resp = await fetch(fallbackUrl);
     if (!resp.ok) {
       console.error(`Failed fallback for teamId=${teamId}: ${resp.statusText}`);
-      leagueLevelCache.set(teamId, null);
-      return null;
+      leagueFallbackCache.set(teamId, { level: null, slug: null });
+      return { level: null, slug: null };
     }
 
     const fallbackData: ApiResponse<TeamStatsItem> = await resp.json();
     if (fallbackData.data && fallbackData.data.length > 0) {
       const level = fallbackData.data[0].league?.leagueLevel ?? null;
-      leagueLevelCache.set(teamId, level);
-      return level;
+      const slug = fallbackData.data[0].league?.slug ?? null;
+      leagueFallbackCache.set(teamId, { level, slug });
+      return { level, slug };
     }
 
-    leagueLevelCache.set(teamId, null);
-    return null;
+    // no records found
+    leagueFallbackCache.set(teamId, { level: null, slug: null });
+    return { level: null, slug: null };
   } catch (error) {
     console.error(`Error in fallback for teamId=${teamId}:`, error);
-    leagueLevelCache.set(teamId, null);
-    return null;
+    leagueFallbackCache.set(teamId, { level: null, slug: null });
+    return { level: null, slug: null };
   }
 }
 
@@ -154,29 +168,41 @@ async function fetchAndMergePlayerStats(
 
       const existing = playerMap.get(pid)!;
 
-      let leagueLevel = item.team.league?.leagueLevel || null;
+      let leagueLevel = item.team.league?.leagueLevel ?? null;
+      let leagueSlug = item.team.league?.slug ?? null;
+
       const teamId = item.team.id;
-      if (!leagueLevel && teamId) {
-        leagueLevel = await fetchLeagueLevelFallback(teamId);
+      if ((teamId && !leagueLevel) || (teamId && !leagueSlug)) {
+        const fallback = await fetchLeagueLevelAndSlug(teamId);
+        if (!leagueLevel) {
+          leagueLevel = fallback.level;
+        }
+        if (!leagueSlug) {
+          leagueSlug = fallback.slug;
+        }
       }
 
       const teamObj = {
         name: item.team.name || 'Unknown Team',
         leagueLevel: leagueLevel ?? 'unknown',
-        leagueSlug: item.team.league?.slug ?? 'unknown',
+        leagueSlug: leagueSlug ?? 'unknown',
       };
+
       console.log(teamObj);
 
       const alreadyExists = existing.teams.find(
-        (t) => t.name === teamObj.name && t.leagueLevel === teamObj.leagueLevel
+        (t) =>
+          t.name === teamObj.name &&
+          t.leagueLevel === teamObj.leagueLevel &&
+          t.leagueSlug === teamObj.leagueSlug
       );
+
       if (!alreadyExists) {
         existing.teams.push(teamObj);
       }
     }
   } catch (err) {
     console.error('Error in fetchAndMergePlayerStats:', err);
-    
   }
 }
 
@@ -271,6 +297,7 @@ export async function GET(request: Request) {
     });
   }
 
+  // Parse the query params
   const teamIds = teamIdsParam
     ? teamIdsParam.split(',').map((idStr) => parseInt(idStr.trim(), 10))
     : [];
@@ -315,7 +342,6 @@ export async function GET(request: Request) {
       position: p.player.position,
       status: p.player.status,
       youthTeam: p.player.youthTeam,
-
       draftPick: p.draftPick
         ? {
             year: p.draftPick.year,
