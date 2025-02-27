@@ -21,10 +21,8 @@ import {
 import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
 import Image from "next/image";
-import { leagueRankings } from "./LeagueSelection";
 import {
   sortTeamsByLeagueRankThenName,
-  getBestCategoryRankAndTeam,
   filterAndSortPlayers,
 } from "./PlayerTableProcessor";
 
