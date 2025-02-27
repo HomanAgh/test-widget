@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import Team from "@/app/components/team/Team";
 import { useSearchParams } from "next/navigation";
+import ResizeObserver from "@/app/components/embed/ResizeObserver";
 
 const EmbedTeam = () => {
   return (
@@ -22,12 +23,13 @@ const TeamPageContent = () => {
   }
 
   return (
-    <div style={{ height: "100vh", overflow: "auto" }}>
-      <Team
-        teamId={teamId}
-
-      />
-    </div>
+    <ResizeObserver>
+      <div style={{ overflow: "auto" }}>
+        <Team
+          teamId={teamId}
+        />
+      </div>
+    </ResizeObserver>
   );
 };
 
