@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Simple Widget Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 400px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Super Simple Widget Test</h1>
+    
+    <div class="instructions">
+        <p><strong>Instructions:</strong></p>
+        <ol>
+            <li>Make sure your development server is running at <code>http://localhost:3000</code></li>
+            <li>Replace the example script tag below with your own script tag</li>
+            <li>Save the file and refresh the page to see your widget</li>
+        </ol>
+    </div>
+    
+    <h2>Your Widget Will Appear Below:</h2>
+    <div class="container">
+        <!-- REPLACE THIS SCRIPT TAG WITH YOUR OWN -->
+        <script
+        src="http://localhost:3000/widget-embed.js"
+        data-widget-type="alumni"
+        data-team-ids="18741"
+        data-leagues="nhl,shl,ahl,khl,nl,liiga,czechia,del,echl,icehl,slovakia,hockeyallsvenskan,ncaa,usports,acac,acha,ohl,whl,ushl,qmjhl,j20-nationell,mhl,cchl,pwhl-w,sdhl-w,nwhl-ca-w,phf-w,ncaa-w,ncaa-iii-w,acha-w,acha-d2-w,jwhl-w"
+        data-teams="San Jose Barracuda"
+        data-background-color="#052D41"
+        data-text-color="#000000"
+        data-table-background-color="#FFFFFF"
+        data-name-text-color="#0D73A6"
+        data-width="100%"
+        data-height="600px"
+        ></script>
+    </div>
+    
+    <div class="instructions">
+        <p><strong>Troubleshooting:</strong></p>
+        <ul>
+            <li>If nothing appears, make sure your development server is running</li>
+            <li>Check your browser's console (F12) for any JavaScript errors</li>
+            <li>Verify that all required data attributes are included in your script tag</li>
+        </ul>
+    </div>
+</body>
+</html> 

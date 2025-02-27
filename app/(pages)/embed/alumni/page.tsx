@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import Alumni from "@/app/components/alumni/Alumni";
 import { useSearchParams } from "next/navigation";
+import ResizeObserver from "@/app/components/embed/ResizeObserver";
 
 const EmbedAlumni = () => {
   return (
@@ -36,19 +37,21 @@ const AlumniEmbedContent = () => {
   }));
   
   return (
-    <div style={{ height: "100vh", overflow: "auto" }}>
-      <Alumni
-        selectedTeams={selectedTeams}
-        selectedLeagues={selectedLeagues}
-        customColors={{
-          backgroundColor,
-          textColor,
-          tableBackgroundColor,
-          nameTextColor
-        }}
-        includeYouth={true}
-      />
-    </div>
+    <ResizeObserver>
+      <div style={{ overflow: "auto" }}>
+        <Alumni
+          selectedTeams={selectedTeams}
+          selectedLeagues={selectedLeagues}
+          customColors={{
+            backgroundColor,
+            textColor,
+            tableBackgroundColor,
+            nameTextColor
+          }}
+          includeYouth={true}
+        />
+      </div>
+    </ResizeObserver>
   );
 };
 

@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import League from "@/app/components/league/League";
+import ResizeObserver from "@/app/components/embed/ResizeObserver";
 
 const EmbedLeague = () => {
   return (
@@ -22,11 +23,13 @@ const LeagueEmbedContent = () => {
   }
 
   return (
-    <div style={{ height: "100vh", overflow: "auto" }}>
-      <League
-        leagueSlug={leagueSlug}
-      />
-    </div>
+    <ResizeObserver>
+      <div style={{ overflow: "auto" }}>
+        <League
+          leagueSlug={leagueSlug}
+        />
+      </div>
+    </ResizeObserver>
   );
 };
 

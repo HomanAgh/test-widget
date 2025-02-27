@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import Player from "../../../components/player/Player";
 import { useSearchParams } from "next/navigation";
+import ResizeObserver from "@/app/components/embed/ResizeObserver";
 
 const EmbedPlayer = () => {
   return (
@@ -34,14 +35,16 @@ const PlayerPageContent = () => {
   }
 
   return (
-    <div style={{ height: "100vh", overflow: "auto" }}>
-      <Player
-        playerId={playerId}    
-        gameLimit={gameLimit}
-        viewMode={viewMode}
-        showSummary={showSummary}
-      />
-    </div>
+    <ResizeObserver>
+      <div style={{ overflow: "auto" }}>
+        <Player
+          playerId={playerId}    
+          gameLimit={gameLimit}
+          viewMode={viewMode}
+          showSummary={showSummary}
+        />
+      </div>
+    </ResizeObserver>
   );
 };
 
