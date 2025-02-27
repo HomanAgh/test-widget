@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { Team, TeamsAPIResponse } from "@/app/types/team"; 
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
-
+import ErrorMessage from "../common/ErrorMessage";
 
 interface TeamSearchBarProps {
-  onSelect: (teamId: string) => void;
-  onError: (error: string) => void;
+  onSelect?: (teamId: string) => void;
+  onError?: (error: string) => void;
 }
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
@@ -17,6 +17,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -56,7 +57,8 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         if (err instanceof Error) {
           errorMessage = err.message;
         }
-        onError(errorMessage);
+        setError(errorMessage);
+        if (onError) onError(errorMessage);
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -81,7 +83,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
         handleSelect(teams[highlightedIndex].id);
       } else if (query.trim()) {
         setShowDropdown(false);
-        onSelect(query.trim());
+        handleSelect(query.trim());
       }
     }
   };
@@ -89,34 +91,43 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
   const handleSelect = (teamId: string) => {
     setShowDropdown(false);
     setQuery("");
-    onSelect(teamId);
+    if (onSelect) {
+      onSelect(teamId);
+    } else {
+      // Default navigation if no onSelect provided
+      window.location.href = `/team/${teamId}`;
+    }
   };
 
   return (
-    <SearchBarContainer>
-      <SearchInput
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onFocus={() => setShowDropdown(teams.length > 0)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-      />
-      {showDropdown && (
-        <Dropdown>
-          {teams.map((team, index) => (
-            <DropdownItem
-              key={team.id}
-              onClick={() => handleSelect(team.id)}
-              isHighlighted={highlightedIndex === index}
-            >
-              {`${team.name} - ${team.league} (${team.country})`}
-            </DropdownItem>
-          ))}
-          {isLoading && <LoadingItem/>}
-        </Dropdown>
-      )}
-    </SearchBarContainer>
+    <>
+      <SearchBarContainer>
+        <SearchInput
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setShowDropdown(teams.length > 0)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+          placeholder="Search for a team..."
+        />
+        {showDropdown && (
+          <Dropdown>
+            {teams.map((team, index) => (
+              <DropdownItem
+                key={team.id}
+                onClick={() => handleSelect(team.id)}
+                isHighlighted={highlightedIndex === index}
+              >
+                {`${team.name} - ${team.league} (${team.country})`}
+              </DropdownItem>
+            ))}
+            {isLoading && <LoadingItem/>}
+          </Dropdown>
+        )}
+      </SearchBarContainer>
+      {error && <ErrorMessage error={error} onClose={() => setError("")} />}
+    </>
   );
 };
 
