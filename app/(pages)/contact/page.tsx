@@ -40,8 +40,7 @@ const ContactPage = () => {
         subject: '',
         message: ''
       });
-    } catch (error: unknown) {
-      // Intentionally not using the error parameter
+    } catch (_error: unknown) {
       setSubmitError('There was an error submitting your message. Please try again.');
     } finally {
       setIsSubmitting(false);
