@@ -40,7 +40,7 @@ const ContactPage = () => {
         subject: '',
         message: ''
       });
-    } catch (error) {
+    } catch (_) {
       setSubmitError('There was an error submitting your message. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -58,7 +58,7 @@ const ContactPage = () => {
               Have questions about our widgets or need help with embedding? Our team is here to help!
             </p>
             <p className="mb-4">
-              Fill out the form and we'll get back to you as soon as possible.
+              Fill out the form and we&apos;ll get back to you as soon as possible.
             </p>
           </div>
           
@@ -66,7 +66,7 @@ const ContactPage = () => {
             <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
               <h3 className="text-xl font-semibold text-green-700 mb-2">Message Sent!</h3>
               <p className="text-green-600">
-                Thank you for reaching out. We've received your message and will respond shortly.
+                Thank you for reaching out. We&apos;ve received your message and will respond shortly.
               </p>
               <button 
                 onClick={() => setSubmitSuccess(false)}

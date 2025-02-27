@@ -34,7 +34,7 @@ const EmbedDocs = () => {
 ></iframe>`}
           </pre>
           <p className="text-sm text-gray-600">
-            The iframe method is compatible with all browsers and doesn't require any JavaScript on your page.
+            The iframe method is compatible with all browsers and doesn&apos;t require any JavaScript on your page.
           </p>
         </div>
         
@@ -54,7 +54,7 @@ const EmbedDocs = () => {
 ></script>`}
           </pre>
           <p className="text-sm text-gray-600">
-            The script method requires JavaScript to be enabled on your visitors' browsers.
+            The script method requires JavaScript to be enabled on your visitors&apos; browsers.
           </p>
         </div>
       </div>
