@@ -5,17 +5,18 @@ import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 import ClientPlayerPage from "@/app/components/player/ClientPlayerPage";
 
-const PlayerPage = ({ params }: { params: { playerId: string } }) => {
+export default function PlayerPage({ params }: any) {
+  const { playerId } = params;
+
   return (
     <PageWrapper>
       <Header currentPath="/player" />
       <PageTitle title="Search player" />
       <AuthCheck>
         <SearchBar />
-        <ClientPlayerPage playerId={params.playerId} />
+        <ClientPlayerPage playerId={playerId} />
       </AuthCheck>
     </PageWrapper>
   );
 };
 
-export default PlayerPage;
