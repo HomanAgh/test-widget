@@ -22,6 +22,11 @@ import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
 import Image from "next/image";
 import { leagueRankings } from "./LeagueSelection";
+import {
+  sortTeamsByLeagueRankThenName,
+  getBestCategoryRankAndTeam,
+  filterAndSortPlayers,
+} from "./PlayerTableProcessor";
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
@@ -38,65 +43,22 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   nameTextColor = "#0D73A6",
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
-  isWomenLeague = false, 
+  isWomenLeague = false,
 }) => {
-  function sortTeamsByLeagueRankThenName(teams: any[]) {
-  return [...teams].sort((a, b) => {
-    const slugA = a.leagueSlug?.toLowerCase() ?? "";
-    const slugB = b.leagueSlug?.toLowerCase() ?? "";
-    const rankA = leagueRankings[slugA] ?? Number.MAX_SAFE_INTEGER;
-    const rankB = leagueRankings[slugB] ?? Number.MAX_SAFE_INTEGER;
-
-    // 1) If ranks differ, return the difference
-    if (rankA !== rankB) {
-      return rankA - rankB; 
-    }
-
-    // 2) If ranks are the same, tie-break alphabetically by team name
-    const nameA = a.name ?? "";
-    const nameB = b.name ?? "";
-    return nameA.localeCompare(nameB);
-  });
-}
-
-
-function getBestCategoryRankAndTeam(
-  player: any,
-  category: "junior" | "college" | "professional"
-) {
-  let bestRank = Number.MAX_SAFE_INTEGER;
-  let bestTeamName = "";
-
-  for (const team of player.teams ?? []) {
-    // Only consider teams in the given category
-    if ((team.leagueLevel ?? "").toLowerCase().includes(category)) {
-      // Look up rank from leagueRankings
-      const slug = team.leagueSlug?.toLowerCase() ?? "";
-      const rank = leagueRankings[slug] ?? Number.MAX_SAFE_INTEGER;
-
-      // If this team is better (lower) rank, update
-      if (rank < bestRank) {
-        bestRank = rank;
-        bestTeamName = team.name ?? "";
-      } else if (rank === bestRank) {
-        // If there's a tie in rank, pick whichever team name is alphabetically first
-        const currentName = team.name ?? "";
-        if (currentName.localeCompare(bestTeamName) < 0) {
-          bestTeamName = currentName;
-        }
-      }
-    }
-  }
-
-  return { bestRank, bestTeamName };
-}
-
-  
-
   const [sortColumn, setSortColumn] = React.useState<
-    "name" | "position" | "status" | "birthYear" | "draftPick" | "junior" | "college" | "pro" | ""
+    | "name"
+    | "position"
+    | "status"
+    | "birthYear"
+    | "draftPick"
+    | "junior"
+    | "college"
+    | "pro"
+    | ""
   >("name");
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc" | "none">("asc");
+  const [sortDirection, setSortDirection] = React.useState<
+    "asc" | "desc" | "none"
+  >("asc");
   const [showNameMenu, setShowNameMenu] = React.useState(false);
 
   const [pages, setPages] = React.useState<{ men: number; women: number }>({
@@ -232,143 +194,20 @@ function getBestCategoryRankAndTeam(
             <div>{contentForStatus}</div>
           </div>
         );
-        
     }
   };
 
-  const filteredPlayers = React.useMemo(() => {
-    if (genderFilter === "men") {
-      return players.filter((p) => p.gender === "male");
-    } else if (genderFilter === "women") {
-      return players.filter((p) => p.gender === "female");
-    }
-    return players;
-  }, [players, genderFilter]);
+  const processedPlayers = React.useMemo(
+    () =>
+      filterAndSortPlayers(players, genderFilter, sortColumn, sortDirection),
+    [players, genderFilter, sortColumn, sortDirection]
+  );
 
-  const sortedPlayers = React.useMemo(() => {
-    if (sortDirection === "none" || !sortColumn) return filteredPlayers;
-    const arr = [...filteredPlayers];
-
-    switch (sortColumn) {
-      case "name":
-        arr.sort((a, b) =>
-          sortDirection === "asc"
-            ? a.name.localeCompare(b.name)
-            : b.name.localeCompare(a.name)
-        );
-        break;
-      case "position":
-        const positionRank: Record<string, number> = {
-          G: 0,
-          D: 1,
-          F: 2,
-        };
-
-        arr.sort((a, b) => {
-          const posA = a.position
-            ? positionRank[a.position.toUpperCase()] ?? 999
-            : 999;
-          const posB = b.position
-            ? positionRank[b.position.toUpperCase()] ?? 999
-            : 999;
-
-          return sortDirection === "asc" ? posA - posB : posB - posA;
-        });
-        break;
-      case "status":
-        arr.sort((a, b) => {
-          const sA = a.status ?? "";
-          const sB = b.status ?? "";
-          return sortDirection === "asc"
-            ? sA.localeCompare(sB)
-            : sB.localeCompare(sA);
-        });
-        break;
-      case "birthYear":
-        arr.sort((a, b) => {
-          const A = a.birthYear ?? 0;
-          const B = b.birthYear ?? 0;
-          return sortDirection === "asc" ? A - B : B - A;
-        });
-        break;
-      case "draftPick":
-        arr.sort((a, b) => {
-          const overallA = a.draftPick?.overall ?? Number.MAX_SAFE_INTEGER;
-          const overallB = b.draftPick?.overall ?? Number.MAX_SAFE_INTEGER;
-          return sortDirection === "asc"
-            ? overallA - overallB
-            : overallB - overallA;
-        });
-        break;
-        case "junior": {
-          arr.sort((a, b) => {
-            const { bestRank: rankA, bestTeamName: nameA } = getBestCategoryRankAndTeam(a, "junior");
-            const { bestRank: rankB, bestTeamName: nameB } = getBestCategoryRankAndTeam(b, "junior");
-        
-            if (rankA === rankB) {
-              // Tie-break alphabetically by bestTeamName
-              return sortDirection === "asc"
-                ? nameA.localeCompare(nameB)
-                : nameB.localeCompare(nameA);
-            } else {
-              // Otherwise, sort by rank
-              return sortDirection === "asc"
-                ? rankA - rankB
-                : rankB - rankA;
-            }
-          });
-          break;
-        }
-        
-    
-        case "college": {
-          arr.sort((a, b) => {
-            const { bestRank: rankA, bestTeamName: nameA } = getBestCategoryRankAndTeam(a, "college");
-            const { bestRank: rankB, bestTeamName: nameB } = getBestCategoryRankAndTeam(b, "college");
-        
-            if (rankA === rankB) {
-              return sortDirection === "asc"
-                ? nameA.localeCompare(nameB)
-                : nameB.localeCompare(nameA);
-            } else {
-              return sortDirection === "asc"
-                ? rankA - rankB
-                : rankB - rankA;
-            }
-          });
-          break;
-        }
-        
-        case "pro": {
-          arr.sort((a, b) => {
-            const { bestRank: rankA, bestTeamName: nameA } = getBestCategoryRankAndTeam(a, "professional");
-            const { bestRank: rankB, bestTeamName: nameB } = getBestCategoryRankAndTeam(b, "professional");
-        
-            if (rankA === rankB) {
-              return sortDirection === "asc"
-                ? nameA.localeCompare(nameB)
-                : nameB.localeCompare(nameA);
-            } else {
-              return sortDirection === "asc"
-                ? rankA - rankB
-                : rankB - rankA;
-            }
-          });
-          break;
-        }
-        
-    
-      default:
-        break;
-    }
-    return arr;
-  }, [filteredPlayers, sortColumn, sortDirection]);
-
-  const totalPlayers = sortedPlayers.length;
+  const totalPlayers = processedPlayers.length;
   const totalPages = Math.max(1, Math.ceil(totalPlayers / pageSize));
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
-  const pagePlayers = sortedPlayers.slice(startIndex, endIndex);
+  const pagePlayers = processedPlayers.slice(startIndex, endIndex);
   const isCustomColor =
     tableBgColor.toLowerCase() !== "#ffffff" &&
     tableBgColor.toLowerCase() !== "#fff";
@@ -493,17 +332,17 @@ function getBestCategoryRankAndTeam(
                 : oddRowColor;
 
               const juniorTeams = sortTeamsByLeagueRankThenName(
-                (player.teams ?? []).filter((t) =>
+                (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("junior")
                 )
               );
               const collegeTeams = sortTeamsByLeagueRankThenName(
-                (player.teams ?? []).filter((t) =>
+                (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("college")
                 )
               );
               const professionalTeams = sortTeamsByLeagueRankThenName(
-                (player.teams ?? []).filter((t) =>
+                (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
                   (t.leagueLevel ?? "").toLowerCase().includes("professional")
                 )
               );

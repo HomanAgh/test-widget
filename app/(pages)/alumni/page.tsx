@@ -16,7 +16,6 @@ const AlumniPage = () => {
       </div>
     </PageWrapper>
   );
-}
-  
+};
+
 export default AlumniPage;
-  

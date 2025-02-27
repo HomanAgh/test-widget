@@ -4,7 +4,6 @@ import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 import ClientLeaguePage from "@/app/components/league/ClientLeaguePage";
-
 export default function LeaguePage({ params }: { params: { leagueSlug: string } }) {
   return (
     <PageWrapper>
