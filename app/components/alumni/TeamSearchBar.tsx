@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { TeamItem, TeamSearchBarProps } from "@/app/types/team"; 
 import { IoIosRemoveCircle } from "react-icons/io";
@@ -21,6 +21,11 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLUListElement>(null);
+
+  // Stabilize the onError callback
+  const stableOnError = useCallback((errorMessage: string) => {
+    if (onError) onError(errorMessage);
+  }, [onError]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -60,13 +65,13 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           dropdownRef.current.scrollTop = 0;
         }
       } catch (err: any) {
-        onError(err.message || "Failed to fetch teams.");
+        stableOnError(err.message || "Failed to fetch teams.");
       } finally {
         setIsLoading(false);
       }
     };
     fetchTeams();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery, stableOnError]);
 
   // Outside click => hide dropdown
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Player } from "@/app/types/player";
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 import ErrorMessage from "../common/ErrorMessage";
@@ -18,6 +18,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Stabilize the onError callback
+  const stableOnError = useCallback((errorMessage: string) => {
+    if (onError) onError(errorMessage);
+  }, [onError]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -54,7 +59,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
       } catch (err: any) {
         const errorMessage = err.message || "SearchError";
         setError(errorMessage);
-        if (onError) onError(errorMessage);
+        stableOnError(errorMessage);
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -62,7 +67,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSelect, onError }) => {
     };
 
     fetchPlayers();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery, stableOnError]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || players.length === 0) return;
