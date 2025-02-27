@@ -24,7 +24,6 @@ const AlumniPage: React.FC = () => {
       </div>
     </PageWrapper>
   );
-}
-  
+};
+
 export default AlumniPage;
-  

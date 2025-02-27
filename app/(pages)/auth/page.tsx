@@ -41,10 +41,12 @@ const LoginPage = () => {
       <div className="flex items-center mb-6">
         <EliteProspectsLogo />
       </div>
-  
+
       <div className="bg-white p-6 rounded-lg w-[320px] md:w-[768px] pb-[56px]">
-        <h1 className="text-[28px] font-bold font-montserrat text-left">Login</h1>
-  
+        <h1 className="text-[28px] font-bold font-montserrat text-left">
+          Login
+        </h1>
+
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="flex flex-col pt-[24px] pb-[24px]">
             <label className="text-sm font-semibold pb-[8px]">Username*</label>
@@ -56,7 +58,7 @@ const LoginPage = () => {
               className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-  
+
           <div className="flex flex-col pb-[56px]">
             <label className="text-sm font-semibold pb-[8px]">Password*</label>
             <input
@@ -69,7 +71,7 @@ const LoginPage = () => {
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
-  
+
           <button
             type="submit"
             className="font-montserrat text-[12px] flex justify-center items-center w-[100px] min-w-[80px] h-[28px] px-[12px] py-[8px] bg-[#0B9D52] text-white font-bold rounded-md hover:bg-green-700 transition-all"
@@ -80,7 +82,6 @@ const LoginPage = () => {
       </div>
     </PageWrapper>
   );
-}
-  
+};
+
 export default LoginPage;
-  

@@ -88,14 +88,30 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
     >
       <TableHead>
         <TableRow className="bg-red-600 text-white">
-          <TableCell isHeader align="center">#</TableCell>
-          <TableCell isHeader align="left">Team</TableCell>
-          <TableCell isHeader align="center">GP</TableCell>
-          <TableCell isHeader align="center">W</TableCell>
-          <TableCell isHeader align="center">L</TableCell>
-          <TableCell isHeader align="center">OTW</TableCell>
-          <TableCell isHeader align="center">OTL</TableCell>
-          <TableCell isHeader align="center">PTS</TableCell>
+          <TableCell isHeader align="center">
+            #
+          </TableCell>
+          <TableCell isHeader align="left">
+            Team
+          </TableCell>
+          <TableCell isHeader align="center">
+            GP
+          </TableCell>
+          <TableCell isHeader align="center">
+            W
+          </TableCell>
+          <TableCell isHeader align="center">
+            L
+          </TableCell>
+          <TableCell isHeader align="center">
+            OTW
+          </TableCell>
+          <TableCell isHeader align="center">
+            OTL
+          </TableCell>
+          <TableCell isHeader align="center">
+            PTS
+          </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -229,7 +245,11 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
                 return (
                   <Collapsible
                     key={divName}
-                    title={<span className="text-base font-medium ml-4">{divName}</span>}
+                    title={
+                      <span className="text-base font-medium ml-4">
+                        {divName}
+                      </span>
+                    }
                   >
                     {renderTable(teamsDiv)}
                   </Collapsible>
