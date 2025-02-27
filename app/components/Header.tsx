@@ -1,11 +1,8 @@
-import { usePathname } from "next/navigation";
-import HomeButton from "./common/HomeButton";
-import LogoutButton from "./common/LogoutButton";
 import EliteProspectsLogo from "./common/EliteProspectsLogo";
+import ClientButtons from './ClientButtons';
 
-const Header: React.FC = () => {
-  const pathname = usePathname();
-
+// This is a server component
+const Header = ({ currentPath }: { currentPath: string }) => {
   return (
     <div className="flex items-center justify-between mb-4 pb-[48px]">
       {/* Left Side - Logo */}
@@ -14,12 +11,9 @@ const Header: React.FC = () => {
       </div>
 
       {/* Right Side - Home & Logout Buttons */}
-      <div className="flex items-center gap-[56px]">
-        <HomeButton isDisabled={pathname === "/home"} />
-        <LogoutButton />
-      </div>
+      <ClientButtons isHomePage={currentPath === "/home"} />
     </div>
   );
 };
 
-export default Header;
+export default Header; 

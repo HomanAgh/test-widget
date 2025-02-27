@@ -3,19 +3,21 @@
 import React, { useState, useEffect } from "react";
 import { League, LeaguesAPIResponse } from "@/app/types/league"; 
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
+import ErrorMessage from "../common/ErrorMessage";
 
 interface LeagueSearchBarProps {
-  onSelect: (leagueSlug: string) => void;
-  onError: (error: string) => void;
+  onSelect?: (leagueSlug: string) => void;
+  onError?: (error: string) => void;
 }
 
 const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [Leagues, setLeagues] = useState<League[]>([]);
+  const [leagues, setLeagues] = useState<League[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -45,7 +47,7 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
 
         const data: LeaguesAPIResponse = await res.json();
 
-        const sortedLeagues= data.leagues
+        const sortedLeagues = data.leagues
           .sort((a, b) => a.name.localeCompare(b.name))
           .slice(0, 20);
 
@@ -56,7 +58,8 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
         if (err instanceof Error) {
           errorMessage = err.message;
         }
-        onError(errorMessage);
+        setError(errorMessage);
+        if (onError) onError(errorMessage);
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -67,21 +70,21 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
   }, [debouncedQuery, onError]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showDropdown || Leagues.length === 0) return;
+    if (!showDropdown || leagues.length === 0) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev + 1) % Leagues.length);
+      setHighlightedIndex((prev) => (prev + 1) % leagues.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev - 1 + Leagues.length) % Leagues.length);
+      setHighlightedIndex((prev) => (prev - 1 + leagues.length) % leagues.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (highlightedIndex >= 0 && highlightedIndex < Leagues.length) {
-        handleSelect(Leagues[highlightedIndex].slug);
+      if (highlightedIndex >= 0 && highlightedIndex < leagues.length) {
+        handleSelect(leagues[highlightedIndex].slug);
       } else if (query.trim()) {
         setShowDropdown(false);
-        onSelect(query.trim());
+        handleSelect(query.trim());
       }
     }
   };
@@ -89,34 +92,43 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
   const handleSelect = (leagueSlug: string) => {
     setShowDropdown(false);
     setQuery("");
-    onSelect(leagueSlug);
+    if (onSelect) {
+      onSelect(leagueSlug);
+    } else {
+      // Default navigation if no onSelect provided
+      window.location.href = `/league/${leagueSlug}`;
+    }
   };
 
   return (
-    <SearchBarContainer>
-      <SearchInput
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onFocus={() => setShowDropdown(Leagues.length > 0)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-      />
-      {showDropdown && (
-        <Dropdown>
-          {Leagues.map((Leagues, index) => (
-            <DropdownItem
-              key={Leagues.slug}
-              onClick={() => handleSelect(Leagues.slug)}
-              isHighlighted={highlightedIndex === index}
-            >
-              {`${Leagues.name} - ${Leagues.fullName} (${Leagues.country})`}
-            </DropdownItem>
-          ))}
-          {isLoading && <LoadingItem />}
-        </Dropdown>
-      )}
-    </SearchBarContainer>
+    <>
+      <SearchBarContainer>
+        <SearchInput
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setShowDropdown(leagues.length > 0)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+          placeholder="Search for a league..."
+        />
+        {showDropdown && (
+          <Dropdown>
+            {leagues.map((league, index) => (
+              <DropdownItem
+                key={league.slug}
+                onClick={() => handleSelect(league.slug)}
+                isHighlighted={highlightedIndex === index}
+              >
+                {`${league.name} - ${league.fullName} (${league.country})`}
+              </DropdownItem>
+            ))}
+            {isLoading && <LoadingItem />}
+          </Dropdown>
+        )}
+      </SearchBarContainer>
+      {error && <ErrorMessage error={error} onClose={() => setError("")} />}
+    </>
   );
 };
 
