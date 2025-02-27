@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Team, TeamsAPIResponse } from "@/app/types/team"; 
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 import ErrorMessage from "../common/ErrorMessage";
@@ -18,6 +18,11 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Stabilize the onError callback
+  const stableOnError = useCallback((errorMessage: string) => {
+    if (onError) onError(errorMessage);
+  }, [onError]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -58,7 +63,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
           errorMessage = err.message;
         }
         setError(errorMessage);
-        if (onError) onError(errorMessage);
+        stableOnError(errorMessage);
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -66,7 +71,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({ onSelect, onError }) => {
     };
 
     fetchTeams();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery, stableOnError]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || teams.length === 0) return;

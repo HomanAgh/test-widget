@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { League, LeaguesAPIResponse } from "@/app/types/league"; 
 import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } from "../common/style/Searchbar";
 import ErrorMessage from "../common/ErrorMessage";
@@ -18,6 +18,11 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Stabilize the onError callback
+  const stableOnError = useCallback((errorMessage: string) => {
+    if (onError) onError(errorMessage);
+  }, [onError]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -59,7 +64,7 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
           errorMessage = err.message;
         }
         setError(errorMessage);
-        if (onError) onError(errorMessage);
+        stableOnError(errorMessage);
         setShowDropdown(false);
       } finally {
         setIsLoading(false);
@@ -67,7 +72,7 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
     };
 
     fetchLeagues();
-  }, [debouncedQuery, onError]);
+  }, [debouncedQuery, stableOnError]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || leagues.length === 0) return;

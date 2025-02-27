@@ -1,5 +1,4 @@
 // Server component - no "use client" needed
-import { PlayerTableProps } from "@/app/types/alumni";
 import { leagueRankings } from "./LeagueSelection";
 
 export function sortTeamsByLeagueRankThenName(teams: any[]) {

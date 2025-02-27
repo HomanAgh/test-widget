@@ -7,7 +7,9 @@ import {
   CombinedPlayer,
 } from '@/app/types/route';
 
-const alumniRouteCache = new Map<string, any>();
+// Increase cache TTL for better performance
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
+const alumniRouteCache = new Map<string, { data: any; timestamp: number }>();
 const apiKey = process.env.API_KEY;
 const apiBaseUrl = process.env.API_BASE_URL;
 
@@ -40,10 +42,12 @@ async function fetchLeagueLevelAndSlug(teamId: number): Promise<LeagueFallback> 
   }
 
   const fallbackUrl = `${apiBaseUrl}/team-stats?offset=0&limit=1&sort=-season&team=${teamId}&apiKey=${apiKey}&fields=league.leagueLevel,league.slug`;
-  console.log(`Alumni: fallback => ${fallbackUrl}`);
 
   try {
-    const resp = await fetch(fallbackUrl);
+    const resp = await fetch(fallbackUrl, { 
+      next: { revalidate: 86400 } // Cache for 24 hours
+    });
+    
     if (!resp.ok) {
       console.error(`Failed fallback for teamId=${teamId}: ${resp.statusText}`);
       leagueFallbackCache.set(teamId, { level: null, slug: null });
@@ -93,7 +97,6 @@ function buildTeamBaseUrl(teamId: number, leagues: string[] | string | null) {
   )}&player.hasPlayedInTeam=${teamId}`;
 
   url += `&fields=${encodeURIComponent(fields)}`;
-  console.log(url);
   return url;
 }
 
@@ -107,39 +110,85 @@ function buildYouthBaseUrl(teamsParam: string, leagues: string[] | string | null
   )}&player.youthTeam=${encodeURIComponent(teamsParam)}`;
 
   url += `&fields=${encodeURIComponent(fields)}`;
-  console.log(url);
   return url;
 }
 
 async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
   const allItems: T[] = [];
-  let offset = 0;
-  let totalRecords = 0;
-
-  do {
-    const urlWithPagination = `${baseUrl}&offset=${offset}&limit=${pageSize}`;
-    console.log('Fetching paginated => ', urlWithPagination);
-
-    const res = await fetch(urlWithPagination);
-    if (!res.ok) {
-      console.error('Paginated fetch failed:', res.statusText);
-      break;
+  
+  try {
+    // First request to get total count
+    const initialUrl = `${baseUrl}&offset=0&limit=${pageSize}`;
+    const initialRes = await fetch(initialUrl, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
+    
+    if (!initialRes.ok) {
+      console.error('Initial fetch failed:', initialRes.statusText);
+      return [];
     }
 
-    const data: ApiResponse<T> & { _meta?: { totalRecords?: number } } = await res.json();
-    if (data.data) {
-      allItems.push(...data.data);
+    const initialData: ApiResponse<T> & { _meta?: { totalRecords?: number } } = await initialRes.json();
+    if (initialData.data) {
+      allItems.push(...initialData.data);
     }
 
-    const metaTotal = data._meta?.totalRecords ?? 0;
-    if (metaTotal > 0) {
-      totalRecords = metaTotal;
+    // Get the total number of records to fetch
+    const totalRecords = initialData._meta?.totalRecords ?? 0;
+    
+    // If we need more pages, fetch them in parallel
+    if (totalRecords > pageSize) {
+      // Calculate how many pages we need to fetch
+      const totalPages = Math.ceil(totalRecords / pageSize);
+      console.log(`Fetching ${totalPages - 1} additional pages for a total of ${totalRecords} records`);
+      
+      const pagePromises = [];
+      
+      // Start from page 1 (we already have page 0)
+      for (let page = 1; page < totalPages; page++) {
+        const offset = page * pageSize;
+        const urlWithPagination = `${baseUrl}&offset=${offset}&limit=${pageSize}`;
+        
+        pagePromises.push(
+          fetch(urlWithPagination, { next: { revalidate: 3600 } })
+            .then(res => {
+              if (!res.ok) throw new Error(`Page ${page} fetch failed: ${res.statusText}`);
+              return res.json();
+            })
+            .then(data => {
+              if (data.data) {
+                return data.data;
+              }
+              return [];
+            })
+            .catch(err => {
+              console.error(`Error fetching page ${page}:`, err);
+              return [];
+            })
+        );
+      }
+      
+      // Wait for all pages to load in parallel
+      const pageResults = await Promise.all(pagePromises);
+      
+      // Add all items from all pages
+      pageResults.forEach(items => {
+        allItems.push(...items);
+      });
     }
 
-    offset += pageSize;
-  } while (offset < totalRecords);
-
-  return allItems;
+    console.log(`Total items fetched: ${allItems.length} out of ${totalRecords}`);
+    
+    // Verify we have all the data
+    if (allItems.length < totalRecords) {
+      console.warn(`Warning: Expected ${totalRecords} items but only fetched ${allItems.length}`);
+    }
+    
+    return allItems;
+  } catch (error) {
+    console.error('Error in fetchAllPages:', error);
+    return allItems; // Return whatever we managed to fetch
+  }
 }
 
 async function fetchAndMergePlayerStats(
@@ -148,7 +197,39 @@ async function fetchAndMergePlayerStats(
 ) {
   try {
     const items = await fetchAllPages<PlayerStatsItem>(baseUrl, 1000);
+    
+    // Batch process league fallbacks
+    const teamIdsNeedingFallback: number[] = [];
+    const teamIdToPlayersMap: Map<number, PlayerStatsItem[]> = new Map();
+    
+    // First pass - identify teams needing fallback
+    for (const item of items) {
+      const teamId = item.team.id;
+      if (teamId && (!item.team.league?.leagueLevel || !item.team.league?.slug)) {
+        if (!teamIdsNeedingFallback.includes(teamId)) {
+          teamIdsNeedingFallback.push(teamId);
+        }
+        
+        if (!teamIdToPlayersMap.has(teamId)) {
+          teamIdToPlayersMap.set(teamId, []);
+        }
+        teamIdToPlayersMap.get(teamId)!.push(item);
+      }
+    }
+    
+    // Fetch all fallbacks in parallel
+    const fallbackPromises = teamIdsNeedingFallback.map(teamId => 
+      fetchLeagueLevelAndSlug(teamId)
+    );
+    const fallbackResults = await Promise.all(fallbackPromises);
+    
+    // Create a map of teamId to fallback data
+    const fallbackMap = new Map<number, LeagueFallback>();
+    teamIdsNeedingFallback.forEach((teamId, index) => {
+      fallbackMap.set(teamId, fallbackResults[index]);
+    });
 
+    // Process all items
     for (const item of items) {
       const pid = item.player.id;
       if (!playerMap.has(pid)) {
@@ -172,8 +253,8 @@ async function fetchAndMergePlayerStats(
       let leagueSlug = item.team.league?.slug ?? null;
 
       const teamId = item.team.id;
-      if ((teamId && !leagueLevel) || (teamId && !leagueSlug)) {
-        const fallback = await fetchLeagueLevelAndSlug(teamId);
+      if (teamId && fallbackMap.has(teamId)) {
+        const fallback = fallbackMap.get(teamId)!;
         if (!leagueLevel) {
           leagueLevel = fallback.level;
         }
@@ -211,54 +292,72 @@ async function fetchBatchDraftPicks(
   const resultMap = new Map<number, DraftSelection>();
   if (!playerIds.length) return resultMap;
 
-  let startIndex = 0;
-  while (startIndex < playerIds.length) {
-    const chunk = playerIds.slice(startIndex, startIndex + chunkSize);
-    const joinedIds = chunk.join(',');
-    const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}&fields=${encodeURIComponent(
-      'player.id,year,round,overall,team.name,team.logo.small,draftType.slug'
-    )}`;
+  // Process chunks in parallel with a reasonable concurrency limit
+  const chunks: number[][] = [];
+  for (let i = 0; i < playerIds.length; i += chunkSize) {
+    chunks.push(playerIds.slice(i, i + chunkSize));
+  }
+  
+  const MAX_CONCURRENT = 3; // Limit concurrent requests
+  
+  // Process chunks with limited concurrency
+  for (let i = 0; i < chunks.length; i += MAX_CONCURRENT) {
+    const chunkPromises = chunks.slice(i, i + MAX_CONCURRENT).map(async (chunk) => {
+      const joinedIds = chunk.join(',');
+      const url = `${apiBaseUrl}/draft-selections?offset=0&limit=1000&draftType=nhl-entry-draft&player=${joinedIds}&apiKey=${apiKey}&fields=${encodeURIComponent(
+        'player.id,year,round,overall,team.name,team.logo.small,draftType.slug'
+      )}`;
 
-    console.log('Fetching Draft Picks from:', url);
-
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        startIndex += chunkSize;
-        continue;
-      }
-
-      interface DraftSelectionWithPlayer extends DraftSelection {
-        player?: { id: number };
-      }
-      const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
-      if (!data.data) {
-        startIndex += chunkSize;
-        continue;
-      }
-
-      for (const ds of data.data) {
-        const pid = ds.player?.id;
-        if (!pid) continue;
-
-        resultMap.set(pid, {
-          year: ds.year,
-          round: ds.round,
-          overall: ds.overall,
-          team: ds.team
-            ? {
-                name: ds.team.name ?? 'Unknown Team',
-                logo: ds.team.logo ?? 'Unkown Logo',
-              }
-            : undefined,
-          draftType: ds.draftType,
+      try {
+        const response = await fetch(url, {
+          next: { revalidate: 86400 } // Cache for 24 hours
         });
-      }
-    } catch (err) {
-      console.error('Error in fetchBatchDraftPicks chunk:', err);
-    }
+        
+        if (!response.ok) {
+          return new Map<number, DraftSelection>();
+        }
 
-    startIndex += chunkSize;
+        interface DraftSelectionWithPlayer extends DraftSelection {
+          player?: { id: number };
+        }
+        const data: ApiResponse<DraftSelectionWithPlayer> = await response.json();
+        if (!data.data) {
+          return new Map<number, DraftSelection>();
+        }
+
+        const chunkMap = new Map<number, DraftSelection>();
+        for (const ds of data.data) {
+          const pid = ds.player?.id;
+          if (!pid) continue;
+
+          chunkMap.set(pid, {
+            year: ds.year,
+            round: ds.round,
+            overall: ds.overall,
+            team: ds.team
+              ? {
+                  name: ds.team.name ?? 'Unknown Team',
+                  logo: ds.team.logo ?? 'Unknown Logo',
+                }
+              : undefined,
+            draftType: ds.draftType,
+          });
+        }
+        return chunkMap;
+      } catch (err) {
+        console.error('Error in fetchBatchDraftPicks chunk:', err);
+        return new Map<number, DraftSelection>();
+      }
+    });
+
+    const chunkResults = await Promise.all(chunkPromises);
+    
+    // Merge chunk results into the main result map
+    for (const chunkMap of chunkResults) {
+      for (const [pid, draftSelection] of chunkMap.entries()) {
+        resultMap.set(pid, draftSelection);
+      }
+    }
   }
 
   return resultMap;
@@ -275,24 +374,20 @@ export async function GET(request: Request) {
   const teamsParam = searchParams.get('teams');
   const genderParam = searchParams.get('gender');
 
-  console.log('Alumni: Query params =>', {
-    teamIdsParam,
-    leagueParam,
-    includeYouth,
-    teamsParam,
-    genderParam,
-  });
-
   const cacheKey = buildCacheKey(teamIdsParam, leagueParam, includeYouth, teamsParam, genderParam);
 
+  // Check cache with TTL
+  const now = Date.now();
   if (alumniRouteCache.has(cacheKey)) {
-    console.log('Returning cached /api/alumni response for key:', cacheKey);
-    return NextResponse.json(alumniRouteCache.get(cacheKey), {
-      status: 200,
-      headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
-      },
-    });
+    const cachedData = alumniRouteCache.get(cacheKey)!;
+    if (now - cachedData.timestamp < CACHE_TTL) {
+      return NextResponse.json(cachedData.data, {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=59',
+        },
+      });
+    }
   }
 
   // Parse the query params
@@ -308,14 +403,21 @@ export async function GET(request: Request) {
   const playerMap: Map<number, CombinedPlayer> = new Map();
 
   try {
+    // Fetch team data in parallel
+    const fetchPromises = [];
+    
     for (const id of teamIds) {
       const baseUrl = buildTeamBaseUrl(id, leagues.length ? leagues : null);
-      await fetchAndMergePlayerStats(baseUrl, playerMap);
+      fetchPromises.push(fetchAndMergePlayerStats(baseUrl, playerMap));
     }
+    
     if (includeYouth && teamsParam) {
       const baseUrl = buildYouthBaseUrl(teamsParam, leagues.length ? leagues : null);
-      await fetchAndMergePlayerStats(baseUrl, playerMap);
+      fetchPromises.push(fetchAndMergePlayerStats(baseUrl, playerMap));
     }
+    
+    // Wait for all fetches to complete
+    await Promise.all(fetchPromises);
 
     let allPlayers = Array.from(playerMap.values());
 
@@ -360,7 +462,11 @@ export async function GET(request: Request) {
       total: finalPlayers.length,
     };
 
-    alumniRouteCache.set(cacheKey, responseData);
+    // Store in cache with timestamp
+    alumniRouteCache.set(cacheKey, { 
+      data: responseData, 
+      timestamp: now 
+    });
 
     return NextResponse.json(responseData, {
       status: 200,
