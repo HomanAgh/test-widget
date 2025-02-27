@@ -40,11 +40,11 @@ const ContactPage = () => {
         subject: '',
         message: ''
       });
-    } catch (_error: unknown) {
+    } catch {
       setSubmitError('There was an error submitting your message. Please try again.');
     } finally {
       setIsSubmitting(false);
-    }
+    }    
   };
 
   return (
