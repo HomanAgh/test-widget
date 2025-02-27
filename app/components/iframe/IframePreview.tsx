@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 
 interface EmbedCodeBlockProps {
   iframeCode: string;
