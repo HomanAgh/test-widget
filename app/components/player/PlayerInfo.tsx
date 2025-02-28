@@ -13,108 +13,111 @@ const formatSeason = (seasonSlug: string) => {
   return `${parts[0].replace(/^20/, "")}-${parts[1].replace(/^20/, "")}`;
 };
 
-
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
   return (
-    <div className="font-montserrat">
-      <div className="md:flex md:justify-between items-start p-6">
-        <div className="md:w-2/3">
-          <div className="flex items-center space-x-2">
-            {player.flagUrls?.primary && (
-              <Image
-                src={player.flagUrls.primary}
-                alt="Primary flag"
-                className="object-contain"
-                width={24}
-                height={16}
-              />
-            )}
-            {player.flagUrls?.secondary && (
-              <Image
-                src={player.flagUrls.secondary}
-                alt="Secondary flag"
-                className="object-contain"
-                width={24}
-                height={16}
-              />
-            )}
-            <Link
-              href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}
-            >
-              <span
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "#0D73A6",
-                }}
+    <div className="font-montserrat bg-white rounded-lg overflow-hidden mb-0">
+      <div className="p-4">
+        {/* Player header section */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+          {/* Left column - Player name, team, etc. */}
+          <div className="flex-1">
+            {/* Player name and flags */}
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="flex space-x-1">
+                {player.flagUrls?.primary && (
+                  <Image
+                    src={player.flagUrls.primary}
+                    alt="Primary flag"
+                    className="object-contain rounded-sm"
+                    width={24}
+                    height={16}
+                  />
+                )}
+                {player.flagUrls?.secondary && (
+                  <Image
+                    src={player.flagUrls.secondary}
+                    alt="Secondary flag"
+                    className="object-contain rounded-sm"
+                    width={24}
+                    height={16}
+                  />
+                )}
+              </div>
+              <Link
+                href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}
+                className="text-xl font-semibold text-blue-600 hover:text-blue-800"
               >
                 {player.name}
-              </span>
-            </Link>
-          </div>
+              </Link>
+            </div>
 
-          <div className="mt-2">
-            <p style={{ fontSize: "1rem", fontWeight: "500" }}>
-              <span> #{player.jerseyNumber} </span>
+            {/* Team and league info */}
+            <div className="flex items-center flex-wrap text-base font-medium mb-2">
+              <span className="mr-2">#{player.jerseyNumber}</span>
               {player.team ? (
                 <Link
                   href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}/${player.season.slug}`}
-                  style={{ color: "#0D73A6" }}
+                  className="text-blue-600 hover:text-blue-800 flex items-center"
                 >
                   {player.teamLogo && (
                     <Image
                       src={player.teamLogo}
                       alt={`${player.team.name} Logo`}
-                      layout="intrinsic"
                       width={20}
                       height={20}
-                      className="object-contain inline-block mr-1"
+                      className="object-contain mr-1"
                     />
                   )}
-                  {player.team.name}
+                  <span>{player.team.name}</span>
                 </Link>
               ) : (
-                "Unknown Team"
+                <span>Unknown Team</span>
               )}
-              <span> / </span>
+              <span className="mx-2">/</span>
               {player.league ? (
                 <Link
                   href={`https://www.eliteprospects.com/league/${player.league.slug}/${player.season.slug}`}
-                  style={{ color: "#0D73A6" }}
+                  className="text-blue-600 hover:text-blue-800"
                 >
                   {player.league.name} {formatSeason(player.season.slug)}
                 </Link>
               ) : (
-                "Unknown League"
+                <span>Unknown League</span>
               )}
-            </p>
-          </div>
-          {player.capHit !== null && (
-            <div
-              className="col-span-2 pt-2 text-left whitespace-nowrap"
-              style={{ fontSize: "1rem", fontWeight: "500" }}
-            >
-              Cap Hit: {player.capHit}
             </div>
-          )}
-        </div>
-        <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-800">
-          {/* Age */}
-          <div className="col-span-2 text-left whitespace-nowrap">Age:</div>
-          <div className="col-span-2 text-right whitespace-nowrap">{player.age}</div>
-          {/* Height */}
-          <div className="col-span-2 text-left whitespace-nowrap">Height:</div>
-          <div className="col-span-2 text-right whitespace-nowrap">
-            {player.heightMet} cm / {player.heightImp}
+
+            {/* Cap Hit */}
+            {player.capHit !== null && (
+              <div className="text-base font-medium">
+                Cap Hit: <span className="font-semibold">{player.capHit}</span>
+              </div>
+            )}
           </div>
-          {/* Weight */}
-          <div className="col-span-2 text-left whitespace-nowrap">Weight:</div>
-          <div className="col-span-2 text-right whitespace-nowrap">
-            {player.weightMet} kg / {player.weightImp} lbs
+
+          {/* Right column - Player details */}
+          <div className="bg-gray-50 rounded-lg p-3 w-full md:w-auto">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              {/* Age */}
+              <div className="font-medium text-gray-700">Age:</div>
+              <div className="text-right font-semibold">{player.age}</div>
+              
+              {/* Height */}
+              <div className="font-medium text-gray-700">Height:</div>
+              <div className="text-right font-semibold">
+                {player.heightMet} cm / {player.heightImp}
+              </div>
+              
+              {/* Weight */}
+              <div className="font-medium text-gray-700">Weight:</div>
+              <div className="text-right font-semibold">
+                {player.weightMet} kg / {player.weightImp} lbs
+              </div>
+              
+              {/* Place of birth */}
+              <div className="font-medium text-gray-700">Place of birth:</div>
+              <div className="text-right font-semibold">{player.placeOfBirth || "N/A"}</div>
+            </div>
           </div>
-          {/* Cap Hit */}
-          <div className="col-span-2 text-left whitespace-nowrap">Place of birth:</div>
-          <div className="col-span-2 text-right whitespace-nowrap">{player.placeOfBirth || "N/A"}</div>
         </div>
       </div>
     </div>

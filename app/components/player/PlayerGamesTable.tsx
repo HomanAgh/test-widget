@@ -89,7 +89,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           <TableBody>
             {showSummary ? (
               <TableRow>
-                <TableCell align="center">Summary</TableCell>
+                <TableCell align="left">Summary</TableCell>
                 {playerType === "GOALTENDER" ? (
                   <>
                     <TableCell align="center">
