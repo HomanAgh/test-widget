@@ -146,13 +146,6 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) =
     setSelectedSeason(e.target.value);
   };
 
-  // Format the title with league name and season
-  const getTitle = () => {
-    const leagueDisplay = leagueName || leagueSlug.toUpperCase();
-    return `Scoring Leaders in the ${leagueDisplay} ${selectedSeason}`; 
-  };
-
-  // Get the Elite Prospects URL
   const getEPUrl = () => {
     return getEliteProspectsStatsUrl(leagueSlug, selectedSeason);
   };

@@ -15,13 +15,13 @@ import {
 import { HiMiniChevronUpDown, HiMiniChevronUp, HiMiniChevronDown } from "react-icons/hi2";
 
 const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({ scoringLeaders}) => {
-  if (!scoringLeaders || !scoringLeaders.data || scoringLeaders.data.length === 0) {
-    return <div className="text-center py-4">No scoring data available</div>;
-  }
-
   // Sorting state - default to TP column with descending order (highest first)
   const [sortColumn, setSortColumn] = useState<string>('TP');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | 'none'>('desc');
+  
+  if (!scoringLeaders || !scoringLeaders.data || scoringLeaders.data.length === 0) {
+    return <div className="text-center py-4">No scoring data available</div>;
+  }
 
   // Helper function to get nationality name
   const getNationalityName = (nationality: any): string => {

@@ -11,6 +11,7 @@ export default function ScoringLeadersPage({ params }: any) {
   return (
     <PageWrapper>
       <Header currentPath="/scoring-leaders" />
+      <PageTitle title="Scoring Leaders" />
       <AuthCheck>
         <ScoringLeadersSearch />
         <ClientScoringLeadersPage leagueSlug={leagueSlug} season="2024-2025" />
