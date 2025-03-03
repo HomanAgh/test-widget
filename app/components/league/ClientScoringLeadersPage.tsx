@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import ScoringLeaders from './ScoringLeaders';
+import ScoringLeadersWidgetSetup from '../widget/ScoringLeadersWidgetSetup';
 
 interface ClientScoringLeadersPageProps {
   leagueSlug: string;
@@ -20,7 +20,10 @@ const ClientScoringLeadersPage: React.FC<ClientScoringLeadersPageProps> = ({ lea
   return (
     <>
       {selectedLeagueSlug && (
-        <ScoringLeaders leagueSlug={selectedLeagueSlug} season={season} />
+        <ScoringLeadersWidgetSetup 
+          leagueSlug={selectedLeagueSlug} 
+          season={season}
+        />
       )}
     </>
   );

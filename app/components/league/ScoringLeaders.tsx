@@ -32,29 +32,6 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) =
   const [error, setError] = useState<string | null>(null);
   const [leagueName, setLeagueName] = useState<string>("");
 
-  // Fetch league info to get the league name
-  useEffect(() => {
-    const fetchLeagueInfo = async () => {
-      try {
-        const response = await fetch(`/api/league/${leagueSlug}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data && data.data && data.data.length > 0) {
-            // Try to find the league name from the response
-            const league = data.data[0];
-            if (league.team && league.team.league && league.team.league.name) {
-              setLeagueName(league.team.league.name);
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching league info:", err);
-      }
-    };
-
-    fetchLeagueInfo();
-  }, [leagueSlug]);
-
   useEffect(() => {
     const fetchScoringLeaders = async () => {
       setLoading(true);
@@ -87,8 +64,8 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) =
           throw new Error("Invalid data structure received from API");
         }
         
-        // Try to extract league name if not already set
-        if (!leagueName && data.data.length > 0) {
+        // Try to extract league name from the first player's data
+        if (data.data.length > 0) {
           const firstPlayer = data.data[0];
           if (firstPlayer.team && firstPlayer.team.league && firstPlayer.team.league.name) {
             setLeagueName(firstPlayer.team.league.name);
@@ -140,7 +117,7 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) =
     };
 
     fetchScoringLeaders();
-  }, [leagueSlug, selectedSeason, leagueName]);
+  }, [leagueSlug, selectedSeason]);
 
   const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSeason(e.target.value);

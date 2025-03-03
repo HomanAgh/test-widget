@@ -1,32 +1,3 @@
-/**
- * Widget Embed Script
- * 
- * This script allows for easy embedding of widgets from the application.
- * It detects the widget type and parameters from the script tag and creates
- * an iframe with the appropriate URL.
- * 
- * Usage:
- * <script 
- *   src="https://your-domain.com/widget-embed.js" 
- *   data-widget-type="player|team|league|alumni"
- *   data-player-id="123"
- *   data-team-id="456"
- *   data-league-slug="nhl"
- *   data-team-ids="123,456"
- *   data-leagues="nhl,ahl"
- *   data-width="100%"
- *   data-height="600px"
- *   data-game-limit="5"
- *   data-view-mode="stats"
- *   data-show-summary="true"
- *   data-background-color="#FFFFFF"
- *   data-text-color="#000000"
- *   data-table-background-color="#FFFFFF"
- *   data-name-text-color="#0D73A6"
- *   data-teams="Youth Team Name"
- * ></script>
- */
-
 (function() {
   // Get the current script element
   const scripts = document.getElementsByTagName('script');
@@ -38,7 +9,14 @@
   const height = currentScript.getAttribute('data-height') || '600px';
   
   // Base URL for the application
-  const baseUrl = new URL(currentScript.src).origin;
+  let baseUrl;
+  try {
+    // Try to get base URL from script src
+    baseUrl = new URL(currentScript.src).origin;
+  } catch (e) {
+    // Fallback to window.location.origin if script src is relative
+    baseUrl = window.location.origin;
+  }
   
   // Create iframe element
   const iframe = document.createElement('iframe');
@@ -87,6 +65,18 @@
       
       iframeSrc = `${baseUrl}/embed/league?leagueSlug=${leagueSlug}`;
       break;
+
+    case 'scoring-leaders':
+      const scoringLeagueSlug = currentScript.getAttribute('data-league-slug') || '';
+      const season = currentScript.getAttribute('data-season') || '';
+      
+      if (!scoringLeagueSlug || !season) {
+        console.error('Scoring Leaders widget requires data-league-slug and data-season attributes');
+        return;
+      }
+      
+      iframeSrc = `${baseUrl}/embed/scoring-leaders?leagueSlug=${scoringLeagueSlug}&season=${season}`;
+      break;
       
     case 'alumni':
       const teamIds = currentScript.getAttribute('data-team-ids') || '';
@@ -106,7 +96,7 @@
       break;
       
     default:
-      console.error('Invalid widget type. Use "player", "team", "league", or "alumni"');
+      console.error('Invalid widget type. Use "player", "team", "league", "scoring-leaders", or "alumni"');
       return;
   }
   
