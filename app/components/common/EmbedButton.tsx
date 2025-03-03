@@ -2,18 +2,18 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { GoHomeFill } from "react-icons/go";
+import { ImEmbed } from "react-icons/im";
 
-interface HomeButtonProps {
+interface EmbedButtonProps {
   isDisabled?: boolean;
 }
 
-const HomeButton: React.FC<HomeButtonProps> = ({ isDisabled = false }) => {
+const EmbedButton: React.FC<EmbedButtonProps> = ({ isDisabled = false }) => {
   const router = useRouter();
 
   const handleRedirect = () => {
     if (!isDisabled) {
-      router.push("/home");
+      router.push("/embed");
     }
   };
 
@@ -25,7 +25,7 @@ const HomeButton: React.FC<HomeButtonProps> = ({ isDisabled = false }) => {
         ${isDisabled ? "bg-gray-200 cursor-not-allowed" : "hover:bg-gray-300"}
       `}
     >
-      <GoHomeFill
+      <ImEmbed
         size={20}
         className={isDisabled ? "opacity-50" : "text-[#0B9D52]"}
       />
@@ -35,10 +35,10 @@ const HomeButton: React.FC<HomeButtonProps> = ({ isDisabled = false }) => {
         }`}
         style={{ fontFamily: "var(--Typography-Font-family)" }}
       >
-        Home
+        Embed
       </span>
     </button>
   );
 };
 
-export default HomeButton;
+export default EmbedButton;
