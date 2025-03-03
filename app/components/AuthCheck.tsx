@@ -20,12 +20,10 @@ const AuthCheck: React.FC<AuthCheckProps> = ({ children }) => {
     }
   }, [router]);
 
-  // Show nothing while checking authentication
   if (isAuthenticated === null) {
     return null;
   }
 
-  // Only render children if authenticated
   return isAuthenticated ? <>{children}</> : null;
 };
 

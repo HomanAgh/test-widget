@@ -20,27 +20,18 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     }
   }, []);
 
-  // Generate script tag code from iframe code
   const generateScriptCode = useCallback(() => {
     try {
-      // Extract the src URL from the iframe code
       const srcMatch = iframeCode.match(/src="([^"]+)"/);
       if (!srcMatch || !srcMatch[1]) return '';
-      
       const srcUrl = srcMatch[1];
       const url = new URL(srcUrl, window.location.origin);
-      
-      // Extract parameters from the URL
       const params = url.searchParams;
-      
-      // Determine widget type from the URL path
       const pathParts = url.pathname.split('/');
       const widgetType = pathParts[pathParts.length - 1];
       
-      // Build the script tag with appropriate data attributes
       let scriptCode = `<script\n  src="${window.location.origin}/widget-embed.js"\n  data-widget-type="${widgetType}"`;
       
-      // Add parameters as data attributes
       switch (widgetType) {
         case 'player':
           if (params.has('playerId')) scriptCode += `\n  data-player-id="${params.get('playerId')}"`;
@@ -65,7 +56,6 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
           break;
       }
       
-      // Add common attributes
       scriptCode += `\n  data-width="100%"\n  data-height="600px"\n></script>`;
       
       return scriptCode;
@@ -78,7 +68,6 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
   const scriptCode = generateScriptCode();
   const currentCode = embedType === 'iframe' ? iframeCode : scriptCode;
 
-  // Navigation handlers
   const navigateToEmbedDocs = () => {
     window.open('/embed/docs', '_blank');
   };
@@ -91,13 +80,11 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     window.open('/contact', '_blank');
   };
 
-  // Reset modal state when opening
   const handleOpenModal = () => {
     setShowModalCode(false);
     setShowModal(true);
   };
 
-  // Modal component
   const EmbedModal = () => {
     if (!showModal) return null;
     
@@ -121,7 +108,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                 onClick={() => setEmbedType('iframe')}
                 className={`px-4 py-2 rounded-md ${
                   embedType === 'iframe' 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-[#0B9D52] text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
@@ -131,7 +118,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                 onClick={() => setEmbedType('script')}
                 className={`px-4 py-2 rounded-md ${
                   embedType === 'script' 
-                    ? 'bg-blue-600 text-white' 
+                    ? 'bg-[#0B9D52] text-white' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
@@ -171,15 +158,15 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
               <div className="flex space-x-2 mt-2">
                 <button
                   onClick={() => copyToClipboard(currentCode)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-500"
+                  className="bg-[#0B9D52] text-white rounded-md hover:bg-green-700 transition-all px-4 py-2"
                 >
                   Copy Code
                 </button>
                 <button
                   onClick={() => {
-                    window.open('/test/super-simple-test.html', '_blank');
+                    window.open('/widget-test.html', '_blank');
                   }}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
+                  className="bg-[#052D41] text-white hover:bg-blue-700 transition-all px-4 py-2 rounded-md "
                 >
                   Test Widget
                 </button>
@@ -193,21 +180,21 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                   onClick={navigateToEmbedDocs}
                   className="block p-4 border rounded-md hover:bg-gray-50 cursor-pointer"
                 >
-                  <h4 className="font-medium text-blue-600">Embedding Guide</h4>
+                  <h4 className="font-medium text-[#052D41] underline">Embedding Guide</h4>
                   <p className="text-sm text-gray-600">Learn how to embed widgets on your website</p>
                 </div>
                 <div 
                   onClick={navigateToEmbedDemo}
                   className="block p-4 border rounded-md hover:bg-gray-50 cursor-pointer"
                 >
-                  <h4 className="font-medium text-blue-600">Live Demos</h4>
+                  <h4 className="font-medium text-[#052D41] underline">Live Demos</h4>
                   <p className="text-sm text-gray-600">See examples of embedded widgets</p>
                 </div>
                 <div 
                   onClick={navigateToContact}
                   className="block p-4 border rounded-md hover:bg-gray-50 cursor-pointer"
                 >
-                  <h4 className="font-medium text-blue-600">Need Help?</h4>
+                  <h4 className="font-medium text-[#052D41] underline">Need Help?</h4>
                   <p className="text-sm text-gray-600">Contact our support team for assistance</p>
                 </div>
               </div>
@@ -222,12 +209,12 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     <div className="mt-8 flex justify-center pb-[24px]">
       <button
         onClick={handleOpenModal}
-        className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-2 font-medium"
+        className="bg-[#0B9D52] text-white font-bold hover:bg-green-700 transition-all px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-2 font-bold font-montserrat"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
         </svg>
-        <span>Add to your website</span>
+        <span>ADD TO YOUR WEBSITE</span>
       </button>
       
       {/* Render the modal */}

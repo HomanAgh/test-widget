@@ -6,7 +6,7 @@ import { SearchBarContainer, SearchInput, Dropdown, DropdownItem, LoadingItem } 
 import ErrorMessage from "../common/ErrorMessage";
 
 interface LeagueSearchBarProps {
-  onSelect?: (leagueSlug: string) => void;
+  onSelect?: (leagueSlug: string) => boolean;
   onError?: (error: string) => void;
 }
 
@@ -98,11 +98,14 @@ const LeagueSearchBar: React.FC<LeagueSearchBarProps> = ({ onSelect, onError }) 
     setShowDropdown(false);
     setQuery("");
     if (onSelect) {
-      onSelect(leagueSlug);
-    } else {
-      // Default navigation if no onSelect provided
-      window.location.href = `/league/${leagueSlug}`;
+      const handled = onSelect(leagueSlug);
+      // If onSelect returns true, it means navigation has been handled
+      if (handled === true) {
+        return;
+      }
     }
+    // Default navigation if no onSelect provided or if onSelect didn't handle navigation
+    window.location.href = `/league/${leagueSlug}`;
   };
 
   return (
