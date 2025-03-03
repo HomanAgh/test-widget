@@ -142,6 +142,31 @@ const EmbedDocs = () => {
             </table>
           </div>
           
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-3">Scoring Leaders Widget</h3>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">leagueSlug</td>
+                  <td className="border border-gray-300 px-4 py-2">The slug identifier for the league</td>
+                  <td className="border border-gray-300 px-4 py-2">nhl</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">season</td>
+                  <td className="border border-gray-300 px-4 py-2">The season to display scoring leaders for</td>
+                  <td className="border border-gray-300 px-4 py-2">2023-24</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
           <div>
             <h3 className="text-lg font-medium mb-3">Alumni Widget</h3>
             <table className="w-full border-collapse">

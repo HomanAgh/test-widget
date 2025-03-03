@@ -250,9 +250,8 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({ scoringLeader
 };
 
 // Export the component and the URL generation function
-export default ScoringLeadersTable;
-
-// Helper function to generate Elite Prospects stats URL
 export const getEliteProspectsStatsUrl = (leagueSlug: string, season: string) => {
   return `https://www.eliteprospects.com/league/${leagueSlug}/stats/${season}`;
-}; 
+};
+
+export default ScoringLeadersTable; 
