@@ -5,8 +5,8 @@ import AuthCheck from "@/app/components/AuthCheck";
 import ClientScoringLeadersPage from "@/app/components/league/ClientScoringLeadersPage";
 import ScoringLeadersSearch from "@/app/components/league/ScoringLeadersSearch";
 
-export default function ScoringLeadersPage({ params }: any) {
-  const { leagueSlug } = params;
+export default async function ScoringLeadersPage({ params }: { params: { leagueSlug: string } }) {
+  const { leagueSlug } = await params;
   
   return (
     <PageWrapper>

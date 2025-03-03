@@ -5,8 +5,8 @@ import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 import ClientLeaguePage from "@/app/components/league/ClientLeaguePage";
 
-export default function LeaguePage({ params }: any) {
-  const { leagueSlug } = params;
+export default async function LeaguePage({ params }: { params: { leagueSlug: string } }) {
+  const { leagueSlug } = await params;
   
   return (
     <PageWrapper>

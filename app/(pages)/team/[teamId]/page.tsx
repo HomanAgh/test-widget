@@ -5,8 +5,8 @@ import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 import ClientTeamPage from "@/app/components/team/ClientTeamPage";
 
-export default function TeamPage({ params }: any) {
-  const { teamId } = params;
+export default async function TeamPage({ params }: { params: { teamId: string } }) {
+  const { teamId } = await params;
 
   return (
     <PageWrapper>

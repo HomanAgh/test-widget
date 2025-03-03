@@ -5,8 +5,8 @@ import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 import ClientPlayerPage from "@/app/components/player/ClientPlayerPage";
 
-export default function PlayerPage({ params }: any) {
-  const { playerId } = params;
+export default async function PlayerPage({ params }: { params: { playerId: string } }) {
+  const { playerId } = await params;
 
   return (
     <PageWrapper>
