@@ -5,8 +5,12 @@ import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 import ClientPlayerPage from "@/app/components/player/ClientPlayerPage";
 
-export default function PlayerPage({ params }: any) {
-  const { playerId } = params;
+interface PageProps {
+  params: Promise<{ playerId: string }>;
+}
+
+export default async function PlayerPage({ params }: PageProps) {
+  const { playerId } = await params;
 
   return (
     <PageWrapper>
