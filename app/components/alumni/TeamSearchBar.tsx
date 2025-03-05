@@ -59,7 +59,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         if (dropdownRef.current) {
           dropdownRef.current.scrollTop = 0;
         }
-      } catch (_err: any) { // varför vill inte github uppdatera det här? bugg?
+      } catch {
         setTeams([]);
       } finally {
         setIsLoading(false);
