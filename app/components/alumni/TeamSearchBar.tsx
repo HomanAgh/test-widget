@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { TeamItem, TeamSearchBarProps } from "@/app/types/team";
 import { IoIosRemoveCircle } from "react-icons/io";
@@ -59,7 +59,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         if (dropdownRef.current) {
           dropdownRef.current.scrollTop = 0;
         }
-      } catch (err: any) {
+      } catch (_err: any) {
         setTeams([]);
       } finally {
         setIsLoading(false);
