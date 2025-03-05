@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import { TeamItem, TeamSearchBarProps } from "@/app/types/team"; 
+import { TeamItem, TeamSearchBarProps } from "@/app/types/team";
 import { IoIosRemoveCircle } from "react-icons/io";
 import Image from "next/image";
 
@@ -21,11 +21,6 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLUListElement>(null);
-
-  // Stabilize the onError callback
-  const stableOnError = useCallback((errorMessage: string) => {
-    if (onError) onError(errorMessage);
-  }, [onError]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -47,7 +42,8 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           `/api/AlumniSearchTeam?query=${encodeURIComponent(debouncedQuery)}`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch teams.");
+          setTeams([]);
+          return;
         }
         const data: { teams: TeamItem[] } = await response.json();
 
@@ -55,7 +51,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           id: team.id,
           name: team.name,
           league: team.league,
-          logo: team.logo || null, 
+          logo: team.logo || null,
         }));
 
         setTeams(teamsWithLogos || []);
@@ -65,13 +61,13 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           dropdownRef.current.scrollTop = 0;
         }
       } catch (err: any) {
-        stableOnError(err.message || "Failed to fetch teams.");
+        setTeams([]);
       } finally {
         setIsLoading(false);
       }
     };
     fetchTeams();
-  }, [debouncedQuery, stableOnError]);
+  }, [debouncedQuery]);
 
   // Outside click => hide dropdown
   useEffect(() => {
@@ -105,7 +101,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           id: highlightedTeam.id,
           name: highlightedTeam.name,
           league: highlightedTeam.league,
-          logo: highlightedTeam.logo || null, 
+          logo: highlightedTeam.logo || null,
         });
       }
     }
@@ -122,7 +118,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
           id: team.id,
           name: team.name,
           league: team.league,
-          logo: team.logo || null, 
+          logo: team.logo || null,
         },
       ]);
     }
@@ -217,7 +213,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
                     onClick={() => removeTeam(team.id)}
                     className="ml-2 text-red-700 font-bold"
                   >
-                    <IoIosRemoveCircle/>
+                    <IoIosRemoveCircle />
                   </button>
                 </span>
               ))}
@@ -232,8 +228,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         )}
       </div>
     </div>
-  );   
+  );
 };
 
 export default TeamSearchBar;
-
