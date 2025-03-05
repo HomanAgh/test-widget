@@ -135,18 +135,17 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   ) => {
     const isActive = status?.toLowerCase() === "active";
     const isRetired = status?.toLowerCase() === "retired";
-    const displayStatus = status ? `[${status.toUpperCase()}]` : "";
+    const isDeceased = status?.toLowerCase() === "deceased";
+    const displayStatus = isRetired || isDeceased ? "[R]" : "";
 
     let contentForStatus: JSX.Element;
     if (isActive) {
+      contentForStatus = <span></span>;
+    } else if (isRetired || isDeceased) {
       contentForStatus = (
-        <Tooltip tooltip={teamName ? `Player is active` : "Player is active"}>
-          <span>{displayStatus}</span>
-        </Tooltip>
-      );
-    } else if (isRetired) {
-      contentForStatus = (
-        <Tooltip tooltip="Player is Retired">
+        <Tooltip
+          tooltip={isDeceased ? "Player is Deceased" : "Player is Retired"}
+        >
           <span>{displayStatus}</span>
         </Tooltip>
       );
@@ -434,6 +433,8 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
           <span className="text-[#000]">Birth year</span>
           <span className="mx-2 text-[#000] font-bold">NHL DP</span>
           <span className="text-[#000]">Draft pick</span>
+          <span className="mx-2 text-[#000] font-bold">R</span>
+          <span className="text-[#000]">Retired</span>
         </div>
       </div>
     </div>
