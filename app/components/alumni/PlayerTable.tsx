@@ -131,7 +131,6 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     lastName: string,
     position?: string | null,
     status?: string | null,
-    teamName = ""
   ) => {
     const isActive = status?.toLowerCase() === "active";
     const isRetired = status?.toLowerCase() === "retired";

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { TeamItem, TeamSearchBarProps } from "@/app/types/team";
 import { IoIosRemoveCircle } from "react-icons/io";
@@ -8,7 +8,6 @@ import Image from "next/image";
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   onSelect,
-  onError,
   selectedTeams,
   onCheckedTeamsChange,
 }) => {
