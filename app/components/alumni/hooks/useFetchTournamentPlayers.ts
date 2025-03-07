@@ -25,7 +25,7 @@ export function useFetchTournamentPlayers(
   const prevTournamentsRef = useRef<string[]>([]);
   const prevLeagueRef = useRef<string | null>(null);
 
-  const limit = 500;
+  const limit = 800;
 
   const fetchPlayers = useCallback(async (reset = false) => {
     // Basic guard: if no tournaments are selected, nothing to fetch
