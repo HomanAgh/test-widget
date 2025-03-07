@@ -25,7 +25,7 @@ export function useFetchTournamentPlayers(
   const prevTournamentsRef = useRef<string[]>([]);
   const prevLeagueRef = useRef<string | null>(null);
 
-  const limit = 800;
+  const limit = 6800;
 
   const fetchPlayers = useCallback(async (reset = false) => {
     // Basic guard: if no tournaments are selected, nothing to fetch
@@ -41,7 +41,7 @@ export function useFetchTournamentPlayers(
       // Step 1: Fetch basic player data from tournaments
       let url = `/api/tournament/players?offset=${reset ? 0 : offset}&limit=${limit}`;
       url += `&tournaments=${encodeURIComponent(selectedTournaments.join(','))}`;
-
+      
       console.log('Step 1: Fetching basic player data =>', url);
       const response = await fetch(url);
       
@@ -51,7 +51,7 @@ export function useFetchTournamentPlayers(
         throw new Error(`Failed to fetch players. Status: ${response.status}`);
       }
 
-      const data = (await response.json()) as AlumniAPIResponse;
+      const data = await response.json() as AlumniAPIResponse;
       
       if (!data.players || data.players.length === 0) {
         setError('No players found for the selected tournaments.');
@@ -142,27 +142,26 @@ export function useFetchTournamentPlayers(
 
       const newPlayers = playersToProcess;
       
-      const combined = reset ? newPlayers : [...results, ...newPlayers];
-
-      // De-duplicate players by id
-      const deduped = Array.from(new Map(combined.map((p) => [p.id, p])).values());
-
-      setResults(deduped);
-      playersCache.set(cacheKey, deduped);
+      setResults(prev => {
+        const combined = reset ? newPlayers : [...prev, ...newPlayers];
+        return Array.from(new Map(combined.map(p => [p.id, p])).values());
+      });
 
       if (reset) {
         setOffset(newPlayers.length);
       } else {
-        setOffset((prev) => prev + newPlayers.length);
+        setOffset(prev => prev + newPlayers.length);
       }
+      
       setHasMore(newPlayers.length === limit);
+
     } catch (err) {
       console.error('useFetchTournamentPlayers error:', err);
       setError('Failed to fetch players.');
     } finally {
       setLoading(false);
     }
-  }, [selectedTournaments, leagueParam, offset, results, cacheKey]);
+  }, [selectedTournaments, leagueParam, offset, limit]);
 
   // Effect to trigger a refetch if relevant inputs changed
   useEffect(() => {
@@ -189,5 +188,11 @@ export function useFetchTournamentPlayers(
     }
   }, [selectedTournaments, leagueParam, cacheKey, fetchPlayers]);
 
-  return { results, loading, error, hasMore, fetchPlayers };
+  return { 
+    results, 
+    loading, 
+    error, 
+    hasMore, 
+    fetchMore: () => !loading && hasMore ? fetchPlayers(false) : null
+  };
 } 
