@@ -38,22 +38,13 @@ export function useFetchTournamentPlayers(
     setError('');
 
     try {
-      let url = `/api/alumni/tournament?offset=${reset ? 0 : offset}&limit=${limit}`;
-
-      // Add tournaments parameter
+      // Step 1: Fetch basic player data from tournaments
+      let url = `/api/tournament/players?offset=${reset ? 0 : offset}&limit=${limit}`;
       url += `&tournaments=${encodeURIComponent(selectedTournaments.join(','))}`;
 
-      // Add leagues parameter if provided
-      if (leagueParam) {
-        const leagueString = Array.isArray(leagueParam)
-          ? leagueParam.join(',')
-          : leagueParam;
-        url += `&leagues=${encodeURIComponent(leagueString)}`;
-      }
-
-      console.log('useFetchTournamentPlayers: GET =>', url);
-
+      console.log('Step 1: Fetching basic player data =>', url);
       const response = await fetch(url);
+      
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API error response:', errorText);
@@ -61,16 +52,95 @@ export function useFetchTournamentPlayers(
       }
 
       const data = (await response.json()) as AlumniAPIResponse;
-      console.log('API response data:', data);
       
-      if (!data.players) {
-        setError('No players returned from API.');
+      if (!data.players || data.players.length === 0) {
+        setError('No players found for the selected tournaments.');
         setLoading(false);
         return;
       }
 
-      const newPlayers = data.players;
-      console.log(`Received ${newPlayers.length} players from API`);
+      let playersToProcess = data.players;
+      console.log(`Received ${playersToProcess.length} basic players from API`);
+
+      // Step 2: If league filter is provided, filter players by leagues
+      if (leagueParam && leagueParam.trim() !== '') {
+        const leagues = leagueParam.split(',').filter(Boolean);
+        
+        if (leagues.length > 0) {
+          console.log('Step 2: Filtering players by leagues:', leagues);
+          
+          const playerIds = playersToProcess.map(p => p.id);
+          const filterResponse = await fetch('/api/tournament/filter-by-leagues', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              playerIds,
+              leagues,
+            }),
+          });
+          
+          if (!filterResponse.ok) {
+            console.error('Error filtering players by leagues:', await filterResponse.text());
+          } else {
+            const filterData = await filterResponse.json();
+            const filteredIds = new Set(filterData.playerIds);
+            
+            playersToProcess = playersToProcess.filter(p => filteredIds.has(p.id));
+            console.log(`Filtered to ${playersToProcess.length} players matching league criteria`);
+          }
+        }
+      }
+
+      // Step 3: Fetch detailed player information (draft picks, team history)
+      if (playersToProcess.length > 0) {
+        console.log('Step 3: Fetching detailed player information');
+        
+        const playerIds = playersToProcess.map(p => p.id);
+        const detailsResponse = await fetch('/api/tournament/player-details', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            playerIds,
+          }),
+        });
+        
+        if (!detailsResponse.ok) {
+          console.error('Error fetching player details:', await detailsResponse.text());
+        } else {
+          const detailsData = await detailsResponse.json();
+          console.log('Received player details data:', Object.keys(detailsData).length, 'players');
+          
+          // Merge the details with the basic player data
+          playersToProcess = playersToProcess.map(player => {
+            const details = detailsData[player.id];
+            
+            if (details) {
+              console.log(`Player ${player.id} (${player.name}) - Birth year from details: ${details.birthYear}`);
+              return {
+                ...player,
+                draftPick: details.draftPick,
+                teams: details.teams,
+                birthYear: details.birthYear
+              };
+            }
+            
+            return player;
+          });
+          
+          // Log a sample of players to verify birth year data
+          if (playersToProcess.length > 0) {
+            console.log('Sample player with details:', JSON.stringify(playersToProcess[0], null, 2));
+          }
+          
+          console.log('Successfully merged player details');
+        }
+      }
+
+      const newPlayers = playersToProcess;
       
       const combined = reset ? newPlayers : [...results, ...newPlayers];
 
