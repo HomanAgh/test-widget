@@ -1,58 +1,47 @@
 "use client";
 
 import React, { Suspense } from "react";
-import Alumni from "@/app/components/alumni/Alumni";
 import { useSearchParams } from "next/navigation";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import TournamentAlumni from "@/app/components/alumni/TournamentAlumni";
 
 const EmbedAlumniShell = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AlumniShellEmbedContent />
-    </Suspense>
+    <div className="p-0 m-0">
+      <Suspense fallback={<div>Loading...</div>}>
+        <AlumniShellEmbedContent />
+      </Suspense>
+    </div>
   );
 };
 
 const AlumniShellEmbedContent = () => {
   const searchParams = useSearchParams();
-  const teamIdsStr = searchParams.get("teamIds") || "";
-  const leaguesStr = searchParams.get("leagues") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
+
+  const tournaments = searchParams.get("tournaments") || "";
+  const leagues = searchParams.get("leagues") || "";
+  const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
   const textColor = searchParams.get("textColor") || "#000000";
   const tableBackgroundColor =
     searchParams.get("tableBackgroundColor") || "#FFFFFF";
   const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
-  const youthTeam = searchParams.get("teams") || "";
-  const teamIds = teamIdsStr
-    .split(",")
-    .map((id) => id.trim())
-    .filter(Boolean);
-  const selectedLeagues = leaguesStr
-    .split(",")
-    .map((l) => l.trim())
-    .filter(Boolean);
-  const selectedTeams = teamIds.map((id) => ({
-    id: parseInt(id, 10) || 0,
-    name: youthTeam,
-    league: selectedLeagues[0] || "",
-  }));
+
+  const selectedTournaments = tournaments ? tournaments.split(",") : [];
+  const selectedLeagues = leagues ? leagues.split(",") : [];
+
+  const customColors = {
+    backgroundColor,
+    textColor,
+    tableBackgroundColor,
+    headerTextColor: "#FFFFFF",
+    nameTextColor,
+  };
 
   return (
-    <ResizeObserver>
-      <div style={{ overflow: "auto" }}>
-        <Alumni
-          selectedTeams={selectedTeams}
-          selectedLeagues={selectedLeagues}
-          customColors={{
-            backgroundColor,
-            textColor,
-            tableBackgroundColor,
-            nameTextColor,
-          }}
-          includeYouth={true}
-        />
-      </div>
-    </ResizeObserver>
+    <TournamentAlumni
+      selectedTournaments={selectedTournaments}
+      selectedLeagues={selectedLeagues}
+      customColors={customColors}
+    />
   );
 };
 
