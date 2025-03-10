@@ -478,8 +478,8 @@ export async function GET(request: Request) {
     console.error('Alumni: Error in fetching data:', error);
     return NextResponse.json({ error: 'Failed to fetch data.' }, { status: 500 });
   }
-}
- */
+} */
+
 
 import { NextResponse } from 'next/server';
 import {
@@ -503,7 +503,7 @@ type LeagueFallback = {
 
 const leagueFallbackCache: Map<number, LeagueFallback> = new Map();
 
-/** Utility function to build a unique cache key from the query params */
+
 function buildCacheKey(
   teamIdsParam: string | null,
   leagueParam: string | null,
@@ -520,10 +520,7 @@ function buildCacheKey(
   });
 }
 
-/** 
- * If a league's data is missing from the item, we do a fallback fetch to fill leagueLevel or slug.
- * This is your existing logic for partial data.
- */
+
 async function fetchLeagueLevelAndSlug(teamId: number): Promise<LeagueFallback> {
   if (leagueFallbackCache.has(teamId)) {
     return leagueFallbackCache.get(teamId)!;
@@ -575,10 +572,7 @@ const fields = [
   'team.league.leagueLevel',
 ].join(',');
 
-/** 
- * Build a URL that fetches players who have played in a specific team ID 
- * plus optional league param
- */
+
 function buildTeamBaseUrl(teamId: number, leagues: string[] | null) {
   const leagueParam = leagues?.join(',');
   let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
@@ -591,9 +585,7 @@ function buildTeamBaseUrl(teamId: number, leagues: string[] | null) {
   return url;
 }
 
-/** 
- * Build a URL that fetches players by youthTeam name, plus optional league param 
- */
+
 function buildYouthBaseUrl(teamsParam: string, leagues: string[] | null) {
   const leagueParam = leagues?.join(',');
   let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
@@ -606,9 +598,7 @@ function buildYouthBaseUrl(teamsParam: string, leagues: string[] | null) {
   return url;
 }
 
-/**
- * NEW: Build a URL that fetches ALL players in given leagues (no team constraint)
- */
+
 function buildLeagueOnlyBaseUrl(leagues: string[]) {
   const leagueParam = leagues.join(',');
   let url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&fields=${encodeURIComponent(fields)}`;
@@ -618,9 +608,7 @@ function buildLeagueOnlyBaseUrl(leagues: string[]) {
   return url;
 }
 
-/**
- * Helper to fetch all pages from an endpoint that might have multiple pages of data.
- */
+
 async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> {
   const allItems: T[] = [];
   
@@ -693,12 +681,7 @@ async function fetchAllPages<T>(baseUrl: string, pageSize = 1000): Promise<T[]> 
   }
 }
 
-/**
- * fetchAndMergePlayerStats:
- *  - fetches all pages of data from baseUrl
- *  - merges them into playerMap by player ID
- *  - does fallback for missing league data
- */
+
 async function fetchAndMergePlayerStats(
   baseUrl: string,
   playerMap: Map<number, CombinedPlayer>
@@ -791,9 +774,7 @@ async function fetchAndMergePlayerStats(
   }
 }
 
-/**
- * fetchBatchDraftPicks: fetches draft info in chunks
- */
+
 async function fetchBatchDraftPicks(
   playerIds: number[],
   chunkSize = 500
@@ -870,9 +851,7 @@ async function fetchBatchDraftPicks(
 
 export const revalidate = 3000;
 
-/** 
- * MAIN GET Handler 
- */
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 

@@ -1,29 +1,21 @@
- "use client";
-
-import React, { useState, useMemo } from "react";
+/* "use client";
+import React, { useState, useEffect } from "react";
 import { TournamentItem } from "@/app/types/tournament";
-import TournamentSearchBar from "@/app/components/alumni/TournamentSearchBar"; 
-// Or wherever you placed your new search bar
-import Alumni from "@/app/components/alumni/Alumni";
+import TournamentSearchBar from "@/app/components/alumni/TournamentSearchBar";
+import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
 import HexColors from "@/app/components/common/color-picker/HexColors";
-import EmbedCodeBlock from "../iframe/IframePreview";
+import EmbedCodeBlock from "@/app/components/iframe/IframePreview";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
-// If you still want to allow selection of regular leagues, import and use the same hook:
-import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection"; 
 import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
+import AlumniLocal from "../alumni/AlumniLocal";
 
-// If you do NOT want to support normal leagues, you can remove the LeagueSelectionDropdown stuff.
-
-const AlumniTournamentWidgetSetup: React.FC = () => {
-  // Tournaments selected by the user
+export default function AlumniTournamentWidgetSetup() {
   const [selectedTournaments, setSelectedTournaments] = useState<TournamentItem[]>([]);
-  // (OPTIONAL) If you want to also filter by normal leagues, keep this. Otherwise remove it.
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
-
-  // For demonstration, I'm leaving this in case you want to show an error message
+  const [finalPlayers, setFinalPlayers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Colors for customizing the alumni table
   const [customColors, setCustomColors] = useState({
     headerTextColor: "#FFFFFF",
     backgroundColor: "#052D41",
@@ -32,51 +24,65 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
     nameTextColor: "#0D73A6",
   });
 
-  // If you want a “live preview” of the tournaments’ alumni
-  // we pass them to <Alumni> as a "league" param.
-  // e.g. if selectedTournaments = [ { slug: "brick-invitational" }, { slug: "spengler-cup" } ]
-  // Then we pass `league=brick-invitational,spengler-cup` to /api/alumni.
-
-  // (OPTIONAL) If you want to fetch extra leagues (professional, junior, college),
-  // use the existing useFetchLeagues:
   const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
 
-  // Build an embed URL for the <iframe>
-  // This is similar to how your AlumniWidgetSetup does it, but focusing on tournaments.
-  const embedUrl = useMemo(() => {
-    // Gather the user’s chosen tournament slugs
-    const tournamentSlugs = selectedTournaments.map((t) => t.slug);
+  useEffect(() => {
+    handleFetchIntersection();
+  }, [selectedTournaments, selectedLeagues]);
 
-    // If you also want to combine normal leagues:
-    const allLeagueSlugs = [...selectedLeagues, ...tournamentSlugs];
-    const leaguesParam = allLeagueSlugs.join(",");
+  async function handleFetchIntersection() {
+    if (selectedTournaments.length === 0 || selectedLeagues.length === 0) {
+      setFinalPlayers([]);
+      return;
+    }
 
-    // We'll construct an embed route, e.g. /embed/alumni
-    // If you only want it to revolve around tournaments, that’s fine.
-    // It doesn’t matter if there’s no "teamIds" param—just omit it.
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${baseUrl}/embed/alumni?leagues=${encodeURIComponent(leaguesParam)}`
-      + `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}`
-      + `&textColor=${encodeURIComponent(customColors.textColor)}`
-      + `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}`
-      + `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}`;
+    setLoading(true);
+    setError(null);
 
-    return url;
-  }, [selectedTournaments, selectedLeagues, customColors]);
+    try {
+      // Tournaments union
+      const tSlugs = selectedTournaments.map((t) => t.slug).join(",");
+      const tourPlayers = await fetchPlayersByLeague(tSlugs);
 
-  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
+      // Leagues union
+      const lSlugs = selectedLeagues.join(",");
+      const leaguePlayers = await fetchPlayersByLeague(lSlugs);
+
+      // Intersection
+      const intersection = intersectById(tourPlayers, leaguePlayers);
+      setFinalPlayers(intersection);
+    } catch (err) {
+      console.error("Intersection fetch error:", err);
+      setError("Failed to fetch intersection data.");
+      setFinalPlayers([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchPlayersByLeague(leagueParam: string) {
+    const url = `/api/alumni?league=${encodeURIComponent(leagueParam)}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Fetch failed for league=${leagueParam}`);
+    }
+    const data = await res.json();
+    return data.players || [];
+  }
+
+  function intersectById(a: any[], b: any[]): any[] {
+    const setB = new Set(b.map((p) => p.id));
+    return a.filter((p) => setB.has(p.id));
+  }
+
+  const iframeCode = `<iframe src="..." class="iframe"></iframe>`;
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Tournament Alumni Widget Setup</h2>
-
-      {/* -- If you want to let user search & pick multiple tournaments: -- */}
+    <div>
       <TournamentSearchBar
         selectedTournaments={selectedTournaments}
         onCheckedTournamentsChange={setSelectedTournaments}
       />
-
-      {/* -- Optional: If you want a normal league dropdown as well: -- */}
       <LeagueSelectionDropdown
         professionalLeagues={customLeagues}
         juniorLeagues={customJunLeagues}
@@ -87,29 +93,132 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
 
       {error && <ErrorMessage error={error} onClose={() => setError(null)} />}
 
-      {/* -- Color pickers, if you want to keep them -- */}
-      <div className="my-4">
-        <HexColors customColors={customColors} setCustomColors={setCustomColors} />
-      </div>
+      <HexColors customColors={customColors} setCustomColors={setCustomColors} />
 
-      {/* -- Show a live preview using <Alumni> if we have tournaments selected -- */}
-      {selectedTournaments.length > 0 && (
-        <div className="border border-gray-300 p-4 rounded">
-          <Alumni
-            // We pass an empty array for "selectedTeams"
-            selectedTeams={[]}
-            // Combine normal leagues + tournaments
-            selectedLeagues={[...selectedLeagues, ...selectedTournaments.map((t) => t.slug)]}
-            customColors={customColors}
-            includeYouth={false} // or true if you want
-          />
-        </div>
+      {loading ? (
+        <p>Loading players...</p>
+      ) : (
+        <>
+          <p>Found {finalPlayers.length} players</p>
+
+          <AlumniLocal players={finalPlayers} customColors={customColors} />
+        </>
       )}
 
-      {/* -- Embed code snippet -- */}
       <EmbedCodeBlock iframeCode={iframeCode} />
     </div>
   );
-};
+}
+ */
 
-export default AlumniTournamentWidgetSetup;
+"use client";
+import React, { useState, useEffect } from "react";
+import { TournamentItem } from "@/app/types/tournament";
+import TournamentSearchBar from "@/app/components/alumni/TournamentSearchBar";
+import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
+import HexColors from "@/app/components/common/color-picker/HexColors";
+import EmbedCodeBlock from "@/app/components/iframe/IframePreview";
+import ErrorMessage from "@/app/components/common/ErrorMessage";
+import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
+import LocalAlumni from "../alumni/LocalAlumni";
+
+export default function AlumniTournamentWidgetSetup() {
+  const [selectedTournaments, setSelectedTournaments] = useState<TournamentItem[]>([]);
+  const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
+  const [finalPlayers, setFinalPlayers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [customColors, setCustomColors] = useState({
+    headerTextColor: "#FFFFFF",
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    nameTextColor: "#0D73A6",
+  });
+
+  const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
+
+  useEffect(() => {
+    handleFetchIntersection();
+  }, [selectedTournaments, selectedLeagues]);
+
+  async function handleFetchIntersection() {
+    if (selectedTournaments.length === 0 || selectedLeagues.length === 0) {
+      setFinalPlayers([]);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Tournaments union
+      const tSlugs = selectedTournaments.map((t) => t.slug).join(",");
+      const tourPlayers = await fetchPlayersByLeague(tSlugs);
+
+      // Leagues union
+      const lSlugs = selectedLeagues.join(",");
+      const leaguePlayers = await fetchPlayersByLeague(lSlugs);
+
+      // Intersection
+      const intersection = intersectById(tourPlayers, leaguePlayers);
+      setFinalPlayers(intersection);
+    } catch (err) {
+      console.error("Intersection fetch error:", err);
+      setError("Failed to fetch intersection data.");
+      setFinalPlayers([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function fetchPlayersByLeague(leagueParam: string) {
+    const url = `/api/alumni?league=${encodeURIComponent(leagueParam)}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Fetch failed for league=${leagueParam}`);
+    }
+    const data = await res.json();
+    return data.players || [];
+  }
+
+  function intersectById(a: any[], b: any[]): any[] {
+    const setB = new Set(b.map((p) => p.id));
+    return a.filter((p) => setB.has(p.id));
+  }
+
+  const iframeCode = `<iframe src="..." class="iframe"></iframe>`;
+
+  return (
+    <div>
+      <TournamentSearchBar
+        selectedTournaments={selectedTournaments}
+        onCheckedTournamentsChange={setSelectedTournaments}
+      />
+      <LeagueSelectionDropdown
+        professionalLeagues={customLeagues}
+        juniorLeagues={customJunLeagues}
+        collegeLeagues={customCollegeLeagues}
+        selectedLeagues={selectedLeagues}
+        onChange={setSelectedLeagues}
+      />
+
+      {error && <ErrorMessage error={error} onClose={() => setError(null)} />}
+
+      <HexColors customColors={customColors} setCustomColors={setCustomColors} />
+
+      {loading ? (
+        <p>Loading players...</p>
+      ) : (
+        <>
+          <p>Found {finalPlayers.length} players</p>
+          {/* Render the local version that replicates old <Alumni> styling */}
+          <LocalAlumni players={finalPlayers} customColors={customColors} />
+        </>
+      )}
+
+      <EmbedCodeBlock iframeCode={iframeCode} />
+    </div>
+  );
+}
