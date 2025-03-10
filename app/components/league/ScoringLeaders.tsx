@@ -8,9 +8,26 @@ import { Link } from '@/app/components/common/style';
 interface ScoringLeadersProps {
   leagueSlug: string;
   season: string;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
-const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) => {
+const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ 
+  leagueSlug, 
+  season,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
+}) => {
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentMonth = date.getMonth() + 1; 
@@ -140,13 +157,14 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) =
   const leagueDisplay = leagueName || leagueSlug.toUpperCase();
 
   return (
-    <div className="max-w-6xl mx-auto my-8">
+    <div className="max-w-6xl mx-auto my-8" style={{ color: customColors.textColor }}>
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-4">
           Scoring Leaders in the{' '}
           <Link 
             href={getEPUrl()}
-            className="text-[#0D73A6] cursor-pointer hover:underline"
+            style={{ color: customColors.nameTextColor }}
+            className="cursor-pointer hover:underline"
           >
             {leagueDisplay} {selectedSeason}
           </Link>
@@ -173,6 +191,7 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ leagueSlug, season }) =
         scoringLeaders={scoringLeaders} 
         leagueDisplay={leagueDisplay}
         selectedSeason={selectedSeason}
+        customColors={customColors}
       />
     </div>
   );

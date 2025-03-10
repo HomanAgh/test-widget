@@ -35,6 +35,13 @@ const calculateAge = (dateOfBirth: string): number | "-" => {
 
 interface RosterTableProps {
   roster: RosterPlayer[];
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const collapsibleContainerStyle: CSSProperties = {
@@ -56,7 +63,16 @@ type SortKey =
   | "height"
   | "shootOrCatch";
 
-const RosterTable: React.FC<RosterTableProps> = ({ roster }) => {
+const RosterTable: React.FC<RosterTableProps> = ({ 
+  roster,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
+}) => {
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
     goaltenders: true,
     defensemen: true,
@@ -160,12 +176,16 @@ const handleSort = (col: SortKey) => {
   };
   
 
+  const isCustomColor =
+    customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+    customColors.tableBackgroundColor.toLowerCase() !== "#fff";
+
   const renderPlayerRow = (player: RosterPlayer, index: number) => (
-    <TableRow
-      key={player.id}
-      className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+    <TableRow 
+      key={player.id} 
+      bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
     >
-      <TableCell align="left">#{player.jerseyNumber}</TableCell>
+      <TableCell align="center">{player.jerseyNumber || "-"}</TableCell>
       <TableCell align="left">
         {player.flagUrl && (
           <Image
@@ -176,11 +196,11 @@ const handleSort = (col: SortKey) => {
             className="inline-block mr-2"
           />
         )}
-        <Link
+        <Link 
           href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
             player.firstName
           )}-${encodeURIComponent(player.lastName)}`}
-          style={{ color: "#0D73A6" }}
+          style={{ color: customColors.nameTextColor }}
         >
           {player.firstName} {player.lastName} ({player.position}){" "}
           {player.playerRole &&
@@ -217,6 +237,7 @@ const handleSort = (col: SortKey) => {
         <div
           onClick={() => toggleSection(sectionKey)}
           className="cursor-pointer flex items-center gap-2 border-b border-gray-300 w-full"
+          style={{ color: customColors.nameTextColor }}
         >
           <span className="font-bold uppercase">{title}</span>
           {isOpen ? (
@@ -236,9 +257,11 @@ const handleSort = (col: SortKey) => {
             border 
             border-customGrayMedium
           "
+            tableBgColor={customColors.tableBackgroundColor}
+            tableTextColor={customColors.textColor}
           >
-            <TableHead className="bg-blue-600 text-white">
-              <TableRow>
+            <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+              <TableRow bgColor={customColors.backgroundColor}>
                 <TableCell
                   isHeader
                   align="left"

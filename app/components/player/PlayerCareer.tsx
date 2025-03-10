@@ -7,8 +7,13 @@ import type { CareerStats } from "@/app/types/player";
 
 interface PlayerCareerProps {
   playerId: string;
-  backgroundColor?: string;
-  textColor?: string; // NEW
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 // Define a fetcher function for SWR
@@ -22,7 +27,8 @@ const fetcher = (url: string) =>
   });
 
 const PlayerCareers: React.FC<PlayerCareerProps> = ({
-  playerId,       // default if not provided
+  playerId,
+  customColors
 }) => {
   // Use SWR to fetch the player's career data
   const { data, error } = useSWR(`/api/playerCareer?playerId=${playerId}`, fetcher);
@@ -68,7 +74,10 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
       {careers && (
-        <CareerTable careers={careers}/>
+        <CareerTable 
+          careers={careers}
+          customColors={customColors}
+        />
       )}
     </div>
   );

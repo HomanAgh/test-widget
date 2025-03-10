@@ -1,32 +1,47 @@
 import React from "react";
-import { SeasonStats, PlayerType } from "@/app/types/player";
+import { PlayerType, SeasonStats } from "@/app/types/player";
 import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link, PoweredBy } from "@/app/components/common/style";
 
-interface SeasonsTableProps {
+interface PlayerSeasonsTableProps {
   playerType: PlayerType;
   seasons: SeasonStats[];
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
-const SeasonsTable: React.FC<SeasonsTableProps> = ({
+const PlayerSeasonsTable: React.FC<PlayerSeasonsTableProps> = ({
   playerType,
   seasons,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
 }) => {
-  const displayedYears: Set<string> = new Set();
+  const isGoaltender = playerType === "GOALTENDER";
+  const isCustomColor =
+    customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+    customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">Season Statistics</h2>
-
+      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.nameTextColor }}>Seasons</h2>
       <TableContainer>
-        <Table>
-          <TableHead className="filter brightness-90">
-            <TableRow>
-              <TableCell isHeader align="left">S</TableCell>
+        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
+          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+            <TableRow bgColor={customColors.backgroundColor}>
+              <TableCell isHeader align="left">Season</TableCell>
               <TableCell isHeader align="left">Team</TableCell>
               <TableCell isHeader align="left">League</TableCell>
               <TableCell isHeader align="center">GP</TableCell>
-
-              {playerType === "GOALTENDER" ? (
+              {isGoaltender ? (
                 <>
                   <TableCell isHeader align="center">GAA</TableCell>
                   <TableCell isHeader align="center">SV%</TableCell>
@@ -37,64 +52,44 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
                   <TableCell isHeader align="center">G</TableCell>
                   <TableCell isHeader align="center">A</TableCell>
                   <TableCell isHeader align="center">TP</TableCell>
+                  <TableCell isHeader align="center">+/-</TableCell>
                 </>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
-            {seasons.map((season, index) => {
-              const isYearDisplayed = displayedYears.has(season.season);
-              if (!isYearDisplayed) {
-                displayedYears.add(season.season);
-              }
-
-              return (
-                <TableRow
-                  key={index}
-                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-                >
-                  <TableCell align="left">
-                    {isYearDisplayed ? "" : season.season}
-                  </TableCell>
-                  <TableCell align="left">
-                    <Link
-                      href={`https://www.eliteprospects.com/team/${season.teamId}/${encodeURIComponent(
-                        season.teamName
-                      )}/${season.season}`}
-                    >
-                      {season.teamName}
-                    </Link>
-                  </TableCell>
-                  <TableCell align="left">
-                    <Link
-                      href={`https://www.eliteprospects.com/league/${season.league}/stats/${season.season}`}
-                    >
-                      {season.league}
-                    </Link>
-                  </TableCell>
-                  <TableCell align="center">{season.gamesPlayed}</TableCell>
-                  {playerType === "GOALTENDER" ? (
-                    <>
-                      <TableCell align="center">
-                        {season.goalsAgainstAverage ?? "N/A"}
-                      </TableCell>
-                      <TableCell align="center">
-                        {season.savePercentage ?? "N/A"}
-                      </TableCell>
-                      <TableCell align="center">
-                        {season.shutouts ?? 0}
-                      </TableCell>
-                    </>
-                  ) : (
-                    <>
-                      <TableCell align="center">{season.goals ?? 0}</TableCell>
-                      <TableCell align="center">{season.assists ?? 0}</TableCell>
-                      <TableCell align="center">{season.points ?? 0}</TableCell>
-                    </>
-                  )}
-                </TableRow>
-              );
-            })}
+            {seasons.map((season, index) => (
+              <TableRow 
+                key={`${season.season}-${season.teamId}`}
+                bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+              >
+                <TableCell align="left">{season.season}</TableCell>
+                <TableCell align="left">
+                  <Link 
+                    href={`https://www.eliteprospects.com/team/${season.teamId}/${season.teamName}`}
+                    style={{ color: customColors.nameTextColor }}
+                  >
+                    {season.teamName}
+                  </Link>
+                </TableCell>
+                <TableCell align="left">{season.league}</TableCell>
+                <TableCell align="center">{season.gamesPlayed}</TableCell>
+                {isGoaltender ? (
+                  <>
+                    <TableCell align="center">{season.goalsAgainstAverage}</TableCell>
+                    <TableCell align="center">{season.savePercentage}</TableCell>
+                    <TableCell align="center">{season.shutouts}</TableCell>
+                  </>
+                ) : (
+                  <>
+                    <TableCell align="center">{season.goals}</TableCell>
+                    <TableCell align="center">{season.assists}</TableCell>
+                    <TableCell align="center">{season.points}</TableCell>
+                    <TableCell align="center">{season.plusMinus}</TableCell>
+                  </>
+                )}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -103,4 +98,4 @@ const SeasonsTable: React.FC<SeasonsTableProps> = ({
   );
 };
 
-export default SeasonsTable;
+export default PlayerSeasonsTable;

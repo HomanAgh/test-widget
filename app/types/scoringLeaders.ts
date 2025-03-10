@@ -90,4 +90,11 @@ export interface ScoringLeadersTableProps {
   scoringLeaders: ScoringLeadersResponse;
   leagueDisplay?: string;
   selectedSeason?: string;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 } 

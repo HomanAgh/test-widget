@@ -1,29 +1,44 @@
 import React from "react";
-import type { CareerStats } from "@/app/types/player";
+import { CareerStats } from "@/app/types/player";
 import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell,Link, PoweredBy } from "@/app/components/common/style";
 
-interface CareerTableProps {
+interface PlayerCareerTableProps {
   careers: CareerStats[];
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
-const PlayerCareerTable: React.FC<CareerTableProps> = ({
+const PlayerCareerTable: React.FC<PlayerCareerTableProps> = ({
   careers,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
 }) => {
-  const isGoalie = careers.some((career) => career.goalsAgainstAverage !== undefined);
+  const isGoaltender = careers[0]?.goalsAgainstAverage !== undefined;
+  const isCustomColor =
+    customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+    customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">Career Statistics</h2>
-
+      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.nameTextColor }}>Career Statistics</h2>
       <TableContainer>
-        <Table>
-          {/* You can pass className to TableHead if you want the brightness filter */}
-          <TableHead className="filter brightness-90">
-            <TableRow>
+        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
+          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+            <TableRow bgColor={customColors.backgroundColor}>
               <TableCell isHeader align="left">League</TableCell>
-              <TableCell isHeader align="center">Years</TableCell>
+              <TableCell isHeader align="center">Seasons</TableCell>
               <TableCell isHeader align="center">GP</TableCell>
-              {isGoalie ? (
+              {isGoaltender ? (
                 <>
                   <TableCell isHeader align="center">GAA</TableCell>
                   <TableCell isHeader align="center">SV%</TableCell>
@@ -34,44 +49,39 @@ const PlayerCareerTable: React.FC<CareerTableProps> = ({
                   <TableCell isHeader align="center">G</TableCell>
                   <TableCell isHeader align="center">A</TableCell>
                   <TableCell isHeader align="center">TP</TableCell>
+                  <TableCell isHeader align="center">+/-</TableCell>
                 </>
               )}
             </TableRow>
           </TableHead>
-
           <TableBody>
             {careers.map((career, index) => (
-              <TableRow key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+              <TableRow 
+                key={career.league}
+                bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+              >
                 <TableCell align="left">
-                  <Link
-                    href={`https://www.eliteprospects.com/league/${career.league
-                      .toLowerCase()
-                      .replace(/\s+/g, "-")}/stats/all-time`}
+                  <Link 
+                    href={`https://www.eliteprospects.com/league/${career.league}`}
+                    style={{ color: customColors.nameTextColor }}
                   >
                     {career.league}
                   </Link>
                 </TableCell>
-
                 <TableCell align="center">{career.numberOfSeasons}</TableCell>
                 <TableCell align="center">{career.gamesPlayed}</TableCell>
-
-                {isGoalie ? (
+                {isGoaltender ? (
                   <>
-                    <TableCell align="center">
-                      {career.goalsAgainstAverage ?? "N/A"}
-                    </TableCell>
-                    <TableCell align="center">
-                      {career.savePercentage ?? "N/A"}
-                    </TableCell>
-                    <TableCell align="center">
-                      {career.shutouts ?? 0}
-                    </TableCell>
+                    <TableCell align="center">{career.goalsAgainstAverage}</TableCell>
+                    <TableCell align="center">{career.savePercentage}</TableCell>
+                    <TableCell align="center">{career.shutouts}</TableCell>
                   </>
                 ) : (
                   <>
-                    <TableCell align="center">{career.goals ?? 0}</TableCell>
-                    <TableCell align="center">{career.assists ?? 0}</TableCell>
-                    <TableCell align="center">{career.points ?? 0}</TableCell>
+                    <TableCell align="center">{career.goals}</TableCell>
+                    <TableCell align="center">{career.assists}</TableCell>
+                    <TableCell align="center">{career.points}</TableCell>
+                    <TableCell align="center">{career.plusMinus}</TableCell>
                   </>
                 )}
               </TableRow>

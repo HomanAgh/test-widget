@@ -7,6 +7,13 @@ import type { PlayerType, Goalie, Skater } from "@/app/types/player";
 
 interface PlayerStatProps {
   playerId: string;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const fetcher = (url: string) =>
@@ -20,6 +27,7 @@ const fetcher = (url: string) =>
 
 const PlayerStat: React.FC<PlayerStatProps> = ({
   playerId,
+  customColors
 }) => {
   const { data, error } = useSWR(`/api/playerStats?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
@@ -55,7 +63,11 @@ const PlayerStat: React.FC<PlayerStatProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <PlayerStatsTable playerType={type} stats={stats}/>
+      <PlayerStatsTable 
+        playerType={type} 
+        stats={stats}
+        customColors={customColors}
+      />
     </div>
   );
 };

@@ -14,10 +14,23 @@ import {
 } from '@/app/components/common/style';
 import { HiMiniChevronUpDown, HiMiniChevronUp, HiMiniChevronDown } from "react-icons/hi2";
 
-const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({ scoringLeaders}) => {
+const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({ 
+  scoringLeaders,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
+}) => {
   // Sorting state - default to TP column with descending order (highest first)
   const [sortColumn, setSortColumn] = useState<string>('TP');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | 'none'>('desc');
+  
+  const isCustomColor =
+    customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+    customColors.tableBackgroundColor.toLowerCase() !== "#fff";
   
   if (!scoringLeaders || !scoringLeaders.data || scoringLeaders.data.length === 0) {
     return <div className="text-center py-4">No scoring data available</div>;
@@ -108,144 +121,107 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({ scoringLeader
   });
 
   return (
-    <div>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell isHeader align="left">#</TableCell>
-              <TableCell 
-                isHeader 
-                align="left" 
-                className="cursor-pointer"
-                onClick={() => handleSort('player')}
+    <TableContainer>
+      <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
+        <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+          <TableRow bgColor={customColors.backgroundColor}>
+            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('rank')}>
+              Rank {renderSortArrow('rank')}
+            </TableCell>
+            <TableCell isHeader align="left" className="cursor-pointer" onClick={() => handleSort('player')}>
+              Player {renderSortArrow('player')}
+            </TableCell>
+            <TableCell isHeader align="left" className="cursor-pointer" onClick={() => handleSort('team')}>
+              Team {renderSortArrow('team')}
+            </TableCell>
+            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('GP')}>
+              GP {renderSortArrow('GP')}
+            </TableCell>
+            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('G')}>
+              G {renderSortArrow('G')}
+            </TableCell>
+            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('A')}>
+              A {renderSortArrow('A')}
+            </TableCell>
+            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('TP')}>
+              TP {renderSortArrow('TP')}
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {sortedData.map((player, index) => {
+            const nationalityName = getNationalityName(player.player.nationality);
+            const playerUrl = player.player.links?.eliteprospectsUrl || 
+              (player.player.slug ? `/player/${player.player.slug}` : `#player-${player.player.id}`);
+            const teamUrl = player.team.links?.eliteprospectsUrl || 
+              (player.team.slug ? `/team/${player.team.slug}` : `#team-${player.team.id}`);
+            
+            return (
+              <TableRow 
+                key={player.id} 
+                bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
               >
-                Player {renderSortArrow('player')}
-              </TableCell>
-              <TableCell 
-                isHeader 
-                align="left"
-                className="cursor-pointer"
-                onClick={() => handleSort('team')}
-              >
-                Team {renderSortArrow('team')}
-              </TableCell>
-              <TableCell 
-                isHeader 
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort('GP')}
-              >
-                GP {renderSortArrow('GP')}
-              </TableCell>
-              <TableCell 
-                isHeader 
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort('G')}
-              >
-                G {renderSortArrow('G')}
-              </TableCell>
-              <TableCell 
-                isHeader 
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort('A')}
-              >
-                A {renderSortArrow('A')}
-              </TableCell>
-              <TableCell 
-                isHeader 
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort('TP')}
-              >
-                TP {renderSortArrow('TP')}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedData.map((player, index) => {
-              // Ensure player and team data exists
-              if (!player.player || !player.team) {
-                console.error('Missing player or team data:', player);
-                return null;
-              }
-
-              const playerUrl = player.player.links?.eliteprospectsUrl || 
-                (player.player.slug ? `/player/${player.player.slug}` : `#player-${player.player.id}`);
-
-              const nationalityName = getNationalityName(player.player.nationality);
-
-              return (
-                <TableRow 
-                  key={`${player.id}-${player.player.id}-${index}`}
-                  className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                >
-                  <TableCell align="left">
-                    {index + 1}.
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className="flex items-center">
-                      {player.player.flagUrl && (
-                        <div className="flex-shrink-0 mr-2">
-                          <Image
-                            src={player.player.flagUrl}
-                            alt={`${nationalityName} flag`}
-                            width={16}
-                            height={12}
-                            className="inline-block"
-                          />
-                        </div>
-                      )}
-                      <div>
-                        <Link 
-                          href={playerUrl}
-                          className="text-[#0D73A6] hover:underline"
-                        >
-                          {typeof player.player.firstName === 'string' ? player.player.firstName : ''} {typeof player.player.lastName === 'string' ? player.player.lastName : ''}
-                        </Link>
+                <TableCell align="left">
+                  {index + 1}.
+                </TableCell>
+                <TableCell align="left">
+                  <div className="flex items-center">
+                    {player.player.flagUrl && (
+                      <div className="flex-shrink-0 mr-2">
+                        <Image
+                          src={player.player.flagUrl}
+                          alt={`${nationalityName} flag`}
+                          width={16}
+                          height={12}
+                          className="inline-block"
+                        />
                       </div>
+                    )}
+                    <div>
+                      <Link 
+                        href={playerUrl}
+                        style={{ color: customColors.nameTextColor }}
+                        className="hover:underline"
+                      >
+                        {typeof player.player.firstName === 'string' ? player.player.firstName : ''} {typeof player.player.lastName === 'string' ? player.player.lastName : ''}
+                      </Link>
                     </div>
-                  </TableCell>
-                  <TableCell align="left">
-                    <div className="flex items-center">
-                      {player.team.logo?.small && (
-                        <div className="flex-shrink-0 mr-2">
-                          <Image
-                            src={player.team.logo.small}
-                            alt={`${player.team.name} logo`}
-                            width={20}
-                            height={20}
-                            className="inline-block"
-                          />
-                        </div>
-                      )}
-                      <div>
-                        {player.team.links?.eliteprospectsUrl ? (
-                          <Link
-                            href={player.team.links.eliteprospectsUrl}
-                            className="text-[#0D73A6] hover:underline"
-                          >
-                            {typeof player.team.name === 'string' ? player.team.name : 'Team'}
-                          </Link>
-                        ) : (
-                          typeof player.team.name === 'string' ? player.team.name : 'Team'
-                        )}
+                  </div>
+                </TableCell>
+                <TableCell align="left">
+                  <div className="flex items-center">
+                    {player.team.logo?.small && (
+                      <div className="flex-shrink-0 mr-2">
+                        <Image
+                          src={player.team.logo.small}
+                          alt={`${player.team.name} logo`}
+                          width={20}
+                          height={20}
+                          className="inline-block"
+                        />
                       </div>
+                    )}
+                    <div>
+                      <Link 
+                        href={teamUrl}
+                        style={{ color: customColors.nameTextColor }}
+                        className="hover:underline"
+                      >
+                        {player.team.name}
+                      </Link>
                     </div>
-                  </TableCell>
-                  <TableCell align="center">{player.regularStats?.GP || 0}</TableCell>
-                  <TableCell align="center">{player.regularStats?.G || 0}</TableCell>
-                  <TableCell align="center">{player.regularStats?.A || 0}</TableCell>
-                  <TableCell align="center" className="font-bold">{player.regularStats?.PTS || 0}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+                  </div>
+                </TableCell>
+                <TableCell align="center">{player.regularStats?.GP || 0}</TableCell>
+                <TableCell align="center">{player.regularStats?.G || 0}</TableCell>
+                <TableCell align="center">{player.regularStats?.A || 0}</TableCell>
+                <TableCell align="center">{player.regularStats?.PTS || 0}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

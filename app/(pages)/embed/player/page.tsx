@@ -18,6 +18,11 @@ const PlayerPageContent = () => {
 
   const playerId = searchParams.get("playerId") || "";
   const gameLimit = parseInt(searchParams.get("gameLimit") || "5", 10);
+  const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
+  const textColor = searchParams.get("textColor") || "#000000";
+  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
+  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
+  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
 
   const viewModeParam = searchParams.get("viewMode");
   const viewMode =
@@ -42,6 +47,13 @@ const PlayerPageContent = () => {
           gameLimit={gameLimit}
           viewMode={viewMode}
           showSummary={showSummary}
+          customColors={{
+            backgroundColor,
+            textColor,
+            tableBackgroundColor,
+            headerTextColor,
+            nameTextColor
+          }}
         />
       </div>
     </ResizeObserver>

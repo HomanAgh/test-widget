@@ -14,6 +14,13 @@ interface GamesTableProps {
   playerType: PlayerType;
   gameLimit: number;
   showSummary: boolean;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const GamesTable: React.FC<GamesTableProps> = ({
@@ -21,9 +28,19 @@ const GamesTable: React.FC<GamesTableProps> = ({
   playerType,
   gameLimit,
   showSummary,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
 }) => {
   // Summaries for skaters or goaltenders
   let summary: GoaltenderSummary | SkaterSummary;
+  const isCustomColor =
+    customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+    customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   if (playerType === "GOALTENDER") {
     // Calculate goaltender summary stats
@@ -62,12 +79,12 @@ const GamesTable: React.FC<GamesTableProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <h2 className="text-xl font-bold mb-2">{titleText}</h2>
+      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.nameTextColor }}>{titleText}</h2>
 
       <TableContainer>
-        <Table>
-          <TableHead className="filter brightness-90">
-            <TableRow>
+        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
+          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+            <TableRow bgColor={customColors.backgroundColor}>
               <TableCell isHeader align="left">Date</TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
@@ -88,7 +105,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           </TableHead>
           <TableBody>
             {showSummary ? (
-              <TableRow>
+              <TableRow bgColor={isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"}>
                 <TableCell align="left">Summary</TableCell>
                 {playerType === "GOALTENDER" ? (
                   <>
@@ -125,7 +142,9 @@ const GamesTable: React.FC<GamesTableProps> = ({
             ) : (
               lastFiveGames.map((game, index) => (
                 <TableRow
-                  key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                  key={index} 
+                  bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+                >
                   <TableCell align="left">{game.date}</TableCell>
                   {playerType === "GOALTENDER" ? (
                     <>

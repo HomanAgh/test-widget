@@ -13,10 +13,24 @@ interface TeamStats {
 
 interface TeamProps {
   teamId: string;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const Team: React.FC<TeamProps> = ({ 
-  teamId, 
+  teamId,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
 }) => {
 
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
@@ -64,7 +78,7 @@ const Team: React.FC<TeamProps> = ({
   if (error) return <div className="text-center text-red-600">{"An error occurred"}: {error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg ">
+    <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg" style={{ color: customColors.textColor }}>
         {teamStats && (
           <div className="font-montserrat">
             <div className="mb-6 flex items-center space-x-4 pb-[24px]">
@@ -77,21 +91,29 @@ const Team: React.FC<TeamProps> = ({
                   height={48}
                 />
               )}
-              <div className="flex flex-col "
-                   style={{ color: "#0D73A6" }}>
-                <h2 className="text-[24px] font-bold leading-[26px]" >
-                  <Link href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}>
+              <div className="flex flex-col">
+                <h2 className="text-[24px] font-bold leading-[26px]">
+                  <Link 
+                    href={`https://www.eliteprospects.com/team/${teamStats.team.id}/${teamStats.team.name}`}
+                    style={{ color: customColors.nameTextColor }}
+                  >
                     {teamStats.team.name}
                   </Link>
                 </h2>
-                <p className="text-[16px] font-semibold " >
-                  <Link href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}>
+                <p className="text-[16px] font-semibold">
+                  <Link 
+                    href={`https://www.eliteprospects.com/league/${teamStats.team.league.toLowerCase()}`}
+                    style={{ color: customColors.nameTextColor }}
+                  >
                     {teamStats.team.league}
                   </Link>
                 </p>
               </div>
             </div>
-            <RosterTable roster={teamStats.roster}/>
+            <RosterTable 
+              roster={teamStats.roster}
+              customColors={customColors}
+            />
           </div>
         )}
     </div>

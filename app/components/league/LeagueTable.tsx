@@ -48,9 +48,19 @@ function groupBy<T extends object>(arr: T[], key: keyof T) {
 interface LeagueTablePropsWithColors extends LeagueTableProps {
   backgroundColor?: string;
   textColor?: string;
+  tableBackgroundColor?: string;
+  headerTextColor?: string;
+  nameTextColor?: string;
 }
 
-const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
+const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ 
+  standings,
+  backgroundColor = "#052D41",
+  textColor = "#000000",
+  tableBackgroundColor = "#FFFFFF",
+  headerTextColor = "#FFFFFF",
+  nameTextColor = "#0D73A6"
+}) => {
   if (!standings || !standings.data) return null;
 
   const rawTeams = standings.data;
@@ -75,84 +85,100 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
     .toLowerCase()
     .replace(/\s+/g, "-")}/${seasonTitle}`;
 
-  const renderTable = (teamArray: ExtendedTeam[]) => (
-    <Table
-      className="
-        border-separate 
-        border-spacing-0 
-        w-full 
-        rounded-lg
-        border 
-        border-customGrayMedium
-      "
-    >
-      <TableHead>
-        <TableRow className="bg-red-600 text-white">
-          <TableCell isHeader align="center">
-            #
-          </TableCell>
-          <TableCell isHeader align="left">
-            Team
-          </TableCell>
-          <TableCell isHeader align="center">
-            GP
-          </TableCell>
-          <TableCell isHeader align="center">
-            W
-          </TableCell>
-          <TableCell isHeader align="center">
-            L
-          </TableCell>
-          <TableCell isHeader align="center">
-            OTW
-          </TableCell>
-          <TableCell isHeader align="center">
-            OTL
-          </TableCell>
-          <TableCell isHeader align="center">
-            PTS
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {teamArray.map((team, i) => (
-          <TableRow
-            key={team.id}
-            className={i % 2 === 0 ? "bg-gray-100" : "bg-white"}
-          >
-            <TableCell align="center">{i + 1}</TableCell>
-            <TableCell align="left" style={{ color: "#0D73A6" }}>
-              <Link href={team.team.links?.eliteprospectsUrl ?? "#"}>
-                {team.logo && (
-                  <Image
-                    src={team.logo}
-                    alt={`${team.team.name ?? "Team"} logo`}
-                    width={20}
-                    height={20}
-                    className="inline-block mr-2 align-middle"
-                  />
-                )}
-                {team.team.name ?? "Unknown Team"}
-              </Link>
+  const renderTable = (teamArray: ExtendedTeam[]) => {
+    const isCustomColor =
+      tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+      tableBackgroundColor.toLowerCase() !== "#fff";
+    
+    return (
+      <Table
+        className="
+          border-separate 
+          border-spacing-0 
+          w-full 
+          rounded-lg
+          border 
+          border-customGrayMedium
+        "
+        tableBgColor={tableBackgroundColor}
+        tableTextColor={textColor}
+      >
+        <TableHead bgColor={backgroundColor} textColor={headerTextColor}>
+          <TableRow bgColor={backgroundColor}>
+            <TableCell isHeader align="center">
+              #
             </TableCell>
-            <TableCell align="center">{team.stats?.GP ?? 0}</TableCell>
-            <TableCell align="center">{team.stats?.W ?? 0}</TableCell>
-            <TableCell align="center">{team.stats?.L ?? 0}</TableCell>
-            <TableCell align="center">{team.stats?.OTW ?? 0}</TableCell>
-            <TableCell align="center">{team.stats?.OTL ?? 0}</TableCell>
-            <TableCell align="center">{team.stats?.PTS ?? 0}</TableCell>
+            <TableCell isHeader align="left">
+              Team
+            </TableCell>
+            <TableCell isHeader align="center">
+              GP
+            </TableCell>
+            <TableCell isHeader align="center">
+              W
+            </TableCell>
+            <TableCell isHeader align="center">
+              L
+            </TableCell>
+            <TableCell isHeader align="center">
+              OTW
+            </TableCell>
+            <TableCell isHeader align="center">
+              OTL
+            </TableCell>
+            <TableCell isHeader align="center">
+              PTS
+            </TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
+        </TableHead>
+        <TableBody>
+          {teamArray.map((team, i) => {
+            const rowBackground = isCustomColor
+              ? tableBackgroundColor
+              : i % 2 === 0
+              ? "#F3F4F6"
+              : "#FFFFFF";
+              
+            return (
+              <TableRow
+                key={team.id}
+                bgColor={rowBackground}
+              >
+                <TableCell align="center">{i + 1}</TableCell>
+                <TableCell align="left">
+                  <Link href={team.team.links?.eliteprospectsUrl ?? "#"} >
+                    {team.logo && (
+                      <Image
+                        src={team.logo}
+                        alt={`${team.team.name ?? "Team"} logo`}
+                        width={20}
+                        height={20}
+                        className="inline-block mr-2 align-middle text-[#0D73A6] hover:underline"
+                      />
+                    )}
+                    {team.team.name ?? "Unknown Team"}
+                  </Link>
+                </TableCell>
+                <TableCell align="center">{team.stats?.GP ?? 0}</TableCell>
+                <TableCell align="center">{team.stats?.W ?? 0}</TableCell>
+                <TableCell align="center">{team.stats?.L ?? 0}</TableCell>
+                <TableCell align="center">{team.stats?.OTW ?? 0}</TableCell>
+                <TableCell align="center">{team.stats?.OTL ?? 0}</TableCell>
+                <TableCell align="center">{team.stats?.PTS ?? 0}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    );
+  };
 
   const byConference = groupBy(teams, "conference");
   const conferenceNames = Object.keys(byConference);
   const renderHeading = () => (
     <div
       className="flex items-center justify-center mb-4"
-      style={{ color: "#0D73A6" }}
+      style={{ color: nameTextColor }}
     >
       {leagueLogo && (
         <Image
@@ -163,7 +189,7 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({ standings }) => {
           className="mr-2"
         />
       )}
-      <Link href={leagueEpUrl} className="text-2xl font-bold hover:underline">
+      <Link href={leagueEpUrl} className="text-2xl font-bold hover:underline" style={{ color: nameTextColor }}>
         {leagueName} Season: {seasonTitle}
       </Link>
     </div>

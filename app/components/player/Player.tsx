@@ -20,6 +20,13 @@ interface PlayerProps {
   gameLimit: number;
   viewMode: "stats" | "seasons" | "career" | "games";
   showSummary: boolean;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const fetcher = (url: string) =>
@@ -35,7 +42,14 @@ const Player: React.FC<PlayerProps> = ({
   playerId,
   gameLimit,
   viewMode,
-  showSummary
+  showSummary,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
 }) => {
   const { data, error } = useSWR(
     `/api/player/${encodeURIComponent(playerId)}?limit=${gameLimit}`,
@@ -74,22 +88,42 @@ const Player: React.FC<PlayerProps> = ({
   };
 
   return (
-    <div>
+    <div style={{ color: customColors.textColor }}>
       <div>
-        <PlayerInfo player={playerStats.player} />
+        <PlayerInfo 
+          player={playerStats.player} 
+          nameTextColor={customColors.nameTextColor}
+          tableBackgroundColor={customColors.tableBackgroundColor}
+        />
       </div>
 
       {/* Player Stats View */}
       <div>
-        {viewMode === "stats" && <PlayerStat playerId={playerId} />}
-        {viewMode === "seasons" && <PlayerSeasons playerId={playerId} />}
-        {viewMode === "career" && <PlayerCareers playerId={playerId} />}
+        {viewMode === "stats" && (
+          <PlayerStat 
+            playerId={playerId} 
+            customColors={customColors}
+          />
+        )}
+        {viewMode === "seasons" && (
+          <PlayerSeasons 
+            playerId={playerId} 
+            customColors={customColors}
+          />
+        )}
+        {viewMode === "career" && (
+          <PlayerCareers 
+            playerId={playerId} 
+            customColors={customColors}
+          />
+        )}
         {viewMode === "games" && (
           <GamesTable
             lastFiveGames={playerStats.lastGames}
             playerType={playerStats.playerType}
             gameLimit={gameLimit}
             showSummary={showSummary}
+            customColors={customColors}
           />
         )}
       </div>
