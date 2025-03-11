@@ -1063,12 +1063,13 @@ export async function GET(request: Request) {
                 }
               : undefined,
           }
-        : {
+        /* : {
             year: 0,
             round: 0,
             overall: 0,
             team: { name: "", logo: "" },
-          };
+          }; */
+          : null;
 
       // Map the teams to your { name, leagueLevel } shape
       const mappedTeams = cp.teams.map((t) => ({
