@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 
 // Hardcoded list of tournaments with their corresponding league slugs
 const TOURNAMENTS = [
@@ -66,3 +66,4 @@ const TournamentSelection: React.FC<TournamentSelectionProps> = ({
 };
 
 export default TournamentSelection;
+ */

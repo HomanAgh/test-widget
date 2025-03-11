@@ -139,7 +139,7 @@ export default function AlumniTournamentWidgetSetup() {
 
   const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
 
-  useEffect(() => {
+  /* useEffect(() => {
     handleFetchIntersection();
   }, [selectedTournaments, selectedLeagues]);
 
@@ -171,10 +171,45 @@ export default function AlumniTournamentWidgetSetup() {
     } finally {
       setLoading(false);
     }
-  }
+  } */
+    useEffect(() => {
+      handleFetchTournamentAlumni();
+    }, [selectedTournaments, selectedLeagues]);
+    
+    async function handleFetchTournamentAlumni() {
+      if (selectedTournaments.length === 0 || selectedLeagues.length === 0) {
+        setFinalPlayers([]);
+        return;
+      }
+      setLoading(true);
+      setError(null);
+    
+      try {
+        // Convert arrays to comma-separated strings
+        const tSlugs = selectedTournaments.map((t) => t.slug).join(",");
+        const lSlugs = selectedLeagues.join(",");
+    
+        // Single call to /api/tournament-alumni
+        let url = `/api/tournament-alumni?tournaments=${encodeURIComponent(tSlugs)}&league=${encodeURIComponent(lSlugs)}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.status}`);
+        }
+        const data = await res.json();
+    
+        // data.players => players who played in "brick-invitational" and also have "nhl" in their career
+        setFinalPlayers(data.players || []);
+      } catch (err) {
+        console.error("Tournament fetch error:", err);
+        setError("Failed to fetch tournament data.");
+        setFinalPlayers([]);
+      } finally {
+        setLoading(false);
+      }
+    }
 
   async function fetchPlayersByLeague(leagueParam: string) {
-    const url = `/api/alumni?league=${encodeURIComponent(leagueParam)}`;
+    const url = `/api/tournament-alumni=${encodeURIComponent(leagueParam)}`;
     const res = await fetch(url);
     if (!res.ok) {
       throw new Error(`Fetch failed for league=${leagueParam}`);

@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import React, { useState, useMemo } from "react";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
@@ -120,3 +120,4 @@ const AlumniShellWidgetSetup: React.FC = () => {
 };
 
 export default AlumniShellWidgetSetup;
+ */

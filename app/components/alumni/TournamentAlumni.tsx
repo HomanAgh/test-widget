@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+/* import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
 import { useFetchTournamentPlayers } from "./hooks/useFetchTournamentPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
@@ -69,7 +69,7 @@ const TournamentAlumni: React.FC<TournamentAlumniProps> = ({
         {error && <p>{error}</p>}
       </div>
 
-      {/* Men/Women Tabs */}
+      
       <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold pb-[32px] pt-[32px]">
         <button
           className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
@@ -108,3 +108,4 @@ const TournamentAlumni: React.FC<TournamentAlumniProps> = ({
 };
 
 export default TournamentAlumni;
+ */
