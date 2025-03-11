@@ -10,31 +10,31 @@ import Image from "next/image";
 // Predefined league rankings (all keys in lower-case for consistency)
 export const leagueRankings: Record<string, number> = {
   // Professional Leagues
-  "nhl": 1,
-  "shl": 2,
-  "ahl": 3,
-  "khl": 4,
-  "nl": 5,
-  "liiga": 6,
-  "czechia": 7,
-  "del": 8,
-  "echl": 9,
-  "icehl": 10,
-  "slovakia": 11,
-  "hockeyallsvenskan": 12,
+  nhl: 1,
+  shl: 2,
+  ahl: 3,
+  khl: 4,
+  nl: 5,
+  liiga: 6,
+  czechia: 7,
+  del: 8,
+  echl: 9,
+  icehl: 10,
+  slovakia: 11,
+  hockeyallsvenskan: 12,
   // College Leagues
-  "ncaa": 13,
-  "usports": 14,
-  "acac": 15,
-  "acha": 16,
+  ncaa: 13,
+  usports: 14,
+  acac: 15,
+  acha: 16,
   // Junior Leagues
-  "ohl": 17,
-  "whl": 18,
-  "ushl": 19,
-  "qmjhl": 20,
+  ohl: 17,
+  whl: 18,
+  ushl: 19,
+  qmjhl: 20,
   "j20-nationell": 21,
-  "mhl": 22,
-  "cchl": 23,
+  mhl: 22,
+  cchl: 23,
   // Womens Professional Leagues
   "pwhl-w": 24,
   "sdhl-w": 25,
@@ -59,8 +59,10 @@ export const sortLeaguesByRank = (slugs: string[]): string[] => {
 
 export const sortLeagueObjectsByRank = (leagues: League[]): League[] => {
   return [...leagues].sort((a, b) => {
-    const rankA = leagueRankings[a.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
-    const rankB = leagueRankings[b.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    const rankA =
+      leagueRankings[a.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    const rankB =
+      leagueRankings[b.slug.toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
     return rankA - rankB;
   });
 };
@@ -96,23 +98,31 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
     onChange([]);
   };
 
-  const findLeagueDetails = (slug: string): { name: string; logo: string | null } => {
-    const allLeagues = [...professionalLeagues, ...juniorLeagues, ...collegeLeagues];
+  const findLeagueDetails = (
+    slug: string
+  ): { name: string; logo: string | null } => {
+    const allLeagues = [
+      ...professionalLeagues,
+      ...juniorLeagues,
+      ...collegeLeagues,
+    ];
     const found = allLeagues.find((l) => l.slug.toLowerCase() === slug);
 
     return {
-      name: found ? found.name : slug, 
-      logo: found?.logo ?? null, 
+      name: found ? found.name : slug,
+      logo: found?.logo ?? null,
     };
   };
 
   const allLeagueSlugs = sortLeaguesByRank(
-    [...professionalLeagues, ...collegeLeagues, ...juniorLeagues].map((league) =>
-      league.slug.toLowerCase()
+    [...professionalLeagues, ...collegeLeagues, ...juniorLeagues].map(
+      (league) => league.slug.toLowerCase()
     )
   );
 
-  const allSelected = allLeagueSlugs.every((slug) => selectedLeagues.includes(slug));
+  const allSelected = allLeagueSlugs.every((slug) =>
+    selectedLeagues.includes(slug)
+  );
 
   const handleSelectAllToggle = () => {
     onChange(allSelected ? [] : allLeagueSlugs);
@@ -125,9 +135,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
         className="w-full bg-[#052D41] text-white text-sm font-montserrat font-bold p-2 rounded flex justify-between items-center"
       >
         SELECT LEAGUES
-        <span>
-          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
-        </span>
+        <span>{isOpen ? <FaChevronUp /> : <FaChevronDown />}</span>
       </button>
 
       {isOpen && (
@@ -149,10 +157,15 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
               <h3 className="font-bold mb-2">{title}</h3>
               <div className="grid grid-cols-2 gap-2">
                 {sortLeagueObjectsByRank(leagues).map((league) => (
-                  <label key={league.slug} className="flex items-center space-x-2">
+                  <label
+                    key={league.slug}
+                    className="flex items-center space-x-2"
+                  >
                     <input
                       type="checkbox"
-                      checked={selectedLeagues.includes(league.slug.toLowerCase())}
+                      checked={selectedLeagues.includes(
+                        league.slug.toLowerCase()
+                      )}
                       onChange={() => handleCheckboxChange(league.slug)}
                     />
                     <span>{league.name}</span>
@@ -174,12 +187,15 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
               const { name, logo } = findLeagueDetails(slug);
 
               return (
-                <span key={slug} className="inline-flex items-center bg-white px-2 py-1 rounded text-sm text-[#052D41] border border-[#052D41]">
+                <span
+                  key={slug}
+                  className="inline-flex items-center bg-white px-2 py-1 rounded text-sm text-[#052D41] border border-[#052D41]"
+                >
                   {logo && (
-                    <Image 
-                      src={logo} 
-                      alt={`${name} logo`} 
-                      className="w-6 h-6 mr-2 rounded" 
+                    <Image
+                      src={logo}
+                      alt={`${name} logo`}
+                      className="w-6 h-6 mr-2 rounded"
                       width={20}
                       height={20}
                     />
@@ -189,7 +205,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
                     onClick={() => removeLeagueSlug(slug)}
                     className="ml-2 text-red-700 font-bold"
                   >
-                    <IoIosRemoveCircle/>
+                    <IoIosRemoveCircle />
                   </button>
                 </span>
               );
