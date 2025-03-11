@@ -88,8 +88,9 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     }
 
     const data = await response.json();
-    // Remove _links from the response without creating an unused variable
-    const { _links: _, ...filteredData } = data;
+    // Remove _links from the response without creating any variables
+    const filteredData = { ...data };
+    delete filteredData._links;
     
     // Process player data to add flag URLs and filter goalies with more than 10 games
     if (filteredData.data && Array.isArray(filteredData.data)) {
