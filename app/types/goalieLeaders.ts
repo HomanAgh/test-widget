@@ -52,30 +52,40 @@ export interface Season {
   endYear: number;
 }
 
-export interface PlayerStats {
-  GP?: number; // Games played
-  G?: number;  // Goals
-  A?: number;  // Assists
-  PTS?: number; // Total points (renamed from TP)
-  PIM?: number; // Penalties in minutes
-  PPG?: number; // Power play goals
-  PM?: number;  // Plus/minus
+export interface GoalieStats {
+  GP?: number;    // Games played
+  GAA?: number;   // Goals against average
+  SVP?: number;   // Save percentage
+  SO?: number;    // Shutouts
+  W?: number;     // Wins
+  L?: number;     // Losses
+  T?: number;     // Ties
+  TOI?: string;   // Time on ice
+  SA?: number;    // Shots against
+  GA?: number;    // Goals against
+  SVS?: number;   // Saves
 }
 
-export interface ScoringLeader {
+export interface GoalieLeader {
   id: number;
   player: Player;
   team: Team;
   season: Season;
-  regularStats: PlayerStats;
+  regularStats: GoalieStats;
 }
 
-export interface ScoringLeadersResponse {
-  data: ScoringLeader[];
+export interface GoalieLeadersResponse {
+  _meta?: {
+    generatedAt: string;
+    offset: number;
+    limit: number;
+    totalRecords: number;
+  };
+  data: GoalieLeader[];
 }
 
-export interface ScoringLeadersTableProps {
-  scoringLeaders: ScoringLeadersResponse;
+export interface GoalieLeadersTableProps {
+  goalieLeaders: GoalieLeadersResponse;
   leagueDisplay?: string;
   selectedSeason?: string;
   customColors?: {
@@ -85,4 +95,4 @@ export interface ScoringLeadersTableProps {
     headerTextColor?: string;
     nameTextColor?: string;
   };
-} 
+}

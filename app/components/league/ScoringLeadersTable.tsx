@@ -63,18 +63,34 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
   // Render sort arrow
   const renderSortArrow = (column: string) => {
     if (sortColumn !== column) {
-      return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
+      return (
+        <React.Fragment key={`${column}-updown`}>
+          <HiMiniChevronUpDown className="inline-block text-gray-300" />
+        </React.Fragment>
+      );
     }
     
     if (sortDirection === 'desc') {
-      return <HiMiniChevronDown className="inline-block text-gray-300" />;
+      return (
+        <React.Fragment key={`${column}-down`}>
+          <HiMiniChevronDown className="inline-block text-gray-300" />
+        </React.Fragment>
+      );
     }
     
     if (sortDirection === 'asc') {
-      return <HiMiniChevronUp className="inline-block text-gray-300" />;
+      return (
+        <React.Fragment key={`${column}-up`}>
+          <HiMiniChevronUp className="inline-block text-gray-300" />
+        </React.Fragment>
+      );
     }
     
-    return <HiMiniChevronUpDown className="inline-block text-gray-300" />;
+    return (
+      <React.Fragment key={`${column}-default`}>
+        <HiMiniChevronUpDown className="inline-block text-gray-300" />
+      </React.Fragment>
+    );
   };
 
   // Sort the data
@@ -124,27 +140,27 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
     <TableContainer>
       <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
         <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
-          <TableRow bgColor={customColors.backgroundColor}>
-            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('rank')}>
-              Rank {renderSortArrow('rank')}
+          <TableRow key="header-row" bgColor={customColors.backgroundColor}>
+            <TableCell key="rank-header" isHeader align="center" className="cursor-pointer" onClick={() => handleSort('rank')}>
+              <span>Rank</span> {renderSortArrow('rank')}
             </TableCell>
-            <TableCell isHeader align="left" className="cursor-pointer" onClick={() => handleSort('player')}>
-              Player {renderSortArrow('player')}
+            <TableCell key="player-header" isHeader align="left" className="cursor-pointer" onClick={() => handleSort('player')}>
+              <span>Player</span> {renderSortArrow('player')}
             </TableCell>
-            <TableCell isHeader align="left" className="cursor-pointer" onClick={() => handleSort('team')}>
-              Team {renderSortArrow('team')}
+            <TableCell key="team-header" isHeader align="left" className="cursor-pointer" onClick={() => handleSort('team')}>
+              <span>Team</span> {renderSortArrow('team')}
             </TableCell>
-            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('GP')}>
-              GP {renderSortArrow('GP')}
+            <TableCell key="gp-header" isHeader align="center" className="cursor-pointer" onClick={() => handleSort('GP')}>
+              <span>GP</span> {renderSortArrow('GP')}
             </TableCell>
-            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('G')}>
-              G {renderSortArrow('G')}
+            <TableCell key="g-header" isHeader align="center" className="cursor-pointer" onClick={() => handleSort('G')}>
+              <span>G</span> {renderSortArrow('G')}
             </TableCell>
-            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('A')}>
-              A {renderSortArrow('A')}
+            <TableCell key="a-header" isHeader align="center" className="cursor-pointer" onClick={() => handleSort('A')}>
+              <span>A</span> {renderSortArrow('A')}
             </TableCell>
-            <TableCell isHeader align="center" className="cursor-pointer" onClick={() => handleSort('TP')}>
-              TP {renderSortArrow('TP')}
+            <TableCell key="tp-header" isHeader align="center" className="cursor-pointer" onClick={() => handleSort('TP')}>
+              <span>TP</span> {renderSortArrow('TP')}
             </TableCell>
           </TableRow>
         </TableHead>
