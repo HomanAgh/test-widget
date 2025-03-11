@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Team from "@/app/components/team/Team"; 
+import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColors";
 
-interface TeamWidgetSetupProps {
-  teamId: string;
+interface GoalieLeadersWidgetSetupProps {
+  leagueSlug: string;
+  season: string;
 }
 
-const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
+const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({ leagueSlug, season }) => {
   const [customColors, setCustomColors] = useState({
     headerTextColor: "#FFFFFF",
     backgroundColor: "#052D41",
@@ -21,15 +22,16 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const params = new URLSearchParams({
-      teamId,
+      leagueSlug,
+      season,
       backgroundColor: customColors.backgroundColor,
       textColor: customColors.textColor,
       tableBackgroundColor: customColors.tableBackgroundColor,
       headerTextColor: customColors.headerTextColor,
       nameTextColor: customColors.nameTextColor,
     });
-    return `${baseUrl}/embed/team?${params.toString()}`;
-  }, [teamId, customColors]);
+    return `${baseUrl}/embed/goalie-leaders?${params.toString()}`;
+  }, [leagueSlug, season, customColors]);
 
   const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
 
@@ -42,8 +44,9 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
       </div>
 
       <div className="mt-6">
-        <Team 
-          teamId={teamId}
+        <GoalieLeaders 
+          leagueSlug={leagueSlug} 
+          season={season}
           customColors={customColors}
         />
       </div>
@@ -53,4 +56,4 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   );
 };
 
-export default TeamWidgetSetup;
+export default GoalieLeadersWidgetSetup;

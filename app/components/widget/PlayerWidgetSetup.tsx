@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Player from "../player/Player";
 import EmbedCodeBlock from "../iframe/IframePreview";
+import HexColors from "../common/color-picker/HexColors";
 
 interface WidgetSetupProps {
   playerId: string;
@@ -13,7 +14,13 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   const [viewMode, setViewMode] = useState<"stats" | "seasons" | "career" | "games">("stats");
   const [,setShowPreview] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-
+  const [customColors, setCustomColors] = useState({
+    headerTextColor: "#FFFFFF",
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    nameTextColor: "#0D73A6",
+  });
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
@@ -24,14 +31,25 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     return (
       `${baseUrl}/embed/player?playerId=${playerId}` +
       `&gameLimit=${gameLimit}&viewMode=${viewMode}` +
-      `&showSummary=${showSummary}`
+      `&showSummary=${showSummary}` +
+      `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
+      `&textColor=${encodeURIComponent(customColors.textColor)}` +
+      `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
+      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}`
     );
-  }, [playerId, gameLimit, viewMode, showSummary]);
+  }, [playerId, gameLimit, viewMode, showSummary, customColors]);
 
   const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
 
   return (
     <div>
+      <div className="mt-6 mb-6">
+        <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
+          <HexColors customColors={customColors} setCustomColors={setCustomColors} />
+        </div>
+      </div>
+
       <div className="text-center my-4">
         <h3 className="text-lg font-medium mb-2">View Mode:</h3>
         <div className="flex justify-center space-x-4">
@@ -118,6 +136,7 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
           gameLimit={gameLimit}
           viewMode={viewMode}
           showSummary={showSummary}
+          customColors={customColors}
         />
       </div>
 

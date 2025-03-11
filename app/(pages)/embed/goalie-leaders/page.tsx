@@ -1,37 +1,39 @@
 "use client";
 
 import React, { Suspense } from "react";
+import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import { useSearchParams } from "next/navigation";
-import League from "@/app/components/league/League";
 import ResizeObserver from "@/app/components/embed/ResizeObserver";
 
-const EmbedLeague = () => {
+const EmbedGoalieLeaders = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <LeagueEmbedContent />
+      <GoalieLeadersPageContent />
     </Suspense>
   );
 };
 
-const LeagueEmbedContent = () => {
+const GoalieLeadersPageContent = () => {
   const searchParams = useSearchParams();
 
   const leagueSlug = searchParams.get("leagueSlug") || "";
+  const season = searchParams.get("season") || "";
   const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
   const textColor = searchParams.get("textColor") || "#000000";
   const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
   const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
   const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
 
-  if (!leagueSlug) {
-    return <div>Missing leagueSlug parameter</div>;
+  if (!leagueSlug || !season) {
+    return <div>Missing league slug or season</div>;
   }
 
   return (
     <ResizeObserver>
       <div style={{ overflow: "auto" }}>
-        <League
+        <GoalieLeaders
           leagueSlug={leagueSlug}
+          season={season}
           customColors={{
             backgroundColor,
             textColor,
@@ -45,4 +47,4 @@ const LeagueEmbedContent = () => {
   );
 };
 
-export default EmbedLeague;
+export default EmbedGoalieLeaders; 

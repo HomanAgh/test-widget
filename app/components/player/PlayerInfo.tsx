@@ -5,6 +5,8 @@ import Link from "../common/style/Link"; // Import the Link component
 
 interface PlayerInfoProps {
   player: Player;
+  nameTextColor?: string;
+  tableBackgroundColor?: string;
 }
 
 const formatSeason = (seasonSlug: string) => {
@@ -13,9 +15,13 @@ const formatSeason = (seasonSlug: string) => {
   return `${parts[0].replace(/^20/, "")}-${parts[1].replace(/^20/, "")}`;
 };
 
-const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
+const PlayerInfo: React.FC<PlayerInfoProps> = ({ 
+  player, 
+  nameTextColor = "#0D73A6",
+  tableBackgroundColor = "#FFFFFF"
+}) => {
   return (
-    <div className="font-montserrat bg-white rounded-lg overflow-hidden mb-0">
+    <div className="font-montserrat rounded-lg overflow-hidden mb-0" style={{ backgroundColor: tableBackgroundColor }}>
       <div className="p-4">
         {/* Player header section */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
@@ -45,7 +51,8 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
               </div>
               <Link
                 href={`https://www.eliteprospects.com/player/${player.id}/${player.name}`}
-                className="text-xl font-semibold text-blue-600 hover:text-blue-800"
+                className="text-xl font-semibold hover:underline"
+                style={{ color: nameTextColor }}
               >
                 {player.name}
               </Link>
@@ -57,7 +64,8 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
               {player.team ? (
                 <Link
                   href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}/${player.season.slug}`}
-                  className="text-blue-600 hover:text-blue-800 flex items-center"
+                  className="hover:underline flex items-center"
+                  style={{ color: nameTextColor }}
                 >
                   {player.teamLogo && (
                     <Image
@@ -77,7 +85,8 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
               {player.league ? (
                 <Link
                   href={`https://www.eliteprospects.com/league/${player.league.slug}/${player.season.slug}`}
-                  className="text-blue-600 hover:text-blue-800"
+                  className="hover:underline"
+                  style={{ color: nameTextColor }}
                 >
                   {player.league.name} {formatSeason(player.season.slug)}
                 </Link>
@@ -95,7 +104,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ player }) => {
           </div>
 
           {/* Right column - Player details */}
-          <div className="bg-gray-50 rounded-lg p-3 w-full md:w-auto">
+          <div className="rounded-lg p-3 w-full md:w-auto" style={{ backgroundColor: tableBackgroundColor === "#FFFFFF" ? "#F3F4F6" : tableBackgroundColor }}>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
               {/* Age */}
               <div className="font-medium text-gray-700">Age:</div>

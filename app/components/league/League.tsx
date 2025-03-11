@@ -6,9 +6,25 @@ import type { LeagueTableProps } from "@/app/types/league";
 
 interface LeagueProps {
   leagueSlug: string;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
-const League: React.FC<LeagueProps> = ({ leagueSlug }) => {
+const League: React.FC<LeagueProps> = ({ 
+  leagueSlug,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
+}) => {
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentMonth = date.getMonth() + 1; 
@@ -87,7 +103,15 @@ const League: React.FC<LeagueProps> = ({ leagueSlug }) => {
           ))}
         </select>
       </div>
-      <LeagueTable standings={standings} logoS="" />
+      <LeagueTable 
+        standings={standings} 
+        logoS="" 
+        backgroundColor={customColors.backgroundColor}
+        textColor={customColors.textColor}
+        tableBackgroundColor={customColors.tableBackgroundColor}
+        headerTextColor={customColors.headerTextColor}
+        nameTextColor={customColors.nameTextColor}
+      />
     </div>
   );
 };

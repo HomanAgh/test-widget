@@ -61,7 +61,12 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    
+    // Remove _links from the response without creating any variables
+    const filteredData = { ...data };
+    delete filteredData._links;
+    
+    return NextResponse.json(filteredData);
   } catch (error: any) {
     console.error("Error during fetch:", error.message);
     return NextResponse.json(

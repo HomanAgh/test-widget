@@ -5,21 +5,38 @@ import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy
 interface PlayerStatsTableProps {
   playerType: PlayerType;
   stats: Goalie | Skater;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
   playerType,
   stats,
+  customColors = {
+    backgroundColor: "#052D41",
+    textColor: "#000000",
+    tableBackgroundColor: "#FFFFFF",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
+  }
 }) => {
   const isGoaltender = playerType === "GOALTENDER";
+  const isCustomColor =
+    customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
+    customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">Statistics</h2>
+      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.nameTextColor }}>Statistics</h2>
       <TableContainer>
-        <Table>
-          <TableHead className="filter brightness-90">
-            <TableRow>
+        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
+          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+            <TableRow bgColor={customColors.backgroundColor}>
               <TableCell isHeader align="center">GP</TableCell>
               {isGoaltender ? (
                 <>
@@ -39,7 +56,7 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
+            <TableRow bgColor={isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"}>
               <TableCell align="center">
                 {(stats as Goalie).gamesPlayed}
               </TableCell>

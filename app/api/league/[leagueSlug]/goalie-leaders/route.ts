@@ -66,29 +66,40 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "season.startYear",
     "season.endYear",
     "regularStats.GP",
-    "regularStats.G",
-    "regularStats.A",
-    "regularStats.PTS",
+    "regularStats.GAA",
+    "regularStats.SVP",
+    "regularStats.SO",
+    "regularStats.W",
+    "regularStats.L",
+    "regularStats.T",
+    "regularStats.TOI",
+    "regularStats.SA",
+    "regularStats.GA",
+    "regularStats.SVS"
   ].join(",");
 
-  const scoringLeadersUrl = `${apiBaseUrl}/leagues/${leagueSlug}/scoring-leaders?season=${season}&fields=${playerFields}&apiKey=${apiKey}&sort=-regularStats.PTS&limit=50`;
-  console.log("Fetching league scoring leaders from:", scoringLeadersUrl);
+  const goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=100&sort=-regularStats.SVP&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
+  console.log("Fetching goalie leaders from:", goalieLeadersUrl);
 
   try {
-    const response = await fetch(scoringLeadersUrl, { method: "GET" });
+    const response = await fetch(goalieLeadersUrl, { method: "GET" });
     if (!response.ok) {
-      throw new Error(`Failed to fetch scoring leaders: ${response.statusText}`);
+      throw new Error(`Failed to fetch goalie leaders: ${response.statusText}`);
     }
 
     const data = await response.json();
-    
     // Remove _links from the response without creating any variables
     const filteredData = { ...data };
     delete filteredData._links;
     
-    // Process player data to add flag URLs
+    // Process player data to add flag URLs and filter goalies with more than 10 games
     if (filteredData.data && Array.isArray(filteredData.data)) {
-      // Limit to 50 scoring leaders
+      // Filter goalies with more than 10 games played
+      filteredData.data = filteredData.data.filter((player: any) => 
+        player.regularStats?.GP && player.regularStats.GP >= 10
+      );
+      
+      // Limit to 50 goalies
       filteredData.data = filteredData.data.slice(0, 50);
       
       // Create a map of unique nationality slugs
@@ -124,8 +135,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
   } catch (error: any) {
     console.error("Error during fetch:", error.message);
     return NextResponse.json(
-      { error: "An internal server error occurred while fetching scoring leaders." },
+      { error: "An internal server error occurred while fetching goalie leaders." },
       { status: 500 }
     );
   }
-} 
+}

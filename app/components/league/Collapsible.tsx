@@ -30,7 +30,7 @@ const Collapsible: React.FC<CollapsibleProps> = ({ title, children }) => {
     <div style={collapsibleContainerStyle}>
       <div
         onClick={toggleOpen}
-        className="cursor-pointer flex items-center gap-2 border-b border-gray-300 w-full pb-[12px] pt-[12px]"
+        className="cursor-pointer flex items-center justify-between border-b border-gray-300 w-full pb-[12px] pt-[12px]"
       >
         <span className="font-bold uppercase">{title}</span>
         {isOpen ? (

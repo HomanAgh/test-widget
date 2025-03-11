@@ -7,6 +7,13 @@ import type { SeasonStats, PlayerType } from "@/app/types/player";
 
 interface PlayerSeasonsProps {
   playerId: string;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
 }
 
 const fetcher = (url: string) =>
@@ -20,6 +27,7 @@ const fetcher = (url: string) =>
 
 const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
   playerId,
+  customColors
 }) => {
   const { data, error } = useSWR(`/api/playerSeasons?playerId=${encodeURIComponent(playerId)}`, fetcher);
 
@@ -61,7 +69,11 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <SeasonsTable playerType={playerType} seasons={seasons}/>
+      <SeasonsTable 
+        playerType={playerType} 
+        seasons={seasons}
+        customColors={customColors}
+      />
     </div>
   );
 };
