@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
-import { SelectedTeam } from "@/app/types/team"; 
+import { SelectedTeam } from "@/app/types/team";
 import { useFetchPlayers } from "./hooks/useFetchPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
@@ -18,7 +18,7 @@ interface AlumniProps {
     headerTextColor?: string;
     nameTextColor?: string;
   };
-  includeYouth?: boolean; 
+  includeYouth?: boolean;
 }
 
 const Alumni: React.FC<AlumniProps> = ({
@@ -32,7 +32,9 @@ const Alumni: React.FC<AlumniProps> = ({
   },
   includeYouth = false,
 }) => {
-  const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
+  const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
+    "men"
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const selectedTeamIds = useMemo(
@@ -45,7 +47,7 @@ const Alumni: React.FC<AlumniProps> = ({
   const { results, loading, error } = useFetchPlayers(
     selectedTeamIds,
     "customLeague",
-    selectedLeagues.join(","), 
+    selectedLeagues.join(","),
     includeYouth,
     youthTeam,
     genderParam
