@@ -1,6 +1,7 @@
 import React from "react";
 import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold,PiTrophyBold,PiPlusBold   } from "react-icons/pi"; 
-import { GiHockey } from "react-icons/gi";
+import { GiJasonMask } from "react-icons/gi";
+import { LiaHockeyPuckSolid } from "react-icons/lia";
 import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
@@ -13,8 +14,8 @@ const HomePage = () => {
     { label: "Team\nRoster", path: "/team", icon: <PiUsersFourBold size={48} /> },
     { label: "Team\nAlumni", path: "/alumni", icon: <PiGraduationCapBold size={48} /> },
     { label: "Tournament\nAlumni", path: "/tournamentsetup", icon: <PiTrophyBold size={48} /> },
-    { label: "Scoring\nLeaders", path: "/scoring-leaders", icon: <GiHockey size={48} /> },
-    { label: "Goalie\nLeaders", path: "/goalie-leaders", icon: <PiPlusBold size={48} /> },
+    { label: "Scoring\nLeaders", path: "/scoring-leaders", icon: <LiaHockeyPuckSolid size={48} /> },
+    { label: "Goalie\nLeaders", path: "/goalie-leaders", icon: <GiJasonMask size={48} /> },
     { label: "Suggest\nWidget", path: "/contact", icon: <PiPlusBold size={48} /> },
 
   ];
