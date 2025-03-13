@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
     // Create a transporter
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // You can change this to your email service
+      service: 'gmail', 
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -62,7 +62,7 @@ This email was sent from your website contact form. To reply to the sender, simp
 <html>
 <head>
   <meta charset="utf-8">
-  <title>New Contact Form Submission</title>
+  <title>Widget Support/Suggestion Ticket</title>
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
     .header { background-color: #f5f5f5; padding: 20px; border-bottom: 3px solid #0B9D52; }
@@ -76,7 +76,7 @@ This email was sent from your website contact form. To reply to the sender, simp
 </head>
 <body>
   <div class="header">
-    <h1>New Contact Form Submission</h1>
+    <h1>Widget Support/Suggestion Ticket</h1>
     <p>Received on ${formattedDate}</p>
   </div>
   
