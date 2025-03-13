@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   
   const url = `${apiBaseUrl}/leagues?leagueLevel=tournament&offset=0&limit=100&sort=name&q=${encodeURIComponent(
     query
-  )}&apiKey=${apiKey}`;
+  )}&fields=id,slug,name,leagueLevel,country,logo,logoUrl,imageUrl&apiKey=${apiKey}`;
 
   console.log("URL:", url);
   try {

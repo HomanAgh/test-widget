@@ -215,6 +215,15 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
                 key={tour.slug}
                 className="inline-flex items-center bg-white text-[#052D41] px-2 py-1 rounded text-sm border border-[#052D41]"
               >
+                {(tour.logoUrl || tour.imageUrl || tour.logo?.url) && (
+                  <Image
+                    src={tour.logoUrl || tour.imageUrl || tour.logo?.url || ""}
+                    alt={`${tour.name} logo`}
+                    className="mr-2 rounded"
+                    width={20}
+                    height={20}
+                  />
+                )}
                 {tour.name}
                 <button
                   onClick={() => removeTournament(tour.slug)}

@@ -6,7 +6,6 @@ import {
   DraftSelection,
   CombinedPlayer,
 } from "@/app/types/route"; // Adjust import path if needed
-import { leagueRankings } from "@/app/components/alumni/LeagueSelection";
 
 // 1 hour cache
 const CACHE_TTL = 60 * 60 * 1000;
