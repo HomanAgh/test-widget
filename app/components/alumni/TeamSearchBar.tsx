@@ -152,6 +152,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             className="border p-2 pl-10 rounded-md w-full font-montserrat"
+            placeholder="Search teams..."
           />
         </div>
 

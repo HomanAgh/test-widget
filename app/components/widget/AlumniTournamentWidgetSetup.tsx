@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useMemo } from "react";
 import { TournamentItem } from "@/app/types/tournament";
 import TournamentSearchBar from "@/app/components/alumni/TournamentSearchBar";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
@@ -26,6 +26,25 @@ export default function AlumniTournamentWidgetSetup() {
   });
 
   const { customLeagues, customJunLeagues, customCollegeLeagues } = useFetchLeagues();
+
+  const embedUrl = useMemo(() => {
+    const tournamentSlugs = selectedTournaments.map((t) => t.slug).join(",");
+    const leagues = selectedLeagues.join(",");
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  
+    return (
+      `${baseUrl}/embed/tournament` +
+      `?tournaments=${encodeURIComponent(tournamentSlugs)}` +
+      `&leagues=${encodeURIComponent(leagues)}` +
+      `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
+      `&textColor=${encodeURIComponent(customColors.textColor)}` +
+      `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
+      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}`
+    );
+  }, [selectedTournaments, selectedLeagues, customColors]);
+  
+  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
 
     useEffect(() => {
       handleFetchTournamentAlumni();
@@ -78,7 +97,7 @@ export default function AlumniTournamentWidgetSetup() {
     return a.filter((p) => setB.has(p.id));
   }
 
-  const iframeCode = `<iframe src="..." class="iframe"></iframe>`;
+ /*  const iframeCode = `<iframe src="..." class="iframe"></iframe>`; */
 
   return (
     <div>

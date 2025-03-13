@@ -11,6 +11,7 @@ type GenderParam = "male" | "female" | null;
 interface AlumniProps {
   selectedTeams?: SelectedTeam[];
   selectedLeagues?: string[];
+  selectedTournaments?: string[];
   customColors?: {
     backgroundColor: string;
     textColor: string;
