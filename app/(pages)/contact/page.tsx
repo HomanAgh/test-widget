@@ -32,10 +32,22 @@ const ContactPage = () => {
     setSubmitError('');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Send data to our API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
       
-      // Success simulation
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+      
+      // Success
       setSubmitSuccess(true);
       setFormData({
         name: '',
@@ -43,8 +55,9 @@ const ContactPage = () => {
         subject: '',
         message: ''
       });
-    } catch {
+    } catch (error) {
       setSubmitError('There was an error submitting your message. Please try again.');
+      console.error('Error:', error);
     } finally {
       setIsSubmitting(false);
     }    
@@ -189,20 +202,7 @@ const ContactPage = () => {
             <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 w-full">
               <h2 className="text-xl font-semibold mb-4">Quick Support Options</h2>
               
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="bg-blue-100 p-2 rounded-full mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Email Support</h3>
-                    <p className="text-gray-600">support@widgetexample.com</p>
-                  </div>
-                </div>
-                
+              <div className="space-y-4">              
                 <div className="flex items-start">
                   <div className="bg-blue-100 p-2 rounded-full mr-3">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
@@ -212,19 +212,6 @@ const ContactPage = () => {
                   <div>
                     <h3 className="font-medium">FAQ</h3>
                     <p className="text-gray-600">Check our <Link href="/faq" className="text-blue-600 hover:underline">frequently asked questions</Link> for quick answers.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="bg-blue-100 p-2 rounded-full mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
-                      <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Live Chat</h3>
-                    <p className="text-gray-600">Available Monday to Friday, 9am - 5pm EST.</p>
                   </div>
                 </div>
               </div>
