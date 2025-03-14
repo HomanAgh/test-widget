@@ -64,7 +64,7 @@ export default function AlumniTournamentWidgetSetup() {
         const lSlugs = selectedLeagues.join(",");
     
         // Single call to /api/tournament-alumni
-        let url = `/api/tournament-alumni?tournaments=${encodeURIComponent(tSlugs)}&league=${encodeURIComponent(lSlugs)}`;
+        const url = `/api/tournament-alumni?tournaments=${encodeURIComponent(tSlugs)}&league=${encodeURIComponent(lSlugs)}`;
         const res = await fetch(url);
         if (!res.ok) {
           throw new Error(`Failed to fetch: ${res.status}`);
@@ -82,7 +82,7 @@ export default function AlumniTournamentWidgetSetup() {
       }
     }
 
-  async function fetchPlayersByLeague(leagueParam: string) {
+  /* async function fetchPlayersByLeague(leagueParam: string) {
     const url = `/api/tournament-alumni=${encodeURIComponent(leagueParam)}`;
     const res = await fetch(url);
     if (!res.ok) {
@@ -95,9 +95,7 @@ export default function AlumniTournamentWidgetSetup() {
   function intersectById(a: any[], b: any[]): any[] {
     const setB = new Set(b.map((p) => p.id));
     return a.filter((p) => setB.has(p.id));
-  }
-
- /*  const iframeCode = `<iframe src="..." class="iframe"></iframe>`; */
+  } */
 
   return (
     <div>
