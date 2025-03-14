@@ -141,10 +141,6 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     setSelectedSeason(e.target.value);
   };
 
-  const getEPUrl = () => {
-    return getEliteProspectsStatsUrl(leagueSlug, selectedSeason);
-  };
-
   if (loading) {
     return <div className="text-center text-gray-600 my-8">Loading scoring leaders...</div>;
   }

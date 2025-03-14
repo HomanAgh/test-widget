@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import GoalieLeadersTable, { getEliteProspectsStatsUrl } from './GoalieLeadersTable';
 import { GoalieLeadersResponse } from '@/app/types/goalieLeaders';
-import { Link } from '@/app/components/common/style';
 
 interface GoalieLeadersProps {
   leagueSlug: string;
@@ -37,11 +36,6 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   const [selectedSeason, setSelectedSeason] = useState<string>(season);
   const [seasonsArray, setSeasonsArray] = useState<string[]>([]);
 
-  const getEPUrl = () => {
-    return getEliteProspectsStatsUrl(leagueSlug, selectedSeason);
-  };
-
-  // Fetch available seasons for the league
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
