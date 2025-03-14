@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import GoalieLeadersTable, { getEliteProspectsStatsUrl } from './GoalieLeadersTable';
+import GoalieLeadersTable from './GoalieLeadersTable';
 import { GoalieLeadersResponse } from '@/app/types/goalieLeaders';
 
 interface GoalieLeadersProps {

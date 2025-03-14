@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import ScoringLeadersTable, { getEliteProspectsStatsUrl } from './ScoringLeadersTable';
+import ScoringLeadersTable from './ScoringLeadersTable';
 import { ScoringLeadersResponse } from '@/app/types/scoringLeaders';
 
 interface ScoringLeadersProps {
