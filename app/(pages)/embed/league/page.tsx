@@ -17,6 +17,7 @@ const LeagueEmbedContent = () => {
   const searchParams = useSearchParams();
 
   const leagueSlug = searchParams.get("leagueSlug") || "";
+  const season = searchParams.get("season") || "";
   const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
   const textColor = searchParams.get("textColor") || "#000000";
   const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
@@ -32,6 +33,7 @@ const LeagueEmbedContent = () => {
       <div style={{ overflow: "auto" }}>
         <League
           leagueSlug={leagueSlug}
+          season={season}
           customColors={{
             backgroundColor,
             textColor,
@@ -39,6 +41,7 @@ const LeagueEmbedContent = () => {
             headerTextColor,
             nameTextColor
           }}
+          hideSeasonSelector={true}
         />
       </div>
     </ResizeObserver>

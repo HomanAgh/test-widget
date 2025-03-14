@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import ScoringLeadersTable, { getEliteProspectsStatsUrl } from './ScoringLeadersTable';
+import ScoringLeadersTable from './ScoringLeadersTable';
 import { ScoringLeadersResponse } from '@/app/types/scoringLeaders';
-import { Link } from '@/app/components/common/style';
 
 interface ScoringLeadersProps {
   leagueSlug: string;
@@ -15,6 +14,7 @@ interface ScoringLeadersProps {
     headerTextColor?: string;
     nameTextColor?: string;
   };
+  hideSeasonSelector?: boolean;
 }
 
 const ScoringLeaders: React.FC<ScoringLeadersProps> = ({ 
@@ -26,7 +26,8 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
     nameTextColor: "#0D73A6"
-  }
+  },
+  hideSeasonSelector = false
 }) => {
   const date = new Date();
   const currentYear = date.getFullYear();
@@ -140,10 +141,6 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     setSelectedSeason(e.target.value);
   };
 
-  const getEPUrl = () => {
-    return getEliteProspectsStatsUrl(leagueSlug, selectedSeason);
-  };
-
   if (loading) {
     return <div className="text-center text-gray-600 my-8">Loading scoring leaders...</div>;
   }
@@ -157,36 +154,28 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
   const leagueDisplay = leagueName || leagueSlug.toUpperCase();
 
   return (
-    <div className="max-w-6xl mx-auto my-8" style={{ color: customColors.textColor }}>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-4">
-          Scoring Leaders in the{' '}
-          <Link 
-            href={getEPUrl()}
-            style={{ color: customColors.nameTextColor }}
-            className="cursor-pointer hover:underline"
-          >
-            {leagueDisplay} {selectedSeason}
-          </Link>
-        </h2>
-        <div className="flex justify-center items-center mb-4">
-          <label htmlFor="season-select" className="mr-2 font-semibold">
-            Select Season:
-          </label>
-          <select
-            id="season-select"
-            value={selectedSeason}
-            onChange={handleSeasonChange}
-            className="border px-3 py-1 rounded"
-          >
-            {seasonsArray.map((seasonOption) => (
-              <option key={seasonOption} value={seasonOption}>
-                {seasonOption}
-              </option>
-            ))}
-          </select>
+    <div className="max-w-6xl mx-auto my-8">
+      {!hideSeasonSelector && (
+        <div className="text-center mb-6">
+          <div className="flex justify-center items-center mb-4">
+            <label htmlFor="season-select" className="mr-2 font-semibold">
+              Select Season:
+            </label>
+            <select
+              id="season-select"
+              value={selectedSeason}
+              onChange={handleSeasonChange}
+              className="border px-3 py-1 rounded"
+            >
+              {seasonsArray.map((seasonOption) => (
+                <option key={seasonOption} value={seasonOption}>
+                  {seasonOption}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
       <ScoringLeadersTable 
         scoringLeaders={scoringLeaders} 
         leagueDisplay={leagueDisplay}

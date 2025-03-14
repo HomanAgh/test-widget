@@ -36,7 +36,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
       `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
-      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}`
+      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}`+
+      `&_t=${Date.now()}`
     );
   }, [playerId, gameLimit, viewMode, showSummary, customColors]);
 

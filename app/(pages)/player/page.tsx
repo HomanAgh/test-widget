@@ -8,7 +8,7 @@ const PlayerSearchPage = () => {
   return (
     <PageWrapper> 
       <Header currentPath="/player" />
-      <PageTitle title="Search player" />
+      <PageTitle title="Search Player" />
       <AuthCheck>
         <SearchBar />
       </AuthCheck>

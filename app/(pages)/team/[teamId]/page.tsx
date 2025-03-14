@@ -15,7 +15,7 @@ export default async function TeamPage({ params }: PageProps) {
   return (
     <PageWrapper>
       <Header currentPath="/team" />
-      <PageTitle title="Search team" />
+      <PageTitle title="Search Team" />
       <AuthCheck>
         <SearchBar />
         <ClientTeamPage teamId={teamId} />

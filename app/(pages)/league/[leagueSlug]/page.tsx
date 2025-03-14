@@ -15,7 +15,7 @@ export default async function LeaguePage({ params }: PageProps) {
   return (
     <PageWrapper>
       <Header currentPath="/league" />
-      <PageTitle title="Search league" />
+      <PageTitle title="Search League" />
       <AuthCheck>
         <SearchBar />
         <ClientLeaguePage leagueSlug={leagueSlug} season="2024-2025" />

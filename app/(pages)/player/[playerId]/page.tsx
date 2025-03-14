@@ -15,7 +15,7 @@ export default async function PlayerPage({ params }: PageProps) {
   return (
     <PageWrapper>
       <Header currentPath="/player" />
-      <PageTitle title="Search player" />
+      <PageTitle title="Search Player" />
       <AuthCheck>
         <SearchBar />
         <ClientPlayerPage playerId={playerId} />

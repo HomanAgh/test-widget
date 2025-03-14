@@ -84,5 +84,7 @@ export interface ScoringLeadersTableProps {
     tableBackgroundColor: string;
     headerTextColor?: string;
     nameTextColor?: string;
+    oddRowColor?: string;
+    evenRowColor?: string;
   };
 } 

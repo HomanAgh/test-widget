@@ -13,6 +13,8 @@ interface LeagueProps {
     headerTextColor?: string;
     nameTextColor?: string;
   };
+  hideSeasonSelector?: boolean;
+  season?: string;
 }
 
 const League: React.FC<LeagueProps> = ({ 
@@ -23,7 +25,9 @@ const League: React.FC<LeagueProps> = ({
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
     nameTextColor: "#0D73A6"
-  }
+  },
+  hideSeasonSelector = false,
+  season
 }) => {
   const date = new Date();
   const currentYear = date.getFullYear();
@@ -40,11 +44,19 @@ const League: React.FC<LeagueProps> = ({
     seasonsArray.push(`${y}-${y + 1}`);
   }
 
-  const [season, setSeason] = useState<string>(seasonsArray[0]);
+  const defaultSeason = season || seasonsArray[0];
+  const [currentSeason, setCurrentSeason] = useState<string>(defaultSeason);
   const [standings, setStandings] =
     useState<LeagueTableProps["standings"] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize with the season prop if provided
+  useEffect(() => {
+    if (season) {
+      setCurrentSeason(season);
+    }
+  }, [season]);
 
   useEffect(() => {
     const fetchLeagueStandings = async () => {
@@ -53,7 +65,7 @@ const League: React.FC<LeagueProps> = ({
 
       try {
         const response = await fetch(
-          `/api/league/${leagueSlug}?season=${encodeURIComponent(season)}`
+          `/api/league/${leagueSlug}?season=${encodeURIComponent(currentSeason)}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch league data");
@@ -68,10 +80,10 @@ const League: React.FC<LeagueProps> = ({
     };
 
     fetchLeagueStandings();
-  }, [leagueSlug, season]);
+  }, [leagueSlug, currentSeason]);
 
   const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSeason(e.target.value);
+    setCurrentSeason(e.target.value);
   };
 
   if (loading) {
@@ -86,24 +98,27 @@ const League: React.FC<LeagueProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg">
-      <div className="text-center mb-6">
-        <label htmlFor="season-select" className="mr-2 font-semibold">
-          Select Season:
-        </label>
-        <select
-          id="season-select"
-          value={season}
-          onChange={handleSeasonChange}
-          className="border px-3 py-1 rounded"
-        >
-          {seasonsArray.map((seasonOption) => (
-            <option key={seasonOption} value={seasonOption}>
-              {seasonOption}
-            </option>
-          ))}
-        </select>
-      </div>
+      {!hideSeasonSelector && (
+        <div className="text-center mb-6">
+          <label htmlFor="season-select" className="mr-2 font-semibold">
+            Select Season:
+          </label>
+          <select
+            id="season-select"
+            value={currentSeason}
+            onChange={handleSeasonChange}
+            className="border px-3 py-1 rounded"
+          >
+            {seasonsArray.map((seasonOption) => (
+              <option key={seasonOption} value={seasonOption}>
+                {seasonOption}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <LeagueTable 
+        key={`league-table-${leagueSlug}-${currentSeason}`}
         standings={standings} 
         logoS="" 
         backgroundColor={customColors.backgroundColor}

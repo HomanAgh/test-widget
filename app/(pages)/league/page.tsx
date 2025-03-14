@@ -8,7 +8,7 @@ export default function LeagueSearchPage() {
   return (
     <PageWrapper>
       <Header currentPath="/league" />
-      <PageTitle title="Search league" />
+      <PageTitle title="Search League" />
       <AuthCheck>
         <SearchBar />
       </AuthCheck>

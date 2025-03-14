@@ -145,7 +145,7 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
                 bgColor={rowBackground}
               >
                 <TableCell align="center">{i + 1}</TableCell>
-                <TableCell align="left">
+                <TableCell align="left" style={{ color: nameTextColor }}>
                   <Link href={team.team.links?.eliteprospectsUrl ?? "#"} >
                     {team.logo && (
                       <Image
