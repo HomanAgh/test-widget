@@ -15,6 +15,7 @@ interface GoalieLeadersProps {
     headerTextColor?: string;
     nameTextColor?: string;
   };
+  hideSeasonSelector?: boolean;
 }
 
 const GoalieLeaders: React.FC<GoalieLeadersProps> = ({ 
@@ -26,7 +27,8 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
     nameTextColor: "#0D73A6"
-  }
+  },
+  hideSeasonSelector = false
 }) => {
   const [goalieLeaders, setGoalieLeaders] = useState<GoalieLeadersResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -129,36 +131,28 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   const leagueDisplay = leagueName || leagueSlug.toUpperCase();
 
   return (
-    <div className="max-w-6xl mx-auto my-8" style={{ color: customColors.textColor }}>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-4">
-          Goalie Leaders in the{' '}
-          <Link 
-            href={getEPUrl()}
-            style={{ color: customColors.nameTextColor }}
-            className="cursor-pointer hover:underline"
-          >
-            {leagueDisplay} {selectedSeason}
-          </Link>
-        </h2>
-        <div className="flex justify-center items-center mb-4">
-          <label htmlFor="season-select" className="mr-2 font-semibold">
-            Select Season:
-          </label>
-          <select
-            id="season-select"
-            value={selectedSeason}
-            onChange={handleSeasonChange}
-            className="border px-3 py-1 rounded"
-          >
-            {seasonsArray.map((seasonOption) => (
-              <option key={seasonOption} value={seasonOption}>
-                {seasonOption}
-              </option>
-            ))}
-          </select>
+    <div className="max-w-6xl mx-auto my-8">
+      {!hideSeasonSelector && (
+        <div className="text-center mb-6">
+          <div className="flex justify-center items-center mb-4">
+            <label htmlFor="season-select" className="mr-2 font-semibold">
+              Select Season:
+            </label>
+            <select
+              id="season-select"
+              value={selectedSeason}
+              onChange={handleSeasonChange}
+              className="border px-3 py-1 rounded"
+            >
+              {seasonsArray.map((seasonOption) => (
+                <option key={seasonOption} value={seasonOption}>
+                  {seasonOption}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
       <GoalieLeadersTable 
         goalieLeaders={goalieLeaders} 
         leagueDisplay={leagueDisplay}

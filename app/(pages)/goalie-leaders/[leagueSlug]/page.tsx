@@ -15,7 +15,7 @@ export default async function GoalieLeadersPage({ params }: PageProps) {
   return (
     <PageWrapper>
       <Header currentPath="/goalie-leaders" />
-      <PageTitle title="Goalie Leaders" />
+      <PageTitle title="Search League" />
       <AuthCheck>
         <GoalieLeadersSearch />
         <ClientGoalieLeadersPage leagueSlug={leagueSlug} season="2024-2025" />

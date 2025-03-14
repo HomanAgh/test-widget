@@ -20,15 +20,17 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    const params = new URLSearchParams({
-      teamId,
-      backgroundColor: customColors.backgroundColor,
-      textColor: customColors.textColor,
-      tableBackgroundColor: customColors.tableBackgroundColor,
-      headerTextColor: customColors.headerTextColor,
-      nameTextColor: customColors.nameTextColor,
-    });
-    return `${baseUrl}/embed/team?${params.toString()}`;
+    
+    return (
+      `${baseUrl}/embed/team` +
+      `?teamId=${encodeURIComponent(teamId)}` +
+      `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
+      `&textColor=${encodeURIComponent(customColors.textColor)}` +
+      `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
+      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
+      `&_t=${Date.now()}`
+    );
   }, [teamId, customColors]);
 
   const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;

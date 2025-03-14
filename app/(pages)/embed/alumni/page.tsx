@@ -19,6 +19,7 @@ const AlumniEmbedContent = () => {
   const leaguesStr = searchParams.get("leagues") || "";
   const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
   const textColor = searchParams.get("textColor") || "#000000";
+  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
   const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
   const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
   const youthTeam = searchParams.get("teams") || "";
@@ -45,6 +46,7 @@ const AlumniEmbedContent = () => {
           customColors={{
             backgroundColor,
             textColor,
+            headerTextColor,
             tableBackgroundColor,
             nameTextColor
           }}

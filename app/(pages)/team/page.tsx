@@ -8,7 +8,7 @@ export default function TeamSearchPage() {
   return (
     <PageWrapper>
       <Header currentPath="/team" />
-      <PageTitle title="Search team" />
+      <PageTitle title="Search Team" />
       <AuthCheck>
         <SearchBar />
       </AuthCheck>

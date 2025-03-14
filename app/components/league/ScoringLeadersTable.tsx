@@ -21,7 +21,9 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
+    nameTextColor: "#0D73A6",
+    oddRowColor: "#F3F4F6",
+    evenRowColor: "#ffffff"
   }
 }) => {
   // Sorting state - default to TP column with descending order (highest first)
@@ -31,6 +33,10 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
   const isCustomColor =
     customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
     customColors.tableBackgroundColor.toLowerCase() !== "#fff";
+  
+  // Use custom row colors if provided, otherwise use defaults
+  const evenRowColor = customColors.evenRowColor || "#ffffff";
+  const oddRowColor = customColors.oddRowColor || "#F3F4F6";
   
   if (!scoringLeaders || !scoringLeaders.data || scoringLeaders.data.length === 0) {
     return <div className="text-center py-4">No scoring data available</div>;
@@ -175,7 +181,7 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
             return (
               <TableRow 
                 key={player.id} 
-                bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+                bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? evenRowColor : oddRowColor}
               >
                 <TableCell align="left">
                   {index + 1}.
@@ -197,9 +203,10 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
                       <Link 
                         href={playerUrl}
                         style={{ color: customColors.nameTextColor }}
-                        className="hover:underline"
                       >
-                        {typeof player.player.firstName === 'string' ? player.player.firstName : ''} {typeof player.player.lastName === 'string' ? player.player.lastName : ''}
+                        <span className="block font-medium text-left hover:underline">
+                          {typeof player.player.firstName === 'string' ? player.player.firstName : ''} {typeof player.player.lastName === 'string' ? player.player.lastName : ''}
+                        </span>
                       </Link>
                     </div>
                   </div>
@@ -221,9 +228,10 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
                       <Link 
                         href={teamUrl}
                         style={{ color: customColors.nameTextColor }}
-                        className="hover:underline"
                       >
-                        {player.team.name}
+                        <span className="block font-medium text-left hover:underline">
+                          {player.team.name}
+                        </span>
                       </Link>
                     </div>
                   </div>

@@ -8,7 +8,7 @@ export default function ScoringLeadersSearchPage() {
   return (
     <PageWrapper>
       <Header currentPath="/scoring-leaders" />
-      <PageTitle title="Scoring Leaders" />
+      <PageTitle title="Search League" />
       <AuthCheck>
         <ScoringLeadersSearch />
       </AuthCheck>

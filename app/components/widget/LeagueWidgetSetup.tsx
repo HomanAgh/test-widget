@@ -23,35 +23,38 @@ const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({
   });
 
   const embedUrl = useMemo(() => {
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const base = `${baseUrl}/embed/league`;
-    const params = new URLSearchParams({
-      leagueSlug,
-      season,
-      backgroundColor: customColors.backgroundColor,
-      textColor: customColors.textColor,
-      tableBackgroundColor: customColors.tableBackgroundColor,
-      headerTextColor: customColors.headerTextColor,
-      nameTextColor: customColors.nameTextColor,
-    });
-    return `${base}?${params.toString()}`;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    
+    const url = `${baseUrl}/embed/league` +
+      `?leagueSlug=${encodeURIComponent(leagueSlug)}` +
+      `&season=${encodeURIComponent(season)}` +
+      `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
+      `&textColor=${encodeURIComponent(customColors.textColor)}` +
+      `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
+      `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
+      `&_t=${Date.now()}`;
+    
+    return url;
   }, [leagueSlug, season, customColors]);
 
-  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="800" style="border:none;" class="iframe"></iframe>`;
 
   return (
     <div>
-      <div className="mt-6 mb-6">
+      <div className="mb-6">
         <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
           <HexColors customColors={customColors} setCustomColors={setCustomColors} />
         </div>
       </div>
+      
       <div className="mt-4">
         <League 
-          leagueSlug={leagueSlug} 
+          leagueSlug={leagueSlug}
           customColors={customColors}
         />
       </div>
+      
       <EmbedCodeBlock iframeCode={iframeCode} />
     </div>
   );

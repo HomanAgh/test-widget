@@ -41,6 +41,7 @@ const GoalieLeadersPageContent = () => {
             headerTextColor,
             nameTextColor
           }}
+          hideSeasonSelector={true}
         />
       </div>
     </ResizeObserver>

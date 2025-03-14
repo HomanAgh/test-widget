@@ -8,7 +8,7 @@ export default function GoalieLeadersSearchPage() {
   return (
     <PageWrapper>
       <Header currentPath="/goalie-leaders" />
-      <PageTitle title="Goalie Leaders" />
+      <PageTitle title="Search League" />
       <AuthCheck>
         <GoalieLeadersSearch />
       </AuthCheck>
