@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { League } from "@/app/types/league";
 import { LeagueSelectionDropdownProps } from "@/app/types/league";
-import { IoIosRemoveCircle } from "react-icons/io";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
 
@@ -139,12 +138,24 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute bg-white border rounded w-full mt-2 z-10 p-4 font-montserrat">
+        <div className="absolute bg-white border rounded w-full z-10 p-4 font-montserrat">
           <button
             onClick={handleSelectAllToggle}
-            className="absolute top-2 right-2 text-[#052D41] text-medium underline"
+            className="absolute top-2 right-2 uppercase text-sm tracking-wider cursor-pointer"
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              lineHeight: "24px",
+              backgroundColor: "transparent",
+              color: "#0B9D52",
+              border: "none",
+              letterSpacing: "0.05em",
+              textAlign: "right",
+              padding: "0",
+            }}
           >
-            {allSelected ? "Deselect All" : "Select All"}
+            {allSelected ? "DESELECT ALL" : "SELECT ALL"}
           </button>
 
           {/* League Categories */}
@@ -152,7 +163,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
             { title: "Professional Leagues", leagues: professionalLeagues },
             { title: "College Leagues", leagues: collegeLeagues },
             { title: "Junior Leagues", leagues: juniorLeagues },
-          ].map(({ title, leagues }) => (
+          ].map(({ title, leagues }, index, array) => (
             <div key={title} className="mt-6">
               <h3 className="font-bold mb-2">{title}</h3>
               <div className="grid grid-cols-2 gap-2">
@@ -172,7 +183,8 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
                   </label>
                 ))}
               </div>
-              <hr className="my-4" />
+              {/* Only show horizontal rule if not the last category */}
+              {index < array.length - 1 && <hr className="my-4" />}
             </div>
           ))}
         </div>
@@ -180,16 +192,16 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
 
       {/* Display Selected Leagues with Logos */}
       {selectedLeagues.length > 0 && (
-        <div className="mt-2 bg-gray-100 p-2 rounded text-[#052D41] font-montserrat">
-          <strong>Selected Leagues:</strong>
-          <div className="flex flex-wrap gap-2 mt-1">
+        <div className="mt-2 p-2 rounded text-[#052D41] font-montserrat text-lg">
+          <strong>Selected Leagues</strong>
+          <div className="flex flex-wrap gap-2 mt-3 mb-2">
             {selectedLeagues.map((slug) => {
               const { name, logo } = findLeagueDetails(slug);
 
               return (
                 <span
                   key={slug}
-                  className="inline-flex items-center bg-white px-2 py-1 rounded text-sm text-[#052D41] border border-[#052D41]"
+                  className="mt-2 mb-2 inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
                 >
                   {logo && (
                     <Image
@@ -203,16 +215,40 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
                   {name}
                   <button
                     onClick={() => removeLeagueSlug(slug)}
-                    className="ml-2 text-red-700 font-bold"
+                    className="ml-2 flex items-center justify-center self-center"
+                    aria-label="Remove league"
                   >
-                    <IoIosRemoveCircle />
+                    <Image
+                      src="/images/close (x).svg"
+                      alt="Remove league"
+                      width={16}
+                      height={16}
+                      className="relative top-[0.5px] transform scale-110"
+                    />
                   </button>
                 </span>
               );
             })}
           </div>
-          <button onClick={clearAllLeagues} className="text-sm mt-2 underline">
-            Clear All
+          <button
+            onClick={clearAllLeagues}
+            className="mt-2 rounded uppercase text-sm tracking-wider text-left cursor-pointer"
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              lineHeight: "24px",
+              backgroundColor: "transparent",
+              color: "#0B9D52",
+              border: "none",
+              letterSpacing: "0.05em",
+              display: "block",
+              textAlign: "left",
+              padding: "0",
+              marginBottom: "-9px",
+            }}
+          >
+            CLEAR ALL
           </button>
         </div>
       )}

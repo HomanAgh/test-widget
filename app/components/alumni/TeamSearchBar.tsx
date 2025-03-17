@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { TeamItem, TeamSearchBarProps } from "@/app/types/team";
-import { IoIosRemoveCircle } from "react-icons/io";
 import Image from "next/image";
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
@@ -141,7 +140,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   };
 
   return (
-    <div className="pb-[48px]">
+    <div className="pb-[20px]">
       <div className="w-full" ref={containerRef}>
         <div className="relative">
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
@@ -191,13 +190,13 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
         )}
 
         {selectedTeams.length > 0 && (
-          <div className="mt-2 bg-gray-100 p-2 rounded font-montserrat">
-            <strong>Selected Teams:</strong>
+          <div className="mt-4 p-2 font-montserrat text-lg">
+            <strong>Selected Teams</strong>
             <div className="flex flex-wrap gap-2 mt-1">
               {selectedTeams.map((team) => (
                 <span
                   key={team.id}
-                  className="inline-flex items-center bg-white text-[#052D41] px-2 py-1 rounded text-sm border border-[#052D41]"
+                  className="mt-4 mb-2 inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
                 >
                   {team.logo && (
                     <Image
@@ -211,18 +210,38 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
                   {team.name}
                   <button
                     onClick={() => removeTeam(team.id)}
-                    className="ml-2 text-red-700 font-bold"
+                    className="ml-2 flex items-center justify-center self-center"
+                    aria-label="Remove team"
                   >
-                    <IoIosRemoveCircle />
+                    <Image
+                      src="/images/close (x).svg"
+                      alt="Remove team"
+                      width={16}
+                      height={16}
+                      className="relative top-[0.5px] transform scale-110"
+                    />
                   </button>
                 </span>
               ))}
             </div>
             <button
               onClick={clearAllTeams}
-              className="text-sm text-[#052D41] mt-2 underline"
+              className="my-2 px-4 py-2 rounded uppercase text-sm tracking-wider text-left cursor-pointer"
+              style={{
+                fontFamily: "Montserrat, sans-serif",
+                fontSize: "12px",
+                fontWeight: 700,
+                lineHeight: "24px",
+                backgroundColor: "transparent",
+                color: "#0B9D52",
+                border: "none",
+                letterSpacing: "0.05em",
+                display: "block",
+                textAlign: "left",
+                padding: "0",
+              }}
             >
-              Clear All
+              CLEAR ALL
             </button>
           </div>
         )}

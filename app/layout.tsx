@@ -7,7 +7,8 @@ const openSans = Open_Sans({
   variable: "--font-open-sans",
 });
 
-const montserrat = Montserrat({ // Add Montserrat
+const montserrat = Montserrat({
+  // Add Montserrat
   subsets: ["latin"],
   variable: "--font-montserrat",
 });
@@ -24,9 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-         className={`${openSans.variable} $${montserrat.variable}`}
-      >
+      <body className={`${openSans.variable} $${montserrat.variable}`}>
         {children}
       </body>
     </html>

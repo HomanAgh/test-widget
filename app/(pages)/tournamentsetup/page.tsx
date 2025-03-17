@@ -2,7 +2,7 @@ import React from "react";
 import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
-import AlumniTournamentWidgetSetup from "@/app/components/widget/AlumniTournamentWidgetSetup";
+import AlumniWidgetSetup from "@/app/components/widget/AlumniWidgetSetup";
 
 const TournamentSetupPage = () => {
   return (
@@ -11,7 +11,7 @@ const TournamentSetupPage = () => {
         <Header currentPath="/tournamentsetup" />
         <PageTitle title="Search Tournaments" />
         <AuthCheck>
-          <AlumniTournamentWidgetSetup />
+        <AlumniWidgetSetup mode="tournament" />
         </AuthCheck>
       </div>
     </PageWrapper>

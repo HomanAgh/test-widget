@@ -4,14 +4,15 @@ import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle } from "@/app/components/common/style";
 import AuthCheck from "@/app/components/AuthCheck";
 
+
 const AlumniPage = () => {
   return (
     <PageWrapper>
       <div>
         <Header currentPath="/alumni" />
-        <PageTitle title="Search Team" />
+        <PageTitle title="Search Teams" />
         <AuthCheck>
-          <AlumniWidgetSetup />
+          <AlumniWidgetSetup mode="team"/>
         </AuthCheck>
       </div>
     </PageWrapper>

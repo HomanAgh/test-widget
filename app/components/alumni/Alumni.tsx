@@ -20,6 +20,11 @@ interface AlumniProps {
     nameTextColor?: string;
   };
   includeYouth?: boolean;
+  selectedLeagueCategories?: {
+    junior: boolean;
+    college: boolean;
+    professional: boolean;
+  };
 }
 
 const Alumni: React.FC<AlumniProps> = ({
@@ -32,6 +37,11 @@ const Alumni: React.FC<AlumniProps> = ({
     headerTextColor: "#000000",
   },
   includeYouth = false,
+  selectedLeagueCategories = {
+    junior: true,
+    college: true,
+    professional: true,
+  },
 }) => {
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
     "men"
@@ -130,6 +140,8 @@ const Alumni: React.FC<AlumniProps> = ({
         nameTextColor={customColors.nameTextColor}
         isWomenLeague={activeGenderTab === "women"}
         resetPagination={resetPagination}
+        selectedLeagueCategories={selectedLeagueCategories}
+
       />
     </div>
   );

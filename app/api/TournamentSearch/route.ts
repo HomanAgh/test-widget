@@ -1,47 +1,55 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const query = searchParams.get("query")?.trim() || "";
-
-  const apiKey = process.env.API_KEY;
-  const apiBaseUrl = process.env.API_BASE_URL;
-
-  if (!apiKey || !apiBaseUrl) {
-    return NextResponse.json(
-      { error: "Missing API key or base URL" },
-      { status: 500 }
-    );
-  }
-
-  if (!query) {
-    // If no query, you could either return all tournaments or just an empty array
-    return NextResponse.json({ tournaments: [] });
-  }
-
-  // This endpoint might differ depending on how partial matching is supported by EliteProspects.
-  // If ?q= works for partial matching, use it:
-  // e.g. `/leagues?leagueLevel=tournament&q=${query}`
-  // Otherwise, you might need to fetch all tournaments and filter locally.
+  export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const query = searchParams.get("query")?.trim() || "";
   
-  const url = `${apiBaseUrl}/leagues?leagueLevel=tournament&offset=0&limit=100&sort=name&q=${encodeURIComponent(
-    query
-  )}&fields=id,slug,name,leagueLevel,country,logo,logoUrl,imageUrl&apiKey=${apiKey}`;
-
-  console.log("URL:", url);
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch tournaments: ${response.statusText}`);
+    const apiKey = process.env.API_KEY;
+    const apiBaseUrl = process.env.API_BASE_URL;
+  
+    if (!apiKey || !apiBaseUrl) {
+      return NextResponse.json(
+        { error: "Missing API key or base URL" },
+        { status: 500 }
+      );
     }
-    const data = await response.json();
-    // data.data should contain an array of leagues with leagueLevel = "tournament"
-    return NextResponse.json({ tournaments: data.data || [] });
-  } catch (err: any) {
-    console.error("TournamentSearch error:", err.message);
-    return NextResponse.json(
-      { error: "Failed to fetch tournaments." },
-      { status: 500 }
-    );
+  
+    if (!query) {
+      return NextResponse.json({ tournaments: [] });
+    }
+  
+    // Define the league levels you want to search
+    const leagueLevels = ["tournament", "midget"];
+    
+    try {
+      // Make separate API calls for each league level
+      const tournamentPromises = leagueLevels.map(async (level) => {
+        const url = `${apiBaseUrl}/leagues?leagueLevel=${encodeURIComponent(level)}&offset=0&limit=100&sort=name&q=${encodeURIComponent(query)}&fields=id,slug,name,leagueLevel,country,logo,logoUrl,imageUrl&apiKey=${apiKey}`;
+        
+        console.log(`Fetching ${level} leagues:`, url);
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          console.warn(`Failed to fetch ${level} leagues: ${response.statusText}`);
+          return [];
+        }
+        
+        const data = await response.json();
+        return data.data || [];
+      });
+  
+      // Wait for all requests to complete
+      const results = await Promise.all(tournamentPromises);
+      
+      // Combine all results into a single array
+      const allTournaments = results.flat();
+      
+      return NextResponse.json({ tournaments: allTournaments });
+    } catch (err: any) {
+      console.error("TournamentSearch error:", err.message);
+      return NextResponse.json(
+        { error: "Failed to fetch tournaments." },
+        { status: 500 }
+      );
+    }
   }
-}
