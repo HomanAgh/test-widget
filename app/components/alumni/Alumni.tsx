@@ -37,6 +37,7 @@ const Alumni: React.FC<AlumniProps> = ({
     "men"
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [resetPagination, setResetPagination] = useState(Date.now());
 
   const selectedTeamIds = useMemo(
     () => selectedTeams.map((t) => t.id),
@@ -69,6 +70,11 @@ const Alumni: React.FC<AlumniProps> = ({
     );
   }, [filteredPlayers, searchQuery]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setResetPagination(Date.now());
+  };
+
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
@@ -77,7 +83,7 @@ const Alumni: React.FC<AlumniProps> = ({
             type="text"
             className="w-full border rounded-lg h-[36px] pl-10"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search player"
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
@@ -123,6 +129,7 @@ const Alumni: React.FC<AlumniProps> = ({
         tableTextColor={customColors.textColor}
         nameTextColor={customColors.nameTextColor}
         isWomenLeague={activeGenderTab === "women"}
+        resetPagination={resetPagination}
       />
     </div>
   );

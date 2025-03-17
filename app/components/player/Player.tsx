@@ -88,14 +88,12 @@ const Player: React.FC<PlayerProps> = ({
   };
 
   return (
-    <div style={{ color: customColors.textColor }}>
-      <div>
-        <PlayerInfo 
-          player={playerStats.player} 
-          nameTextColor={customColors.nameTextColor}
-          tableBackgroundColor={customColors.tableBackgroundColor}
-        />
-      </div>
+    <div style={{ color: customColors.textColor, background: "none" }}>
+      <PlayerInfo 
+        player={playerStats.player} 
+        nameTextColor={customColors.nameTextColor}
+        tableBackgroundColor={customColors.tableBackgroundColor}
+      />
 
       {/* Player Stats View */}
       <div>

@@ -21,12 +21,12 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
   tableBackgroundColor = "#FFFFFF"
 }) => {
   return (
-    <div className="font-montserrat rounded-lg overflow-hidden mb-0" style={{ backgroundColor: tableBackgroundColor }}>
-      <div className="p-4">
+    <div className="font-montserrat overflow-hidden mb-0 max-w-[768px] mx-auto">
+      <div className="px-0">
         {/* Player header section */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full" style={{ backgroundColor: tableBackgroundColor }}>
           {/* Left column - Player name, team, etc. */}
-          <div className="flex-1">
+          <div className="flex-1 p-4">
             {/* Player name and flags */}
             <div className="flex items-center space-x-2 mb-2">
               <div className="flex space-x-1">
@@ -104,7 +104,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
           </div>
 
           {/* Right column - Player details */}
-          <div className="rounded-lg p-3 w-full md:w-auto" style={{ backgroundColor: tableBackgroundColor === "#FFFFFF" ? "#F3F4F6" : tableBackgroundColor }}>
+          <div className="rounded-lg p-3 w-full md:w-[350px] m-4" style={{ backgroundColor: tableBackgroundColor === "#FFFFFF" ? "#F3F4F6" : tableBackgroundColor }}>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
               {/* Age */}
               <div className="font-medium text-gray-700">Age:</div>

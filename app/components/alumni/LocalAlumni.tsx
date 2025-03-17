@@ -1,44 +1,3 @@
-/* "use client";
-import React from "react";
-import PlayerTable from "./PlayerTable"; 
-// or wherever you keep the table logic from your old <Alumni> code
-
-interface AlumniLocalProps {
-  players: any[]; // the final intersection array
-  customColors: {
-    backgroundColor: string;
-    textColor: string;
-    tableBackgroundColor: string;
-    headerTextColor?: string;
-    nameTextColor?: string;
-  };
-}
-
-export default function AlumniLocal({
-  players,
-  customColors
-}: AlumniLocalProps) {
-  // Reuse the same <PlayerTable> or layout your old <Alumni> used:
-  // That table shows columns for birth year, draft picks, etc.
-
-  return (
-    <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
-
-      <PlayerTable
-        players={players}
-        genderFilter="all"
-        headerBgColor={customColors.backgroundColor}
-        headerTextColor={customColors.headerTextColor}
-        tableBgColor={customColors.tableBackgroundColor}
-        tableTextColor={customColors.textColor}
-        nameTextColor={customColors.nameTextColor}
-        // any other props your table requires (like pageSize, sorting, etc.)
-      />
-    </div>
-  );
-}
- */
-
 "use client";
 
 import React, { useState, useMemo } from "react";
@@ -68,6 +27,8 @@ export default function LocalAlumni({
   // This replicates the same men/women tab logic
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
   const [searchQuery, setSearchQuery] = useState("");
+  // Add resetPagination state with a timestamp to trigger pagination reset
+  const [resetPagination, setResetPagination] = useState(Date.now());
 
   // Filter by men/women
   const filteredByGender = useMemo(() => {
@@ -83,6 +44,13 @@ export default function LocalAlumni({
     return filteredByGender.filter((p) => p.name.toLowerCase().includes(q));
   }, [filteredByGender, searchQuery]);
 
+  // Handle search query change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    // Reset pagination to page 1 when search query changes
+    setResetPagination(Date.now());
+  };
+
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       {/* The same search box code as old <Alumni> */}
@@ -92,7 +60,7 @@ export default function LocalAlumni({
             type="text"
             className="w-full border rounded-lg h-[36px] pl-10"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search player"
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
@@ -126,13 +94,14 @@ export default function LocalAlumni({
       {/* The same <PlayerTable> from old <Alumni>, passing searchedPlayers */}
       <PlayerTable
         players={searchedPlayers}
-        genderFilter="all" // or “men” if you want to apply the tab logic differently
+        genderFilter="all" // or "men" if you want to apply the tab logic differently
         headerBgColor={customColors.backgroundColor}
         headerTextColor={customColors.headerTextColor}
         tableBgColor={customColors.tableBackgroundColor}
         tableTextColor={customColors.textColor}
         nameTextColor={customColors.nameTextColor}
         isWomenLeague={activeGenderTab === "women"}
+        resetPagination={resetPagination}
       />
     </div>
   );

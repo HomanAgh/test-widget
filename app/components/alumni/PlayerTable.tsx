@@ -28,6 +28,7 @@ import {
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
+  resetPagination?: number;
 }
 
 const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
@@ -42,6 +43,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
   isWomenLeague = false,
+  resetPagination,
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -64,6 +66,12 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     women: 0,
   });
   const currentPage = isWomenLeague ? pages.women : pages.men;
+
+  React.useEffect(() => {
+    if (resetPagination) {
+      setPages({ men: 0, women: 0 });
+    }
+  }, [resetPagination]);
 
   const isInNameGroup = ["name", "position", "status"].includes(sortColumn);
 

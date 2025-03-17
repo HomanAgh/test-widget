@@ -41,7 +41,7 @@ const PlayerPageContent = () => {
 
   return (
     <ResizeObserver>
-      <div style={{ overflow: "auto" }}>
+      <div className="max-w-[768px] mx-auto px-0" style={{ background: "none" }}>
         <Player
           playerId={playerId}    
           gameLimit={gameLimit}
