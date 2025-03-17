@@ -28,6 +28,11 @@ import {
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
+  selectedLeagueCategories?: {
+    junior: boolean;
+    college: boolean;
+    professional: boolean;
+  };
 }
 
 const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
@@ -42,6 +47,11 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
   isWomenLeague = false,
+  selectedLeagueCategories = {
+    junior: true,
+    college: true,
+    professional: true,
+  },
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -130,7 +140,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     firstName: string,
     lastName: string,
     position?: string | null,
-    status?: string | null,
+    status?: string | null
   ) => {
     const isActive = status?.toLowerCase() === "active";
     const isRetired = status?.toLowerCase() === "retired";
@@ -288,25 +298,32 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 </TableCell>
               )}
 
-              <TableCell
-                isHeader
-                align="center"
-                className="font-bold cursor-pointer"
-                onClick={() => handleSort("junior")}
-              >
-                JUNIOR {renderSortArrow("junior")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="font-bold cursor-pointer"
-                onClick={() => handleSort("college")}
-              >
-                COLLEGE {renderSortArrow("college")}
-              </TableCell>
+              {/* Conditionally render JUNIOR column */}
+              {selectedLeagueCategories.junior && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("junior")}
+                >
+                  JUNIOR {renderSortArrow("junior")}
+                </TableCell>
+              )}
+
+              {/* Conditionally render COLLEGE column */}
+              {selectedLeagueCategories.college && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("college")}
+                >
+                  COLLEGE {renderSortArrow("college")}
+                </TableCell>
+              )}
 
               {/* Conditionally render PRO column */}
-              {!isWomenLeague && (
+              {!isWomenLeague && selectedLeagueCategories.professional && (
                 <TableCell
                   isHeader
                   align="center"
@@ -392,15 +409,22 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                     </TableCell>
                   )}
 
-                  <TableCell align="center">
-                    <ToggleTeamList teams={juniorTeams} />
-                  </TableCell>
-                  <TableCell align="center">
-                    <ToggleTeamList teams={collegeTeams} />
-                  </TableCell>
+                  {/* Conditionally render JUNIOR cell */}
+                  {selectedLeagueCategories.junior && (
+                    <TableCell align="center">
+                      <ToggleTeamList teams={juniorTeams} />
+                    </TableCell>
+                  )}
 
-                  {/* Render PRO cell only if not women's league */}
-                  {!isWomenLeague && (
+                  {/* Conditionally render COLLEGE cell */}
+                  {selectedLeagueCategories.college && (
+                    <TableCell align="center">
+                      <ToggleTeamList teams={collegeTeams} />
+                    </TableCell>
+                  )}
+
+                  {/* Conditionally render PRO cell only if not women's league */}
+                  {!isWomenLeague && selectedLeagueCategories.professional && (
                     <TableCell align="center">
                       <ToggleTeamList teams={professionalTeams} />
                     </TableCell>

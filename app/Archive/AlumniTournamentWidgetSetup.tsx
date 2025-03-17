@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import React, { useState, useEffect,useMemo } from "react";
 import { TournamentItem } from "@/app/types/tournament";
@@ -82,20 +82,6 @@ export default function AlumniTournamentWidgetSetup() {
       }
     }
 
-  /* async function fetchPlayersByLeague(leagueParam: string) {
-    const url = `/api/tournament-alumni=${encodeURIComponent(leagueParam)}`;
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`Fetch failed for league=${leagueParam}`);
-    }
-    const data = await res.json();
-    return data.players || [];
-  }
-
-  function intersectById(a: any[], b: any[]): any[] {
-    const setB = new Set(b.map((p) => p.id));
-    return a.filter((p) => setB.has(p.id));
-  } */
 
   return (
     <div>
@@ -119,9 +105,12 @@ export default function AlumniTournamentWidgetSetup() {
         <p>Loading players...</p>
       ) : (
         <>
-          <p>Found {finalPlayers.length} players</p>
-          {/* Render the local version that replicates old <Alumni> styling */}
-          <LocalAlumni players={finalPlayers} customColors={customColors} />
+          {selectedTournaments.length > 0 && selectedLeagues.length > 0 ? (
+            <>
+              <p>Found {finalPlayers.length} players</p>
+              <LocalAlumni players={finalPlayers} customColors={customColors} />
+            </>
+          ) : null}
         </>
       )}
 
@@ -129,3 +118,4 @@ export default function AlumniTournamentWidgetSetup() {
     </div>
   );
 }
+ */

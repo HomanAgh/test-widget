@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { usePathname } from "next/navigation";
 import HomeButton from "./common/HomeButton";
@@ -22,4 +22,4 @@ const ClientButtons = ({ isHomePage }: ClientButtonsProps) => {
   );
 };
 
-export default ClientButtons; 
+export default ClientButtons;

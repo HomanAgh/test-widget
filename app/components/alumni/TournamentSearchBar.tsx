@@ -2,11 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import { IoIosRemoveCircle } from "react-icons/io";
 import Image from "next/image";
 import { TournamentItem } from "@/app/types/tournament";
 
-// Extend these props if you want to handle "onSelect" single-click logic 
+// Extend these props if you want to handle "onSelect" single-click logic
 // (like TeamSearchBar's `onSelect`), or if you have more advanced behaviors.
 interface TournamentSearchBarProps {
   // Called whenever the user selects/deselects tournaments by checkbox
@@ -14,7 +13,7 @@ interface TournamentSearchBarProps {
   // Array of tournaments currently selected
   selectedTournaments: TournamentItem[];
 
-  // Optional: If you want single-selection on "Enter" key, 
+  // Optional: If you want single-selection on "Enter" key,
   // you can replicate what `TeamSearchBar` does:
   onSelect?: (tournament: TournamentItem) => void;
 }
@@ -105,7 +104,9 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
       setHighlightedIndex((prev) => (prev + 1) % tournaments.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlightedIndex((prev) => (prev - 1 + tournaments.length) % tournaments.length);
+      setHighlightedIndex(
+        (prev) => (prev - 1 + tournaments.length) % tournaments.length
+      );
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (highlightedIndex >= 0 && highlightedIndex < tournaments.length) {
@@ -152,7 +153,7 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
   };
 
   return (
-    <div className="pb-[48px]" ref={containerRef}>
+    <div className="pb-[20px]" ref={containerRef}>
       {/* --- Search Input --- */}
       <div className="relative">
         <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
@@ -207,13 +208,13 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
 
       {/* --- Selected Tournaments --- */}
       {selectedTournaments.length > 0 && (
-        <div className="mt-2 bg-gray-100 p-2 rounded font-montserrat">
-          <strong>Selected Tournaments:</strong>
+        <div className="mt-4 p-2 font-montserrat text-lg">
+          <strong>Selected Tournaments</strong>
           <div className="flex flex-wrap gap-2 mt-1">
             {selectedTournaments.map((tour) => (
               <span
                 key={tour.slug}
-                className="inline-flex items-center bg-white text-[#052D41] px-2 py-1 rounded text-sm border border-[#052D41]"
+                className="mt-4 mb-2 inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
               >
                 {(tour.logoUrl || tour.imageUrl || tour.logo?.url) && (
                   <Image
@@ -227,18 +228,38 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
                 {tour.name}
                 <button
                   onClick={() => removeTournament(tour.slug)}
-                  className="ml-2 text-red-700 font-bold"
+                  className="ml-2 flex items-center justify-center self-center"
+                  aria-label="Remove tournament"
                 >
-                  <IoIosRemoveCircle />
+                  <Image
+                    src="/images/close (x).svg"
+                    alt="Remove tournament"
+                    width={16}
+                    height={16}
+                    className="relative top-[0.5px] transform scale-110"
+                  />
                 </button>
               </span>
             ))}
           </div>
           <button
             onClick={clearAllTournaments}
-            className="text-sm text-[#052D41] mt-2 underline"
+            className="my-2 px-4 py-2 rounded uppercase text-sm tracking-wider text-left cursor-pointer"
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              lineHeight: "24px",
+              backgroundColor: "transparent",
+              color: "#0B9D52",
+              border: "none",
+              letterSpacing: "0.05em",
+              display: "block",
+              textAlign: "left",
+              padding: "0",
+            }}
           >
-            Clear All
+            CLEAR ALL
           </button>
         </div>
       )}
