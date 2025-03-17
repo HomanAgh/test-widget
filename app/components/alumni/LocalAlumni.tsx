@@ -40,6 +40,8 @@ export default function LocalAlumni({
     "men"
   );
   const [searchQuery, setSearchQuery] = useState("");
+  // Add resetPagination state with a timestamp to trigger pagination reset
+  const [resetPagination, setResetPagination] = useState(Date.now());
 
   const filteredByGender = useMemo(() => {
     return activeGenderTab === "men"
@@ -53,6 +55,13 @@ export default function LocalAlumni({
     return filteredByGender.filter((p) => p.name.toLowerCase().includes(q));
   }, [filteredByGender, searchQuery]);
 
+  // Handle search query change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    // Reset pagination to page 1 when search query changes
+    setResetPagination(Date.now());
+  };
+
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
@@ -61,7 +70,7 @@ export default function LocalAlumni({
             type="text"
             className="w-full border rounded-lg h-[36px] pl-10"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search player"
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
@@ -105,6 +114,7 @@ export default function LocalAlumni({
         tableTextColor={customColors.textColor}
         nameTextColor={customColors.nameTextColor}
         isWomenLeague={activeGenderTab === "women"}
+        resetPagination={resetPagination}
         selectedLeagueCategories={selectedLeagueCategories}
       />
     </div>

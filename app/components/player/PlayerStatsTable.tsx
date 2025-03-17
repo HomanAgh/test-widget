@@ -32,7 +32,7 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.nameTextColor }}>Statistics</h2>
+      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.textColor }}>Statistics</h2>
       <TableContainer>
         <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
           <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>

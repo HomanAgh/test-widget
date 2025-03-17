@@ -48,5 +48,6 @@ export interface AlumniPlayer {
     nameTextColor?: string;
     oddRowColor?: string;
     evenRowColor?: string;
+    resetPagination?: number;
   }
   

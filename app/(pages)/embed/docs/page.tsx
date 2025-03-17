@@ -32,11 +32,11 @@ const EmbedDocs = () => {
             <h3 className="text-lg font-medium mb-2">Basic Example:</h3>
             <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto mb-4">
               {`<iframe
-                src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/player?playerId=8478402" 
-                width="100%"
-                height="600px"
-                frameborder="0"
-              ></iframe>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/player?playerId=8478402" 
+width="100%"
+eight="600px"
+frameborder="0"
+></iframe>`}
             </pre>
             <p className="text-sm text-gray-600">
               The iframe method is compatible with all browsers and doesn&apos;t require any JavaScript on your page.
@@ -46,20 +46,20 @@ const EmbedDocs = () => {
           <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
             <h2 className="text-xl font-semibold mb-4">Script Tag Embedding</h2>
             <p className="mb-4">
-              For more advanced integration, you can use our script tag method. This creates an iframe dynamically and can adjust to the content height.
+              For more flexibility, you can use our script tag method. This approach automatically handles responsive sizing.
             </p>
             <h3 className="text-lg font-medium mb-2">Basic Example:</h3>
             <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto mb-4">
               {`<script 
-                src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-                data-widget-type="player"
-                data-player-id="8478402"
-                data-width="100%"
-                data-height="600px"
-              ></script>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
+data-widget-type="player"
+data-player-id="8478402"
+data-width="100%"
+data-height="600px"
+></script>`}
             </pre>
             <p className="text-sm text-gray-600">
-              The script method requires JavaScript to be enabled on your visitors&apos; browsers.
+              The script tag automatically creates an iframe and handles the responsive behavior.
             </p>
           </div>
         </div>
@@ -98,6 +98,31 @@ const EmbedDocs = () => {
                   <td className="border border-gray-300 px-4 py-2">Whether to show the summary section</td>
                   <td className="border border-gray-300 px-4 py-2">true</td>
                 </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">textColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -118,6 +143,31 @@ const EmbedDocs = () => {
                   <td className="border border-gray-300 px-4 py-2">The unique ID of the team</td>
                   <td className="border border-gray-300 px-4 py-2">18741</td>
                 </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">textColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -137,6 +187,31 @@ const EmbedDocs = () => {
                   <td className="border border-gray-300 px-4 py-2">leagueSlug</td>
                   <td className="border border-gray-300 px-4 py-2">The slug identifier for the league</td>
                   <td className="border border-gray-300 px-4 py-2">nhl</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">textColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
                 </tr>
               </tbody>
             </table>
@@ -160,14 +235,89 @@ const EmbedDocs = () => {
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">season</td>
-                  <td className="border border-gray-300 px-4 py-2">The season to display scoring leaders for</td>
-                  <td className="border border-gray-300 px-4 py-2">2023-24</td>
+                  <td className="border border-gray-300 px-4 py-2">The season to display</td>
+                  <td className="border border-gray-300 px-4 py-2">2024-2025</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">textColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
                 </tr>
               </tbody>
             </table>
           </div>
           
-          <div>
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-3">Goalie Leaders Widget</h3>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">leagueSlug</td>
+                  <td className="border border-gray-300 px-4 py-2">The slug identifier for the league</td>
+                  <td className="border border-gray-300 px-4 py-2">nhl</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">season</td>
+                  <td className="border border-gray-300 px-4 py-2">The season to display</td>
+                  <td className="border border-gray-300 px-4 py-2">2024-2025</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">textColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="mb-6">
             <h3 className="text-lg font-medium mb-3">Alumni Widget</h3>
             <table className="w-full border-collapse">
               <thead>
@@ -180,37 +330,87 @@ const EmbedDocs = () => {
               <tbody>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">teamIds</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated list of team IDs</td>
+                  <td className="border border-gray-300 px-4 py-2">Comma-separated team IDs</td>
                   <td className="border border-gray-300 px-4 py-2">18741</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">leagues</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated list of leagues</td>
+                  <td className="border border-gray-300 px-4 py-2">Comma-separated league slugs to filter by</td>
                   <td className="border border-gray-300 px-4 py-2">nhl,shl,ahl,khl</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">teams</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated list of team names</td>
+                  <td className="border border-gray-300 px-4 py-2">Youth team names (optional)</td>
                   <td className="border border-gray-300 px-4 py-2">San Jose Barracuda</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Background color (hex)</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
                   <td className="border border-gray-300 px-4 py-2">#052D41</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (hex)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (hex)</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
                   <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
                 </tr>
                 <tr>
                   <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Name text color (hex)</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="mb-6">
+            <h3 className="text-lg font-medium mb-3">Tournament Alumni Widget</h3>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tournaments</td>
+                  <td className="border border-gray-300 px-4 py-2">Comma-separated tournament slugs</td>
+                  <td className="border border-gray-300 px-4 py-2">brick-invitational</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">leagues</td>
+                  <td className="border border-gray-300 px-4 py-2">Comma-separated league slugs to filter by</td>
+                  <td className="border border-gray-300 px-4 py-2">nhl,ahl</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">textColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#000000</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
+                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
+                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
                   <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
                 </tr>
               </tbody>

@@ -28,6 +28,7 @@ import {
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
+  resetPagination?: number;
   selectedLeagueCategories?: {
     junior: boolean;
     college: boolean;
@@ -47,11 +48,13 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   oddRowColor = "#F3F4F6",
   evenRowColor = "#ffffff",
   isWomenLeague = false,
+  resetPagination,
   selectedLeagueCategories = {
     junior: true,
     college: true,
     professional: true,
   },
+
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -63,7 +66,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     | "college"
     | "pro"
     | ""
-  >("name");
+  >("draftPick");
   const [sortDirection, setSortDirection] = React.useState<
     "asc" | "desc" | "none"
   >("asc");
@@ -74,6 +77,12 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     women: 0,
   });
   const currentPage = isWomenLeague ? pages.women : pages.men;
+
+  React.useEffect(() => {
+    if (resetPagination) {
+      setPages({ men: 0, women: 0 });
+    }
+  }, [resetPagination]);
 
   const isInNameGroup = ["name", "position", "status"].includes(sortColumn);
 
