@@ -39,7 +39,7 @@ frameborder="0"
 ></iframe>`}
             </pre>
             <p className="text-sm text-gray-600">
-              The iframe method is compatible with all browsers and doesn't require any JavaScript on your page.
+              The iframe method is compatible with all browsers and doesn&apos;t require any JavaScript on your page.
             </p>
           </div>
           
