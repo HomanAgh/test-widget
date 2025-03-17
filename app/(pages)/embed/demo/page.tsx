@@ -48,27 +48,27 @@ const EmbedDemo = () => {
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">Script Tag</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
-                    {`<script 
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-                      data-widget-type="player"
-                      data-player-id="38703"
-                      data-game-limit="5"
-                      data-view-mode="stats"
-                      data-show-summary="true"
-                      data-width="100%"
-                      data-height="600px"
-                    ></script>`}
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="player"
+data-player-id="38703"
+data-game-limit="5"
+data-view-mode="stats"
+data-show-summary="true"
+data-width="100%"
+data-height="600px"
+></script>`}
                   </pre>
                 </div>
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">iframe</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
                     {`<iframe
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/player?playerId=38703&gameLimit=5&viewMode=stats&showSummary=true" 
-                      width="100%"
-                      height="600px"
-                      frameborder="0"
-                    ></iframe>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/player?playerId=38703&gameLimit=5&viewMode=stats&showSummary=true"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
                   </pre>
                 </div>
               </div>
@@ -96,24 +96,24 @@ const EmbedDemo = () => {
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">Script Tag</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
-                    {`<script 
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-                      data-widget-type="team"
-                      data-team-id="18741"
-                      data-width="100%"
-                      data-height="600px"
-                    ></script>`}
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="team"
+data-team-id="18741"
+data-width="100%"
+data-height="600px"
+></script>`}
                   </pre>
                 </div>
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">iframe</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
                     {`<iframe
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/team?teamId=18741" 
-                      width="100%"
-                      height="600px"
-                      frameborder="0"
-                    ></iframe>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/team?teamId=18741"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
                   </pre>
                 </div>
               </div>
@@ -141,24 +141,24 @@ const EmbedDemo = () => {
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">Script Tag</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
-                    {`<script 
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-                      data-widget-type="league"
-                      data-league-slug="nhl"
-                      data-width="100%"
-                      data-height="600px"
-                    ></script>`}
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="league"
+data-league-slug="nhl"
+data-width="100%"
+data-height="600px"
+></script>`}
                   </pre>
                 </div>
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">iframe</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
                     {`<iframe
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/league?leagueSlug=nhl" 
-                      width="100%"
-                      height="600px"
-                      frameborder="0"
-                    ></iframe>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/league?leagueSlug=nhl"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
                   </pre>
                 </div>
               </div>
@@ -186,25 +186,25 @@ const EmbedDemo = () => {
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">Script Tag</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
-                    {`<script 
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-                      data-widget-type="scoring-leaders"
-                      data-league-slug="nhl"
-                      data-season="2024-2025"
-                      data-width="100%"
-                      data-height="600px"
-                    ></script>`}
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="scoring-leaders"
+data-league-slug="nhl"
+data-season="2024-2025"
+data-width="100%"
+data-height="600px"
+></script>`}
                   </pre>
                 </div>
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">iframe</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
                     {`<iframe
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/scoring-leaders?leagueSlug=nhl&season=2024-2025" 
-                      width="100%"
-                      height="600px"
-                      frameborder="0"
-                    ></iframe>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/scoring-leaders?leagueSlug=nhl&season=2024-2025"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
                   </pre>
                 </div>
               </div>
@@ -224,6 +224,52 @@ const EmbedDemo = () => {
           </div>
           
           <div className="border border-gray-300 rounded-md p-6">
+            <h2 className="text-2xl font-semibold mb-4">Goalie Leaders Widget</h2>
+            
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold mb-4">Code Options</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <h4 className="font-semibold mb-2">Script Tag</h4>
+                  <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="goalie-leaders"
+data-league-slug="nhl"
+data-season="2024-2025"
+data-width="100%"
+data-height="600px"
+></script>`}
+                  </pre>
+                </div>
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <h4 className="font-semibold mb-2">iframe</h4>
+                  <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
+                    {`<iframe
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/goalie-leaders?leagueSlug=nhl&season=2024-2025"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t pt-6">
+              <h3 className="text-xl font-semibold mb-4">Live Preview</h3>
+              <div className="bg-gray-100 p-4 rounded-md">
+                <iframe
+                  src="/embed/goalie-leaders?leagueSlug=nhl&season=2024-2025"
+                  width="100%"
+                  height="600px"
+                  frameBorder="0"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border border-gray-300 rounded-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Alumni Widget</h2>
             
             <div className="mb-6">
@@ -232,30 +278,30 @@ const EmbedDemo = () => {
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">Script Tag</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
-                    {`<script 
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-                      data-widget-type="alumni"
-                      data-team-ids="18741"
-                      data-leagues="nhl,shl,ahl,khl"
-                      data-teams="San Jose Barracuda"
-                      data-background-color="#052D41"
-                      data-text-color="#000000"
-                      data-table-background-color="#FFFFFF"
-                      data-name-text-color="#0D73A6"
-                      data-width="100%"
-                      data-height="600px"
-                    ></script>`}
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="alumni"
+data-team-ids="18741"
+data-leagues="nhl,shl,ahl,khl"
+data-teams="San Jose Barracuda"
+data-background-color="#052D41"
+data-text-color="#000000"
+data-table-background-color="#FFFFFF"
+data-name-text-color="#0D73A6"
+data-width="100%"
+data-height="600px"
+></script>`}
                   </pre>
                 </div>
                 <div className="bg-gray-100 p-4 rounded-md">
                   <h4 className="font-semibold mb-2">iframe</h4>
                   <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
                     {`<iframe
-                      src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/alumni?teamIds=18741&leagues=nhl,shl,ahl,khl&teams=San%20Jose%20Barracuda&backgroundColor=%23052D41&textColor=%23000000&tableBackgroundColor=%23FFFFFF&nameTextColor=%230D73A6" 
-                      width="100%"
-                      height="600px"
-                      frameborder="0"
-                    ></iframe>`}
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/alumni?teamIds=18741&leagues=nhl,shl,ahl,khl&teams=San%20Jose%20Barracuda&backgroundColor=%23052D41&textColor=%23000000&tableBackgroundColor=%23FFFFFF&nameTextColor=%230D73A6"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
                   </pre>
                 </div>
               </div>
@@ -266,6 +312,57 @@ const EmbedDemo = () => {
               <div className="bg-gray-100 p-4 rounded-md">
                 <iframe
                   src="/embed/alumni?teamIds=18741&leagues=nhl,shl,ahl,khl&teams=San%20Jose%20Barracuda&backgroundColor=%23052D41&textColor=%23000000&tableBackgroundColor=%23FFFFFF&nameTextColor=%230D73A6"
+                  width="100%"
+                  height="600px"
+                  frameBorder="0"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border border-gray-300 rounded-md p-6">
+            <h2 className="text-2xl font-semibold mb-4">Tournament Alumni Widget</h2>
+            
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold mb-4">Code Options</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <h4 className="font-semibold mb-2">Script Tag</h4>
+                  <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
+                    {`<script
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js"
+data-widget-type="tournament"
+data-tournaments="brick-invitational"
+data-leagues="nhl,ahl"
+data-background-color="#052D41"
+data-text-color="#000000"
+data-table-background-color="#FFFFFF"
+data-header-text-color="#FFFFFF"
+data-name-text-color="#0D73A6"
+data-width="100%"
+data-height="600px"
+></script>`}
+                  </pre>
+                </div>
+                <div className="bg-gray-100 p-4 rounded-md">
+                  <h4 className="font-semibold mb-2">iframe</h4>
+                  <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto">
+                    {`<iframe
+src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/tournament?tournaments=brick-invitational&leagues=nhl,ahl&backgroundColor=%23052D41&textColor=%23000000&tableBackgroundColor=%23FFFFFF&headerTextColor=%23FFFFFF&nameTextColor=%230D73A6"
+width="100%"
+height="600px"
+frameborder="0"
+></iframe>`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t pt-6">
+              <h3 className="text-xl font-semibold mb-4">Live Preview</h3>
+              <div className="bg-gray-100 p-4 rounded-md">
+                <iframe
+                  src="/embed/tournament?tournaments=brick-invitational&leagues=nhl,ahl&backgroundColor=%23052D41&textColor=%23000000&tableBackgroundColor=%23FFFFFF&headerTextColor=%23FFFFFF&nameTextColor=%230D73A6"
                   width="100%"
                   height="600px"
                   frameBorder="0"

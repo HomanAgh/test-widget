@@ -24,20 +24,20 @@ const FAQPage = () => {
             <div className="py-3 px-4 text-gray-700">
               <p className="mb-2">To search for a player:</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>Navigate to the &quot;Players&apos; Last Games&quot; section from the home menu</li>
-                <li>Use the search bar to enter the player&apos;s name</li>
+                <li>Navigate to the "Players' Last Games" section from the home menu</li>
+                <li>Use the search bar to enter the player's name</li>
                 <li>Select the player from the search results</li>
-                <li>View the player&apos;s statistics and recent game information</li>
+                <li>View the player's statistics and recent game information</li>
               </ol>
             </div>
           </Collapsible>
           
           <Collapsible title="How do I view team rosters?">
             <div className="py-3 px-4 text-gray-700">
-              <p className="mb-2">To view a team&apos;s roster:</p>
+              <p className="mb-2">To view a team's roster:</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>Navigate to the &quot;Team Roster&quot; section from the home menu</li>
-                <li>Search for the team you&apos;re interested in</li>
+                <li>Navigate to the "Team Roster" section from the home menu</li>
+                <li>Search for the team you're interested in</li>
                 <li>Select the team from the search results</li>
                 <li>The roster will display with player information and statistics</li>
               </ol>
@@ -56,12 +56,12 @@ const FAQPage = () => {
             <div className="py-3 px-4 text-gray-700">
               <p className="mb-2">To access alumni information:</p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
-                <li>Navigate to the &quot;Team Alumni&quot; section from the home menu</li>
-                <li>Search for the team you&apos;re interested in</li>
+                <li>Navigate to the "Team Alumni" section from the home menu</li>
+                <li>Search for the team you're interested in</li>
                 <li>Select the team from the search results</li>
                 <li>View alumni players who have played for that team</li>
               </ol>
-              <p className="mt-2">You can also access tournament alumni through the &quot;Tournament Alumni&quot; section.</p>
+              <p className="mt-2">You can also access tournament alumni through the "Tournament Alumni" section.</p>
             </div>
           </Collapsible>
           
@@ -82,10 +82,10 @@ const FAQPage = () => {
                 <li>Navigate to the section you want to embed (player stats, team roster, etc.)</li>
                 <li>Look for the embed button or option</li>
                 <li>Copy the provided embed code</li>
-                <li>Paste the code into your website&apos;s HTML</li>
+                <li>Paste the code into your website's HTML</li>
               </ol>
               <p className="mt-2">
-                If you need a custom widget, you can use the &quot;Suggest Widget&quot; option from the home menu.
+                If you need a custom widget, you can use the "Suggest Widget" option from the home menu.
               </p>
             </div>
           </Collapsible>
@@ -93,7 +93,7 @@ const FAQPage = () => {
           <Collapsible title="How do I contact support?">
             <p className="py-3 px-4 text-gray-700">
               For support inquiries, feature requests, or to report issues, please use the 
-              &quot;Suggest Widget&quot; option from the home menu. This form allows you to send messages 
+              "Suggest Widget" option from the home menu. This form allows you to send messages 
               to our support team who will assist you with any questions or concerns.
             </p>
           </Collapsible>

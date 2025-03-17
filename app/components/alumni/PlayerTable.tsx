@@ -55,7 +55,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     | "college"
     | "pro"
     | ""
-  >("name");
+  >("draftPick");
   const [sortDirection, setSortDirection] = React.useState<
     "asc" | "desc" | "none"
   >("asc");
