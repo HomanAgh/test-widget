@@ -12,6 +12,7 @@ import {
   TableRow,
   TableCell,
   Link,
+  PoweredBy
 } from "@/app/components/common/style";
 
 import Collapsible from "@/app/components/league/Collapsible";
@@ -285,6 +286,7 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
           );
         })}
       </TableContainer>
+      <PoweredBy />
     </div>
   );
 };

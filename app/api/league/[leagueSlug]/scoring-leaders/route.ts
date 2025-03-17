@@ -71,7 +71,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "regularStats.PTS",
   ].join(",");
 
-  const scoringLeadersUrl = `${apiBaseUrl}/leagues/${leagueSlug}/scoring-leaders?season=${season}&fields=${playerFields}&apiKey=${apiKey}&sort=-regularStats.PTS&limit=50`;
+  const scoringLeadersUrl = `${apiBaseUrl}/leagues/${leagueSlug}/scoring-leaders?season=${season}&fields=${playerFields}&apiKey=${apiKey}&sort=-regularStats.PTS&limit=75`;
   console.log("Fetching league scoring leaders from:", scoringLeadersUrl);
 
   try {
@@ -88,8 +88,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     
     // Process player data to add flag URLs
     if (filteredData.data && Array.isArray(filteredData.data)) {
-      // Limit to 50 scoring leaders
-      filteredData.data = filteredData.data.slice(0, 50);
+      // Limit to 75 scoring leaders
+      filteredData.data = filteredData.data.slice(0, 75);
       
       // Create a map of unique nationality slugs
       const nationalitySlugs = new Set<string>();

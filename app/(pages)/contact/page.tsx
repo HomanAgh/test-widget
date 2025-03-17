@@ -141,6 +141,7 @@ const ContactPage = () => {
                   >
                     <option value="">Select a subject</option>
                     <option value="Widget Support">Widget Support</option>
+                    <option value="Widget Support">Suggest a new Widget</option>
                     <option value="Embedding Help">Embedding Help</option>
                     <option value="Feature Request">Feature Request</option>
                     <option value="Bug Report">Bug Report</option>

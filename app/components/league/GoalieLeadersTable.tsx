@@ -10,8 +10,10 @@ import {
   TableRow, 
   TableCell,
   TableContainer,
-  Link
+  Link,
+  PoweredBy
 } from '@/app/components/common/style';
+import AdvancedPaginationControls from '@/app/components/common/style/PaginationControls';
 import { HiMiniChevronUpDown, HiMiniChevronUp, HiMiniChevronDown } from "react-icons/hi2";
 
 const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({ 
@@ -27,6 +29,10 @@ const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({
   // Sorting state - default to SVP column with descending order (highest first)
   const [sortColumn, setSortColumn] = useState<string>('SVP');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | 'none'>('desc');
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const GOALIES_PER_PAGE = 15;
+  const MAX_GOALIES = 75;
   
   const isCustomColor =
     customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
@@ -58,6 +64,11 @@ const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({
       setSortColumn(column);
       setSortDirection('desc');
     }
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   // Render sort arrow
@@ -156,6 +167,52 @@ const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({
     return sortDirection === 'desc' ? -result : result;
   });
 
+  // First, create initial ranking by save percentage (SVP) for all goalies
+  const initialRanking = [...goalieLeaders.data]
+    .sort((a, b) => (b.regularStats?.SVP || 0) - (a.regularStats?.SVP || 0))
+    .map((goalie, index) => {
+      // Ensure we have a valid ID for matching
+      const goalieId = goalie.id || 
+        `${goalie.player.firstName}-${goalie.player.lastName}-${goalie.team.name}`.toLowerCase().replace(/\s+/g, '-');
+      
+      return { 
+        id: goalieId, 
+        playerId: goalie.player.id,
+        playerName: `${goalie.player.firstName} ${goalie.player.lastName}`,
+        rank: index + 1 
+      };
+    });
+
+  // Map the ranking to each goalie in the sorted data
+  const rankedData = sortedData.map(goalie => {
+    // Create a backup ID in case the primary ID is missing
+    const goalieId = goalie.id || 
+      `${goalie.player.firstName}-${goalie.player.lastName}-${goalie.team.name}`.toLowerCase().replace(/\s+/g, '-');
+    
+    // Try to find the rank info by primary ID or by player ID
+    let rankInfo = initialRanking.find(r => r.id === goalieId);
+    
+    // If not found by ID, try to find by player name as a fallback
+    if (!rankInfo) {
+      rankInfo = initialRanking.find(r => 
+        r.playerName === `${goalie.player.firstName} ${goalie.player.lastName}`
+      );
+    }
+    
+    return {
+      ...goalie,
+      originalRank: rankInfo ? rankInfo.rank : 999 // Fallback rank if not found
+    };
+  });
+
+  // Limit to MAX_GOALIES and paginate the data
+  const limitedData = rankedData.slice(0, MAX_GOALIES);
+  const totalPages = Math.ceil(limitedData.length / GOALIES_PER_PAGE);
+  const paginatedData = limitedData.slice(
+    currentPage * GOALIES_PER_PAGE, 
+    (currentPage + 1) * GOALIES_PER_PAGE
+  );
+
   // Header cells with keys
   const headerCells = [
     { key: 'rank', label: 'Rank', align: 'center' },
@@ -167,107 +224,120 @@ const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({
   ];
 
   return (
-    <TableContainer>
-      <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
-        <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
-          <TableRow key="header-row" bgColor={customColors.backgroundColor}>
-            {headerCells.map(cell => (
-              <TableCell 
-                key={`header-${cell.key}`} 
-                isHeader 
-                align={cell.align as any} 
-                className="cursor-pointer" 
-                onClick={() => handleSort(cell.key)}
-              >
-                <span>{cell.label}</span> {renderSortArrow(cell.key)}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedData.map((goalie, index) => {
-            const nationalityName = getNationalityName(goalie.player.nationality);
-            
-            // Prioritize EliteProspects URL for player links
-            const playerUrl = goalie.player.links?.eliteprospectsUrl || 
-              (goalie.player.id ? `https://www.eliteprospects.com/player/${goalie.player.id}/${goalie.player.lastName?.toLowerCase()}-${goalie.player.firstName?.toLowerCase()}` : 
-              (goalie.player.slug ? `/player/${goalie.player.slug}` : '#'));
+    <div>
+      <TableContainer>
+        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
+          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+            <TableRow key="header-row" bgColor={customColors.backgroundColor}>
+              {headerCells.map(cell => (
+                <TableCell 
+                  key={`header-${cell.key}`} 
+                  isHeader 
+                  align={cell.align as any} 
+                  className="cursor-pointer" 
+                  onClick={() => handleSort(cell.key === 'rank' ? 'SVP' : cell.key)}
+                >
+                  <span>{cell.label}</span> {renderSortArrow(cell.key === 'rank' ? 'SVP' : cell.key)}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {paginatedData.map((goalie, index) => {
+              const nationalityName = getNationalityName(goalie.player.nationality);
               
-            const teamUrl = goalie.team.links?.eliteprospectsUrl || 
-              (goalie.team.slug ? `/team/${goalie.team.slug}` : `#team-${goalie.team.id}`);
-            
-            // Create a unique key using index as fallback when id is undefined
-            const uniqueKey = goalie.id ? `goalie-${goalie.id}` : `goalie-index-${index}`;
-            
-            return (
-              <TableRow 
-                key={`row-${uniqueKey}`} 
-                bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
-              >
-                <TableCell key={`rank-${uniqueKey}`} align="left">
-                  {index + 1}.
-                </TableCell>
-                <TableCell key={`player-${uniqueKey}`} align="left">
-                  <div className="flex items-center">
-                    {goalie.player.flagUrl && (
-                      <div key={`flag-container-${goalie.player.id || index}`} className="flex-shrink-0 mr-2">
-                        <Image
-                          key={`flag-${goalie.player.id || index}`}
-                          src={goalie.player.flagUrl}
-                          alt={`${nationalityName} flag`}
-                          width={16}
-                          height={12}
-                          className="inline-block"
-                        />
+              // Prioritize EliteProspects URL for player links
+              const playerUrl = goalie.player.links?.eliteprospectsUrl || 
+                (goalie.player.id ? `https://www.eliteprospects.com/player/${goalie.player.id}/${goalie.player.lastName?.toLowerCase()}-${goalie.player.firstName?.toLowerCase()}` : 
+                (goalie.player.slug ? `/player/${goalie.player.slug}` : '#'));
+                
+              const teamUrl = goalie.team.links?.eliteprospectsUrl || 
+                (goalie.team.slug ? `/team/${goalie.team.slug}` : `#team-${goalie.team.id}`);
+              
+              // Create a unique key using index as fallback when id is undefined
+              const uniqueKey = goalie.id ? `goalie-${goalie.id}` : `goalie-index-${index}`;
+              
+              return (
+                <TableRow 
+                  key={`row-${uniqueKey}`} 
+                  bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+                >
+                  <TableCell key={`rank-${uniqueKey}`} align="left">
+                    {goalie.originalRank}.
+                  </TableCell>
+                  <TableCell key={`player-${uniqueKey}`} align="left">
+                    <div className="flex items-center">
+                      {goalie.player.flagUrl && (
+                        <div key={`flag-container-${goalie.player.id || index}`} className="flex-shrink-0 mr-2">
+                          <Image
+                            key={`flag-${goalie.player.id || index}`}
+                            src={goalie.player.flagUrl}
+                            alt={`${nationalityName} flag`}
+                            width={16}
+                            height={12}
+                            className="inline-block"
+                          />
+                        </div>
+                      )}
+                      <div key={`player-name-${goalie.player.id || index}`}>
+                        <Link 
+                          key={`player-link-${goalie.player.id || index}`}
+                          href={playerUrl}
+                          style={{ color: customColors.nameTextColor }}
+                          className="hover:underline"
+                        >
+                          {typeof goalie.player.firstName === 'string' ? goalie.player.firstName : ''} {typeof goalie.player.lastName === 'string' ? goalie.player.lastName : ''}
+                        </Link>
                       </div>
-                    )}
-                    <div key={`player-name-${goalie.player.id || index}`}>
-                      <Link 
-                        key={`player-link-${goalie.player.id || index}`}
-                        href={playerUrl}
-                        style={{ color: customColors.nameTextColor }}
-                        className="hover:underline"
-                      >
-                        {typeof goalie.player.firstName === 'string' ? goalie.player.firstName : ''} {typeof goalie.player.lastName === 'string' ? goalie.player.lastName : ''}
-                      </Link>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell key={`team-${uniqueKey}`} align="left">
-                  <div className="flex items-center">
-                    {goalie.team.logo?.small && (
-                      <div key={`logo-container-${goalie.team.id || index}`} className="flex-shrink-0 mr-2">
-                        <Image
-                          key={`logo-${goalie.team.id || index}`}
-                          src={goalie.team.logo.small}
-                          alt={`${goalie.team.name} logo`}
-                          width={20}
-                          height={20}
-                          className="inline-block"
-                        />
+                  </TableCell>
+                  <TableCell key={`team-${uniqueKey}`} align="left">
+                    <div className="flex items-center">
+                      {goalie.team.logo?.small && (
+                        <div key={`logo-container-${goalie.team.id || index}`} className="flex-shrink-0 mr-2">
+                          <Image
+                            key={`logo-${goalie.team.id || index}`}
+                            src={goalie.team.logo.small}
+                            alt={`${goalie.team.name} logo`}
+                            width={20}
+                            height={20}
+                            className="inline-block"
+                          />
+                        </div>
+                      )}
+                      <div key={`team-name-${goalie.team.id || index}`}>
+                        <Link 
+                          key={`team-link-${goalie.team.id || index}`}
+                          href={teamUrl}
+                          style={{ color: customColors.nameTextColor }}
+                          className="hover:underline"
+                        >
+                          {goalie.team.name}
+                        </Link>
                       </div>
-                    )}
-                    <div key={`team-name-${goalie.team.id || index}`}>
-                      <Link 
-                        key={`team-link-${goalie.team.id || index}`}
-                        href={teamUrl}
-                        style={{ color: customColors.nameTextColor }}
-                        className="hover:underline"
-                      >
-                        {goalie.team.name}
-                      </Link>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell key={`gp-${uniqueKey}`} align="center">{goalie.regularStats?.GP || 0}</TableCell>
-                <TableCell key={`gaa-${uniqueKey}`} align="center">{formatGAA(goalie.regularStats?.GAA)}</TableCell>
-                <TableCell key={`svp-${uniqueKey}`} align="center">{formatSVP(goalie.regularStats?.SVP)}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                  </TableCell>
+                  <TableCell key={`gp-${uniqueKey}`} align="center">{goalie.regularStats?.GP || 0}</TableCell>
+                  <TableCell key={`gaa-${uniqueKey}`} align="center">{formatGAA(goalie.regularStats?.GAA)}</TableCell>
+                  <TableCell key={`svp-${uniqueKey}`} align="center">{formatSVP(goalie.regularStats?.SVP)}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {totalPages > 1 && (
+        <div className="mt-4">
+          <AdvancedPaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
+      <PoweredBy />
+    </div>
   );
 };
 

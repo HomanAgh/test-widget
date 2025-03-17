@@ -78,7 +78,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "regularStats.SVS"
   ].join(",");
 
-  const goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=100&sort=-regularStats.SVP&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
+  const goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=75&sort=-regularStats.SVP&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
   console.log("Fetching goalie leaders from:", goalieLeadersUrl);
 
   try {
@@ -99,8 +99,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
         player.regularStats?.GP && player.regularStats.GP >= 10
       );
       
-      // Limit to 50 goalies
-      filteredData.data = filteredData.data.slice(0, 50);
+      // Limit to 75 goalies
+      filteredData.data = filteredData.data.slice(0, 75);
       
       // Create a map of unique nationality slugs
       const nationalitySlugs = new Set<string>();
