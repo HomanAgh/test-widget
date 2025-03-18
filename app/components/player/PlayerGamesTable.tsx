@@ -79,7 +79,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <h2 className="text-xl font-bold mb-2" style={{ color: customColors.textColor }}>{titleText}</h2>
+      <h2 className="text-xl font-bold mb-2 font-montserrat" style={{ color: customColors.textColor }}>{titleText}</h2>
 
       <TableContainer>
         <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>

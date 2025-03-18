@@ -51,8 +51,9 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
         </div>
       </div>
 
-      <div className="text-center my-4">
-        <h3 className="text-lg font-medium mb-2">View Mode:</h3>
+    <div className="border-b border-gray-200 pb-8  ">
+    <div className="text-left font-montserrat font-bold my-4 border-buttom " >
+        <h3 className="text-lg font-montserrat font-bold mb-2">View Mode</h3>
         <div className="flex justify-center space-x-4">
           <button
             onClick={() => {
@@ -60,8 +61,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
               setShowPreview(false);
             }}
             className={`px-2 py-2 rounded-md ${
-              viewMode === "stats" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
-            } hover:bg-blue-500`}
+              viewMode === "stats" ? "bg-[#052D41] text-white" : "bg-[#052D41] text-white"
+            } hover:bg-[#031A28]`}
           >
             Show Current Season Stats
           </button>
@@ -71,8 +72,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
               setShowPreview(false);
             }}
             className={`px-6 py-2 rounded-md ${
-              viewMode === "seasons" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
-            } hover:bg-blue-500`}
+              viewMode === "seasons" ? "bg-[#052D41] text-white" : "bg-[#052D41] text-white"
+            } hover:bg-[#031A28]`}
           >
             Show Player Seasons
           </button>
@@ -82,8 +83,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
               setShowPreview(false);
             }}
             className={`px-6 py-2 rounded-md ${
-              viewMode === "career" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
-            } hover:bg-blue-500`}
+              viewMode === "career" ? "bg-[#052D41] text-white" : "bg-[#052D41] text-white"
+            } hover:bg-[#031A28]`}
           >
             Show Player Career
           </button>
@@ -93,8 +94,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
               setShowPreview(false);
             }}
             className={`px-6 py-2 rounded-md ${
-              viewMode === "games" ? "bg-blue-600 text-white" : "bg-blue-400 text-white"
-            } hover:bg-blue-500`}
+              viewMode === "games" ? "bg-[#052D41] text-white" : "bg-[#052D41] text-white"
+            } hover:bg-[#031A28]`}
           >
             Show Recent Games
           </button>
@@ -102,8 +103,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
       </div>
 
       {viewMode === "games" && (
-        <div className="mt-4 text-center">
-          <h3 className="text-lg font-medium mb-2">Select Number of Games:</h3>
+        <div className="mt-4 left-center pb-8">
+          <h3 className="text-lg font-medium mb-2 font-montserrat pl-20">Select Number of Games</h3>
           <div className="flex justify-center space-x-4">
             {[5, 10, 15, 20, 25].map((limit) => (
               <button
@@ -113,8 +114,8 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
                   setShowPreview(false);
                 }}
                 className={`px-4 py-2 rounded-md ${
-                  gameLimit === limit ? "bg-green-600 text-white" : "bg-green-400 text-white"
-                } hover:bg-green-500`}
+                  gameLimit === limit ? "bg-green-600 text-white" : "bg-[#0B9D52] text-white"
+                } hover:bg-green-700`}
               >
                 {limit} Games
               </button>
@@ -122,14 +123,15 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
             <button
               onClick={() => setShowSummary((prev) => !prev)}
               className={`px-4 py-2 rounded-md ${
-                showSummary ? "bg-purple-600 text-white" : "bg-purple-400 text-white"
-              } hover:bg-purple-500`}
+                showSummary ? "bg-purple-700 text-white" : "bg-purple-700 text-white"
+              } hover:bg-purple-800`}
             >
               {showSummary ? "View Details" : "View Summary"}
             </button>
-          </div>
+          </div >
         </div>
       )}
+    </div>
 
       <div className="mt-6">
         <Player
