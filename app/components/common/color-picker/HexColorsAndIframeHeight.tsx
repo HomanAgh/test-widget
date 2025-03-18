@@ -24,6 +24,10 @@ interface HexColorsProps {
   label?: string;
   value?: string;
   onChange?: (color: string) => void;
+  // New props for height control
+  height?: number;
+  onHeightChange?: (height: number) => void;
+  defaultHeight?: number;
 }
 
 // Default colors
@@ -201,15 +205,81 @@ const ColorPickerButton = ({
   );
 };
 
+const HeightControl = ({ 
+  height, 
+  onChange,
+  hasChanges,
+  defaultHeight
+}: { 
+  height: number, 
+  onChange: (height: number) => void,
+  hasChanges: boolean,
+  defaultHeight: number
+}) => {
+  return (
+    <div className="relative mb-6">
+      <div 
+        className="mb-2" 
+        style={{ 
+          color: "#000",
+          fontFamily: "Montserrat, sans-serif",
+          fontSize: "14px",
+          fontWeight: 700,
+          lineHeight: "24px",
+          fontFeatureSettings: "'liga' off, 'clig' off",
+        }}
+      >
+        Iframe Height
+      </div>
+      <div className="flex">
+        <div className="relative flex-grow-0" style={{ width: "160px" }}>
+          <input
+            type="number"
+            className="flex items-center border border-gray-300 rounded-l px-3 py-1 bg-white hover:bg-gray-50 w-full h-[36px] relative"
+            value={height}
+            onChange={(e) => onChange(Number(e.target.value))}
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "14px",
+              fontWeight: 400,
+              lineHeight: "24px",
+            }}
+          />
+        </div>
+        <div className="relative">
+          <button
+            onClick={() => onChange(defaultHeight)}
+            className={`border border-gray-300 border-l-0 rounded-r p-1 w-[120px] h-[36px] text-center ${hasChanges ? 'text-[#0B9D52] hover:text-[#0A8A47]' : 'text-gray-400'}`}
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              lineHeight: "24px",
+              backgroundColor: "#fff",
+              letterSpacing: "0.05em",
+            }}
+          >
+            RESET
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const HexColors: React.FC<HexColorsProps> = ({ 
   customColors, 
   setCustomColors,
   label,
   value,
-  onChange
+  onChange,
+  height,
+  onHeightChange,
+  defaultHeight
 }) => {
   // Check if any colors have been changed from defaults
   const hasChanges = customColors ? colorsChanged(customColors) : false;
+  const heightChanged = height !== undefined && defaultHeight !== undefined && height !== defaultHeight;
 
   // If using the individual color picker mode
   if (label && value !== undefined && onChange) {
@@ -240,7 +310,7 @@ const HexColors: React.FC<HexColorsProps> = ({
           Set colours
         </h2>
         <div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8"
+          className="grid grid-cols-1 md:grid-cols-3 gap-x-8"
           style={{
             borderBottom: "1px solid #E5E7EB",
           }}
@@ -259,8 +329,6 @@ const HexColors: React.FC<HexColorsProps> = ({
             defaultColor={DEFAULT_COLORS.headerTextColor}
             onChange={(color) => setCustomColors(prev => ({ ...prev, headerTextColor: color }))}
           />
-          
-          <div className="hidden lg:block"></div> {/* Spacer for third column */}
           
           <ColorPickerButton
             label="Table background"
@@ -283,27 +351,37 @@ const HexColors: React.FC<HexColorsProps> = ({
             defaultColor={DEFAULT_COLORS.nameTextColor}
             onChange={(color) => setCustomColors(prev => ({ ...prev, nameTextColor: color }))}
           />
- 
-        <button
-          onClick={() => hasChanges && setCustomColors(DEFAULT_COLORS)}
-          className={`mb-6 px-4 py-2 rounded uppercase text-sm tracking-wider text-left ${hasChanges ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-          style={{
-            fontFamily: "Montserrat, sans-serif",
-            fontSize: "12px",
-            fontWeight: 700,
-            lineHeight: "24px",
-            backgroundColor: "transparent",
-            color: hasChanges ? "#0B9D52" : "#9CA3AF",
-            border: "none",
-            letterSpacing: "0.05em",
-            display: "block",
-            textAlign: "left",
-            padding: "0",
-          }}
-        >
-          RESET TO DEFAULT COLOURS
-        </button>
 
+          {height !== undefined && onHeightChange && defaultHeight !== undefined && (
+            <HeightControl 
+              height={height} 
+              onChange={onHeightChange}
+              hasChanges={heightChanged}
+              defaultHeight={defaultHeight}
+            />
+          )}
+        </div>
+
+        <div className="mt-6 mb-6">
+          <button
+            onClick={() => hasChanges && setCustomColors(DEFAULT_COLORS)}
+            className={`px-4 py-2 rounded uppercase text-sm tracking-wider text-left ${hasChanges ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+            style={{
+              fontFamily: "Montserrat, sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              lineHeight: "24px",
+              backgroundColor: "transparent",
+              color: hasChanges ? "#0B9D52" : "#9CA3AF",
+              border: "none",
+              letterSpacing: "0.05em",
+              display: "block",
+              textAlign: "left",
+              padding: "0",
+            }}
+          >
+            RESET TO DEFAULT COLOURS
+          </button>
         </div>
       </div>
     );
