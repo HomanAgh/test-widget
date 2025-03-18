@@ -10,8 +10,10 @@ import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
 import Alumni from "@/app/components/alumni/Alumni";
 import LocalAlumni from "@/app/components/alumni/LocalAlumni";
-import HexColors from "@/app/components/common/color-picker/HexColors";
+import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
 import EmbedCodeBlock from "../iframe/IframePreview";
+
+const DEFAULT_IFRAME_HEIGHT = 1300;
 
 interface AlumniWidgetSetupProps {
   mode: "team" | "tournament";
@@ -27,7 +29,6 @@ const AlumniWidgetSetup: React.FC<AlumniWidgetSetupProps> = ({ mode }) => {
   const [includeYouth] = useState<boolean>(mode === "team");
   const [finalPlayers, setFinalPlayers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
   const [customColors, setCustomColors] = useState({
     headerTextColor: "#FFFFFF",
     backgroundColor: "#052D41",
@@ -35,6 +36,7 @@ const AlumniWidgetSetup: React.FC<AlumniWidgetSetupProps> = ({ mode }) => {
     tableBackgroundColor: "#FFFFFF",
     nameTextColor: "#0D73A6",
   });
+  const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
 
   const { customLeagues, customJunLeagues, customCollegeLeagues } =
     useFetchLeagues();
@@ -171,7 +173,7 @@ const AlumniWidgetSetup: React.FC<AlumniWidgetSetupProps> = ({ mode }) => {
     youthName,
   ]);
 
-  const iframeCode = `<iframe src="${embedUrl}" class="iframe"></iframe>`;
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
 
   return (
     <div>
@@ -204,6 +206,9 @@ const AlumniWidgetSetup: React.FC<AlumniWidgetSetupProps> = ({ mode }) => {
         <HexColors
           customColors={customColors}
           setCustomColors={setCustomColors}
+          height={iframeHeight}
+          onHeightChange={setIframeHeight}
+          defaultHeight={DEFAULT_IFRAME_HEIGHT}
         />
       </div>
 
