@@ -289,7 +289,7 @@ const HexColors: React.FC<HexColorsProps> = ({
           className={`mb-6 px-4 py-2 rounded uppercase text-sm tracking-wider text-left ${hasChanges ? 'cursor-pointer' : 'cursor-not-allowed'}`}
           style={{
             fontFamily: "Montserrat, sans-serif",
-            fontSize: "14px",
+            fontSize: "12px",
             fontWeight: 700,
             lineHeight: "24px",
             backgroundColor: "transparent",
