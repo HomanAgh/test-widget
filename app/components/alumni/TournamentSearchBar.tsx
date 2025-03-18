@@ -214,7 +214,7 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
             {selectedTournaments.map((tour) => (
               <span
                 key={tour.slug}
-                className="mt-4 mb-2 inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
+                className=" inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
               >
                 {(tour.logoUrl || tour.imageUrl || tour.logo?.url) && (
                   <Image

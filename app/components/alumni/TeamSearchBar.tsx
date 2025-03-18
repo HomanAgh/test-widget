@@ -196,7 +196,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
               {selectedTeams.map((team) => (
                 <span
                   key={team.id}
-                  className="mt-4 mb-2 inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
+                  className="inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
                 >
                   {team.logo && (
                     <Image
