@@ -3,7 +3,7 @@ import Alumni from "@/app/components/alumni/Alumni";
 import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     teamIds?: string;
     leagues?: string;
     backgroundColor?: string;
@@ -12,18 +12,19 @@ interface PageProps {
     headerTextColor?: string;
     nameTextColor?: string;
     teams?: string;
-  };
+  }>;
 }
 
 const EmbedAlumni = async ({ searchParams }: PageProps) => {
-  const teamIdsStr = searchParams.teamIds || "";
-  const leaguesStr = searchParams.leagues || "";
-  const backgroundColor = searchParams.backgroundColor || "#FFFFFF";
-  const textColor = searchParams.textColor || "#000000";
-  const headerTextColor = searchParams.headerTextColor || "#FFFFFF";
-  const tableBackgroundColor = searchParams.tableBackgroundColor || "#FFFFFF";
-  const nameTextColor = searchParams.nameTextColor || "#0D73A6";
-  const youthTeam = searchParams.teams || "";
+  const params = await searchParams;
+  const teamIdsStr = params.teamIds || "";
+  const leaguesStr = params.leagues || "";
+  const backgroundColor = params.backgroundColor || "#FFFFFF";
+  const textColor = params.textColor || "#000000";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
+  const youthTeam = params.teams || "";
 
   const teamIds = teamIdsStr
     .split(",")
