@@ -4,18 +4,19 @@ import ClientWrapper from "@/app/components/embed/ClientWrapper";
 import { Metadata } from "next";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     teamId?: string;
     backgroundColor?: string;
     textColor?: string;
     tableBackgroundColor?: string;
     headerTextColor?: string;
     nameTextColor?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const teamId = searchParams.teamId || "";
+  const params = await searchParams;
+  const teamId = params.teamId || "";
   
   return {
     title: `Hockey Team Statistics - Team ID: ${teamId}`,
@@ -41,12 +42,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
 }
 
 const EmbedTeam = async ({ searchParams }: PageProps) => {
-  const teamId = searchParams.teamId || "";
-  const backgroundColor = searchParams.backgroundColor || "#052D41";
-  const textColor = searchParams.textColor || "#000000";
-  const tableBackgroundColor = searchParams.tableBackgroundColor || "#FFFFFF";
-  const headerTextColor = searchParams.headerTextColor || "#FFFFFF";
-  const nameTextColor = searchParams.nameTextColor || "#0D73A6";
+  const params = await searchParams;
+  const teamId = params.teamId || "";
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
   if (!teamId) {
     return <div>Missing team ID</div>;
