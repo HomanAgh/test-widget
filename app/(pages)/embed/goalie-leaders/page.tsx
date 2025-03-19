@@ -1,35 +1,35 @@
-"use client";
-
-import React, { Suspense } from "react";
+import React from "react";
 import GoalieLeaders from "@/app/components/league/GoalieLeaders";
-import { useSearchParams } from "next/navigation";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
-const EmbedGoalieLeaders = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <GoalieLeadersPageContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    leagueSlug?: string;
+    season?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  }>;
+}
 
-const GoalieLeadersPageContent = () => {
-  const searchParams = useSearchParams();
+const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const leagueSlug = params.leagueSlug || "";
+  const season = params.season || "";
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
-  const leagueSlug = searchParams.get("leagueSlug") || "";
-  const season = searchParams.get("season") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
-  const textColor = searchParams.get("textColor") || "#000000";
-  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
-  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
-  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
-
-  if (!leagueSlug || !season) {
-    return <div>Missing league slug or season</div>;
+  if (!leagueSlug) {
+    return <div>Missing leagueSlug parameter</div>;
   }
 
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div style={{ overflow: "auto" }}>
         <GoalieLeaders
           leagueSlug={leagueSlug}
@@ -41,10 +41,9 @@ const GoalieLeadersPageContent = () => {
             headerTextColor,
             nameTextColor
           }}
-          hideSeasonSelector={true}
         />
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 

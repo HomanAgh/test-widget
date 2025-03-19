@@ -1,70 +1,35 @@
-"use client";
-
-import React, { Suspense } from "react";
+import React from "react";
 import ScoringLeaders from "@/app/components/league/ScoringLeaders";
-import { useSearchParams } from "next/navigation";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
-const EmbedScoringLeaders = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ScoringLeadersPageContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    leagueSlug?: string;
+    season?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  }>;
+}
 
-const ScoringLeadersPageContent = () => {
-  const searchParams = useSearchParams();
-  const getParam = (name: string, defaultValue: string): string => {
-    try {
-      const value = searchParams.get(name);
-      if (!value) return defaultValue;
-      
-      // For color parameters, ensure they're valid hex colors
-      if (name.toLowerCase().includes('color')) {
-        const decoded = decodeURIComponent(value);
-        // Basic validation for hex color - should start with # and be 4 or 7 chars long
-        if (decoded.startsWith('#') && (decoded.length === 4 || decoded.length === 7)) {
-          return decoded;
-        }
-        console.warn(`Invalid color format for ${name}:`, decoded);
-        return defaultValue;
-      }
-      
-      return decodeURIComponent(value);
-    } catch (err) {
-      console.error(`Error processing parameter ${name}:`, err);
-      return defaultValue;
-    }
-  };
+const EmbedScoringLeaders = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const leagueSlug = params.leagueSlug || "";
+  const season = params.season || "";
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
-  const leagueSlug = getParam("leagueSlug", "");
-  const season = getParam("season", "");
-  const backgroundColor = getParam("backgroundColor", "#052D41");
-  const textColor = getParam("textColor", "#000000");
-  const tableBackgroundColor = getParam("tableBackgroundColor", "#FFFFFF");
-  const headerTextColor = getParam("headerTextColor", "#FFFFFF");
-  const nameTextColor = getParam("nameTextColor", "#0D73A6");
-
-  // Log all URL parameters for debugging
-  console.log('Full URL:', typeof window !== 'undefined' ? window.location.href : 'server-side');
-  console.log('All search params:', Object.fromEntries([...searchParams.entries()]));
-  console.log('Processed parameters:', { 
-    leagueSlug,
-    season,
-    nameTextColor, 
-    backgroundColor,
-    textColor,
-    tableBackgroundColor,
-    headerTextColor
-  });
-
-  if (!leagueSlug || !season) {
-    return <div>Missing league slug or season</div>;
+  if (!leagueSlug) {
+    return <div>Missing leagueSlug parameter</div>;
   }
 
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div style={{ overflow: "auto" }}>
         <ScoringLeaders
           leagueSlug={leagueSlug}
@@ -76,10 +41,9 @@ const ScoringLeadersPageContent = () => {
             headerTextColor,
             nameTextColor
           }}
-          hideSeasonSelector={true}
         />
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 

@@ -1,30 +1,32 @@
-"use client";
-
-import React, { Suspense } from "react";
+import React from "react";
 import Player from "../../../components/player/Player";
-import { useSearchParams } from "next/navigation";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
-const EmbedPlayer = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PlayerPageContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    playerId?: string;
+    gameLimit?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+    viewMode?: string;
+    showSummary?: string;
+  }>;
+}
 
-const PlayerPageContent = () => {
-  const searchParams = useSearchParams();
+const EmbedPlayer = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const playerId = params.playerId || "";
+  const gameLimit = parseInt(params.gameLimit || "5", 10);
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
-  const playerId = searchParams.get("playerId") || "";
-  const gameLimit = parseInt(searchParams.get("gameLimit") || "5", 10);
-  const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
-  const textColor = searchParams.get("textColor") || "#000000";
-  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
-  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
-  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
-
-  const viewModeParam = searchParams.get("viewMode");
+  const viewModeParam = params.viewMode;
   const viewMode =
     viewModeParam === "seasons" ||
     viewModeParam === "games" ||
@@ -33,14 +35,14 @@ const PlayerPageContent = () => {
       ? viewModeParam
       : "stats";
 
-  const showSummary = searchParams.get("showSummary") === "true";
+  const showSummary = params.showSummary === "true";
 
   if (!playerId) {
     return <div>Missing player ID</div>;
   }
 
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div className="max-w-[768px] mx-auto px-0" style={{ background: "none" }}>
         <Player
           playerId={playerId}    
@@ -56,7 +58,7 @@ const PlayerPageContent = () => {
           }}
         />
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 
