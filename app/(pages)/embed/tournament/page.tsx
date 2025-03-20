@@ -1,62 +1,51 @@
-"use client";
-
-import React, { Suspense, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import React from "react";
 import LocalAlumni from "@/app/components/alumni/LocalAlumni";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
-const EmbedTournament = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <TournamentEmbedContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    tournaments?: string;
+    leagues?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  }>;
+}
 
-const TournamentEmbedContent = () => {
-  const searchParams = useSearchParams();
-  const [finalPlayers, setFinalPlayers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+async function getTournamentData(tournaments: string, leagues: string) {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/tournament-alumni?tournaments=${encodeURIComponent(tournaments)}&league=${encodeURIComponent(leagues)}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    const data = await res.json();
+    return data.players || [];
+  } catch (err) {
+    console.error("Tournament fetch error:", err);
+    return [];
+  }
+}
 
-  // Get parameters from URL
-  const tournamentsStr = searchParams.get("tournaments") || "";
-  const leaguesStr = searchParams.get("leagues") || "";
-  
-  // Color parameters
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
-  const textColor = searchParams.get("textColor") || "#000000";
-  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
-  const headerTextColor = searchParams.get("headerTextColor") || "#000000";
-  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
+const EmbedTournament = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const tournamentsStr = params.tournaments || "";
+  const leaguesStr = params.leagues || "";
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
-  // Fetch tournament player data
-  useEffect(() => {
-    async function fetchTournamentData() {
-      if (!tournamentsStr || !leaguesStr) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const url = `/api/tournament-alumni?tournaments=${encodeURIComponent(tournamentsStr)}&league=${encodeURIComponent(leaguesStr)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        setFinalPlayers(data.players || []);
-      } catch (err) {
-        console.error("Tournament fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchTournamentData();
-  }, [tournamentsStr, leaguesStr]);
+  let finalPlayers = [];
+  if (tournamentsStr && leaguesStr) {
+    finalPlayers = await getTournamentData(tournamentsStr, leaguesStr);
+  }
 
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div style={{ overflow: "auto" }}>
-        {loading ? (
-          <p className="flex justify-center pt-3 font-montserrat font-semibold">Loading...</p>
+        {finalPlayers.length === 0 ? (
+          <p className="flex justify-center pt-3 font-montserrat font-semibold">No data available</p>
         ) : (
           <LocalAlumni 
             players={finalPlayers} 
@@ -70,7 +59,7 @@ const TournamentEmbedContent = () => {
           />
         )}
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 

@@ -1,35 +1,35 @@
-"use client";
-
-import React, { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import React from "react";
 import League from "@/app/components/league/League";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
-const EmbedLeague = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LeagueEmbedContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    leagueSlug?: string;
+    season?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  }>;
+}
 
-const LeagueEmbedContent = () => {
-  const searchParams = useSearchParams();
-
-  const leagueSlug = searchParams.get("leagueSlug") || "";
-  const season = searchParams.get("season") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
-  const textColor = searchParams.get("textColor") || "#000000";
-  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
-  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
-  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
+const EmbedLeague = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const leagueSlug = params.leagueSlug || "";
+  const season = params.season || "";
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
   if (!leagueSlug) {
     return <div>Missing leagueSlug parameter</div>;
   }
 
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div style={{ overflow: "auto" }}>
         <League
           leagueSlug={leagueSlug}
@@ -44,7 +44,7 @@ const LeagueEmbedContent = () => {
           hideSeasonSelector={true}
         />
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 

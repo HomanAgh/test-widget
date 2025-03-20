@@ -1,44 +1,49 @@
-"use client";
-
-import React, { Suspense } from "react";
+import React from "react";
 import Alumni from "@/app/components/alumni/Alumni";
-import { useSearchParams } from "next/navigation";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
-const EmbedAlumni = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AlumniEmbedContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    teamIds?: string;
+    leagues?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+    teams?: string;
+  }>;
+}
 
-const AlumniEmbedContent = () => {
-  const searchParams = useSearchParams();
-  const teamIdsStr = searchParams.get("teamIds") || "";
-  const leaguesStr = searchParams.get("leagues") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#FFFFFF";
-  const textColor = searchParams.get("textColor") || "#000000";
-  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
-  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
-  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
-  const youthTeam = searchParams.get("teams") || "";
+const EmbedAlumni = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const teamIdsStr = params.teamIds || "";
+  const leaguesStr = params.leagues || "";
+  const backgroundColor = params.backgroundColor || "#FFFFFF";
+  const textColor = params.textColor || "#000000";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
+  const youthTeam = params.teams || "";
+
   const teamIds = teamIdsStr
     .split(",")
     .map((id) => id.trim())
     .filter(Boolean);
+
   const selectedLeagues = leaguesStr
     .split(",")
     .map((l) => l.trim())
     .filter(Boolean);
+
   const selectedTeams = teamIds.map((id) => ({
     id: parseInt(id, 10) || 0,
     name: youthTeam,
-    league: selectedLeagues[0] || "", 
+    league: selectedLeagues[0] || "",
   }));
-  
+
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div style={{ overflow: "auto" }}>
         <Alumni
           selectedTeams={selectedTeams}
@@ -53,7 +58,7 @@ const AlumniEmbedContent = () => {
           includeYouth={true}
         />
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 

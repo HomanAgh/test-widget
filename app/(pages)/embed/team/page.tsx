@@ -1,34 +1,61 @@
-"use client";
-
-import React, { Suspense } from "react";
+import React from "react";
 import Team from "@/app/components/team/Team";
-import { useSearchParams } from "next/navigation";
-import ResizeObserver from "@/app/components/embed/ResizeObserver";
+import ClientWrapper from "@/app/components/embed/ClientWrapper";
+import { Metadata } from "next";
 
-const EmbedTeam = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <TeamPageContent />
-    </Suspense>
-  );
-};
+interface PageProps {
+  searchParams: Promise<{
+    teamId?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    tableBackgroundColor?: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  }>;
+}
 
-const TeamPageContent = () => {
-  const searchParams = useSearchParams();
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const teamId = params.teamId || "";
+  
+  return {
+    title: `Hockey Team Statistics - Team ID: ${teamId}`,
+    description: `View comprehensive hockey statistics for team ID: ${teamId}. Includes team performance, player stats, and season records.`,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    openGraph: {
+      title: `Hockey Team Statistics - Team ID: ${teamId}`,
+      description: `View comprehensive hockey statistics for team ID: ${teamId}. Includes team performance, player stats, and season records.`,
+      type: 'website',
+      locale: 'en_US',
+    },
+  };
+}
 
-  const teamId = searchParams.get("teamId") || "";
-  const backgroundColor = searchParams.get("backgroundColor") || "#052D41";
-  const textColor = searchParams.get("textColor") || "#000000";
-  const tableBackgroundColor = searchParams.get("tableBackgroundColor") || "#FFFFFF";
-  const headerTextColor = searchParams.get("headerTextColor") || "#FFFFFF";
-  const nameTextColor = searchParams.get("nameTextColor") || "#0D73A6";
+const EmbedTeam = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const teamId = params.teamId || "";
+  const backgroundColor = params.backgroundColor || "#052D41";
+  const textColor = params.textColor || "#000000";
+  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
+  const headerTextColor = params.headerTextColor || "#FFFFFF";
+  const nameTextColor = params.nameTextColor || "#0D73A6";
 
   if (!teamId) {
     return <div>Missing team ID</div>;
   }
 
   return (
-    <ResizeObserver>
+    <ClientWrapper>
       <div style={{ overflow: "auto" }}>
         <Team
           teamId={teamId}
@@ -41,7 +68,7 @@ const TeamPageContent = () => {
           }}
         />
       </div>
-    </ResizeObserver>
+    </ClientWrapper>
   );
 };
 
