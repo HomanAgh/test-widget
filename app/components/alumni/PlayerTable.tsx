@@ -54,7 +54,6 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     college: true,
     professional: true,
   },
-
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -62,6 +61,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     | "status"
     | "birthYear"
     | "draftPick"
+    | "draftYear"
     | "junior"
     | "college"
     | "pro"
@@ -71,6 +71,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     "asc" | "desc" | "none"
   >("asc");
   const [showNameMenu, setShowNameMenu] = React.useState(false);
+  const [showDraftMenu, setShowDraftMenu] = React.useState(false);
 
   const [pages, setPages] = React.useState<{ men: number; women: number }>({
     men: 0,
@@ -163,6 +164,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
       contentForStatus = (
         <Tooltip
           tooltip={isDeceased ? "Player is Deceased" : "Player is Retired"}
+          position="right"
         >
           <span>{displayStatus}</span>
         </Tooltip>
@@ -245,7 +247,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                     e.stopPropagation();
                     setShowNameMenu((prev) => !prev);
                   }}
-                  className="absolute right-2 px-2 rounded bg-gray-200 text-black cursor-pointer text-sm"
+                  className="absolute ml-1 px-2 rounded bg-gray-200 text-black cursor-pointer text-sm"
                 >
                   +
                 </span>
@@ -300,10 +302,61 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 <TableCell
                   isHeader
                   align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("draftPick")}
+                  className="font-bold cursor-pointer relative"
+                  onClick={() =>
+                    handleSort(
+                      sortColumn === "draftYear" ? "draftYear" : "draftPick"
+                    )
+                  }
                 >
-                  NHL DP {renderSortArrow("draftPick")}
+                  <span>
+                    {sortColumn === "draftYear" ? "NHL DY" : "NHL DP"}
+                  </span>{" "}
+                  {renderSortArrow(
+                    sortColumn === "draftYear" ? "draftYear" : "draftPick"
+                  )}
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDraftMenu((prev) => !prev);
+                    }}
+                    className="absolute ml-1 px-2 rounded bg-gray-200 text-black cursor-pointer text-sm"
+                  >
+                    +
+                  </span>
+                  {showDraftMenu && (
+                    <div
+                      className="absolute bg-white text-black border border-gray-300 rounded px-2 py-1 mt-1 z-10 text-sm"
+                      style={{ minWidth: "150px", right: 0 }}
+                    >
+                      <div
+                        className={`cursor-pointer hover:bg-gray-100 p-1 font-normal ${
+                          sortColumn === "draftPick" ? "bg-blue-50" : ""
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSortColumn("draftPick");
+                          setSortDirection("asc");
+                          setShowDraftMenu(false);
+                        }}
+                      >
+                        Sort by Overall Pick
+                      </div>
+                      <div
+                        className={`cursor-pointer hover:bg-gray-100 p-1 font-normal ${
+                          sortColumn === "draftYear" ? "bg-blue-50" : ""
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSortColumn("draftYear");
+                          setSortDirection("desc");
+                          setShowDraftMenu(false);
+                        }}
+                      >
+                        Sort by Draft Year
+                      </div>
+                    </div>
+                  )}
                 </TableCell>
               )}
 
@@ -400,7 +453,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                         <div className="flex items-center justify-center gap-1">
                           {player.draftPick.team.logo && (
                             <Tooltip
-                              tooltip={`${player.draftPick.year} round ${player.draftPick.round} #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
+                              tooltip={`${player.draftPick.year} NHL Draft\nRound ${player.draftPick.round}, #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
                             >
                               <Image
                                 src={player.draftPick.team.logo}
@@ -410,7 +463,17 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                               />
                             </Tooltip>
                           )}
-                          <span>{"#" + player.draftPick.overall}</span>
+                          <Tooltip
+                            tooltip={`${player.draftPick.year} NHL Draft\nRound ${player.draftPick.round}, #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
+                          >
+                            {sortColumn === "draftYear" ? (
+                              <span className="text-sm">
+                                {player.draftPick.year}
+                              </span>
+                            ) : (
+                              <span>{"#" + player.draftPick.overall}</span>
+                            )}
+                          </Tooltip>
                         </div>
                       ) : (
                         <span>-</span>
@@ -465,6 +528,8 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
           <span className="text-[#000]">Birth year</span>
           <span className="mx-2 text-[#000] font-bold">NHL DP</span>
           <span className="text-[#000]">Draft pick</span>
+          <span className="mx-2 text-[#000] font-bold">NHL DY</span>
+          <span className="text-[#000]">Draft year</span>
           <span className="mx-2 text-[#000] font-bold">R</span>
           <span className="text-[#000]">Retired</span>
         </div>

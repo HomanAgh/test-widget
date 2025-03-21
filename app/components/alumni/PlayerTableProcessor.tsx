@@ -3,6 +3,21 @@ import { leagueRankings } from "./LeagueSelection";
 
 export function sortTeamsByLeagueRankThenName(teams: any[]) {
   return [...teams].sort((a, b) => {
+    // Special case: If one team is NHL and current, prioritize it
+    const isNhlA = a.leagueSlug?.toLowerCase() === "nhl";
+    const isNhlB = b.leagueSlug?.toLowerCase() === "nhl";
+
+    // If A is current NHL team and B is not, A comes first
+    if (isNhlA && a.isCurrentTeam && !(isNhlB && b.isCurrentTeam)) {
+      return -1;
+    }
+
+    // If B is current NHL team and A is not, B comes first
+    if (isNhlB && b.isCurrentTeam && !(isNhlA && a.isCurrentTeam)) {
+      return 1;
+    }
+
+    // If both or neither are current NHL teams, fall back to normal sorting
     const slugA = a.leagueSlug?.toLowerCase() ?? "";
     const slugB = b.leagueSlug?.toLowerCase() ?? "";
     const rankA = leagueRankings[slugA] ?? Number.MAX_SAFE_INTEGER;
@@ -24,7 +39,25 @@ export function getBestCategoryRankAndTeam(
 ) {
   let bestRank = Number.MAX_SAFE_INTEGER;
   let bestTeamName = "";
+  let foundCurrentNhl = false;
 
+  // First pass: check if there's a current NHL team
+  if (category === "professional") {
+    for (const team of player.teams ?? []) {
+      if ((team.leagueLevel ?? "").toLowerCase().includes(category)) {
+        const slug = team.leagueSlug?.toLowerCase() ?? "";
+        if (slug === "nhl" && team.isCurrentTeam) {
+          // Current NHL team found! This is our priority.
+          return {
+            bestRank: -1, // Special rank that's better than any other
+            bestTeamName: team.name ?? "",
+          };
+        }
+      }
+    }
+  }
+
+  // Normal ranking logic if no current NHL team was found
   for (const team of player.teams ?? []) {
     if ((team.leagueLevel ?? "").toLowerCase().includes(category)) {
       const slug = team.leagueSlug?.toLowerCase() ?? "";
@@ -102,6 +135,28 @@ export function filterAndSortPlayers(
         return sortDirection === "asc"
           ? overallA - overallB
           : overallB - overallA;
+      }
+
+      case "draftYear": {
+        // Get the draft year or use a fallback value
+        // Players without draft information should be at the end (or beginning) of the list
+        const yearA =
+          a.draftPick && typeof a.draftPick === "object" && a.draftPick.year
+            ? parseInt(a.draftPick.year, 10)
+            : sortDirection === "asc"
+            ? Number.MAX_SAFE_INTEGER
+            : 0;
+
+        const yearB =
+          b.draftPick && typeof b.draftPick === "object" && b.draftPick.year
+            ? parseInt(b.draftPick.year, 10)
+            : sortDirection === "asc"
+            ? Number.MAX_SAFE_INTEGER
+            : 0;
+
+        // Simply compare the years
+
+        return sortDirection === "asc" ? yearA - yearB : yearB - yearA;
       }
 
       case "junior": {

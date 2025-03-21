@@ -177,6 +177,7 @@ async function mergePlayerStats(baseUrl: string, playerMap: Map<number, Combined
     "team.name",
     "team.league.slug",
     "team.league.leagueLevel",
+    "isActiveSeason"
   ].join(","));
 
   const urlWithFields = `${baseUrl}&fields=${fields}`;
@@ -267,6 +268,7 @@ async function mergePlayerStats(baseUrl: string, playerMap: Map<number, Combined
         name: item.team.name || "Unknown Team",
         leagueSlug: leagueSlug || "unknown",
         leagueLevel: leagueLevel || "unknown",
+        isCurrentTeam: item.isActiveSeason === true
       });
     }
   }
@@ -420,7 +422,8 @@ export async function GET(request: Request) {
       const mappedTeams = cp.teams.map((t) => ({
         name: t.name,
         leagueLevel: t.leagueLevel,
-        leagueSlug: t.leagueSlug
+        leagueSlug: t.leagueSlug,
+        isCurrentTeam: t.isCurrentTeam
       }));
 
       return {
