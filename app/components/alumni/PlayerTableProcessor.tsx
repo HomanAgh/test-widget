@@ -39,7 +39,7 @@ export function getBestCategoryRankAndTeam(
 ) {
   let bestRank = Number.MAX_SAFE_INTEGER;
   let bestTeamName = "";
-  let foundCurrentNhl = false;
+  /* const foundCurrentNhl = false; */
 
   // First pass: check if there's a current NHL team
   if (category === "professional") {
