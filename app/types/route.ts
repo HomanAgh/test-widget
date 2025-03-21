@@ -24,6 +24,8 @@ export interface ApiResponse<T> {
         leagueLevel?: string;
       };
     };
+    isActiveSeason?: boolean;
+    season?: string;
   }
   
   export interface TeamStatsItem {
@@ -60,6 +62,7 @@ export interface ApiResponse<T> {
       name: string;
       leagueLevel: string | null;
       leagueSlug: string | null;
+      isCurrentTeam?: boolean;
     }[];
     draftPick?: DraftSelection | null; 
   }

@@ -267,6 +267,7 @@ async function fetchAndMergePlayerStats(
         name: item.team.name || 'Unknown Team',
         leagueLevel: leagueLevel ?? 'unknown',
         leagueSlug: leagueSlug ?? 'unknown',
+        isCurrentTeam: item.isActiveSeason === true
       };
 
       const alreadyExists = existing.teams.find(
@@ -454,7 +455,12 @@ export async function GET(request: Request) {
             draftType: p.draftPick.draftType,
           }
         : '-',
-      teams: p.teams,
+      teams: p.teams.map(team => ({
+        name: team.name,
+        leagueLevel: team.leagueLevel,
+        leagueSlug: team.leagueSlug,
+        isCurrentTeam: team.isCurrentTeam
+      })),
     }));
 
     const responseData = {
