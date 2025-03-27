@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import GoalieLeadersTable from './GoalieLeadersTable';
-import { GoalieLeadersResponse } from '@/app/types/goalieLeaders';
+import React, { useEffect, useState } from "react";
+import GoalieLeadersTable from "./GoalieLeadersTable";
+import { GoalieLeadersResponse } from "@/app/types/goalieLeaders";
+import SeasonSelector from "@/app/components/common/SeasonSelector";
 
 interface GoalieLeadersProps {
   leagueSlug: string;
@@ -17,7 +18,7 @@ interface GoalieLeadersProps {
   hideSeasonSelector?: boolean;
 }
 
-const GoalieLeaders: React.FC<GoalieLeadersProps> = ({ 
+const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   leagueSlug,
   season = "2024-2025",
   customColors = {
@@ -25,74 +26,44 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
+    nameTextColor: "#0D73A6",
   },
-  hideSeasonSelector = false
+  hideSeasonSelector = false,
 }) => {
-  const [goalieLeaders, setGoalieLeaders] = useState<GoalieLeadersResponse | null>(null);
+  const [goalieLeaders, setGoalieLeaders] =
+    useState<GoalieLeadersResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [leagueName, setLeagueName] = useState<string>("");
   const [selectedSeason, setSelectedSeason] = useState<string>(season);
-  const [seasonsArray, setSeasonsArray] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchSeasons = async () => {
-      try {
-        const response = await fetch(`/api/seasons?leagueSlug=${leagueSlug}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch seasons: ${response.statusText}`);
-        }
-        const data = await response.json();
-        
-        if (data && data.seasons && Array.isArray(data.seasons)) {
-          // Sort seasons in descending order (newest first)
-          const sortedSeasons = [...data.seasons].sort((a, b) => {
-            const yearA = parseInt(a.split('-')[0]);
-            const yearB = parseInt(b.split('-')[0]);
-            return yearB - yearA;
-          });
-          
-          setSeasonsArray(sortedSeasons);
-          
-          // If the provided season is not in the list, use the most recent one
-          if (!sortedSeasons.includes(selectedSeason) && sortedSeasons.length > 0) {
-            setSelectedSeason(sortedSeasons[0]);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching seasons:", error);
-        // Set a default array of recent seasons if API fails
-        const currentYear = new Date().getFullYear();
-        const defaultSeasons = [];
-        for (let i = 0; i < 5; i++) {
-          defaultSeasons.push(`${currentYear - i}-${currentYear - i + 1}`);
-        }
-        setSeasonsArray(defaultSeasons);
-      }
-    };
-
-    fetchSeasons();
-  }, [leagueSlug, selectedSeason]);
 
   // Fetch goalie leaders data
   useEffect(() => {
     const fetchGoalieLeaders = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
-        const response = await fetch(`/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}`);
-        
+        const response = await fetch(
+          `/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}`
+        );
+
         if (!response.ok) {
-          throw new Error(`Failed to fetch goalie leaders: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch goalie leaders: ${response.statusText}`
+          );
         }
-        
+
         const data = await response.json();
         setGoalieLeaders(data);
-        
+
         // Try to get league name from the first player's team
-        if (data && data.data && data.data.length > 0 && data.data[0].team?.league?.name) {
+        if (
+          data &&
+          data.data &&
+          data.data.length > 0 &&
+          data.data[0].team?.league?.name
+        ) {
           setLeagueName(data.data[0].team.league.name);
         }
       } catch (error: any) {
@@ -102,23 +73,32 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
         setLoading(false);
       }
     };
-    
+
     if (leagueSlug && selectedSeason) {
       fetchGoalieLeaders();
     }
   }, [leagueSlug, selectedSeason]);
 
-  const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedSeason(e.target.value);
+  // Handler for the SeasonSelector component
+  const handleSeasonChange = (newSeason: string) => {
+    setSelectedSeason(newSeason);
   };
 
   if (loading) {
-    return <div className="text-center text-gray-600 my-8">Loading goalie leaders...</div>;
+    return (
+      <div className="text-center text-gray-600 my-8">
+        Loading goalie leaders...
+      </div>
+    );
   }
   if (error) {
     return <div className="text-center text-red-600 my-8">Error: {error}</div>;
   }
-  if (!goalieLeaders || !goalieLeaders.data || goalieLeaders.data.length === 0) {
+  if (
+    !goalieLeaders ||
+    !goalieLeaders.data ||
+    goalieLeaders.data.length === 0
+  ) {
     return <div className="text-center my-8">No goalie data available</div>;
   }
 
@@ -127,28 +107,14 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   return (
     <div className="max-w-6xl mx-auto my-8">
       {!hideSeasonSelector && (
-        <div className="text-center mb-6">
-          <div className="flex justify-center items-center mb-4">
-            <label htmlFor="season-select" className="mr-2 font-semibold">
-              Select Season:
-            </label>
-            <select
-              id="season-select"
-              value={selectedSeason}
-              onChange={handleSeasonChange}
-              className="border px-3 py-1 rounded"
-            >
-              {seasonsArray.map((seasonOption) => (
-                <option key={seasonOption} value={seasonOption}>
-                  {seasonOption}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        <SeasonSelector
+          leagueSlug={leagueSlug}
+          initialSeason={selectedSeason}
+          onSeasonChange={handleSeasonChange}
+        />
       )}
-      <GoalieLeadersTable 
-        goalieLeaders={goalieLeaders} 
+      <GoalieLeadersTable
+        goalieLeaders={goalieLeaders}
         leagueDisplay={leagueDisplay}
         selectedSeason={selectedSeason}
         customColors={customColors}

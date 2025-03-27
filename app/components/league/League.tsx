@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import LeagueTable from "./LeagueTable";
 import type { LeagueTableProps } from "@/app/types/league";
+import SeasonSelector from "@/app/components/common/SeasonSelector";
 
 interface LeagueProps {
   leagueSlug: string;
@@ -17,37 +18,33 @@ interface LeagueProps {
   season?: string;
 }
 
-const League: React.FC<LeagueProps> = ({ 
+const League: React.FC<LeagueProps> = ({
   leagueSlug,
   customColors = {
     backgroundColor: "#052D41",
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
+    nameTextColor: "#0D73A6",
   },
   hideSeasonSelector = false,
-  season
+  season,
 }) => {
   const date = new Date();
   const currentYear = date.getFullYear();
-  const currentMonth = date.getMonth() + 1; 
+  const currentMonth = date.getMonth() + 1;
 
   let seasonStartYear = currentYear;
   if (currentMonth < 9) {
     seasonStartYear = currentYear - 1;
   }
 
-  const SEASONS_BACK = 19;
-  const seasonsArray: string[] = [];
-  for (let y = seasonStartYear; y >= seasonStartYear - SEASONS_BACK; y--) {
-    seasonsArray.push(`${y}-${y + 1}`);
-  }
-
-  const defaultSeason = season || seasonsArray[0];
+  // Generate a default season string for initial load
+  const defaultSeason = season || `${seasonStartYear}-${seasonStartYear + 1}`;
   const [currentSeason, setCurrentSeason] = useState<string>(defaultSeason);
-  const [standings, setStandings] =
-    useState<LeagueTableProps["standings"] | null>(null);
+  const [standings, setStandings] = useState<
+    LeagueTableProps["standings"] | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,7 +62,9 @@ const League: React.FC<LeagueProps> = ({
 
       try {
         const response = await fetch(
-          `/api/league/${leagueSlug}?season=${encodeURIComponent(currentSeason)}`
+          `/api/league/${leagueSlug}?season=${encodeURIComponent(
+            currentSeason
+          )}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch league data");
@@ -82,8 +81,9 @@ const League: React.FC<LeagueProps> = ({
     fetchLeagueStandings();
   }, [leagueSlug, currentSeason]);
 
-  const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrentSeason(e.target.value);
+  // Handler for the SeasonSelector component
+  const handleSeasonChange = (newSeason: string) => {
+    setCurrentSeason(newSeason);
   };
 
   if (loading) {
@@ -99,28 +99,16 @@ const League: React.FC<LeagueProps> = ({
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 rounded-lg">
       {!hideSeasonSelector && (
-        <div className="text-center mb-6">
-          <label htmlFor="season-select" className="mr-2 font-semibold">
-            Select Season:
-          </label>
-          <select
-            id="season-select"
-            value={currentSeason}
-            onChange={handleSeasonChange}
-            className="border px-3 py-1 rounded"
-          >
-            {seasonsArray.map((seasonOption) => (
-              <option key={seasonOption} value={seasonOption}>
-                {seasonOption}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SeasonSelector
+          leagueSlug={leagueSlug}
+          initialSeason={currentSeason}
+          onSeasonChange={handleSeasonChange}
+        />
       )}
-      <LeagueTable 
+      <LeagueTable
         key={`league-table-${leagueSlug}-${currentSeason}`}
-        standings={standings} 
-        logoS="" 
+        standings={standings}
+        logoS=""
         backgroundColor={customColors.backgroundColor}
         textColor={customColors.textColor}
         tableBackgroundColor={customColors.tableBackgroundColor}

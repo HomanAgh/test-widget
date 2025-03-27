@@ -12,7 +12,10 @@ const AuthCheck: React.FC<AuthCheckProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    // Change this line: instead of checking for a boolean flag, check for token
+    const token = localStorage.getItem("token");
+    const isLoggedIn = !!token; // Convert to boolean (true if token exists, false if not)
+    
     setIsAuthenticated(isLoggedIn);
     
     if (!isLoggedIn) {
@@ -27,4 +30,4 @@ const AuthCheck: React.FC<AuthCheckProps> = ({ children }) => {
   return isAuthenticated ? <>{children}</> : null;
 };
 
-export default AuthCheck; 
+export default AuthCheck;

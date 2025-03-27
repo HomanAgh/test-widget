@@ -4,29 +4,39 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import EliteProspectsLogo from "@/app/components/common/EliteProspectsLogo";
 import PageWrapper from "@/app/components/common/style/PageWrapper";
+import { gql, useMutation } from "@apollo/client";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        id
+        email
+        name
+      }
+    }
+  }
+`;
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [login, { loading }] = useMutation(LOGIN_MUTATION);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+      // Use GraphQL mutation instead of fetch
+      const { data } = await login({ 
+        variables: { email, password } 
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Login Failed");
-      }
-
-      localStorage.setItem("isLoggedIn", "true");
+      
+      // Store the JWT token instead of a boolean
+      localStorage.setItem("token", data.login.token);
       console.log("[DEBUG] Redirecting to /home");
       router.push("/home");
     } catch (err) {
@@ -49,12 +59,12 @@ const LoginPage = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="flex flex-col pt-[24px] pb-[24px]">
-            <label className="text-sm font-semibold pb-[8px]">Username*</label>
+            <label className="text-sm font-semibold pb-[8px]">Email*</label>
             <input
-              type="text"
-              value={username}
-              placeholder="Enter your username"
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              value={email}
+              placeholder="Enter your Email"
+              onChange={(e) => setEmail(e.target.value)}
               className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -75,8 +85,9 @@ const LoginPage = () => {
           <button
             type="submit"
             className="font-montserrat text-[12px] flex justify-center items-center w-[100px] min-w-[80px] h-[28px] px-[12px] py-[8px] bg-[#0B9D52] text-white font-bold rounded-md hover:bg-green-700 transition-all"
+            disabled={loading}
           >
-            SUBMIT
+            {loading ? "LOADING..." : "SUBMIT"}
           </button>
         </form>
       </div>
