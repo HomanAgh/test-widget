@@ -1,11 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";
 import PageWrapper from "@/app/components/common/style/PageWrapper";
 
-export default function VerifyEmailPage() {
+// Loading component
+const LoadingDisplay = () => (
+  <PageWrapper>
+    <div className="bg-white p-6 rounded-lg w-full max-w-md mx-auto text-center">
+      <h1 className="text-2xl font-bold mb-4">Email Verification</h1>
+      <div className="text-gray-700">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+        <p>Loading verification page...</p>
+      </div>
+    </div>
+  </PageWrapper>
+);
+
+// Content component that uses useSearchParams
+function VerifyEmailContent() {
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
@@ -114,5 +128,14 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </PageWrapper>
+  );
+}
+
+// Main component with Suspense boundary
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<LoadingDisplay />}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
