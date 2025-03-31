@@ -1,7 +1,6 @@
 import React from "react";
 
-import { PageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";
-import AuthCheck from "@/app/components/AuthCheck";     
+import { PageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";   
 import Header from "@/app/components/Header";
 import Collapsible from "@/app/components/league/Collapsible";
 
@@ -10,7 +9,6 @@ const FAQPage = () => {
     <PageWrapper>
       <Header currentPath="/faq" />
       <PageTitle title="Frequently Asked Questions" />
-      <AuthCheck>
         <div className="space-y-4">
           <Collapsible title="What is this application for?">
             <p className="py-3 px-4 text-gray-700">
@@ -162,7 +160,6 @@ const FAQPage = () => {
           </Collapsible>
         </div>
         <PoweredBy />
-      </AuthCheck>
     </PageWrapper>
   );
 };

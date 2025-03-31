@@ -2,16 +2,13 @@ import React from "react";
 import SearchBar from "@/app/components/team/TeamSearch";
 import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle } from "@/app/components/common/style";
-import AuthCheck from "@/app/components/AuthCheck";
 
 export default function TeamSearchPage() {
   return (
     <PageWrapper>
       <Header currentPath="/team" />
       <PageTitle title="Search Team" />
-      <AuthCheck>
         <SearchBar />
-      </AuthCheck>
     </PageWrapper>
   );
 }
