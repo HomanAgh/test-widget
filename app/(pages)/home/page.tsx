@@ -24,10 +24,10 @@ const HomePage = () => {
     <PageWrapper>
       <Header currentPath="/home" />
       <PageTitle title="Choose an option" />
-      <AuthCheck>
+     
         <ClientNavigation menuItems={menuItems} />
         <PoweredBy/>
-      </AuthCheck>
+    
     </PageWrapper>
   );
 };
