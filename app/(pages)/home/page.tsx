@@ -4,7 +4,6 @@ import { GiJasonMask } from "react-icons/gi";
 import { LiaHockeyPuckSolid } from "react-icons/lia";
 import Header from "@/app/components/Header";
 import { PageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";
-import AuthCheck from "@/app/components/AuthCheck";
 import ClientNavigation from "@/app/components/ClientNavigation";
 
 const HomePage = () => {
