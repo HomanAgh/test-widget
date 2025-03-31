@@ -2,6 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  // Debug: Log the current path
+  console.log('Middleware: Current path:', request.nextUrl.pathname)
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -12,7 +15,9 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          const cookies = request.cookies.getAll()
+          console.log('Middleware: Cookies:', cookies.map(c => c.name))
+          return cookies
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
@@ -22,6 +27,7 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
+          console.log('Middleware: Setting cookies:', cookiesToSet.map(c => c.name))
         },
       },
     }
@@ -31,37 +37,39 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
-
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/api/graphql') &&
-    !request.nextUrl.pathname.startsWith('/verify-email')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // Debug: Log user state
+  console.log('Middleware: User state:', user ? 'Logged in' : 'Not logged in')
+
+  // List of public routes that don't require authentication
+  const publicRoutes = ['/login', '/auth', '/api/graphql', '/verify-email']
+  const isPublicRoute = publicRoutes.some(route => 
+    request.nextUrl.pathname.startsWith(route)
+  )
+
+  // Debug: Log route state
+  console.log('Middleware: Route type:', isPublicRoute ? 'Public' : 'Protected')
+
+  // If user is logged in and trying to access auth pages, redirect to home
+  if (user && isPublicRoute && !request.nextUrl.pathname.startsWith('/api')) {
+    console.log('Middleware: Redirecting authenticated user to home')
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  // If no user and trying to access protected route, redirect to auth
+  if (!user && !isPublicRoute) {
+    console.log('Middleware: Redirecting unauthenticated user to auth')
     const url = request.nextUrl.clone()
     url.pathname = '/auth'
     return NextResponse.redirect(url)
   }
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  // If you're creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
-
+  // Add auth state to headers for debugging
+  supabaseResponse.headers.set('x-auth-state', user ? 'authenticated' : 'unauthenticated')
   return supabaseResponse
 }
