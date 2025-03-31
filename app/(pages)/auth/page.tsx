@@ -1,40 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import EliteProspectsLogo from "@/app/components/common/EliteProspectsLogo";
 import PageWrapper from "@/app/components/common/style/PageWrapper";
+import { login } from "@/app/login/action"; // Import the server action
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    // Check if this is an email verification redirect
+    const code = searchParams?.get("code");
 
-    try {
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Login Failed");
-      }
-
-      localStorage.setItem("isLoggedIn", "true");
-      console.log("[DEBUG] Redirecting to /home");
-      router.push("/home");
-    } catch (err) {
-      const errorMessage = (err as Error).message || "Unknown Error";
-      console.error("[DEBUG] Login error:", errorMessage);
-      setError(errorMessage);
+    if (code) {
+      // Redirect to verify-email with the code
+      router.push(`/verify-email?code=${code}`);
     }
-  };
+  }, [searchParams, router]);
 
   return (
     <PageWrapper>
@@ -47,14 +32,13 @@ const LoginPage = () => {
           Login
         </h1>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form className="space-y-4">
           <div className="flex flex-col pt-[24px] pb-[24px]">
-            <label className="text-sm font-semibold pb-[8px]">Username*</label>
+            <label className="text-sm font-semibold pb-[8px]">Email*</label>
             <input
-              type="text"
-              value={username}
-              placeholder="Enter your username"
-              onChange={(e) => setUsername(e.target.value)}
+              name="email"
+              type="email"
+              placeholder="Enter your Email"
               className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -62,10 +46,9 @@ const LoginPage = () => {
           <div className="flex flex-col pb-[56px]">
             <label className="text-sm font-semibold pb-[8px]">Password*</label>
             <input
+              name="password"
               type="password"
-              value={password}
               placeholder="Enter your password"
-              onChange={(e) => setPassword(e.target.value)}
               className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -74,6 +57,8 @@ const LoginPage = () => {
 
           <button
             type="submit"
+            //@ts-ignore
+            formAction={login}
             className="font-montserrat text-[12px] flex justify-center items-center w-[100px] min-w-[80px] h-[28px] px-[12px] py-[8px] bg-[#0B9D52] text-white font-bold rounded-md hover:bg-green-700 transition-all"
           >
             SUBMIT

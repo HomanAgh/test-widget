@@ -124,7 +124,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
         id="season-select"
         value={selectedSeason}
         onChange={(e) => handleSeasonChange(e.target.value)}
-        className="border px-3 py-1 rounded"
+        className="border px-3 py-1 rounded font-sans"
       >
         {seasonsArray.map((seasonOption) => (
           <option key={seasonOption} value={seasonOption}>
