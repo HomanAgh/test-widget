@@ -3,13 +3,15 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { MdLogout } from "react-icons/md";
+import { createClient } from '@/app/utils/supabase/client';
 
 const LogoutButton: React.FC = () => {
   const router = useRouter();
+  const supabase = createClient();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    router.push("/");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/auth");
   };
 
   return (
