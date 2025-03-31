@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import EliteProspectsLogo from "@/app/components/common/EliteProspectsLogo";
 import PageWrapper from "@/app/components/common/style/PageWrapper";
 import { login } from "@/app/login/action"; // Import the server action
 
-const LoginPage = () => {
+// Separate component that uses useSearchParams
+const LoginPageContent = () => {
   const [error] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -66,6 +67,15 @@ const LoginPage = () => {
         </form>
       </div>
     </PageWrapper>
+  );
+};
+
+// Main component with Suspense boundary
+const LoginPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 };
 
