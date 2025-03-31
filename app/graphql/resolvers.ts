@@ -1,15 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { GraphQLError } from 'graphql';
-import { 
-  generateToken, 
-  getUserFromToken, 
-  hashPassword, 
-  verifyPassword, 
-  generateVerificationToken 
-} from '../lib/auth';
-import { sendVerificationEmail, sendPasswordResetEmail } from '../lib/email';
-
-const prisma = new PrismaClient();
+import { createClient } from '@/app/utils/supabase/server';
 
 // For troubleshooting
 const DEBUG = true;
@@ -18,44 +8,23 @@ export const resolvers = {
   Query: {
     me: async (_: any, __: any, context: { user: any; req?: any }) => {
       try {
-        // Normal auth check
-        if (context.user) {
-          return context.user;
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (DEBUG) console.log('Current user:', user);
+
+        if (!user) {
+          throw new GraphQLError('Not authenticated', {
+            extensions: { code: 'UNAUTHENTICATED' },
+          });
         }
 
-        // TROUBLESHOOTING: Direct token check for testing
-        if (context.req && DEBUG) {
-          console.log('Troubleshooting auth directly in resolver');
-          
-          // Try to get token directly from request headers
-          let authHeader;
-          if (context.req.headers) {
-            if (context.req.headers.get) {
-              authHeader = context.req.headers.get('authorization');
-            } else {
-              authHeader = context.req.headers.authorization;
-            }
-          }
-          
-          console.log('Auth header from resolver:', authHeader);
-          
-          if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.slice(7);
-            console.log('Token from resolver:', token.substring(0, 15) + '...');
-            
-            // Try direct user lookup
-            const user = await getUserFromToken(token);
-            if (user) {
-              console.log('User found directly in resolver!');
-              return user;
-            }
-          }
-        }
-        
-        // If we get here, authentication failed
-        throw new GraphQLError('Not authenticated', {
-          extensions: { code: 'UNAUTHENTICATED' },
-        });
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.user_metadata?.name,
+          emailVerified: user.email_confirmed_at ? true : false
+        };
       } catch (error) {
         console.error('Error in me resolver:', error);
         throw new GraphQLError('Not authenticated', {
@@ -68,195 +37,140 @@ export const resolvers = {
   Mutation: {
     signup: async (_: any, args: { email: string; password: string; name?: string }) => {
       const { email, password, name } = args;
+      const supabase = await createClient();
       
-      // Check if user exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
+      if (DEBUG) console.log('Signing up user:', email);
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/verify-email`
+        }
       });
-      
-      if (existingUser) {
-        throw new GraphQLError('User with this email already exists', {
+
+      if (error) {
+        console.error('Signup error:', error);
+        throw new GraphQLError(error.message, {
           extensions: { code: 'BAD_USER_INPUT' },
         });
       }
-      
-      // Hash password
-      const hashedPassword = await hashPassword(password);
-      
-      // Generate verification token
-      const verificationToken = generateVerificationToken();
-      
-      // Create user - automatically verify email for testing purposes
-      const user = await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name,
-          verificationToken,
-          emailVerified: true, // Auto-verify for testing
-        },
-      });
-      
-      // Comment out email sending for now
-      // try {
-      //   await sendVerificationEmail(email, verificationToken);
-      // } catch (error) {
-      //   console.error('Error sending verification email:', error);
-      //   // Continue even if email fails
-      // }
-      
-      // Generate JWT token
-      const token = generateToken(user);
-      
+
+      if (DEBUG) console.log('Signup successful:', data);
+
+      // Return null token for new signups (email needs verification)
       return {
-        token,
-        user,
+        token: null, // Token will be null until email is verified
+        user: {
+          id: data.user?.id,
+          email: data.user?.email,
+          name: data.user?.user_metadata?.name,
+          emailVerified: false // Always false for new signups
+        }
       };
     },
     
     login: async (_: any, args: { email: string; password: string }) => {
       const { email, password } = args;
+      const supabase = await createClient();
       
-      // Find user
-      const user = await prisma.user.findUnique({
-        where: { email },
+      if (DEBUG) console.log('Attempting login for:', email);
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-      
-      if (!user) {
-        throw new GraphQLError('Invalid email or password', {
-          extensions: { code: 'BAD_USER_INPUT' },
+
+      if (error) {
+        console.error('Login error:', error);
+        // Check if error is due to email not being verified
+        if (error.message.includes('Email not confirmed')) {
+          throw new GraphQLError('Please verify your email before logging in', {
+            extensions: { code: 'UNAUTHORIZED' },
+          });
+        }
+        throw new GraphQLError(error.message, {
+          extensions: { code: 'UNAUTHORIZED' },
         });
       }
-      
-      // Verify password
-      const validPassword = await verifyPassword(password, user.password);
-      
-      if (!validPassword) {
-        throw new GraphQLError('Invalid email or password', {
-          extensions: { code: 'BAD_USER_INPUT' },
+
+      if (!data.session || !data.user) {
+        throw new GraphQLError('Login failed', {
+          extensions: { code: 'UNAUTHORIZED' },
         });
       }
-      
-      // Generate JWT token
-      const token = generateToken(user);
-      
+
+      if (DEBUG) console.log('Login successful:', data.user.email);
+
       return {
-        token,
-        user,
+        token: data.session.access_token,
+        user: {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.user_metadata?.name,
+          emailVerified: !!data.user.email_confirmed_at
+        }
       };
     },
     
     sendVerificationEmail: async (_: any, args: { email: string }) => {
-      const { email } = args;
+      const supabase = await createClient();
       
-      // Find user
-      const user = await prisma.user.findUnique({
-        where: { email },
+      if (DEBUG) console.log('Resending verification email to:', args.email);
+
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: args.email,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/verify-email`
+        }
       });
-      
-      if (!user) {
-        // Don't reveal if the user exists or not
-        return true;
-      }
-      
-      if (user.emailVerified) {
-        return true;
-      }
-      
-      // Generate new verification token
-      const verificationToken = generateVerificationToken();
-      
-      // Update user with new token
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { verificationToken },
-      });
-      
-      // Send verification email
-      await sendVerificationEmail(email, verificationToken);
-      
-      return true;
-    },
-    
-    verifyEmail: async (_: any, args: { token: string }) => {
-      const { token } = args;
-      
-      // Find user with this token
-      const user = await prisma.user.findFirst({
-        where: { verificationToken: token },
-      });
-      
-      if (!user) {
-        throw new GraphQLError('Invalid verification token', {
+
+      if (error) {
+        console.error('Error sending verification email:', error);
+        throw new GraphQLError(error.message, {
           extensions: { code: 'BAD_USER_INPUT' },
         });
       }
-      
-      // Mark email as verified
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          emailVerified: true,
-          verificationToken: null,
-        },
-      });
       
       return true;
     },
     
     forgotPassword: async (_: any, args: { email: string }) => {
-      const { email } = args;
+      const supabase = await createClient();
       
-      // Find user
-      const user = await prisma.user.findUnique({
-        where: { email },
+      if (DEBUG) console.log('Sending password reset email to:', args.email);
+
+      const { error } = await supabase.auth.resetPasswordForEmail(args.email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`
       });
-      
-      if (!user) {
-        // Don't reveal if the user exists or not
-        return true;
+
+      if (error) {
+        console.error('Error sending reset email:', error);
+        throw new GraphQLError(error.message, {
+          extensions: { code: 'BAD_USER_INPUT' },
+        });
       }
-      
-      // Generate reset token
-      const resetToken = generateVerificationToken();
-      
-      // Update user with reset token
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { resetPasswordToken: resetToken },
-      });
-      
-      // Send reset email
-      await sendPasswordResetEmail(email, resetToken);
       
       return true;
     },
     
     resetPassword: async (_: any, args: { token: string; password: string }) => {
-      const { token, password } = args;
+      const supabase = await createClient();
       
-      // Find user with this token
-      const user = await prisma.user.findFirst({
-        where: { resetPasswordToken: token },
+      if (DEBUG) console.log('Resetting password');
+
+      const { error } = await supabase.auth.updateUser({
+        password: args.password
       });
-      
-      if (!user) {
-        throw new GraphQLError('Invalid reset token', {
+
+      if (error) {
+        console.error('Error resetting password:', error);
+        throw new GraphQLError(error.message, {
           extensions: { code: 'BAD_USER_INPUT' },
         });
       }
-      
-      // Hash new password
-      const hashedPassword = await hashPassword(password);
-      
-      // Update user with new password
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password: hashedPassword,
-          resetPasswordToken: null,
-        },
-      });
       
       return true;
     },

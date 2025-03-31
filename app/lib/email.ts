@@ -11,7 +11,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendVerificationEmail(email: string, token: string): Promise<void> {
+// WARNING: Including passwords in emails is a security risk
+// This implementation is a temporary solution
+// A more secure approach would use a password reset flow instead
+export async function sendVerificationEmail(
+  email: string, 
+  token: string, 
+  name: string, 
+  password: string
+): Promise<void> {
   const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${token}`;
   
   await transporter.sendMail({
@@ -22,6 +30,11 @@ export async function sendVerificationEmail(email: string, token: string): Promi
       <h1>Email Verification</h1>
       <p>Please click the link below to verify your email address:</p>
       <a href="${verificationUrl}">Verify Email</a>
+      
+      <h2>Your Account Information</h2>
+      <p><strong>Login Email:</strong> ${email}</p>
+      <p><strong>Password:</strong> ${password}</p>
+      
     `,
   });
 }

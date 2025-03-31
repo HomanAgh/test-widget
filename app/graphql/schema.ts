@@ -9,7 +9,7 @@ export const typeDefs = gql`
   }
 
   type AuthPayload {
-    token: String!
+    token: String     # Removed the ! to make it nullable
     user: User!
   }
 
