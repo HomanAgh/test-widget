@@ -25,7 +25,7 @@ function getAuthHeader(headers: any): string {
       return headers.authorization as string;
     }
   } catch (e) {
-    console.error('Header access error:', e);
+    if (DEBUG) console.error('Header access error:', e);
   }
   return '';
 }
@@ -35,25 +35,25 @@ const handler = startServerAndCreateNextHandler(server, {
     try {
       // Use helper function to get auth header
       const authHeader = getAuthHeader(req.headers);
-      console.log('Auth header:', authHeader);
+      if (DEBUG) console.log('Auth header:', authHeader);
       
       // Extract token if present
       let token = '';
       if (authHeader && authHeader.startsWith('Bearer ')) {
         token = authHeader.slice(7);
-        console.log('Token length:', token.length);
+        if (DEBUG) console.log('Token length:', token.length);
       } else {
-        console.log('No Bearer token found in header');
+        if (DEBUG) console.log('No Bearer token found in header');
       }
       
       // Get user from token
       const user = token ? await getUserFromToken(token) : null;
-      console.log('User authenticated:', !!user);
+      if (DEBUG) console.log('User authenticated:', !!user);
       
       // Return both user and original request
       return { user, req };
     } catch (error) {
-      console.error('GraphQL context error:', error);
+      if (DEBUG) console.error('GraphQL context error:', error);
       return { user: null, req };
     }
   },

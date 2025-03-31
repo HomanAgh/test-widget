@@ -6,7 +6,7 @@ const DEBUG = true;
 
 export const resolvers = {
   Query: {
-    me: async (_: any, __: any, context: { user: any; req?: any }) => {
+    me: async () => {
       try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();

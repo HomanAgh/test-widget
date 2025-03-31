@@ -7,7 +7,7 @@ import PageWrapper from "@/app/components/common/style/PageWrapper";
 import { login } from "@/app/login/action"; // Import the server action
 
 const LoginPage = () => {
-  const [error, setError] = useState("");
+  const [error] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -57,7 +57,7 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            //@ts-ignore
+            //@ts-expect-error Server Actions are not yet fully typed
             formAction={login}
             className="font-montserrat text-[12px] flex justify-center items-center w-[100px] min-w-[80px] h-[28px] px-[12px] py-[8px] bg-[#0B9D52] text-white font-bold rounded-md hover:bg-green-700 transition-all"
           >

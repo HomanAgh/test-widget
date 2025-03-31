@@ -50,7 +50,7 @@ export function useAuth() {
   const [loginMutation] = useMutation(LOGIN_MUTATION);
   
   // Fetch current user
-  const { data, loading: queryLoading, refetch } = useQuery(ME_QUERY, {
+  const { loading: queryLoading, refetch } = useQuery(ME_QUERY, {
     skip: typeof window === 'undefined' || !localStorage.getItem('token'),
     onCompleted: (data) => {
       if (data?.me) {
