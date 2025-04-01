@@ -50,19 +50,8 @@ export async function updateSession(request: NextRequest) {
     '/auth',
     '/api/graphql',
     '/verify-email',
-    '/embed/alumni',
-    '/embed/tournament',
-    '/embed/team',
-    '/embed/player',
-    '/embed/league',
-    '/embed/goalie-leaders',
-    '/embed/goalie-leaders',
-    '/api/player',
-    '/api/team',
-    '/api/tournament',
-    '/api/alumni',
-    '/api/league',
-    '/api/goalie-leaders'
+    '/api',
+    '/embed'
   ]
   const isPublicRoute = publicRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
