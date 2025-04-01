@@ -2,6 +2,8 @@ import React from "react";
 import { Player } from "@/app/types/player";
 import Image from "next/image";
 import Link from "../common/style/Link"; // Import the Link component
+import { IoChevronUpOutline, IoChevronDownOutline } from "react-icons/io5";
+import { useState } from "react";
 
 interface PlayerInfoProps {
   player: Player;
@@ -15,16 +17,21 @@ const formatSeason = (seasonSlug: string) => {
   return `${parts[0].replace(/^20/, "")}-${parts[1].replace(/^20/, "")}`;
 };
 
-const PlayerInfo: React.FC<PlayerInfoProps> = ({ 
-  player, 
+const PlayerInfo: React.FC<PlayerInfoProps> = ({
+  player,
   nameTextColor = "#0D73A6",
-  tableBackgroundColor = "#FFFFFF"
+  tableBackgroundColor = "#FFFFFF",
 }) => {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
   return (
     <div className="font-montserrat overflow-hidden mb-0 max-w-[768px] mx-auto">
       <div className="px-0">
         {/* Player header section */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full" style={{ backgroundColor: tableBackgroundColor }}>
+        <div
+          className="flex flex-col md:flex-row md:justify-between md:items-start w-full"
+          style={{ backgroundColor: tableBackgroundColor }}
+        >
           {/* Left column - Player name, team, etc. */}
           <div className="flex-1 p-4">
             {/* Player name and flags */}
@@ -98,34 +105,58 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
             {/* Cap Hit */}
             {player.capHit !== null && (
               <div className="text-base font-medium">
-                Cap Hit: <span className="font-semibold">{player.capHit}</span>
+                {/* Cap Hit: <span className="font-semibold">{player.capHit}</span> */}
               </div>
             )}
           </div>
 
           {/* Right column - Player details */}
-          <div className="rounded-lg p-3 w-full md:w-[350px] m-4" style={{ backgroundColor: tableBackgroundColor === "#FFFFFF" ? "#F3F4F6" : tableBackgroundColor }}>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              {/* Age */}
-              <div className="font-medium text-gray-700">Age:</div>
-              <div className="text-right font-semibold">{player.age}</div>
-              
-              {/* Height */}
-              <div className="font-medium text-gray-700">Height:</div>
-              <div className="text-right font-semibold">
-                {player.heightMet} cm / {player.heightImp}
-              </div>
-              
-              {/* Weight */}
-              <div className="font-medium text-gray-700">Weight:</div>
-              <div className="text-right font-semibold">
-                {player.weightMet} kg / {player.weightImp} lbs
-              </div>
-              
-              {/* Place of birth */}
-              <div className="font-medium text-gray-700">Place of birth:</div>
-              <div className="text-right font-semibold">{player.placeOfBirth || "N/A"}</div>
+          <div
+            className="rounded-lg p-3 w-full md:w-[350px] m-4"
+            style={{
+              backgroundColor:
+                tableBackgroundColor === "#FFFFFF"
+                  ? "#F3F4F6"
+                  : tableBackgroundColor,
+            }}
+          >
+            <div
+              className="flex items-center justify-between cursor-pointer mb-2"
+              onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+            >
+              <h3 className="font-semibold">Player Details</h3>
+              {isDetailsOpen ? (
+                <IoChevronUpOutline className="w-5 h-5" />
+              ) : (
+                <IoChevronDownOutline className="w-5 h-5" />
+              )}
             </div>
+
+            {isDetailsOpen && (
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                {/* Age */}
+                <div className="font-medium text-gray-700">Age:</div>
+                <div className="text-right font-semibold">{player.age}</div>
+
+                {/* Height */}
+                <div className="font-medium text-gray-700">Height:</div>
+                <div className="text-right font-semibold">
+                  {player.heightMet} cm / {player.heightImp}
+                </div>
+
+                {/* Weight */}
+                <div className="font-medium text-gray-700">Weight:</div>
+                <div className="text-right font-semibold">
+                  {player.weightMet} kg / {player.weightImp} lbs
+                </div>
+
+                {/* Place of birth */}
+                <div className="font-medium text-gray-700">Place of birth:</div>
+                <div className="text-right font-semibold">
+                  {player.placeOfBirth || "N/A"}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

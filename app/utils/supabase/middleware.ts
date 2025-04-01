@@ -45,7 +45,19 @@ export async function updateSession(request: NextRequest) {
   console.log('Middleware: User state:', user ? 'Logged in' : 'Not logged in')
 
   // List of public routes that don't require authentication
-  const publicRoutes = ['/login', '/auth', '/api/graphql', '/verify-email']
+  const publicRoutes =
+  ['/login',
+    '/auth',
+    '/api/graphql',
+    '/verify-email',
+    '/embed/alumni',
+    '/embed/tournament',
+    '/embed/team',
+    '/embed/player',
+    '/embed/league',
+    '/embed/goalie-leaders',
+    '/embed/goalie-leaders'
+  ]
   const isPublicRoute = publicRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
   )

@@ -7,7 +7,15 @@ import {
   GoaltenderSummary,
   SkaterSummary,
 } from "@/app/types/player";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy } from "@/app/components/common/style";
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  PoweredBy,
+} from "@/app/components/common/style";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
@@ -33,8 +41,8 @@ const GamesTable: React.FC<GamesTableProps> = ({
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
-  }
+    nameTextColor: "#0D73A6",
+  },
 }) => {
   // Summaries for skaters or goaltenders
   let summary: GoaltenderSummary | SkaterSummary;
@@ -79,33 +87,66 @@ const GamesTable: React.FC<GamesTableProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <h2 className="text-xl font-bold mb-2 font-montserrat" style={{ color: customColors.textColor }}>{titleText}</h2>
+      <h2
+        className="text-xl font-bold mb-2 font-montserrat"
+        style={{ color: customColors.textColor }}
+      >
+        {titleText}
+      </h2>
 
       <TableContainer>
-        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
-          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+        <Table
+          tableBgColor={customColors.tableBackgroundColor}
+          tableTextColor={customColors.textColor}
+        >
+          <TableHead
+            bgColor={customColors.backgroundColor}
+            textColor={customColors.headerTextColor}
+          >
             <TableRow bgColor={customColors.backgroundColor}>
-              <TableCell isHeader align="left">Date</TableCell>
+              <TableCell isHeader align="left">
+                Date
+              </TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
-                  <TableCell isHeader align="center">GA</TableCell>
-                  <TableCell isHeader align="center">SA</TableCell>
-                  <TableCell isHeader align="center">SV</TableCell>
-                  <TableCell isHeader align="center">SV%</TableCell>
+                  <TableCell isHeader align="center">
+                    GA
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    SA
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    SV
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    SV%
+                  </TableCell>
                 </>
               ) : (
                 <>
-                  <TableCell isHeader align="center">G</TableCell>
-                  <TableCell isHeader align="center">A</TableCell>
-                  <TableCell isHeader align="center">TP</TableCell>
-                  <TableCell isHeader align="center">+/-</TableCell>
+                  <TableCell isHeader align="center">
+                    G
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    A
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    TP
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    +/-
+                  </TableCell>
                 </>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
             {showSummary ? (
-              <TableRow bgColor={isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"}>
+              <TableRow
+                bgColor={
+                  isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"
+                }
+              >
                 <TableCell align="left">Summary</TableCell>
                 {playerType === "GOALTENDER" ? (
                   <>
@@ -119,7 +160,8 @@ const GamesTable: React.FC<GamesTableProps> = ({
                       {(summary as GoaltenderSummary).saves}
                     </TableCell>
                     <TableCell align="center">
-                      {(summary as GoaltenderSummary).savePercentage.toFixed(2)}%
+                      {(summary as GoaltenderSummary).savePercentage.toFixed(2)}
+                      %
                     </TableCell>
                   </>
                 ) : (
@@ -142,14 +184,24 @@ const GamesTable: React.FC<GamesTableProps> = ({
             ) : (
               lastFiveGames.map((game, index) => (
                 <TableRow
-                  key={index} 
-                  bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+                  key={index}
+                  bgColor={
+                    isCustomColor
+                      ? customColors.tableBackgroundColor
+                      : index % 2 === 0
+                      ? "#F3F4F6"
+                      : "#FFFFFF"
+                  }
                 >
                   <TableCell align="left">{game.date}</TableCell>
                   {playerType === "GOALTENDER" ? (
                     <>
-                      <TableCell align="center">{game.goalsAgainst || 0}</TableCell>
-                      <TableCell align="center">{game.shotsAgainst || 0}</TableCell>
+                      <TableCell align="center">
+                        {game.goalsAgainst || 0}
+                      </TableCell>
+                      <TableCell align="center">
+                        {game.shotsAgainst || 0}
+                      </TableCell>
                       <TableCell align="center">{game.saves || 0}</TableCell>
                       <TableCell align="center">
                         {game.savePercentage?.toFixed(2) || "0.00"}%
@@ -160,7 +212,9 @@ const GamesTable: React.FC<GamesTableProps> = ({
                       <TableCell align="center">{game.goals || 0}</TableCell>
                       <TableCell align="center">{game.assists || 0}</TableCell>
                       <TableCell align="center">{game.points || 0}</TableCell>
-                      <TableCell align="center">{game.plusMinusRating || 0}</TableCell>
+                      <TableCell align="center">
+                        {game.plusMinusRating || 0}
+                      </TableCell>
                     </>
                   )}
                 </TableRow>
@@ -169,7 +223,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <PoweredBy/>
+      <PoweredBy />
     </div>
   );
 };
