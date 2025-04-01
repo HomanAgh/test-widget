@@ -48,6 +48,7 @@ export async function updateSession(request: NextRequest) {
   const publicRoutes =
   ['/login',
     '/auth',
+    '/register',
     '/api/graphql',
     '/verify-email',
     '/api',

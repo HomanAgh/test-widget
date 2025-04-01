@@ -93,7 +93,7 @@ const LoginPageContent = () => {
 
         <div className="mt-8 pt-4 border-t">
           <p className="text-center">
-            Don't have an account? 
+            Don&apos;t have an account? 
             <Link href="/register" className="ml-2 text-[#0B9D52] font-semibold hover:underline">
               Create one!
             </Link>

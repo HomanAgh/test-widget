@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { createClient } from '@/app/utils/supabase/client';
-import { MdAdminPanelSettings } from "react-icons/md";
 
 interface User {
   id: string;
