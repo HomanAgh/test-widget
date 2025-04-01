@@ -1,5 +1,6 @@
 export { default as PageTitle } from "./PageTitle";
 export { default as PageWrapper } from "./PageWrapper";
+export { default as AdminPageWrapper } from "./AdminPageWrapper";
 export { default as Table } from "./Table";
 export { default as TableBody } from "./TableBody";
 export { default as TableCell } from "./TableCell";
