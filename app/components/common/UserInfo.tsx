@@ -13,11 +13,14 @@ const UserInfo = () => {
     const fetchUserInfo = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
+        if (user && user.email) {
           setEmail(user.email);
+        } else {
+          setEmail(null);
         }
       } catch (error) {
         console.error('Error fetching user info:', error);
+        setEmail(null);
       } finally {
         setLoading(false);
       }
