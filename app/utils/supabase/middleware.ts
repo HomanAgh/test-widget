@@ -56,7 +56,13 @@ export async function updateSession(request: NextRequest) {
     '/embed/player',
     '/embed/league',
     '/embed/goalie-leaders',
-    '/embed/goalie-leaders'
+    '/embed/goalie-leaders',
+    '/api/player',
+    '/api/team',
+    '/api/tournament',
+    '/api/alumni',
+    '/api/league',
+    '/api/goalie-leaders'
   ]
   const isPublicRoute = publicRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
