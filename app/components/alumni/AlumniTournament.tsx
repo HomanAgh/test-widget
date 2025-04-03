@@ -2,11 +2,14 @@
 
 import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
+import { useFetchTournamentPlayers } from "./hooks/useFetchTournamentPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
-interface LocalAlumniProps {
-  players: any[];
-  loading?: boolean;
+type GenderParam = "male" | "female" | null;
+
+interface AlumniTournamentProps {
+  selectedTournaments?: string[];
+  selectedLeagues?: string[];
   customColors?: {
     backgroundColor: string;
     textColor: string;
@@ -21,9 +24,9 @@ interface LocalAlumniProps {
   };
 }
 
-export default function LocalAlumni({
-  players = [],
-  loading = false,
+const AlumniTournament: React.FC<AlumniTournamentProps> = ({
+  selectedTournaments = [],
+  selectedLeagues = [],
   customColors = {
     backgroundColor: "#FFFFFF",
     textColor: "#000000",
@@ -35,30 +38,36 @@ export default function LocalAlumni({
     college: true,
     professional: true,
   },
-}: LocalAlumniProps) {
-  const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
-    "men"
-  );
+}) => {
+  const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
   const [searchQuery, setSearchQuery] = useState("");
-  // Add resetPagination state with a timestamp to trigger pagination reset
   const [resetPagination, setResetPagination] = useState(Date.now());
 
-  const filteredByGender = useMemo(() => {
-    return activeGenderTab === "men"
-      ? players.filter((p) => p.gender === "male")
-      : players.filter((p) => p.gender === "female");
-  }, [players, activeGenderTab]);
+  const genderParam: GenderParam = null;
+
+  const { results, loading, error } = useFetchTournamentPlayers(
+    selectedTournaments,
+    selectedLeagues.join(","),
+    genderParam
+  );
+
+  const filteredPlayers = useMemo(() => {
+    return results.filter((player) =>
+      activeGenderTab === "men"
+        ? player.gender === "male"
+        : player.gender === "female"
+    );
+  }, [results, activeGenderTab]);
 
   const searchedPlayers = useMemo(() => {
-    if (!searchQuery) return filteredByGender;
-    const q = searchQuery.toLowerCase();
-    return filteredByGender.filter((p) => p.name.toLowerCase().includes(q));
-  }, [filteredByGender, searchQuery]);
+    if (!searchQuery) return filteredPlayers;
+    return filteredPlayers.filter((player) =>
+      player.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [filteredPlayers, searchQuery]);
 
-  // Handle search query change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    // Reset pagination to page 1 when search query changes
     setResetPagination(Date.now());
   };
 
@@ -80,8 +89,10 @@ export default function LocalAlumni({
             Loading...
           </p>
         )}
+        {error && <p>{error}</p>}
       </div>
 
+      {/* Men/Women Tabs */}
       <div className="flex h-[48px] px-[10px] py-[12px] justify-center items-center font-montserrat font-semibold pb-[32px] pt-[32px]">
         <button
           className={`flex items-center justify-center w-1/2 px-4 py-2 text-[14px] leading-[18px]${
@@ -119,4 +130,6 @@ export default function LocalAlumni({
       />
     </div>
   );
-}
+};
+
+export default AlumniTournament;

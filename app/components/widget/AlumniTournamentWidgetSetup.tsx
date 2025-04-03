@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { SelectedTeam } from "@/app/types/team";
-import TeamSearchBar from "@/app/components/alumni/TeamSearchBar";
+import { TournamentItem } from "@/app/types/tournament";
+import TournamentSearchBar from "@/app/components/alumni/TournamentSearchBar";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
 import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
-import Alumni from "@/app/components/alumni/Alumni";
+import AlumniTournament from "@/app/components/alumni/AlumniTournament";
 import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
 import EmbedCodeBlock from "../iframe/IframePreview";
 
 const DEFAULT_IFRAME_HEIGHT = 1300;
 
-const AlumniWidgetSetup: React.FC = () => {
-  const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
+const AlumniTournamentWidgetSetup: React.FC = () => {
+  const [selectedTournaments, setSelectedTournaments] = useState<TournamentItem[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [customColors, setCustomColors] = useState({
@@ -68,40 +68,34 @@ const AlumniWidgetSetup: React.FC = () => {
     return categories;
   }, [selectedLeagues, customLeagues, customJunLeagues, customCollegeLeagues]);
 
-  const youthName =
-    selectedTeams.length > 0 ? selectedTeams[0].name : "CHICAGO MISSION U16";
-
   // Create embed URL
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const teamIds = selectedTeams.map((t) => t.id).join(",");
+    const tournamentSlugs = selectedTournaments.map((t) => t.slug).join(",");
     const leagues = selectedLeagues.join(",");
 
     return (
-      `${baseUrl}/embed/alumni` +
-      `?teamIds=${encodeURIComponent(teamIds)}` +
+      `${baseUrl}/embed/alumni-tournament` +
+      `?tournaments=${encodeURIComponent(tournamentSlugs)}` +
       `&leagues=${encodeURIComponent(leagues)}` +
-      `&teams=${encodeURIComponent(youthName)}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
       `&tableBackgroundColor=${encodeURIComponent(
         customColors.tableBackgroundColor
       )}` +
+      `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
-      `&includeYouth=true` +
       `&_t=${Date.now()}`
     );
-  }, [selectedTeams, selectedLeagues, customColors, youthName]);
+  }, [selectedTournaments, selectedLeagues, customColors]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
 
   return (
     <div>
-      <TeamSearchBar
-        onSelect={(team) => setSelectedTeams([team])}
-        onError={(errMsg) => setError(errMsg)}
-        selectedTeams={selectedTeams}
-        onCheckedTeamsChange={setSelectedTeams}
+      <TournamentSearchBar
+        selectedTournaments={selectedTournaments}
+        onCheckedTournamentsChange={setSelectedTournaments}
       />
 
       {error && <ErrorMessage error={error} onClose={() => setError(null)} />}
@@ -124,13 +118,12 @@ const AlumniWidgetSetup: React.FC = () => {
         />
       </div>
 
-      {selectedTeams.length > 0 && (
+      {selectedTournaments.length > 0 && selectedLeagues.length > 0 && (
         <div className="mt-6">
-          <Alumni
-            selectedTeams={selectedTeams}
+          <AlumniTournament
+            selectedTournaments={selectedTournaments.map(t => t.slug)}
             selectedLeagues={selectedLeagues}
             customColors={customColors}
-            includeYouth={true}
             selectedLeagueCategories={selectedLeagueCategories}
           />
         </div>
@@ -141,4 +134,4 @@ const AlumniWidgetSetup: React.FC = () => {
   );
 };
 
-export default AlumniWidgetSetup;
+export default AlumniTournamentWidgetSetup;
