@@ -89,7 +89,16 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
     );
   }, [selectedTournaments, selectedLeagues, customColors]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
+  // Generate source attribution links
+  const sourceLinks = useMemo(() => {
+    if (selectedTournaments.length === 0) return '';
+    
+    return selectedTournaments.map(tournament => (
+      `<p> Source: <a href="https://www.eliteprospects.com/league/${tournament.slug}" target="_blank" rel="noopener noreferrer">${tournament.name}</a> @ Elite Prospects</p>`
+    )).join('\n');
+  }, [selectedTournaments]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>
