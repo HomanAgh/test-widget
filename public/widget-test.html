@@ -4,11 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EliteProspects Widget Test</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-</head>
 <body>
   <h1>EliteProspects Widget Test</h1>
   
@@ -18,62 +13,27 @@
     
     <h3>Basic Implementation</h3>
     <div class="code-block">
-      <pre>&lt;!-- Player Widget --&gt;
-&lt;div 
-  class="ep-widget" 
-  data-widget-type="player" 
-  data-player-id="38703"
-  data-game-limit="5"
-  data-view-mode="stats"
-  data-background-color="#052D41"
-  data-text-color="#000000"
-  data-table-background-color="#FFFFFF"
-  data-header-text-color="#FFFFFF"
-  data-name-text-color="#0D73A6"
-&gt;&lt;/div&gt;
+      <pre>&lt;!-- alumni Widget --&gt;
+        &lt;div 
+          class="ep-widget" 
+          data-widget-type="alumni" 
+          data-selected-teams='[{"id":"18741","name":"San Jose Barracuda"}]'
+          data-selected-leagues='["nhl","shl","ahl","khl","nl","liiga","czechia","del","echl","icehl","slovakia","hockeyallsvenskan","ncaa","usports","acac","acha","ohl","whl","ushl","qmjhl","j20-nationell","mhl","cchl","pwhl-w","sdhl-w","nwhl-ca-w","phf-w","ncaa-w","ncaa-iii-w","acha-w","acha-d2-w","jwhl-w"]'
+          data-include-youth="false"
+          data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+          data-background-color="#052D41"
+          data-text-color="#000000"
+          data-table-background-color="#FFFFFF"
+          data-header-text-color="#FFFFFF"
+          data-name-text-color="#0D73A6"
+        &gt;&lt;/div&gt;
 
-&lt;!-- Widget Loader Script (place at the end of the body) --&gt;
-&lt;script src="https://widget.eliteprospects.com/widget-loader-combined.js"&gt;&lt;/script&gt;</pre>
-    </div>
-    
-    <h3>Widget Types & Parameters</h3>
-    <table>
-      <tr>
-        <th>Widget Type</th>
-        <th>Required Parameters</th>
-      </tr>
-      <tr>
-        <td>player</td>
-        <td>data-player-id</td>
-      </tr>
-      <tr>
-        <td>team</td>
-        <td>data-team-id</td>
-      </tr>
-      <tr>
-        <td>league</td>
-        <td>data-league-slug</td>
-      </tr>
-      <tr>
-        <td>scoring-leaders</td>
-        <td>data-league-slug, data-season</td>
-      </tr>
-      <tr>
-        <td>goalie-leaders</td>
-        <td>data-league-slug, data-season</td>
-      </tr>
-      <tr>
-        <td>alumni</td>
-        <td>data-selected-teams, data-selected-leagues</td>
-      </tr>
-      <tr>
-        <td>tournament</td>
-        <td>data-selected-tournaments, data-selected-leagues</td>
-      </tr>
-    </table>
+        &lt;!-- Widget Loader Script (place at the end of the body) --&gt;
+        &lt;script src="https://widget.eliteprospects.com/widget-loader-combined.js"&gt;&lt;/script&gt;</pre>
+
   </div>
   
-  <h2>Example: Player Widget</h2>
+  <h2> Example: Alumni Widget</h2>
   <div class="ep-widget" data-widget-type="alumni"
   data-selected-teams='[{"id":"18741","name":"San Jose Barracuda"}]'
   data-selected-leagues='["nhl","shl","ahl","khl","nl","liiga","czechia","del","echl","icehl","slovakia","hockeyallsvenskan","ncaa","usports","acac","acha","ohl","whl","ushl","qmjhl","j20-nationell","mhl","cchl","pwhl-w","sdhl-w","nwhl-ca-w","phf-w","ncaa-w","ncaa-iii-w","acha-w","acha-d2-w","jwhl-w"]'
@@ -83,7 +43,7 @@
   data-text-color="#000000"
   data-table-background-color="#FFFFFF"
   data-name-text-color="#0D73A6"
-  ></div>
+></div>
 
 <!-- Widget Loader Script -->
 <script src="http://localhost:3000/widget-loader-combined.js?dev=true"></script>

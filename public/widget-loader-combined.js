@@ -15,6 +15,36 @@
   
   debug('Widget loader starting');
   
+  // Add preconnect for Google Fonts
+  function addGoogleFontsPreconnect() {
+    // Only add if they don't already exist
+    if (!document.querySelector('link[href="https://fonts.googleapis.com"]')) {
+      const preconnect1 = document.createElement('link');
+      preconnect1.rel = 'preconnect';
+      preconnect1.href = 'https://fonts.googleapis.com';
+      document.head.appendChild(preconnect1);
+      
+      debug('Added Google Fonts preconnect');
+    }
+  }
+  
+  // Add Google Fonts directly (minimal subset for faster loading)
+  function addFontStylesheet() {
+    if (!document.querySelector('link[href*="fonts.googleapis.com/css2"]')) {
+      const fontLink = document.createElement('link');
+      fontLink.rel = 'stylesheet';
+      fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap';
+      document.head.appendChild(fontLink);
+      debug('Added font stylesheet link');
+    }
+  }
+  
+  // Add font preconnect
+  addGoogleFontsPreconnect();
+  
+  // Add the fonts directly
+  addFontStylesheet();
+  
   // Find all widget containers
   const widgets = document.querySelectorAll('.ep-widget');
   
@@ -170,7 +200,6 @@
         // Initialize widget if the global widget renderer is available
         if (window.EPWidgets && typeof window.EPWidgets.renderWidget === 'function') {
           console.log('Rendering widget:', widgetType, config);
-          console.log("hej");
           window.EPWidgets.renderWidget(container, widgetType, config);
         } else {
           console.error('Widget renderer not loaded properly');

@@ -103,68 +103,6 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     }
   }, [iframeCode]);
 
-  // Legacy iframe script code generator 
-  const generateScriptCode = useCallback(() => {
-    try {
-      const srcMatch = iframeCode.match(/src="([^"]+)"/);
-      if (!srcMatch || !srcMatch[1]) return '';
-      const srcUrl = srcMatch[1];
-      const url = new URL(srcUrl, window.location.origin);
-      const params = url.searchParams;
-      const pathParts = url.pathname.split('/');
-      const widgetType = pathParts[pathParts.length - 1];
-      
-      let scriptCode = `<script\n  src="${window.location.origin}/widget-embed.js"\n  data-widget-type="${widgetType}"`;
-      
-      // Add widget-specific parameters
-      switch (widgetType) {
-        case 'player':
-          if (params.has('playerId')) scriptCode += `\n  data-player-id="${params.get('playerId')}"`;
-          if (params.has('gameLimit')) scriptCode += `\n  data-game-limit="${params.get('gameLimit')}"`;
-          if (params.has('viewMode')) scriptCode += `\n  data-view-mode="${params.get('viewMode')}"`;
-          if (params.has('showSummary')) scriptCode += `\n  data-show-summary="${params.get('showSummary')}"`;
-          break;
-        case 'team':
-          if (params.has('teamId')) scriptCode += `\n  data-team-id="${params.get('teamId')}"`;
-          break;
-        case 'league':
-          if (params.has('leagueSlug')) scriptCode += `\n  data-league-slug="${params.get('leagueSlug')}"`;
-          break;
-        case 'scoring-leaders':
-          if (params.has('leagueSlug')) scriptCode += `\n  data-league-slug="${params.get('leagueSlug')}"`;
-          if (params.has('season')) scriptCode += `\n  data-season="${params.get('season')}"`;
-          break;
-        case 'goalie-leaders':
-          if (params.has('leagueSlug')) scriptCode += `\n  data-league-slug="${params.get('leagueSlug')}"`;
-          if (params.has('season')) scriptCode += `\n  data-season="${params.get('season')}"`;
-          break;
-        case 'alumni':
-          if (params.has('teamIds')) scriptCode += `\n  data-team-ids="${params.get('teamIds')}"`;
-          if (params.has('leagues')) scriptCode += `\n  data-leagues="${params.get('leagues')}"`;
-          if (params.has('teams')) scriptCode += `\n  data-teams="${params.get('teams')}"`;
-          break;
-        case 'tournament':
-          if (params.has('tournaments')) scriptCode += `\n  data-tournaments="${params.get('tournaments')}"`;
-          if (params.has('leagues')) scriptCode += `\n  data-leagues="${params.get('leagues')}"`;
-          break;
-      }
-      
-      // Add common styling parameters
-      if (params.has('backgroundColor')) scriptCode += `\n  data-background-color="${params.get('backgroundColor')}"`;
-      if (params.has('textColor')) scriptCode += `\n  data-text-color="${params.get('textColor')}"`;
-      if (params.has('tableBackgroundColor')) scriptCode += `\n  data-table-background-color="${params.get('tableBackgroundColor')}"`;
-      if (params.has('headerTextColor')) scriptCode += `\n  data-header-text-color="${params.get('headerTextColor')}"`;
-      if (params.has('nameTextColor')) scriptCode += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
-      
-      scriptCode += `\n  data-width="100%"\n  data-height="600px"\n></script>`;
-      
-      return scriptCode;
-    } catch (error) {
-      console.error('Error generating script code:', error);
-      return '';
-    }
-  }, [iframeCode]);
-
   // Get the appropriate code based on the selected embed type
   const directScriptCode = generateDirectScriptCode();
   const currentCode = embedType === 'iframe' ? iframeCode : directScriptCode;

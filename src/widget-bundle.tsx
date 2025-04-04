@@ -132,7 +132,7 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
 
   try {
     // Check for required parameters for each widget type
-    let missingParams: string[] = [];
+    const missingParams: string[] = [];
     
     switch (widgetType) {
       case 'player':

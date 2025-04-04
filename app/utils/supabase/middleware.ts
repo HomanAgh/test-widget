@@ -54,6 +54,10 @@ export async function updateSession(request: NextRequest) {
     '/api',
     '/embed'
   ]
+  
+  // Check if the current path is under /embed
+  const isEmbedRoute = request.nextUrl.pathname.startsWith('/embed')
+  
   const isPublicRoute = publicRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
   )
@@ -62,7 +66,8 @@ export async function updateSession(request: NextRequest) {
   console.log('Middleware: Route type:', isPublicRoute ? 'Public' : 'Protected')
 
   // If user is logged in and trying to access auth pages, redirect to home
-  if (user && isPublicRoute && !request.nextUrl.pathname.startsWith('/api')) {
+  // EXCEPT for embed routes which should always be accessible
+  if (user && isPublicRoute && !request.nextUrl.pathname.startsWith('/api') && !isEmbedRoute) {
     console.log('Middleware: Redirecting authenticated user to home')
     const url = request.nextUrl.clone()
     url.pathname = '/'
