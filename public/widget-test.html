@@ -1,65 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EP-widget Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .container {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin: 20px 0;
-            min-height: 400px;
-        }
-        h1, h2 {
-            color: #333;
-        }
-        .instructions {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-left: 4px solid #007bff;
-            margin-bottom: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EliteProspects Widget Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>EP-widget Test</h1>
+  <h1>EliteProspects Widget Test</h1>
+  
+  <div class="instructions">
+    <h2>Widget Implementation Guide</h2>
+    <p>This page demonstrates the direct script implementation of EliteProspects widgets. This method embeds widgets directly on your page (without iframes) for better integration and performance.</p>
     
-    <div class="instructions">
-        <p><strong>Instructions:</strong></p>
-        <ol>
-            <li>Make sure your development server is running at <code>http://localhost:3000</code></li>
-            <li>Replace the example script tag below with your own script tag</li>
-            <li>Save the file and refresh the page to see your widget</li>
-        </ol>
+    <h3>Basic Implementation</h3>
+    <div class="code-block">
+      <pre>&lt;!-- Player Widget --&gt;
+&lt;div 
+  class="ep-widget" 
+  data-widget-type="player" 
+  data-player-id="38703"
+  data-game-limit="5"
+  data-view-mode="stats"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+&gt;&lt;/div&gt;
+
+&lt;!-- Widget Loader Script (place at the end of the body) --&gt;
+&lt;script src="https://widget.eliteprospects.com/widget-loader-combined.js"&gt;&lt;/script&gt;</pre>
     </div>
     
-    <h2>Your Widget Will Appear Below:</h2>
-    <div class="container">
-        <!-- REPLACE THIS SCRIPT TAG WITH YOUR OWN -->
-        <script
-        src="/widget-embed.js"
-        data-widget-type="scoring-leaders"
-        data-league-slug="nhl"
-        data-season="2024-2025"
-        data-width="100%"
-        data-height="600px"
-      ></script>
-    </div>
-    
-    <div class="instructions">
-        <p><strong>Troubleshooting:</strong></p>
-        <ul>
-            <li>If nothing appears, make sure your development server is running</li>
-            <li>Check your browser's console (F12) for any JavaScript errors</li>
-            <li>Verify that all required data attributes are included in your script tag</li>
-        </ul>
-    </div>
+    <h3>Widget Types & Parameters</h3>
+    <table>
+      <tr>
+        <th>Widget Type</th>
+        <th>Required Parameters</th>
+      </tr>
+      <tr>
+        <td>player</td>
+        <td>data-player-id</td>
+      </tr>
+      <tr>
+        <td>team</td>
+        <td>data-team-id</td>
+      </tr>
+      <tr>
+        <td>league</td>
+        <td>data-league-slug</td>
+      </tr>
+      <tr>
+        <td>scoring-leaders</td>
+        <td>data-league-slug, data-season</td>
+      </tr>
+      <tr>
+        <td>goalie-leaders</td>
+        <td>data-league-slug, data-season</td>
+      </tr>
+      <tr>
+        <td>alumni</td>
+        <td>data-selected-teams, data-selected-leagues</td>
+      </tr>
+      <tr>
+        <td>tournament</td>
+        <td>data-selected-tournaments, data-selected-leagues</td>
+      </tr>
+    </table>
+  </div>
+  
+  <h2>Example: Player Widget</h2>
+  <div class="ep-widget" data-widget-type="alumni"
+  data-selected-teams='[{"id":"18741","name":"San Jose Barracuda"}]'
+  data-selected-leagues='["nhl","shl","ahl","khl","nl","liiga","czechia","del","echl","icehl","slovakia","hockeyallsvenskan","ncaa","usports","acac","acha","ohl","whl","ushl","qmjhl","j20-nationell","mhl","cchl","pwhl-w","sdhl-w","nwhl-ca-w","phf-w","ncaa-w","ncaa-iii-w","acha-w","acha-d2-w","jwhl-w"]'
+  data-include-youth="false"
+  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+  ></div>
+
+<!-- Widget Loader Script -->
+<script src="http://localhost:3000/widget-loader-combined.js?dev=true"></script>
+
+<iframe src="http://localhost:3000/embed/alumni?teamIds=18741&leagues=nhl%2Cshl%2Cahl%2Ckhl%2Cnl%2Cliiga%2Cczechia%2Cdel%2Cechl%2Cicehl%2Cslovakia%2Chockeyallsvenskan%2Cncaa%2Cusports%2Cacac%2Cacha%2Cohl%2Cwhl%2Cushl%2Cqmjhl%2Cj20-nationell%2Cmhl%2Ccchl%2Cpwhl-w%2Csdhl-w%2Cnwhl-ca-w%2Cphf-w%2Cncaa-w%2Cncaa-iii-w%2Cacha-w%2Cacha-d2-w%2Cjwhl-w&teams=San%20Jose%20Barracuda&backgroundColor=%23052D41&textColor=%23000000&tableBackgroundColor=%23FFFFFF&nameTextColor=%230D73A6&includeYouth=true&_t=1743751329387" width="100%" height="1300px" frameborder="0" class="iframe"></iframe>
 </body>
 </html> 

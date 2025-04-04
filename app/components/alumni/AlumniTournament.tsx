@@ -28,10 +28,11 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
   selectedTournaments = [],
   selectedLeagues = [],
   customColors = {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#052D41",
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
-    headerTextColor: "#000000",
+    headerTextColor: "#FFFFFF",
+    nameTextColor: "#0D73A6"
   },
   selectedLeagueCategories = {
     junior: true,

@@ -8,7 +8,7 @@ interface EmbedCodeBlockProps {
 
 const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
   const [showModalCode, setShowModalCode] = useState(false);
-  const [embedType, setEmbedType] = useState<'iframe' | 'script'>('iframe');
+  const [embedType, setEmbedType] = useState<'direct-script' | 'iframe'>('direct-script');
   const [showModal, setShowModal] = useState(false);
 
   const copyToClipboard = useCallback(async (text: string) => {
@@ -20,6 +20,90 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     }
   }, []);
 
+  // Convert iframe code to direct script implementation
+  const generateDirectScriptCode = useCallback(() => {
+    try {
+      const srcMatch = iframeCode.match(/src="([^"]+)"/);
+      if (!srcMatch || !srcMatch[1]) return '';
+      const srcUrl = srcMatch[1];
+      const url = new URL(srcUrl, window.location.origin);
+      const params = url.searchParams;
+      const pathParts = url.pathname.split('/');
+      const widgetType = pathParts[pathParts.length - 1];
+      
+      // Build the direct script implementation
+      let widgetDiv = `<div class="ep-widget" data-widget-type="${widgetType}"`;
+      
+      // Add parameters based on widget type
+      switch (widgetType) {
+        case 'player':
+          if (params.has('playerId')) widgetDiv += `\n  data-player-id="${params.get('playerId')}"`;
+          if (params.has('gameLimit')) widgetDiv += `\n  data-game-limit="${params.get('gameLimit')}"`;
+          if (params.has('viewMode')) widgetDiv += `\n  data-view-mode="${params.get('viewMode')}"`;
+          if (params.has('showSummary')) widgetDiv += `\n  data-show-summary="${params.get('showSummary')}"`;
+          break;
+        case 'team':
+          if (params.has('teamId')) widgetDiv += `\n  data-team-id="${params.get('teamId')}"`;
+          break;
+        case 'league':
+          if (params.has('leagueSlug')) widgetDiv += `\n  data-league-slug="${params.get('leagueSlug')}"`;
+          break;
+        case 'scoring-leaders':
+          if (params.has('leagueSlug')) widgetDiv += `\n  data-league-slug="${params.get('leagueSlug')}"`;
+          if (params.has('season')) widgetDiv += `\n  data-season="${params.get('season')}"`;
+          break;
+        case 'goalie-leaders':
+          if (params.has('leagueSlug')) widgetDiv += `\n  data-league-slug="${params.get('leagueSlug')}"`;
+          if (params.has('season')) widgetDiv += `\n  data-season="${params.get('season')}"`;
+          break;
+        case 'alumni':
+          if (params.has('teamIds')) {
+            // Convert team IDs to object array format
+            const teamIds = params.get('teamIds')?.split(',') || [];
+            const teams = params.get('teams')?.split(',') || [];
+            const teamObjects = teamIds.map((id, index) => ({
+              id,
+              name: teams[index] || `Team ${id}`
+            }));
+            widgetDiv += `\n  data-selected-teams='${JSON.stringify(teamObjects)}'`;
+          }
+          if (params.has('leagues')) {
+            const leagues = params.get('leagues')?.split(',') || [];
+            widgetDiv += `\n  data-selected-leagues='${JSON.stringify(leagues)}'`;
+          }
+          widgetDiv += `\n  data-include-youth="false"`;
+          widgetDiv += `\n  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'`;
+          break;
+        case 'tournament':
+          if (params.has('tournaments')) {
+            const tournaments = params.get('tournaments')?.split(',') || [];
+            widgetDiv += `\n  data-selected-tournaments='${JSON.stringify(tournaments)}'`;
+          }
+          if (params.has('leagues')) {
+            const leagues = params.get('leagues')?.split(',') || [];
+            widgetDiv += `\n  data-selected-leagues='${JSON.stringify(leagues)}'`;
+          }
+          widgetDiv += `\n  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'`;
+          break;
+      }
+      
+      // Add common styling parameters
+      if (params.has('backgroundColor')) widgetDiv += `\n  data-background-color="${params.get('backgroundColor')}"`;
+      if (params.has('textColor')) widgetDiv += `\n  data-text-color="${params.get('textColor')}"`;
+      if (params.has('tableBackgroundColor')) widgetDiv += `\n  data-table-background-color="${params.get('tableBackgroundColor')}"`;
+      if (params.has('headerTextColor')) widgetDiv += `\n  data-header-text-color="${params.get('headerTextColor')}"`;
+      if (params.has('nameTextColor')) widgetDiv += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
+      
+      widgetDiv += `\n></div>\n\n<!-- Widget Loader Script -->\n<script src="${window.location.origin}/widget-loader-combined.js"></script>`;
+      
+      return widgetDiv;
+    } catch (error) {
+      console.error('Error generating direct script code:', error);
+      return '';
+    }
+  }, [iframeCode]);
+
+  // Legacy iframe script code generator 
   const generateScriptCode = useCallback(() => {
     try {
       const srcMatch = iframeCode.match(/src="([^"]+)"/);
@@ -32,6 +116,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       
       let scriptCode = `<script\n  src="${window.location.origin}/widget-embed.js"\n  data-widget-type="${widgetType}"`;
       
+      // Add widget-specific parameters
       switch (widgetType) {
         case 'player':
           if (params.has('playerId')) scriptCode += `\n  data-player-id="${params.get('playerId')}"`;
@@ -45,16 +130,31 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
         case 'league':
           if (params.has('leagueSlug')) scriptCode += `\n  data-league-slug="${params.get('leagueSlug')}"`;
           break;
+        case 'scoring-leaders':
+          if (params.has('leagueSlug')) scriptCode += `\n  data-league-slug="${params.get('leagueSlug')}"`;
+          if (params.has('season')) scriptCode += `\n  data-season="${params.get('season')}"`;
+          break;
+        case 'goalie-leaders':
+          if (params.has('leagueSlug')) scriptCode += `\n  data-league-slug="${params.get('leagueSlug')}"`;
+          if (params.has('season')) scriptCode += `\n  data-season="${params.get('season')}"`;
+          break;
         case 'alumni':
           if (params.has('teamIds')) scriptCode += `\n  data-team-ids="${params.get('teamIds')}"`;
           if (params.has('leagues')) scriptCode += `\n  data-leagues="${params.get('leagues')}"`;
           if (params.has('teams')) scriptCode += `\n  data-teams="${params.get('teams')}"`;
-          if (params.has('backgroundColor')) scriptCode += `\n  data-background-color="${params.get('backgroundColor')}"`;
-          if (params.has('textColor')) scriptCode += `\n  data-text-color="${params.get('textColor')}"`;
-          if (params.has('tableBackgroundColor')) scriptCode += `\n  data-table-background-color="${params.get('tableBackgroundColor')}"`;
-          if (params.has('nameTextColor')) scriptCode += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
+          break;
+        case 'tournament':
+          if (params.has('tournaments')) scriptCode += `\n  data-tournaments="${params.get('tournaments')}"`;
+          if (params.has('leagues')) scriptCode += `\n  data-leagues="${params.get('leagues')}"`;
           break;
       }
+      
+      // Add common styling parameters
+      if (params.has('backgroundColor')) scriptCode += `\n  data-background-color="${params.get('backgroundColor')}"`;
+      if (params.has('textColor')) scriptCode += `\n  data-text-color="${params.get('textColor')}"`;
+      if (params.has('tableBackgroundColor')) scriptCode += `\n  data-table-background-color="${params.get('tableBackgroundColor')}"`;
+      if (params.has('headerTextColor')) scriptCode += `\n  data-header-text-color="${params.get('headerTextColor')}"`;
+      if (params.has('nameTextColor')) scriptCode += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
       
       scriptCode += `\n  data-width="100%"\n  data-height="600px"\n></script>`;
       
@@ -65,8 +165,9 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
     }
   }, [iframeCode]);
 
-  const scriptCode = generateScriptCode();
-  const currentCode = embedType === 'iframe' ? iframeCode : scriptCode;
+  // Get the appropriate code based on the selected embed type
+  const directScriptCode = generateDirectScriptCode();
+  const currentCode = embedType === 'iframe' ? iframeCode : directScriptCode;
 
   const navigateToEmbedDocs = () => {
     window.open('/embed/docs', '_blank');
@@ -105,6 +206,16 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
             <p className="mb-2">Choose how you want to embed this widget:</p>
             <div className="flex space-x-2 mb-4">
               <button
+                onClick={() => setEmbedType('direct-script')}
+                className={`px-4 py-2 rounded-md ${
+                  embedType === 'direct-script' 
+                    ? 'bg-[#0B9D52] text-white' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Direct Script (Recommended)
+              </button>
+              <button
                 onClick={() => setEmbedType('iframe')}
                 className={`px-4 py-2 rounded-md ${
                   embedType === 'iframe' 
@@ -112,29 +223,19 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                iframe
-              </button>
-              <button
-                onClick={() => setEmbedType('script')}
-                className={`px-4 py-2 rounded-md ${
-                  embedType === 'script' 
-                    ? 'bg-[#0B9D52] text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Script Tag
+                iframe (Legacy)
               </button>
             </div>
             
             <div className="mb-4">
               <h3 className="font-semibold mb-2">
-                {embedType === 'iframe' ? 'iframe Embed Code' : 'Script Tag Embed Code'}
+                {embedType === 'direct-script' ? 'Direct Script Embed Code (Recommended)' : 'iframe Embed Code (Legacy)'}
               </h3>
               <div className="relative">
                 <textarea
                   readOnly
                   value={currentCode}
-                  rows={embedType === 'script' ? 8 : 3}
+                  rows={embedType === 'direct-script' ? 10 : 3}
                   className={`w-full p-2 border border-gray-300 rounded-md transition-[filter] duration-300 ${
                     showModalCode ? "" : "blur-sm"
                   }`}
@@ -164,13 +265,31 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                 </button>
                 <button
                   onClick={() => {
-                    window.open('/widget-test.html', '_blank');
+                    window.open('/widget-script-test.html', '_blank');
                   }}
                   className="bg-[#052D41] text-white hover:bg-blue-700 transition-all px-4 py-2 rounded-md "
                 >
                   Test Widget
                 </button>
               </div>
+
+              {embedType === 'direct-script' && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-800">
+                    <strong>Direct Script Implementation:</strong> This method embeds the widget directly into your page without an iframe. 
+                    It provides better integration with your site and improved performance.
+                  </p>
+                </div>
+              )}
+
+              {embedType === 'iframe' && (
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                  <p className="text-sm text-amber-800">
+                    <strong>Legacy Method:</strong> iframe embedding is still supported but not recommended. 
+                    Consider using the direct script implementation for better integration and performance.
+                  </p>
+                </div>
+              )}
             </div>
             
             <div className="mt-6 border-t pt-4">

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EP Widget Script Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px 0;
+      min-height: 400px;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .instructions {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-left: 4px solid #007bff;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>EP Widget Direct Script Test</h1>
+  
+  <div class="instructions">
+    <p><strong>Instructions:</strong></p>
+    <ol>
+      <li>Make sure your development server is running at <code>http://localhost:3000</code></li>
+      <li>Build the widget bundle with <code>npm run build:widget</code></li>
+      <li>This page demonstrates widgets loaded via script (no iframes)</li>
+      <li>Check your browser's console (F12) for any errors</li>
+    </ol>
+  </div>
+  
+  <h2>Player Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="player" 
+      data-player-id="38703"
+      data-game-limit="5"
+      data-view-mode="career"
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+    ></div>
+  </div>
+  
+  <h2>Team Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="team" 
+      data-team-id="77"
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+    ></div>
+  </div>
+  
+  <h2>League Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="league" 
+      data-league-slug="nhl"
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+    ></div>
+  </div>
+  
+  <h2>Scoring Leaders Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="scoring-leaders" 
+      data-league-slug="nhl"
+      data-season="2023-2024"
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+    ></div>
+  </div>
+  
+  <h2>Goalie Leaders Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="goalie-leaders" 
+      data-league-slug="nhl"
+      data-season="2023-2024"
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+    ></div>
+  </div>
+  
+  <h2>Alumni Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="alumni" 
+      data-selected-teams='[{"id":"77","name":"Detroit Red Wings"}]'
+      data-selected-leagues='["nhl"]'
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+      data-include-youth="false"
+      data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+    ></div>
+  </div>
+  
+  <h2>Tournament Widget</h2>
+  <div class="container">
+    <div 
+      class="ep-widget" 
+      data-widget-type="tournament" 
+      data-selected-tournaments='["brick-invitational"]'
+      data-selected-leagues='["shl"]'
+      data-background-color="#052D41"
+      data-text-color="#000000"
+      data-table-background-color="#FFFFFF"
+      data-header-text-color="#FFFFFF"
+      data-name-text-color="#0D73A6"
+      data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+    ></div>
+  </div>
+  
+  <div class="instructions">
+    <p><strong>Implementation Example:</strong></p>
+    <pre><code>&lt;!-- Player Widget --&gt;
+&lt;div 
+  class="ep-widget" 
+  data-widget-type="player" 
+  data-player-id="38703"
+  data-game-limit="5"
+  data-view-mode="stats"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+&gt;&lt;/div&gt;
+
+&lt;!-- Scoring Leaders Widget --&gt;
+&lt;div 
+  class="ep-widget" 
+  data-widget-type="scoring-leaders" 
+  data-league-slug="nhl"
+  data-season="2023-2024"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+&gt;&lt;/div&gt;
+
+&lt;!-- Widget Loader Script --&gt;
+&lt;script src="https://widget.eliteprospects.com/widget-loader-combined.js"&gt;&lt;/script&gt;</code></pre>
+  </div>
+  
+  <!-- Load the widget script -->
+  <script src="/widget-loader-combined.js"></script>
+</body>
+</html> 
