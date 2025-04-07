@@ -10,8 +10,18 @@ const LogoutButton: React.FC = () => {
   const supabase = createClient();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/auth");
+    try {
+      await supabase.auth.signOut();
+      
+      // Add a small delay before navigation to ensure the signOut completes
+      setTimeout(() => {
+        router.push("/auth");
+        // Force a full refresh to clear any client-side state
+        router.refresh();
+      }, 100);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (

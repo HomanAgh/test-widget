@@ -10,7 +10,7 @@ const AlumniPage = () => {
       <div>
         <Header currentPath="/alumni" />
         <PageTitle title="Search Teams" />
-          <AlumniWidgetSetup mode="team"/>
+          <AlumniWidgetSetup/>
       </div>
     </PageWrapper>
   );

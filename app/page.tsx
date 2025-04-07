@@ -22,7 +22,7 @@ const HomePage = () => {
     checkAuth();
   }, [router]);
 
-  return null; // Render nothing during the redirect
+  return null; 
 };
 
 export default HomePage;

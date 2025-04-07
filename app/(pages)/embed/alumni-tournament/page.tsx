@@ -1,5 +1,5 @@
 import React from "react";
-import LocalAlumni from "@/app/components/alumni/LocalAlumni";
+import AlumniTournament from "@/app/components/alumni/AlumniTournament";
 import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
 interface PageProps {
@@ -14,18 +14,6 @@ interface PageProps {
   }>;
 }
 
-async function getTournamentData(tournaments: string, leagues: string) {
-  try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/tournament-alumni?tournaments=${encodeURIComponent(tournaments)}&league=${encodeURIComponent(leagues)}`;
-    const res = await fetch(url, { cache: 'no-store' });
-    const data = await res.json();
-    return data.players || [];
-  } catch (err) {
-    console.error("Tournament fetch error:", err);
-    return [];
-  }
-}
-
 const EmbedTournament = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
   const tournamentsStr = params.tournaments || "";
@@ -36,26 +24,25 @@ const EmbedTournament = async ({ searchParams }: PageProps) => {
   const headerTextColor = params.headerTextColor || "#FFFFFF";
   const nameTextColor = params.nameTextColor || "#0D73A6";
 
-  let finalPlayers = [];
-  if (tournamentsStr && leaguesStr) {
-    finalPlayers = await getTournamentData(tournamentsStr, leaguesStr);
-  }
+  const selectedTournaments = tournamentsStr.split(",").filter(Boolean);
+  const selectedLeagues = leaguesStr.split(",").filter(Boolean);
 
   return (
     <ClientWrapper>
       <div style={{ overflow: "auto" }}>
-        {finalPlayers.length === 0 ? (
+        {selectedTournaments.length === 0 || selectedLeagues.length === 0 ? (
           <p className="flex justify-center pt-3 font-montserrat font-semibold">No data available</p>
         ) : (
-          <LocalAlumni 
-            players={finalPlayers} 
+          <AlumniTournament
+            selectedTournaments={selectedTournaments}
+            selectedLeagues={selectedLeagues}
             customColors={{
               backgroundColor,
               textColor,
               tableBackgroundColor,
               headerTextColor,
               nameTextColor,
-            }} 
+            }}
           />
         )}
       </div>

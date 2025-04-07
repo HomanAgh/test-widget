@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "prisma generate && next build",
+    "dev": "npm run build:widget && next dev --turbopack",
+    "build": "prisma generate && npm run build:widget && next build",
+    "build:widget": "vite build --config vite.widget.config.ts",
+    "build:all": "npm run build && npm run build:widget",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "npm run build:widget"
   },
   "dependencies": {
     "@apollo/client": "^3.13.5",
@@ -45,10 +48,15 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.8.2"
+    "terser": "^5.39.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.5",
+    "vite-plugin-css-injected-by-js": "^3.5.2"
   }
 }

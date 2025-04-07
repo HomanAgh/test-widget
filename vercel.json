@@ -1,0 +1,37 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    { 
+      "src": "/widget-bundle.js", 
+      "headers": { 
+        "cache-control": "public, max-age=31536000, immutable" 
+      },
+      "dest": "/widget-bundle.js"
+    },
+    { 
+      "src": "/widget-loader-combined.js", 
+      "headers": { 
+        "cache-control": "public, max-age=31536000, immutable",
+        "access-control-allow-origin": "*"
+      },
+      "dest": "/widget-loader-combined.js"
+    },
+    { 
+      "src": "/widget-test.html", 
+      "headers": { 
+        "cache-control": "public, max-age=0, must-revalidate" 
+      },
+      "dest": "/widget-test.html"
+    }
+  ]
+} 
