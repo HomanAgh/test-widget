@@ -20,7 +20,6 @@ import {
 } from "@/app/components/common/style";
 import ToggleTeamList from "./ToggleTeamList";
 import Tooltip from "../common/Tooltip";
-import Image from "next/image";
 import {
   sortTeamsByLeagueRankThenName,
   filterAndSortPlayers,
@@ -455,7 +454,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                             <Tooltip
                               tooltip={`${player.draftPick.year} NHL Draft\nRound ${player.draftPick.round}, #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
                             >
-                              <Image
+                              <img
                                 src={player.draftPick.team.logo}
                                 alt={player.draftPick.team.name}
                                 width={20}

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import RosterTable from "@/app/components/team/RosterTable";
 import type { Team as TeamType, RosterPlayer } from "@/app/types/team";
-import Image from "next/image";
 import Link from "../common/style/Link"; // Import the Link component
 
 interface TeamStats {
@@ -83,10 +82,9 @@ const Team: React.FC<TeamProps> = ({
           <div className="font-montserrat">
             <div className="mb-6 flex items-center space-x-4 pb-[24px]">
               {teamStats.team.logoM && (
-                <Image
+                <img
                   src={teamStats.team.logoM}
                   alt={`${teamStats.team.name} Logo`}
-                  layout="intrinsic"
                   width={48}
                   height={48}
                 />

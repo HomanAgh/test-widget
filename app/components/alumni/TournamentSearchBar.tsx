@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
-import Image from "next/image";
 import { TournamentItem } from "@/app/types/tournament";
 
 // Extend these props if you want to handle "onSelect" single-click logic
@@ -217,7 +216,7 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
                 className=" inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
               >
                 {(tour.logoUrl || tour.imageUrl || tour.logo?.url) && (
-                  <Image
+                  <img
                     src={tour.logoUrl || tour.imageUrl || tour.logo?.url || ""}
                     alt={`${tour.name} logo`}
                     className="mr-2 rounded"
@@ -231,7 +230,7 @@ const TournamentSearchBar: React.FC<TournamentSearchBarProps> = ({
                   className="ml-2 flex items-center justify-center self-center"
                   aria-label="Remove tournament"
                 >
-                  <Image
+                  <img
                     src="/images/close (x).svg"
                     alt="Remove tournament"
                     width={16}

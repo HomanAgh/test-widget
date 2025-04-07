@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 
 const PoweredBy: React.FC = () => {
   return (
@@ -15,10 +14,10 @@ const PoweredBy: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
+          <img
             className="h-[14px] w-[97.075px] cursor-pointer"
             alt="EliteProspects"
-            src="/images/Group.svg"
+            src="https://widget.eliteprospects.com/images/Group.svg"
             width={97.075}
             height={14}
           />

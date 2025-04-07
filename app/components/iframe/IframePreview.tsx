@@ -32,7 +32,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       const widgetType = pathParts[pathParts.length - 1];
       
       // Build the direct script implementation
-      let widgetDiv = `<div class="ep-widget" data-widget-type="${widgetType}"`;
+      let widgetDiv = `<div class="ep-widget" \n  data-widget-type="${widgetType}"`;
       
       // Add parameters based on widget type
       switch (widgetType) {
@@ -87,14 +87,13 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
           break;
       }
       
-      // Add common styling parameters
       if (params.has('backgroundColor')) widgetDiv += `\n  data-background-color="${params.get('backgroundColor')}"`;
       if (params.has('textColor')) widgetDiv += `\n  data-text-color="${params.get('textColor')}"`;
       if (params.has('tableBackgroundColor')) widgetDiv += `\n  data-table-background-color="${params.get('tableBackgroundColor')}"`;
       if (params.has('headerTextColor')) widgetDiv += `\n  data-header-text-color="${params.get('headerTextColor')}"`;
       if (params.has('nameTextColor')) widgetDiv += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
       
-      widgetDiv += `\n></div>\n\n<!-- Widget Loader Script -->\n<script src="${window.location.origin}/widget-loader-combined.js"></script>`;
+      widgetDiv += `\n></div>\n\n<script async src="${window.location.origin}/widget-loader-combined.js"></script>`;
       
       return widgetDiv;
     } catch (error) {

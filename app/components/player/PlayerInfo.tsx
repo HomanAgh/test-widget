@@ -1,6 +1,5 @@
 import React from "react";
 import { Player } from "@/app/types/player";
-import Image from "next/image";
 import Link from "../common/style/Link"; // Import the Link component
 import { IoChevronUpOutline, IoChevronDownOutline } from "react-icons/io5";
 import { useState } from "react";
@@ -37,7 +36,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
             <div className="flex items-center space-x-2 mb-2">
               <div className="flex space-x-1">
                 {player.flagUrls?.primary && (
-                  <Image
+                  <img
                     src={player.flagUrls.primary}
                     alt="Primary flag"
                     className="object-contain rounded-sm"
@@ -46,7 +45,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
                   />
                 )}
                 {player.flagUrls?.secondary && (
-                  <Image
+                  <img
                     src={player.flagUrls.secondary}
                     alt="Secondary flag"
                     className="object-contain rounded-sm"
@@ -74,7 +73,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
                   style={{ color: nameTextColor }}
                 >
                   {player.teamLogo && (
-                    <Image
+                    <img
                       src={player.teamLogo}
                       alt={`${player.team.name} Logo`}
                       width={20}

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import PageWrapper from "@/app/components/common/style/PageWrapper";
 import Header from "@/app/components/Header";
@@ -191,12 +190,12 @@ const ContactPage = () => {
           
           <div className="w-full md:w-1/2 flex flex-col items-center">
             <div className="relative w-full h-[300px] md:h-[400px] mb-8">
-              <Image 
+              <img 
                 src="/images/what-huh.gif" 
                 alt="Confused person gif" 
-                fill
+                width={400}
+                height={400}
                 style={{ objectFit: 'contain' }}
-                priority
               />
             </div>
             

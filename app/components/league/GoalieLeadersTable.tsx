@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { GoalieLeadersTableProps } from '@/app/types/goalieLeaders';
 import { 
   Table, 
@@ -269,7 +268,7 @@ const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({
                     <div className="flex items-center">
                       {goalie.player.flagUrl && (
                         <div key={`flag-container-${goalie.player.id || index}`} className="flex-shrink-0 mr-2">
-                          <Image
+                          <img
                             key={`flag-${goalie.player.id || index}`}
                             src={goalie.player.flagUrl}
                             alt={`${nationalityName} flag`}
@@ -295,7 +294,7 @@ const GoalieLeadersTable: React.FC<GoalieLeadersTableProps> = ({
                     <div className="flex items-center">
                       {goalie.team.logo?.small && (
                         <div key={`logo-container-${goalie.team.id || index}`} className="flex-shrink-0 mr-2">
-                          <Image
+                          <img
                             key={`logo-${goalie.team.id || index}`}
                             src={goalie.team.logo.small}
                             alt={`${goalie.team.name} logo`}

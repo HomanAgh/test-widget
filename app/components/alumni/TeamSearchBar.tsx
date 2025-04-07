@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { TeamItem, TeamSearchBarProps } from "@/app/types/team";
-import Image from "next/image";
 
 const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
   onSelect,
@@ -199,7 +198,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
                   className="inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
                 >
                   {team.logo && (
-                    <Image
+                    <img
                       src={team.logo}
                       alt={`${team.name} logo`}
                       className="mr-2 rounded"
@@ -213,7 +212,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
                     className="ml-2 flex items-center justify-center self-center"
                     aria-label="Remove team"
                   >
-                    <Image
+                    <img
                       src="/images/close (x).svg"
                       alt="Remove team"
                       width={16}
