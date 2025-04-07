@@ -8,7 +8,7 @@ import { useState } from "react";
 interface PlayerInfoProps {
   player: Player;
   nameTextColor?: string;
-  tableBackgroundColor?: string;
+  containerWidth?: string;
 }
 
 const formatSeason = (seasonSlug: string) => {
@@ -20,20 +20,19 @@ const formatSeason = (seasonSlug: string) => {
 const PlayerInfo: React.FC<PlayerInfoProps> = ({
   player,
   nameTextColor = "#0D73A6",
-  tableBackgroundColor = "#FFFFFF",
+  containerWidth = "max-w-md",
 }) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   return (
-    <div className="font-montserrat overflow-hidden mb-0 max-w-[768px] mx-auto">
+    <div
+      className={`font-montserrat overflow-hidden mb-0 ${containerWidth} mx-auto rounded-t-lg`}
+    >
       <div className="px-0">
         {/* Player header section */}
-        <div
-          className="flex flex-col md:flex-row md:justify-between md:items-start w-full"
-          style={{ backgroundColor: tableBackgroundColor }}
-        >
-          {/* Left column - Player name, team, etc. */}
-          <div className="flex-1 p-4">
+        <div className="w-full">
+          {/* Player name, team, etc. */}
+          <div className="flex flex-col p-4">
             {/* Player name and flags */}
             <div className="flex items-center space-x-2 mb-2">
               <div className="flex space-x-1">
@@ -100,40 +99,21 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
               ) : (
                 <span>Unknown League</span>
               )}
-            </div>
-
-            {/* Cap Hit */}
-            {player.capHit !== null && (
-              <div className="text-base font-medium">
-                {/* Cap Hit: <span className="font-semibold">{player.capHit}</span> */}
+              <div
+                className="ml-2 cursor-pointer"
+                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+              >
+                {isDetailsOpen ? (
+                  <IoChevronUpOutline className="w-5 h-5" />
+                ) : (
+                  <IoChevronDownOutline className="w-5 h-5" />
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Right column - Player details */}
-          <div
-            className="rounded-lg p-3 w-full md:w-[350px] m-4"
-            style={{
-              backgroundColor:
-                tableBackgroundColor === "#FFFFFF"
-                  ? "#F3F4F6"
-                  : tableBackgroundColor,
-            }}
-          >
-            <div
-              className="flex items-center justify-between cursor-pointer mb-2"
-              onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-            >
-              <h3 className="font-semibold">Player Details</h3>
-              {isDetailsOpen ? (
-                <IoChevronUpOutline className="w-5 h-5" />
-              ) : (
-                <IoChevronDownOutline className="w-5 h-5" />
-              )}
             </div>
 
+            {/* Player details dropdown */}
             {isDetailsOpen && (
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm mt-2">
                 {/* Age */}
                 <div className="font-medium text-gray-700">Age:</div>
                 <div className="text-right font-semibold">{player.age}</div>

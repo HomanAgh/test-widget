@@ -1,6 +1,14 @@
 import React from "react";
 import { PlayerType, Goalie, Skater } from "@/app/types/player";
-import { TableContainer, Table,TableHead,TableBody,TableRow,TableCell, PoweredBy } from "@/app/components/common/style";
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  PoweredBy,
+} from "@/app/components/common/style";
 
 interface PlayerStatsTableProps {
   playerType: PlayerType;
@@ -22,8 +30,8 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
-  }
+    nameTextColor: "#0D73A6",
+  },
 }) => {
   const isGoaltender = playerType === "GOALTENDER";
   const isCustomColor =
@@ -31,32 +39,65 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
     customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-2 font-montserrat" style={{ color: customColors.textColor }}>Statistics</h2>
+    <div className="max-w-md mx-auto rounded-lg -mt-4">
+      {/* <h2
+        className="text-xl font-bold mb-2 font-montserrat"
+        style={{ color: customColors.textColor }}
+      >
+        Statistics
+      </h2> */}
       <TableContainer>
-        <Table tableBgColor={customColors.tableBackgroundColor} tableTextColor={customColors.textColor}>
-          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+        <Table
+          tableBgColor={customColors.tableBackgroundColor}
+          tableTextColor={customColors.textColor}
+        >
+          <TableHead
+            bgColor={customColors.backgroundColor}
+            textColor={customColors.headerTextColor}
+          >
             <TableRow bgColor={customColors.backgroundColor}>
-              <TableCell isHeader align="center">GP</TableCell>
+              <TableCell isHeader align="center">
+                GP
+              </TableCell>
               {isGoaltender ? (
                 <>
-                  <TableCell isHeader align="center">GA</TableCell>
-                  <TableCell isHeader align="center">SA</TableCell>
-                  <TableCell isHeader align="center">SV</TableCell>
-                  <TableCell isHeader align="center">SV%</TableCell>
+                  <TableCell isHeader align="center">
+                    GA
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    SA
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    SV
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    SV%
+                  </TableCell>
                 </>
               ) : (
                 <>
-                  <TableCell isHeader align="center">G</TableCell>
-                  <TableCell isHeader align="center">A</TableCell>
-                  <TableCell isHeader align="center">TP</TableCell>
-                  <TableCell isHeader align="center">+/-</TableCell>
+                  <TableCell isHeader align="center">
+                    G
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    A
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    TP
+                  </TableCell>
+                  <TableCell isHeader align="center">
+                    +/-
+                  </TableCell>
                 </>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow bgColor={isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"}>
+            <TableRow
+              bgColor={
+                isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"
+              }
+            >
               <TableCell align="center">
                 {(stats as Goalie).gamesPlayed}
               </TableCell>
@@ -95,7 +136,7 @@ const PlayerStatsTable: React.FC<PlayerStatsTableProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <PoweredBy/>
+      <PoweredBy />
     </div>
   );
 };

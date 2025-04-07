@@ -16,6 +16,8 @@ interface ScoringLeadersProps {
     nameTextColor?: string;
   };
   hideSeasonSelector?: boolean;
+  positionFilter?: string;
+  nationalityFilter?: string;
 }
 
 const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
@@ -29,6 +31,8 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     nameTextColor: "#0D73A6",
   },
   hideSeasonSelector = false,
+  positionFilter = "all",
+  nationalityFilter = "all",
 }) => {
   const date = new Date();
   const currentYear = date.getFullYear();
@@ -54,15 +58,32 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
       setError(null);
 
       try {
-        const response = await fetch(
-          `/api/league/${leagueSlug}/scoring-leaders?season=${encodeURIComponent(
-            selectedSeason
-          )}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch scoring leaders data");
+        // Build query parameters
+        const params = new URLSearchParams();
+        params.append("season", selectedSeason);
+        if (positionFilter !== "all") {
+          params.append("position", positionFilter);
         }
+        if (nationalityFilter !== "all") {
+          params.append("nationality", nationalityFilter);
+        }
+
+        console.log("Fetching scoring leaders with params:", params.toString());
+        const response = await fetch(
+          `/api/league/${leagueSlug}/scoring-leaders?${params.toString()}`
+        );
+
+        console.log("Response status:", response.status);
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error response:", errorData);
+          throw new Error(
+            errorData.error || "Failed to fetch scoring leaders data"
+          );
+        }
+
         const data = await response.json();
+        console.log("Received data:", data);
 
         // Validate the data structure
         if (!data) {
@@ -94,46 +115,7 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
           }
         }
 
-        // Process the data to ensure all required fields exist
-        const processedData = {
-          ...data,
-          data: data.data.map((item: any) => ({
-            id: item.id || Math.random().toString(36).substr(2, 9),
-            player: {
-              id: item.player?.id || 0,
-              firstName: item.player?.firstName || "",
-              lastName: item.player?.lastName || "",
-              name:
-                item.player?.name ||
-                `${item.player?.firstName || ""} ${
-                  item.player?.lastName || ""
-                }`,
-              slug: item.player?.slug || item.player?.id?.toString() || "",
-              position: "",
-              nationality: "",
-              ...item.player,
-            },
-            team: {
-              id: item.team?.id || 0,
-              name: item.team?.name || "",
-              // Generate a slug if it doesn't exist
-              slug: item.team?.slug || item.team?.id?.toString() || "",
-              league: item.team?.league || {},
-              ...item.team,
-            },
-            regularStats: {
-              GP: item.regularStats?.GP || 0,
-              G: item.regularStats?.G || 0,
-              A: item.regularStats?.A || 0,
-              PTS: item.regularStats?.PTS || 0,
-              ...item.regularStats,
-            },
-            season: item.season || { slug: selectedSeason },
-            ...item,
-          })),
-        };
-
-        setScoringLeaders(processedData);
+        setScoringLeaders(data);
       } catch (err: any) {
         console.error("Error fetching scoring leaders:", err);
         setError(err.message || "An error occurred");
@@ -143,7 +125,7 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     };
 
     fetchScoringLeaders();
-  }, [leagueSlug, selectedSeason]);
+  }, [leagueSlug, selectedSeason, positionFilter, nationalityFilter]);
 
   // Handler for the SeasonSelector component
   const handleSeasonChange = (newSeason: string) => {
@@ -169,6 +151,17 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
   }
 
   const leagueDisplay = leagueName || leagueSlug.toUpperCase();
+
+  // Extract unique nationalities from the data
+  const nationalities = new Set<string>();
+  scoringLeaders.data.forEach((player) => {
+    if (
+      player.player?.nationality &&
+      typeof player.player.nationality === "object"
+    ) {
+      nationalities.add(player.player.nationality.slug);
+    }
+  });
 
   return (
     <div className="max-w-6xl mx-auto my-8">

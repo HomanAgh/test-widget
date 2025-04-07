@@ -11,6 +11,8 @@ interface PageProps {
     tableBackgroundColor?: string;
     headerTextColor?: string;
     nameTextColor?: string;
+    positionFilter?: string;
+    nationalityFilter?: string;
   }>;
 }
 
@@ -23,6 +25,8 @@ const EmbedScoringLeaders = async ({ searchParams }: PageProps) => {
   const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
   const headerTextColor = params.headerTextColor || "#FFFFFF";
   const nameTextColor = params.nameTextColor || "#0D73A6";
+  const positionFilter = params.positionFilter || "all";
+  const nationalityFilter = params.nationalityFilter || "all";
 
   if (!leagueSlug) {
     return <div>Missing leagueSlug parameter</div>;
@@ -39,12 +43,15 @@ const EmbedScoringLeaders = async ({ searchParams }: PageProps) => {
             textColor,
             tableBackgroundColor,
             headerTextColor,
-            nameTextColor
+            nameTextColor,
           }}
+          positionFilter={positionFilter}
+          nationalityFilter={nationalityFilter}
+          hideSeasonSelector={true}
         />
       </div>
     </ClientWrapper>
   );
 };
 
-export default EmbedScoringLeaders; 
+export default EmbedScoringLeaders;

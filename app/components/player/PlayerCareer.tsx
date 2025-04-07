@@ -28,10 +28,13 @@ const fetcher = (url: string) =>
 
 const PlayerCareers: React.FC<PlayerCareerProps> = ({
   playerId,
-  customColors
+  customColors,
 }) => {
   // Use SWR to fetch the player's career data
-  const { data, error } = useSWR(`/api/playerCareer?playerId=${playerId}`, fetcher);
+  const { data, error } = useSWR(
+    `/api/playerCareer?playerId=${playerId}`,
+    fetcher
+  );
 
   // Handle loading state
   if (!data && !error) {
@@ -40,12 +43,20 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
 
   // Handle error state
   if (error) {
-    return <div className="text-center text-red-600">{"Error Occurred"}: {error.message}</div>;
+    return (
+      <div className="text-center text-red-600">
+        {"Error Occurred"}: {error.message}
+      </div>
+    );
   }
 
   // Now we have data and no error
   if (!data || !data.stats) {
-    return <div className="text-center text-red-600">{"Error Occurred"}: NoStatsAvailable</div>;
+    return (
+      <div className="text-center text-red-600">
+        {"Error Occurred"}: NoStatsAvailable
+      </div>
+    );
   }
 
   console.log("Fetched Player Career Stats:", data); // Debug log
@@ -69,17 +80,12 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
         }),
   }));
 
-  console.log("Mapped Careers:", careers); 
+  console.log("Mapped Careers:", careers);
 
   return (
-    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      {careers && (
-        <CareerTable 
-          careers={careers}
-          customColors={customColors}
-        />
-      )}
-    </div>
+    <>
+      {careers && <CareerTable careers={careers} customColors={customColors} />}
+    </>
   );
 };
 

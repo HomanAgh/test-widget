@@ -48,8 +48,8 @@ const Player: React.FC<PlayerProps> = ({
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
-  }
+    nameTextColor: "#0D73A6",
+  },
 }) => {
   const { data, error } = useSWR(
     `/api/player/${encodeURIComponent(playerId)}?limit=${gameLimit}`,
@@ -61,7 +61,9 @@ const Player: React.FC<PlayerProps> = ({
   }
 
   if (error) {
-    return <div className="text-center text-red-600">Error: {error.message}</div>;
+    return (
+      <div className="text-center text-red-600">Error: {error.message}</div>
+    );
   }
 
   const playerStats: PlayerStats = {
@@ -72,10 +74,10 @@ const Player: React.FC<PlayerProps> = ({
       league: data.playerInfo.league,
       jerseyNumber: data.playerInfo.jerseyNumber || "N/A",
       views: data.playerInfo.views || 0,
-      weightMet: data.playerInfo.weightMet || "",  
-      weightImp: data.playerInfo.weightImp || "",    
-      heightMet: data.playerInfo.heightMet || "",    
-      heightImp: data.playerInfo.heightImp || "",  
+      weightMet: data.playerInfo.weightMet || "",
+      weightImp: data.playerInfo.weightImp || "",
+      heightMet: data.playerInfo.heightMet || "",
+      heightImp: data.playerInfo.heightImp || "",
       capHit: data.playerInfo.capHit,
       age: data.playerInfo.age || 0,
       placeOfBirth: data.playerInfo.placeOfBirth,
@@ -87,33 +89,39 @@ const Player: React.FC<PlayerProps> = ({
     playerType: data.playerInfo.playerType,
   };
 
+  const getContainerWidth = (mode: string) => {
+    switch (mode) {
+      case "games":
+        return "max-w-md";
+      case "career":
+        return "max-w-lg";
+      case "seasons":
+        return "max-w-3xl";
+      case "stats":
+        return "max-w-md";
+      default:
+        return "max-w-md";
+    }
+  };
+
   return (
     <div style={{ color: customColors.textColor, background: "none" }}>
-      <PlayerInfo 
-        player={playerStats.player} 
+      <PlayerInfo
+        player={playerStats.player}
         nameTextColor={customColors.nameTextColor}
-        tableBackgroundColor={customColors.tableBackgroundColor}
+        containerWidth={getContainerWidth(viewMode)}
       />
 
       {/* Player Stats View */}
       <div>
         {viewMode === "stats" && (
-          <PlayerStat 
-            playerId={playerId} 
-            customColors={customColors}
-          />
+          <PlayerStat playerId={playerId} customColors={customColors} />
         )}
         {viewMode === "seasons" && (
-          <PlayerSeasons 
-            playerId={playerId} 
-            customColors={customColors}
-          />
+          <PlayerSeasons playerId={playerId} customColors={customColors} />
         )}
         {viewMode === "career" && (
-          <PlayerCareers 
-            playerId={playerId} 
-            customColors={customColors}
-          />
+          <PlayerCareers playerId={playerId} customColors={customColors} />
         )}
         {viewMode === "games" && (
           <GamesTable
