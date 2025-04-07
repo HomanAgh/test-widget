@@ -25,11 +25,11 @@ const fetcher = (url: string) =>
     return res.json();
   });
 
-const PlayerStat: React.FC<PlayerStatProps> = ({
-  playerId,
-  customColors
-}) => {
-  const { data, error } = useSWR(`/api/playerStats?playerId=${encodeURIComponent(playerId)}`, fetcher);
+const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, customColors }) => {
+  const { data, error } = useSWR(
+    `/api/playerStats?playerId=${encodeURIComponent(playerId)}`,
+    fetcher
+  );
 
   if (!data && !error) {
     return <div>Loading...</div>;
@@ -45,30 +45,31 @@ const PlayerStat: React.FC<PlayerStatProps> = ({
 
   const type: PlayerType = data.playerInfo.playerType;
 
-  const stats = type === "GOALTENDER"
-    ? {
-        gamesPlayed: data.stats?.gamesPlayed || 0,
-        shotsAgainst: data.stats?.shotsAgainst ?? "N/A",
-        saves: data.stats?.saves ?? "N/A",
-        goalsAgainst: data.stats?.goalsAgainst ?? "N/A",
-        savePercentage: parseFloat(data.stats?.savePercentage) || 0,
-      } as Goalie
-    : {
-        gamesPlayed: data.stats?.gamesPlayed || 0,
-        goals: data.stats?.goals ?? "N/A",
-        assists: data.stats?.assists ?? "N/A",
-        points: data.stats?.points ?? "N/A",
-        plusMinusRating: data.stats?.plusMinusRating ?? "N/A",
-      } as Skater;
+  const stats =
+    type === "GOALTENDER"
+      ? ({
+          gamesPlayed: data.stats?.gamesPlayed || 0,
+          shotsAgainst: data.stats?.shotsAgainst ?? "N/A",
+          saves: data.stats?.saves ?? "N/A",
+          goalsAgainst: data.stats?.goalsAgainst ?? "N/A",
+          savePercentage: parseFloat(data.stats?.savePercentage) || 0,
+        } as Goalie)
+      : ({
+          gamesPlayed: data.stats?.gamesPlayed || 0,
+          goals: data.stats?.goals ?? "N/A",
+          assists: data.stats?.assists ?? "N/A",
+          points: data.stats?.points ?? "N/A",
+          plusMinusRating: data.stats?.plusMinusRating ?? "N/A",
+        } as Skater);
 
   return (
-    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <PlayerStatsTable 
-        playerType={type} 
+    <>
+      <PlayerStatsTable
+        playerType={type}
         stats={stats}
         customColors={customColors}
       />
-    </div>
+    </>
   );
 };
 

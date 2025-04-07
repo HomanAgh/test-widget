@@ -39,7 +39,7 @@ const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
             textColor,
             tableBackgroundColor,
             headerTextColor,
-            nameTextColor
+            nameTextColor,
           }}
         />
       </div>
@@ -47,4 +47,4 @@ const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default EmbedGoalieLeaders; 
+export default EmbedGoalieLeaders;

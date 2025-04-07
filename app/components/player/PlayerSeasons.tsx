@@ -27,9 +27,12 @@ const fetcher = (url: string) =>
 
 const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
   playerId,
-  customColors
+  customColors,
 }) => {
-  const { data, error } = useSWR(`/api/playerSeasons?playerId=${encodeURIComponent(playerId)}`, fetcher);
+  const { data, error } = useSWR(
+    `/api/playerSeasons?playerId=${encodeURIComponent(playerId)}`,
+    fetcher
+  );
 
   if (!data && !error) {
     return <div>Loading...</div>;
@@ -68,13 +71,13 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
   }));
 
   return (
-    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <SeasonsTable 
-        playerType={playerType} 
+    <>
+      <SeasonsTable
+        playerType={playerType}
         seasons={seasons}
         customColors={customColors}
       />
-    </div>
+    </>
   );
 };
 

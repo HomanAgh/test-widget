@@ -81,19 +81,12 @@ const GamesTable: React.FC<GamesTableProps> = ({
     );
   }
 
-  const titleText = showSummary
+  /* const titleText = showSummary
     ? `Summary Last ${gameLimit} Games`
-    : `Last ${gameLimit} Games`;
+    : `Last ${gameLimit} Games`; */
 
   return (
-    <div className="max-w-6xl mx-auto my-8 p-6 rounded-lg">
-      <h2
-        className="text-xl font-bold mb-2 font-montserrat"
-        style={{ color: customColors.textColor }}
-      >
-        {titleText}
-      </h2>
-
+    <div className="max-w-md mx-auto rounded-lg -mt-4">
       <TableContainer>
         <Table
           tableBgColor={customColors.tableBackgroundColor}
@@ -105,7 +98,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
           >
             <TableRow bgColor={customColors.backgroundColor}>
               <TableCell isHeader align="left">
-                Date
+                Games
               </TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
@@ -147,7 +140,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
                   isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"
                 }
               >
-                <TableCell align="left">Summary</TableCell>
+                <TableCell align="left">{`Last ${gameLimit} Games`}</TableCell>
                 {playerType === "GOALTENDER" ? (
                   <>
                     <TableCell align="center">

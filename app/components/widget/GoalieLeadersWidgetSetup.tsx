@@ -12,7 +12,10 @@ interface GoalieLeadersWidgetSetupProps {
   season: string;
 }
 
-const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({ leagueSlug, season }) => {
+const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
+  leagueSlug,
+  season,
+}) => {
   const [customColors, setCustomColors] = useState({
     headerTextColor: "#FFFFFF",
     backgroundColor: "#052D41",
@@ -23,18 +26,21 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({ lea
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
 
   const embedUrl = useMemo(() => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    
-    const url = `${baseUrl}/embed/goalie-leaders` +
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+
+    const url =
+      `${baseUrl}/embed/goalie-leaders` +
       `?leagueSlug=${encodeURIComponent(leagueSlug)}` +
       `&season=${encodeURIComponent(season)}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
-      `&tableBackgroundColor=${encodeURIComponent(customColors.tableBackgroundColor)}` +
+      `&tableBackgroundColor=${encodeURIComponent(
+        customColors.tableBackgroundColor
+      )}` +
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&_t=${Date.now()}`;
-    
+
     return url;
   }, [leagueSlug, season, customColors]);
 
@@ -44,25 +50,25 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({ lea
     <div>
       <div className="mb-6">
         <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
-          <HexColors 
-            customColors={customColors} 
+          <HexColors
+            customColors={customColors}
             setCustomColors={setCustomColors}
             height={iframeHeight}
             onHeightChange={setIframeHeight}
             defaultHeight={DEFAULT_IFRAME_HEIGHT}
           />
-        </div>  
+        </div>
       </div>
 
       <div className="mt-6">
-        <GoalieLeaders 
+        <GoalieLeaders
           leagueSlug={leagueSlug}
           season={season}
           customColors={customColors}
         />
       </div>
 
-      <EmbedCodeBlock iframeCode={iframeCode}/>
+      <EmbedCodeBlock iframeCode={iframeCode} />
     </div>
   );
 };
