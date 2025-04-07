@@ -42,6 +42,7 @@ export async function updateSession(request: NextRequest) {
   ['/login',
     '/auth',
     '/register',
+    '/register',
     '/api/graphql',
     '/verify-email',
     '/api',
@@ -50,6 +51,7 @@ export async function updateSession(request: NextRequest) {
   // Check if the current path is under /embed
   const isEmbedRoute = request.nextUrl.pathname.startsWith('/embed')
   const isPublicRoute = publicRoutes.some(route =>
+
     request.nextUrl.pathname.startsWith(route)
   )
   // Debug: Log route state

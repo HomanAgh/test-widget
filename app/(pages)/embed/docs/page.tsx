@@ -11,452 +11,404 @@ const EmbedDocs = () => {
     <PageWrapper>
       <Header currentPath="/embed/docs" />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-6">Widget Embedding Documentation</h1>
+        <h1 className="text-3xl font-bold mb-6">Widget Documentation</h1>
         
-        <div className="mb-8">
-          <p className="mb-4">
-            Our widgets can be embedded on any website using either an iframe or a script tag. 
-            This documentation explains how to use both methods and customize the widgets to fit your needs.
+        <section className="mb-6 bg-blue-50 p-5 rounded-lg border border-blue-200">
+          <h2 className="text-xl font-bold mb-3">How It Works</h2>
+          <p className="mb-3">
+            EliteProspects widgets are embedded directly into your website using a combination of:
           </p>
-          <Link href="/embed/demo" className="text-blue-600 hover:underline">
-            View live demos →
+          <ol className="list-decimal pl-8 mb-4">
+            <li className="mb-2"><strong>Widget Container:</strong> An HTML div with data attributes that define the widget type and parameters</li>
+            <li className="mb-2"><strong>Widget Loader Script:</strong> A JavaScript file that processes all widget containers on your page</li>
+          </ol>
+          <div className="bg-blue-100 p-3 rounded-lg">
+            <p className="font-semibold text-blue-800">
+              The widget loader script only needs to be included once, regardless of how many widgets you have on the page.
+            </p>
+          </div>
+        </section>
+        
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold mb-4">Basic Implementation</h2>
+          <p className="mb-4">
+            Add the widget container element with data attributes and the loader script:
+          </p>
+          
+          <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-6">
+            <pre className="text-sm">
+{`<!-- Widget Container -->
+<div 
+  class="ep-widget" 
+  data-widget-type="player" 
+  data-player-id="38703"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>
+
+<!-- Widget Loader Script -->
+<script src="https://widget.eliteprospects.com/widget-loader-combined.js"></script>`}
+            </pre>
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold mb-4">Widget Types & Parameters</h2>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">Player Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-player-id</code> - EliteProspects player ID</li>
+              </ul>
+              
+              <h4 className="font-semibold mb-2">Optional Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-game-limit</code> - Number of games to display (default: 5)</li>
+                <li><code>data-view-mode</code> - Display mode: &quot;stats&quot;, &quot;seasons&quot;, &quot;career&quot;, or &quot;games&quot; (default: &quot;stats&quot;)</li>
+                <li><code>data-show-summary</code> - Show game summaries: &quot;true&quot; or &quot;false&quot; (default: &quot;false&quot;)</li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="player" 
+  data-player-id="38703"
+  data-game-limit="5"
+  data-view-mode="stats"
+  data-show-summary="false"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">Team Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-team-id</code> - EliteProspects team ID</li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="team" 
+  data-team-id="18741"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">League Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-league-slug</code> - League identifier (e.g., &quot;nhl&quot;, &quot;shl&quot;)</li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="league" 
+  data-league-slug="nhl"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">Scoring Leaders Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-league-slug</code> - League identifier (e.g., &quot;nhl&quot;, &quot;shl&quot;)</li>
+                <li><code>data-season</code> - Season identifier (e.g., &quot;2023-2024&quot;)</li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="scoring-leaders" 
+  data-league-slug="nhl"
+  data-season="2023-2024"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">Goalie Leaders Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-league-slug</code> - League identifier (e.g., &quot;nhl&quot;, &quot;shl&quot;)</li>
+                <li><code>data-season</code> - Season identifier (e.g., &quot;2023-2024&quot;)</li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="goalie-leaders" 
+  data-league-slug="nhl"
+  data-season="2023-2024"
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">Alumni Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-selected-teams</code> - JSON array of team objects: <code>[{`{"id":"18741","name":"Team Name"}`}]</code></li>
+                <li><code>data-selected-leagues</code> - JSON array of league slugs: <code>[&quot;nhl&quot;,&quot;shl&quot;,&quot;ahl&quot;]</code></li>
+              </ul>
+              
+              <h4 className="font-semibold mb-2">Optional Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-include-youth</code> - Include youth players: &quot;true&quot; or &quot;false&quot; (default: &quot;false&quot;)</li>
+                <li><code>data-selected-league-categories</code> - JSON object of category filters: <code>{`{"junior":true,"college":true,"professional":true}`}</code></li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="alumni" 
+  data-selected-teams='[{"id":"18741","name":"San Jose Barracuda"}]'
+  data-selected-leagues='["nhl","shl","ahl","khl"]'
+  data-include-youth="false"
+  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-3">Tournament Widget</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Required Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-selected-tournaments</code> - JSON array of tournament slugs: <code>[&quot;world-championship-u20&quot;]</code></li>
+                <li><code>data-selected-leagues</code> - JSON array of league slugs: <code>[&quot;wjc-20&quot;]</code></li>
+              </ul>
+              
+              <h4 className="font-semibold mb-2">Optional Parameters:</h4>
+              <ul className="list-disc pl-6 mb-4">
+                <li><code>data-selected-league-categories</code> - JSON object of category filters: <code>{`{"junior":true,"college":true,"professional":true}`}</code></li>
+              </ul>
+              
+              <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                <pre className="text-sm">
+{`<div 
+  class="ep-widget" 
+  data-widget-type="tournament" 
+  data-selected-tournaments='["world-championship-u20"]'
+  data-selected-leagues='["wjc-20"]'
+  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+  data-background-color="#052D41"
+  data-text-color="#000000"
+  data-table-background-color="#FFFFFF"
+  data-header-text-color="#FFFFFF"
+  data-name-text-color="#0D73A6"
+></div>`}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold mb-4">Styling Parameters</h2>
+          <p className="mb-4">All widgets support these styling parameters:</p>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse mb-6">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2"><code>data-background-color</code></td>
+                  <td className="border border-gray-300 px-4 py-2">Widget background color</td>
+                  <td className="border border-gray-300 px-4 py-2"><code>#052D41</code></td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2"><code>data-text-color</code></td>
+                  <td className="border border-gray-300 px-4 py-2">Text color</td>
+                  <td className="border border-gray-300 px-4 py-2"><code>#000000</code></td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2"><code>data-table-background-color</code></td>
+                  <td className="border border-gray-300 px-4 py-2">Table background color</td>
+                  <td className="border border-gray-300 px-4 py-2"><code>#FFFFFF</code></td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2"><code>data-header-text-color</code></td>
+                  <td className="border border-gray-300 px-4 py-2">Header text color</td>
+                  <td className="border border-gray-300 px-4 py-2"><code>#FFFFFF</code></td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 px-4 py-2"><code>data-name-text-color</code></td>
+                  <td className="border border-gray-300 px-4 py-2">Name text color</td>
+                  <td className="border border-gray-300 px-4 py-2"><code>#0D73A6</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-yellow-50 p-4 rounded-lg mb-6 border border-yellow-200">
+            <p className="text-yellow-800">
+              <strong>Important:</strong> Always include all styling parameters to ensure proper display.
+              The <code>data-header-text-color=&quot;#FFFFFF&quot;</code> parameter is especially important for dark backgrounds.
+            </p>
+          </div>
+        </section>
+
+        <section className="mb-6 bg-yellow-50 p-5 rounded-lg border border-yellow-200">
+          <h2 className="text-xl font-bold mb-3">Notes on JSON Parameters</h2>
+          <p className="mb-3">
+            Some widgets (Alumni and Tournament) require JSON-formatted parameters. When adding these parameters:
+          </p>
+          <ul className="list-disc pl-8 mb-4">
+            <li className="mb-2">Use <strong>single quotes</strong> for the HTML attribute and <strong>double quotes</strong> for the JSON values</li>
+            <li className="mb-2">Make sure the JSON is valid with no trailing commas</li>
+            <li className="mb-2">For HTML attributes, escape apostrophes if needed (e.g., <code>data-name=&quot;San Jose\&apos;s Team&quot;</code> should be <code>data-name=&quot;San Jose\&apos;s Team&quot;</code>)</li>
+          </ul>
+          <div className="bg-gray-100 p-3 rounded-lg overflow-x-auto">
+            <pre className="text-sm">
+{`<!-- Correct JSON formatting -->
+data-selected-teams='[{"id":"18741","name":"San Jose Barracuda"}]'
+data-selected-leagues='["nhl","shl","ahl"]'
+data-selected-league-categories='{"junior":true,"college":true,"professional":true}'`}
+            </pre>
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold mb-4">JavaScript Implementation</h2>
+          <p className="mb-4">
+            For dynamic widget creation, you can add widgets programmatically:
+          </p>
+          
+          <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-6">
+            <pre className="text-sm">
+{`// Create widget container
+const widget = document.createElement("div");
+widget.className = "ep-widget";
+widget.dataset.widgetType = "player";
+widget.dataset.playerId = "38703";
+widget.dataset.backgroundColor = "#052D41";
+widget.dataset.textColor = "#000000";
+widget.dataset.tableBackgroundColor = "#FFFFFF";
+widget.dataset.headerTextColor = "#FFFFFF";
+widget.dataset.nameTextColor = "#0D73A6";
+
+// Add to page
+document.getElementById("widget-container").appendChild(widget);
+
+// Load widget script (if not already loaded)
+if (!document.querySelector('script[src*="widget-loader-combined.js"]')) {
+  const script = document.createElement("script");
+  script.src = "https://widget.eliteprospects.com/widget-loader-combined.js";
+  document.body.appendChild(script);
+}`}
+            </pre>
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold mb-4">Development vs Production</h2>
+          <p className="mb-4">
+            During development, you may want to use the development version of the widget loader:
+          </p>
+          
+          <div className="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-6">
+            <pre className="text-sm">
+{`<!-- Development environment -->
+<script src="https://dev-widget.eliteprospects.com/widget-loader-combined.js"></script>
+
+<!-- Production environment -->
+<script src="https://widget.eliteprospects.com/widget-loader-combined.js"></script>`}
+            </pre>
+          </div>
+          
+          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6">
+            <h3 className="font-semibold text-yellow-800 mb-2">Important Notes:</h3>
+            <ul className="list-disc pl-6 text-yellow-800">
+              <li className="mb-1">Always test thoroughly before deploying to production.</li>
+              <li className="mb-1">For JSON parameters, use single quotes (&apos;) for the HTML attribute and double quotes (&quot;) inside the JSON.</li>
+            </ul>
+          </div>
+        </section>
+
+        <div className="flex justify-center mb-8">
+          <Link 
+            href="/embed/demo" 
+            className="inline-block bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors font-semibold"
+          >
+            View Widget Demo
           </Link>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4">iframe Embedding</h2>
-            <p className="mb-4">
-              The simplest way to embed our widgets is using an iframe. This method works on any website and gives you full control over the dimensions.
-            </p>
-            <h3 className="text-lg font-medium mb-2">Basic Example:</h3>
-            <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto mb-4">
-              {`<iframe
-src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/embed/player?playerId=8478402" 
-width="100%"
-eight="600px"
-frameborder="0"
-></iframe>`}
-            </pre>
-            <p className="text-sm text-gray-600">
-              The iframe method is compatible with all browsers and doesn&apos;t require any JavaScript on your page.
-            </p>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4">Script Tag Embedding</h2>
-            <p className="mb-4">
-              For more flexibility, you can use our script tag method. This approach automatically handles responsive sizing.
-            </p>
-            <h3 className="text-lg font-medium mb-2">Basic Example:</h3>
-            <pre className="bg-gray-800 text-white p-3 rounded-md text-sm overflow-x-auto mb-4">
-              {`<script 
-src="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/widget-embed.js" 
-data-widget-type="player"
-data-player-id="8478402"
-data-width="100%"
-data-height="600px"
-></script>`}
-            </pre>
-            <p className="text-sm text-gray-600">
-              The script tag automatically creates an iframe and handles the responsive behavior.
-            </p>
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Widget Types & Parameters</h2>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">Player Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">playerId</td>
-                  <td className="border border-gray-300 px-4 py-2">The unique ID of the player</td>
-                  <td className="border border-gray-300 px-4 py-2">8478402</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">gameLimit</td>
-                  <td className="border border-gray-300 px-4 py-2">Number of games to display (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">5</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">viewMode</td>
-                  <td className="border border-gray-300 px-4 py-2">Display mode (stats or games)</td>
-                  <td className="border border-gray-300 px-4 py-2">stats</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">showSummary</td>
-                  <td className="border border-gray-300 px-4 py-2">Whether to show the summary section</td>
-                  <td className="border border-gray-300 px-4 py-2">true</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">Team Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">teamId</td>
-                  <td className="border border-gray-300 px-4 py-2">The unique ID of the team</td>
-                  <td className="border border-gray-300 px-4 py-2">18741</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">League Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">leagueSlug</td>
-                  <td className="border border-gray-300 px-4 py-2">The slug identifier for the league</td>
-                  <td className="border border-gray-300 px-4 py-2">nhl</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">Scoring Leaders Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">leagueSlug</td>
-                  <td className="border border-gray-300 px-4 py-2">The slug identifier for the league</td>
-                  <td className="border border-gray-300 px-4 py-2">nhl</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">season</td>
-                  <td className="border border-gray-300 px-4 py-2">The season to display</td>
-                  <td className="border border-gray-300 px-4 py-2">2024-2025</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">Goalie Leaders Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">leagueSlug</td>
-                  <td className="border border-gray-300 px-4 py-2">The slug identifier for the league</td>
-                  <td className="border border-gray-300 px-4 py-2">nhl</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">season</td>
-                  <td className="border border-gray-300 px-4 py-2">The season to display</td>
-                  <td className="border border-gray-300 px-4 py-2">2024-2025</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">Alumni Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">teamIds</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated team IDs</td>
-                  <td className="border border-gray-300 px-4 py-2">18741</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">leagues</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated league slugs to filter by</td>
-                  <td className="border border-gray-300 px-4 py-2">nhl,shl,ahl,khl</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">teams</td>
-                  <td className="border border-gray-300 px-4 py-2">Youth team names (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">San Jose Barracuda</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-3">Tournament Alumni Widget</h3>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Parameter</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Example</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tournaments</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated tournament slugs</td>
-                  <td className="border border-gray-300 px-4 py-2">brick-invitational</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">leagues</td>
-                  <td className="border border-gray-300 px-4 py-2">Comma-separated league slugs to filter by</td>
-                  <td className="border border-gray-300 px-4 py-2">nhl,ahl</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">backgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#052D41</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">textColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#000000</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">tableBackgroundColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Table background color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">headerTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Header text color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#FFFFFF</td>
-                </tr>
-                <tr>
-                  <td className="border border-gray-300 px-4 py-2">nameTextColor</td>
-                  <td className="border border-gray-300 px-4 py-2">Player name link color (optional)</td>
-                  <td className="border border-gray-300 px-4 py-2">#0D73A6</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Advanced Usage</h2>
-          
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-2">Responsive Design</h3>
-            <p className="mb-4">
-              Both embedding methods support responsive design. For best results:
-            </p>
-            <ul className="list-disc pl-6 mb-4">
-              <li className="mb-2">Set width to 100% to make the widget fill its container</li>
-              <li className="mb-2">For script embedding, you can omit the height to allow automatic height adjustment</li>
-              <li className="mb-2">For iframe embedding, a fixed height is recommended (e.g., 600px)</li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium mb-2">Troubleshooting</h3>
-            <p className="mb-4">
-              If you encounter issues with the widgets:
-            </p>
-            <ul className="list-disc pl-6">
-              <li className="mb-2">Ensure the parameters are correctly formatted</li>
-              <li className="mb-2">Check that the IDs used are valid</li>
-              <li className="mb-2">For script embedding, verify that JavaScript is enabled</li>
-              <li className="mb-2">If using Content Security Policy (CSP), ensure our domain is allowed</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-          <h2 className="text-xl font-semibold mb-4">Need Help?</h2>
-          <p className="mb-4">
-            If you need assistance with embedding our widgets or have any questions, please contact our support team.
-          </p>
-          <Link href="/contact" className="inline-flex items-center px-4 py-2 bg-[#0B9D52] text-white rounded-md hover:bg-green-700 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-            </svg>
-            Contact Support
+        <div className="flex justify-center mb-8">
+          <Link 
+            href="/widget-test.html" 
+            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors font-semibold"
+          >
+            Test Widgets Yourself
           </Link>
         </div>
       </div>
