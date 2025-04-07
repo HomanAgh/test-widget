@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { ScoringLeadersTableProps } from "@/app/types/scoringLeaders";
 import {
   Table,
@@ -328,7 +327,7 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
                     <div className="flex items-center">
                       {player.player.flagUrl && (
                         <div className="flex-shrink-0 mr-2">
-                          <Image
+                          <img
                             src={player.player.flagUrl}
                             alt={`${nationalityName} flag`}
                             width={16}
@@ -358,7 +357,7 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
                     <div className="flex items-center">
                       {player.team.logo?.small && (
                         <div className="flex-shrink-0 mr-2">
-                          <Image
+                          <img
                             src={player.team.logo.small}
                             alt={`${player.team.name} logo`}
                             width={20}

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { League } from "@/app/types/league";
 import { LeagueSelectionDropdownProps } from "@/app/types/league";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import Image from "next/image";
 
 // Predefined league rankings (all keys in lower-case for consistency)
 export const leagueRankings: Record<string, number> = {
@@ -204,7 +203,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
                   className=" inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]"
                 >
                   {logo && (
-                    <Image
+                    <img
                       src={logo}
                       alt={`${name} logo`}
                       className="w-6 h-6 mr-2 rounded"
@@ -218,7 +217,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
                     className="ml-2 flex items-center justify-center self-center"
                     aria-label="Remove league"
                   >
-                    <Image
+                    <img
                       src="/images/close (x).svg"
                       alt="Remove league"
                       width={16}

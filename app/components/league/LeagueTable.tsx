@@ -2,7 +2,6 @@
 
 import React from "react";
 import { LeagueTableProps, ExtendedTeam } from "@/app/types/league";
-import Image from "next/image";
 
 import {
   TableContainer,
@@ -149,7 +148,7 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
                 <TableCell align="left" style={{ color: nameTextColor }}>
                   <Link href={team.team.links?.eliteprospectsUrl ?? "#"} >
                     {team.logo && (
-                      <Image
+                      <img
                         src={team.logo}
                         alt={`${team.team.name ?? "Team"} logo`}
                         width={20}
@@ -182,7 +181,7 @@ const LeagueTable: React.FC<LeagueTablePropsWithColors> = ({
       style={{ color: nameTextColor }}
     >
       {leagueLogo && (
-        <Image
+        <img
           src={leagueLogo}
           alt={`${leagueName} logo`}
           width={30}

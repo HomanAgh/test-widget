@@ -7,7 +7,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/widget-bundle.js') || 
     request.nextUrl.pathname.startsWith('/widget-loader.js') || 
     request.nextUrl.pathname.startsWith('/widget-loader-combined.js') ||
-    request.nextUrl.pathname.endsWith('.html')
+    request.nextUrl.pathname.endsWith('.html')||
+    request.nextUrl.pathname.startsWith('/_next/image') && request.nextUrl.searchParams.has('url')
   ) {
     return;
   }

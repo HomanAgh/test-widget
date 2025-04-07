@@ -9,7 +9,24 @@ const nextConfig: NextConfig = {
   },
 
     images: {
-      domains: ['files.eliteprospects.com'], 
+      unoptimized: true,
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'files.eliteprospects.com',
+          pathname: '/**',
+        },
+        {
+          protocol: 'https',
+          hostname: 'www.eliteprospects.com',
+          pathname: '/**',
+        },
+        {
+          protocol: 'https',
+          hostname: 'eliteprospects.com',
+          pathname: '/**',
+        }
+      ]
   },
 
   async headers() {

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { RosterPlayer } from "@/app/types/team";
 import {
   TableContainer,
@@ -170,7 +169,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
       <TableCell align="center">{player.jerseyNumber || "-"}</TableCell>
       <TableCell align="left">
         {player.flagUrl && (
-          <Image
+          <img
             src={player.flagUrl}
             alt="Flag"
             width={16}
