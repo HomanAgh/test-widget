@@ -2,20 +2,26 @@
 
 import React, { useState } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import Link from "../common/style/Link";
 
 interface Team {
+  id?: string;
   name: string;
-  leagueLevel: string | null;
+  leagueLevel?: string | null;
+  leagueSlug?: string;
+  isCurrentTeam?: boolean;
 }
 
 interface ToggleTeamListProps {
   teams: Team[];
   shortCount?: number; // Number of teams to show initially before expanding
+  linkColor?: string; // Color for the team name links
 }
 
 const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
   teams,
   shortCount = 1,
+  linkColor = "#0D73A6"
 }) => {
   const [expanded, setExpanded] = useState(false);
   const visibleTeams = expanded ? teams : teams.slice(0, shortCount);
@@ -29,7 +35,7 @@ const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
 
   return (
     <div className="flex flex-col">
-      {/* Render the first team with the chevron */}
+      {/* Render the teams with links if ID is available */}
       {visibleTeams.map((team, index) => (
         <div
           key={index}
@@ -37,7 +43,18 @@ const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
             index === 0 ? "gap-1" : ""
           } py-1`}
         >
-          <span>{team.name}</span>
+          {team.id ? (
+            <Link
+              href={`https://www.eliteprospects.com/team/${team.id}/${encodeURIComponent(team.name)}`} 
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: linkColor }}
+            >
+              {team.name}
+            </Link>
+          ) : (
+            <span>{team.name}</span>
+          )}
           {index === 0 && canExpand && (
             <button
               onClick={toggleExpand}
@@ -48,7 +65,6 @@ const ToggleTeamList: React.FC<ToggleTeamListProps> = ({
           )}
         </div>
       ))}
-      
     </div>
   );
 };

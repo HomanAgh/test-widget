@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
 import { useFetchTournamentPlayers } from "./hooks/useFetchTournamentPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
+import { ColumnOptions } from "./ColumnSelector";
 
 type GenderParam = "male" | "female" | null;
 
@@ -22,6 +23,7 @@ interface AlumniTournamentProps {
     college: boolean;
     professional: boolean;
   };
+  selectedColumns?: ColumnOptions;
 }
 
 const AlumniTournament: React.FC<AlumniTournamentProps> = ({
@@ -39,6 +41,16 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
     college: true,
     professional: true,
   },
+  selectedColumns = {
+    name: true, // Always true
+    birthYear: true,
+    draftPick: true,
+    tournamentTeam: true,
+    tournamentSeason: true,
+    juniorTeams: true,
+    collegeTeams: true,
+    proTeams: true
+  }
 }) => {
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
   const [searchQuery, setSearchQuery] = useState("");
@@ -75,7 +87,7 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
-        <div className="relative w-full">
+        <div className="relative w-full px-4">
           <input
             type="text"
             className="w-full border rounded-lg h-[36px] pl-10"
@@ -83,7 +95,7 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
             onChange={handleSearchChange}
             placeholder="Search player"
           />
-          <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
+          <RxMagnifyingGlass className="absolute left-7 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
         </div>
         {loading && (
           <p className="flex justify-center pt-3 font-montserrat font-semibold">
@@ -128,6 +140,7 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
         isWomenLeague={activeGenderTab === "women"}
         resetPagination={resetPagination}
         selectedLeagueCategories={selectedLeagueCategories}
+        selectedColumns={selectedColumns}
       />
     </div>
   );

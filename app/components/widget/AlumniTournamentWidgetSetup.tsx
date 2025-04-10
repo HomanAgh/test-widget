@@ -9,6 +9,7 @@ import ErrorMessage from "@/app/components/common/ErrorMessage";
 import AlumniTournament from "@/app/components/alumni/AlumniTournament";
 import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
 import EmbedCodeBlock from "../iframe/IframePreview";
+import ColumnSelector, { ColumnOptions } from "../alumni/ColumnSelector";
 
 const DEFAULT_IFRAME_HEIGHT = 1300;
 
@@ -68,16 +69,47 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
     return categories;
   }, [selectedLeagues, customLeagues, customJunLeagues, customCollegeLeagues]);
 
+  // Initialize selected columns based on selected league categories
+  const [selectedColumns, setSelectedColumns] = useState<ColumnOptions>({
+    name: true, // Always true
+    birthYear: true,
+    draftPick: true, // Moved up to be after birthYear
+    tournamentTeam: true,
+    tournamentSeason: true,
+    juniorTeams: true,
+    collegeTeams: true,
+    proTeams: true
+  });
+
+  // Update selected columns when league categories change
+  React.useEffect(() => {
+    setSelectedColumns(prevColumns => ({
+      ...prevColumns,
+      juniorTeams: selectedLeagueCategories.junior,
+      collegeTeams: selectedLeagueCategories.college,
+      proTeams: selectedLeagueCategories.professional
+    }));
+  }, [selectedLeagueCategories]);
+
   // Create embed URL
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
     const tournamentSlugs = selectedTournaments.map((t) => t.slug).join(",");
     const leagues = selectedLeagues.join(",");
 
+    // Serialize selected columns for URL
+    const columnsParam = encodeURIComponent(
+      Object.entries(selectedColumns)
+        .filter(([, value]) => value) // Only include enabled columns
+        .map(([key]) => key)
+        .join(",")
+    );
+
     return (
       `${baseUrl}/embed/alumni-tournament` +
       `?tournaments=${encodeURIComponent(tournamentSlugs)}` +
       `&leagues=${encodeURIComponent(leagues)}` +
+      `&columns=${columnsParam}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
       `&tableBackgroundColor=${encodeURIComponent(
@@ -87,7 +119,7 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&_t=${Date.now()}`
     );
-  }, [selectedTournaments, selectedLeagues, customColors]);
+  }, [selectedTournaments, selectedLeagues, customColors, selectedColumns]);
 
   // Generate source attribution links
   const sourceLinks = useMemo(() => {
@@ -99,6 +131,9 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
   }, [selectedTournaments]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
+
+  // Only show column selector when tournaments and leagues are selected
+  const showColumnSelector = selectedTournaments.length > 0 && selectedLeagues.length > 0;
 
   return (
     <div>
@@ -117,15 +152,28 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
         onChange={setSelectedLeagues}
       />
 
-      <div className="flex flex-wrap md:flex-nowrap items-center space-x-8">
-        <HexColors
-          customColors={customColors}
-          setCustomColors={setCustomColors}
-          height={iframeHeight}
-          onHeightChange={setIframeHeight}
-          defaultHeight={DEFAULT_IFRAME_HEIGHT}
-        />
+      <div className="mt-8">
+        <div className="flex flex-wrap md:flex-nowrap items-start">
+          <HexColors
+            customColors={customColors}
+            setCustomColors={setCustomColors}
+            height={iframeHeight}
+            onHeightChange={setIframeHeight}
+            defaultHeight={DEFAULT_IFRAME_HEIGHT}
+          />
+        </div>
       </div>
+
+      {/* Column Selector - only show when tournaments and leagues are selected */}
+      {showColumnSelector && (
+        <div className="mt-4">
+          <ColumnSelector
+            selectedColumns={selectedColumns}
+            onChange={setSelectedColumns}
+            selectedLeagueCategories={selectedLeagueCategories}
+          />
+        </div>
+      )}
 
       {selectedTournaments.length > 0 && selectedLeagues.length > 0 && (
         <div className="mt-6">
@@ -134,6 +182,7 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
             selectedLeagues={selectedLeagues}
             customColors={customColors}
             selectedLeagueCategories={selectedLeagueCategories}
+            selectedColumns={selectedColumns}
           />
         </div>
       )}

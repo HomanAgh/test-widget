@@ -41,7 +41,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'scoring-leaders': DummyComponent,
   'goalie-leaders': DummyComponent,
   alumni: DummyComponent,
-  tournament: DummyComponent,
+  'alumni-tournament': DummyComponent,
 };
 
 // In a browser environment, we need to directly import the components
@@ -64,7 +64,7 @@ try {
   WIDGET_COMPONENTS['scoring-leaders'] = ScoringLeaders;
   WIDGET_COMPONENTS['goalie-leaders'] = GoalieLeaders;
   WIDGET_COMPONENTS.alumni = Alumni;
-  WIDGET_COMPONENTS.tournament = AlumniTournament;
+  WIDGET_COMPONENTS['alumni-tournament'] = AlumniTournament;
 } catch (e) {
   console.error('Error setting up widget components:', e);
 }
@@ -156,7 +156,7 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
         if (!config.selectedTeams) missingParams.push('data-selected-teams');
         if (!config.selectedLeagues) missingParams.push('data-selected-leagues');
         break;
-      case 'tournament':
+      case 'alumni-tournament':
         if (!config.selectedTournaments) missingParams.push('data-selected-tournaments');
         if (!config.selectedLeagues) missingParams.push('data-selected-leagues');
         break;

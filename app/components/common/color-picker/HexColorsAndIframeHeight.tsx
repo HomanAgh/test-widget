@@ -297,23 +297,9 @@ const HexColors: React.FC<HexColorsProps> = ({
   // Original component for backward compatibility with new UI
   if (customColors && setCustomColors) {
     return (
-      <div className="my-6 border-t border-gray-200 pt-6" style={{ fontFamily: "Montserrat, sans-serif" }}>
-        <h2 
-          className="mb-6" 
-          style={{ 
-            fontSize: "18px",
-            fontWeight: 700,
-            lineHeight: "24px",
-            color: "#000"
-          }}
-        >
-          Set colours
-        </h2>
+      <div className="w-full" style={{ fontFamily: "Montserrat, sans-serif" }}>
         <div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-x-8"
-          style={{
-            borderBottom: "1px solid #E5E7EB",
-          }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-x-8 border-t border-gray-200 pt-6"
         >
           <ColorPickerButton
             label="Header background"
@@ -383,6 +369,13 @@ const HexColors: React.FC<HexColorsProps> = ({
             RESET TO DEFAULT COLOURS
           </button>
         </div>
+        
+        <div 
+          style={{
+            borderBottom: "1px solid #E5E7EB",
+            marginBottom: "1.5rem",
+          }}
+        />
       </div>
     );
   }

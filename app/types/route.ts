@@ -63,6 +63,7 @@ export interface ApiResponse<T> {
       leagueLevel: string | null;
       leagueSlug: string | null;
       isCurrentTeam?: boolean;
+      id?: number;
     }[];
     draftPick?: DraftSelection | null; 
   }

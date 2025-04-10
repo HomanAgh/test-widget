@@ -31,6 +31,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       const pathParts = url.pathname.split('/');
       const widgetType = pathParts[pathParts.length - 1];
       
+      
       // Build the direct script implementation
       let widgetDiv = `<div class="ep-widget" \n  data-widget-type="${widgetType}"`;
       
@@ -71,10 +72,32 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
             const leagues = params.get('leagues')?.split(',') || [];
             widgetDiv += `\n  data-selected-leagues='${JSON.stringify(leagues)}'`;
           }
+          if (params.has('columns')) {
+            const columns = params.get('columns')?.split(',') || [];
+            const columnOptions: Record<string, boolean> = {
+              name: true,
+              birthYear: false,
+              draftPick: false,
+              tournamentTeam: false,
+              tournamentSeason: false,
+              juniorTeams: false,
+              collegeTeams: false,
+              proTeams: false
+            };
+            
+            // Enable the selected columns
+            columns.forEach(col => {
+              if (Object.prototype.hasOwnProperty.call(columnOptions, col)) {
+                columnOptions[col] = true;
+              }
+            });
+            
+            widgetDiv += `\n  data-selected-columns='${JSON.stringify(columnOptions)}'`;
+          }
           widgetDiv += `\n  data-include-youth="false"`;
           widgetDiv += `\n  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'`;
           break;
-        case 'tournament':
+        case 'alumni-tournament':
           if (params.has('tournaments')) {
             const tournaments = params.get('tournaments')?.split(',') || [];
             widgetDiv += `\n  data-selected-tournaments='${JSON.stringify(tournaments)}'`;
@@ -82,6 +105,28 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
           if (params.has('leagues')) {
             const leagues = params.get('leagues')?.split(',') || [];
             widgetDiv += `\n  data-selected-leagues='${JSON.stringify(leagues)}'`;
+          }
+          if (params.has('columns')) {
+            const columns = params.get('columns')?.split(',') || [];
+            const columnOptions: Record<string, boolean> = {
+              name: true,
+              birthYear: false,
+              draftPick: false,
+              tournamentTeam: false,
+              tournamentSeason: false,
+              juniorTeams: false,
+              collegeTeams: false,
+              proTeams: false
+            };
+            
+            // Enable the selected columns
+            columns.forEach(col => {
+              if (Object.prototype.hasOwnProperty.call(columnOptions, col)) {
+                columnOptions[col] = true;
+              }
+            });
+            
+            widgetDiv += `\n  data-selected-columns='${JSON.stringify(columnOptions)}'`;
           }
           widgetDiv += `\n  data-selected-league-categories='{"junior":true,"college":true,"professional":true}'`;
           break;

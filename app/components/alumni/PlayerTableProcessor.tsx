@@ -159,6 +159,22 @@ export function filterAndSortPlayers(
         return sortDirection === "asc" ? yearA - yearB : yearB - yearA;
       }
 
+      case "tournamentTeam": {
+        const teamA = a.tournamentTeamName ?? "";
+        const teamB = b.tournamentTeamName ?? "";
+        return sortDirection === "asc"
+          ? teamA.localeCompare(teamB)
+          : teamB.localeCompare(teamA);
+      }
+
+      case "tournamentSeason": {
+        const seasonA = a.tournamentSeason ?? "";
+        const seasonB = b.tournamentSeason ?? "";
+        return sortDirection === "asc"
+          ? seasonA.localeCompare(seasonB)
+          : seasonB.localeCompare(seasonA);
+      }
+
       case "junior": {
         const { bestRank: rankA, bestTeamName: nameA } =
           getBestCategoryRankAndTeam(a, "junior");
