@@ -383,7 +383,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                   className="font-bold cursor-pointer"
                   onClick={() => handleSort("tournamentTeam")}
                 >
-                  TOURNAMENT TEAM {renderSortArrow("tournamentTeam")}
+                  PLAYED FOR {renderSortArrow("tournamentTeam")}
                 </TableCell>
               )}
 
@@ -471,8 +471,8 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 <TableRow key={player.id} bgColor={rowBackground}>
                   <TableCell align="center" style={{ color: nameTextColor }}>
                     <Link
-                      href={`https://www.eliteprospects.com/player/${encodeURIComponent(
-                        player?.id || ""
+                      href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
+                        player.name || ""
                       )}`}
                       target="_blank"
                       style={{ color: nameTextColor }}
