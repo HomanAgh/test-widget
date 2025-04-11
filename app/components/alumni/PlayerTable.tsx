@@ -24,6 +24,7 @@ import {
   sortTeamsByLeagueRankThenName,
   filterAndSortPlayers,
 } from "./PlayerTableProcessor";
+import { ColumnOptions } from "./ColumnSelector";
 
 interface ExtendedPlayerTableProps extends PlayerTableProps {
   isWomenLeague?: boolean;
@@ -33,6 +34,7 @@ interface ExtendedPlayerTableProps extends PlayerTableProps {
     college: boolean;
     professional: boolean;
   };
+  selectedColumns?: ColumnOptions;
 }
 
 const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
@@ -53,6 +55,16 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     college: true,
     professional: true,
   },
+  selectedColumns = {
+    name: true,
+    birthYear: true,
+    draftPick: true,
+    tournamentTeam: false,
+    tournamentSeason: false,
+    juniorTeams: true,
+    collegeTeams: true,
+    proTeams: true,
+  },
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -64,6 +76,8 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     | "junior"
     | "college"
     | "pro"
+    | "tournamentTeam"
+    | "tournamentSeason"
     | ""
   >("draftPick");
   const [sortDirection, setSortDirection] = React.useState<
@@ -229,7 +243,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     tableBgColor.toLowerCase() !== "#fff";
 
   return (
-    <div className="relative">
+    <div className="min-w-full overflow-y-auto">
       <TableContainer>
         <Table tableBgColor={tableBgColor} tableTextColor={tableTextColor}>
           <TableHead bgColor={headerBgColor} textColor={headerTextColor}>
@@ -286,18 +300,20 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 )}
               </TableCell>
 
-              {/* Birth Year */}
-              <TableCell
-                isHeader
-                align="center"
-                className="font-bold cursor-pointer"
-                onClick={() => handleSort("birthYear")}
-              >
-                BY {renderSortArrow("birthYear")}
-              </TableCell>
+              {/* Birth Year - conditionally render */}
+              {selectedColumns.birthYear && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("birthYear")}
+                >
+                  BY {renderSortArrow("birthYear")}
+                </TableCell>
+              )}
 
-              {/* Conditionally render NHL DP column */}
-              {!isWomenLeague && (
+              {/* Conditionally render NHL DP column - moved to be right after birth year */}
+              {!isWomenLeague && selectedColumns.draftPick && (
                 <TableCell
                   isHeader
                   align="center"
@@ -359,8 +375,32 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 </TableCell>
               )}
 
+              {/* Conditionally render Tournament Team */}
+              {selectedColumns.tournamentTeam && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("tournamentTeam")}
+                >
+                  PLAYED FOR {renderSortArrow("tournamentTeam")}
+                </TableCell>
+              )}
+
+              {/* Conditionally render Tournament Season */}
+              {selectedColumns.tournamentSeason && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="font-bold cursor-pointer"
+                  onClick={() => handleSort("tournamentSeason")}
+                >
+                  SEASON {renderSortArrow("tournamentSeason")}
+                </TableCell>
+              )}
+
               {/* Conditionally render JUNIOR column */}
-              {selectedLeagueCategories.junior && (
+              {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
                 <TableCell
                   isHeader
                   align="center"
@@ -372,7 +412,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
               )}
 
               {/* Conditionally render COLLEGE column */}
-              {selectedLeagueCategories.college && (
+              {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
                 <TableCell
                   isHeader
                   align="center"
@@ -384,7 +424,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
               )}
 
               {/* Conditionally render PRO column */}
-              {!isWomenLeague && selectedLeagueCategories.professional && (
+              {selectedLeagueCategories.professional && selectedColumns.proTeams && (
                 <TableCell
                   isHeader
                   align="center"
@@ -431,9 +471,11 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                 <TableRow key={player.id} bgColor={rowBackground}>
                   <TableCell align="center" style={{ color: nameTextColor }}>
                     <Link
-                      href={`https://www.eliteprospects.com/player/${encodeURIComponent(
-                        player?.id || ""
-                      )}/${encodeURIComponent(fullName)}`}
+                      href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
+                        player.name || ""
+                      )}`}
+                      target="_blank"
+                      style={{ color: nameTextColor }}
                     >
                       <span className="block font-medium text-left">
                         {renderNameBlock(firstName, lastName, pos, stat)}
@@ -441,37 +483,43 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                     </Link>
                   </TableCell>
 
-                  <TableCell align="center">
-                    {player.birthYear ?? "-"}
-                  </TableCell>
-
-                  {/* Render NHL DP cell only if not women's league */}
-                  {!isWomenLeague && (
+                  {/* Birth Year - conditionally render */}
+                  {selectedColumns.birthYear && (
                     <TableCell align="center">
-                      {player.draftPick && player.draftPick.team ? (
+                      {player?.birthYear ?? "-"}
+                    </TableCell>
+                  )}
+
+                  {/* NHL Draft Pick - conditionally render - moved to be after birth year */}
+                  {!isWomenLeague && selectedColumns.draftPick && (
+                    <TableCell align="center">
+                      {player?.draftPick && player?.draftPick.team ? (
                         <div className="flex items-center justify-center gap-1">
-                          {player.draftPick.team.logo && (
+                          {player?.draftPick.team.logo && (
                             <Tooltip
-                              tooltip={`${player.draftPick.year} NHL Draft\nRound ${player.draftPick.round}, #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
+                              tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
                             >
                               <img
-                                src={player.draftPick.team.logo}
-                                alt={player.draftPick.team.name}
+                                src={player?.draftPick.team.logo}
+                                alt={player?.draftPick.team.name}
                                 width={20}
                                 height={20}
                               />
                             </Tooltip>
+                            
                           )}
                           <Tooltip
-                            tooltip={`${player.draftPick.year} NHL Draft\nRound ${player.draftPick.round}, #${player.draftPick.overall} overall\nby ${player.draftPick.team.name}`}
+                            tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
                           >
-                            {sortColumn === "draftYear" ? (
-                              <span className="text-sm">
-                                {player.draftPick.year}
-                              </span>
-                            ) : (
-                              <span>{"#" + player.draftPick.overall}</span>
-                            )}
+                            <span>
+                              {sortColumn === "draftYear" ? (
+                                <span className="text-sm">
+                                  {player?.draftPick.year}
+                                </span>
+                              ) : (
+                                <span>{"#" + player?.draftPick.overall}</span>
+                              )}
+                            </span>
                           </Tooltip>
                         </div>
                       ) : (
@@ -480,24 +528,69 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                     </TableCell>
                   )}
 
-                  {/* Conditionally render JUNIOR cell */}
-                  {selectedLeagueCategories.junior && (
+                  {/* Conditionally render Tournament Team with link */}
+                  {selectedColumns.tournamentTeam && (
                     <TableCell align="center">
-                      <ToggleTeamList teams={juniorTeams} />
+                      {player?.tournamentTeam?.id ? (
+                        <Link
+                          href={`https://www.eliteprospects.com/team/${player.tournamentTeam.id}/${encodeURIComponent(player.tournamentTeamName || "")}`}
+                          target="_blank"
+                          style={{ color: nameTextColor }}
+                        >
+                          {player?.tournamentTeamName || "-"}
+                        </Link>
+                      ) : (
+                        player?.tournamentTeamName || "-"
+                      )}
                     </TableCell>
                   )}
 
-                  {/* Conditionally render COLLEGE cell */}
-                  {selectedLeagueCategories.college && (
+                  {/* Conditionally render Tournament Season */}
+                  {selectedColumns.tournamentSeason && (
                     <TableCell align="center">
-                      <ToggleTeamList teams={collegeTeams} />
+                      {player?.tournamentSeason || "-"}
                     </TableCell>
                   )}
 
-                  {/* Conditionally render PRO cell only if not women's league */}
-                  {!isWomenLeague && selectedLeagueCategories.professional && (
+                  {/* Junior Teams - conditionally render */}
+                  {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
                     <TableCell align="center">
-                      <ToggleTeamList teams={professionalTeams} />
+                      {juniorTeams.length > 0 ? (
+                        <ToggleTeamList
+                          teams={juniorTeams.slice(0, 3)}
+                          linkColor={nameTextColor}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                  )}
+
+                  {/* College Teams - conditionally render */}
+                  {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
+                    <TableCell align="center">
+                      {collegeTeams.length > 0 ? (
+                        <ToggleTeamList
+                          teams={collegeTeams.slice(0, 3)}
+                          linkColor={nameTextColor}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                  )}
+
+                  {/* Pro Teams - conditionally render */}
+                  {selectedLeagueCategories.professional && selectedColumns.proTeams && (
+                    <TableCell align="center">
+                      {professionalTeams.length > 0 ? (
+                        <ToggleTeamList
+                          teams={professionalTeams.slice(0, 3)}
+                          linkColor={nameTextColor}
+                        />
+                      ) : (
+                        "-"
+                      )}
                     </TableCell>
                   )}
                 </TableRow>
@@ -507,29 +600,28 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
         </Table>
       </TableContainer>
 
-      <div className="flex items-center justify-center mt-4 w-full">
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) =>
-            setPages((prev) =>
-              isWomenLeague ? { ...prev, women: page } : { ...prev, men: page }
-            )
-          }
-        />
-      </div>
+      {/* Pagination controls */}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) =>
+          setPages((prev) =>
+            isWomenLeague ? { ...prev, women: page } : { ...prev, men: page }
+          )
+        }
+      />
 
       <div className="flex flex-col items-center justify-center mt-4">
         <PoweredBy />
-        <div className="flex justify-center items-center text-gray-600 mt-2 text-[12px] font-montserrat">
-          <span className="font-semibold">Legend:</span>
-          <span className="mx-2 text-[#000] font-bold">BY</span>
+        <div className="flex justify-center items-center text-gray-600 mt-2 text-[12px] font-montserrat flex-wrap">
+          <span className="font-semibold mr-1">Legend:</span>
+          <span className="mx-1 text-[#000] font-bold">BY</span>
           <span className="text-[#000]">Birth year</span>
-          <span className="mx-2 text-[#000] font-bold">NHL DP</span>
+          <span className="mx-1 text-[#000] font-bold">NHL DP</span>
           <span className="text-[#000]">Draft pick</span>
-          <span className="mx-2 text-[#000] font-bold">NHL DY</span>
+          <span className="mx-1 text-[#000] font-bold">NHL DY</span>
           <span className="text-[#000]">Draft year</span>
-          <span className="mx-2 text-[#000] font-bold">R</span>
+          <span className="mx-1 text-[#000] font-bold">R</span>
           <span className="text-[#000]">Retired</span>
         </div>
       </div>

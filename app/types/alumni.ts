@@ -17,27 +17,36 @@ export interface AlumniPlayer {
     teams: {
       name: string;
       leagueLevel: string | null;
+      leagueSlug?: string | null;
+      isCurrentTeam?: boolean;
+      id?: number; // Team ID for linking
     }[];
-    teamName: string;
-  }
+    // Tournament-specific details
+    tournamentTeamName?: string;
+    tournamentSeason?: string | null;
+    tournamentSlug?: string | null;
+    tournamentTeam?: {
+      id: number;
+      name: string;
+    };
+}
   
-  export interface AlumniAPIResponse {
+export interface AlumniAPIResponse {
     players: AlumniPlayer[];
     total: number;
     nextOffset: number | null;
     error?: string;
-  }
+}
   
-  
-  export interface DraftPickAPIResponse {
+export interface DraftPickAPIResponse {
     players: {
       playerId: number;
       draftPick?: string;
       teams?: string[];
     }[];
-  }
+}
 
-  export interface PlayerTableProps {
+export interface PlayerTableProps {
     players: AlumniPlayer[];
     genderFilter: "men" | "women" | "all";
     pageSize?: number;
@@ -49,5 +58,5 @@ export interface AlumniPlayer {
     oddRowColor?: string;
     evenRowColor?: string;
     resetPagination?: number;
-  }
+}
   

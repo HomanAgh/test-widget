@@ -181,6 +181,7 @@ async function mergePlayerStats(baseUrl: string, playerMap: Map<number, Combined
   ].join(","));
 
   const urlWithFields = `${baseUrl}&fields=${fields}`;
+  console.log("EP API URL:", urlWithFields);
   const items = await fetchAllPages<PlayerStatsItem>(urlWithFields, 1000);
 
   // Identify teams needing fallback
@@ -265,6 +266,7 @@ async function mergePlayerStats(baseUrl: string, playerMap: Map<number, Combined
     
     if (!alreadyExists) {
       existing.teams.push({
+        id: item.team.id || undefined,
         name: item.team.name || "Unknown Team",
         leagueSlug: leagueSlug || "unknown",
         leagueLevel: leagueLevel || "unknown",
@@ -337,6 +339,70 @@ function buildCacheKey(tournamentsParam: string, leagueParam: string, genderPara
   return JSON.stringify({ tournamentsParam, leagueParam, genderParam });
 }
 
+/** Fetch tournament-specific details for the players (team name, season) */
+async function fetchTournamentDetails(playerIds: number[], tournamentSlug: string, chunkSize = 500): Promise<Map<number, { teamName: string; teamId?: number; season: { startYear: number; endYear: number } | null }>> {
+  const resultMap = new Map<number, { teamName: string; teamId?: number; season: { startYear: number; endYear: number } | null }>();
+  if (!playerIds.length) return resultMap;
+
+  try {
+    // Chunking playerIds to avoid URL length limits
+    const chunks: number[][] = [];
+    for (let i = 0; i < playerIds.length; i += chunkSize) {
+      chunks.push(playerIds.slice(i, i + chunkSize));
+    }
+
+    const MAX_CONCURRENT = 3;
+    for (let i = 0; i < chunks.length; i += MAX_CONCURRENT) {
+      const chunkPromises = chunks.slice(i, i + MAX_CONCURRENT).map(async (chunk) => {
+        const joinedIds = chunk.join(",");
+        const url = `${apiBaseUrl}/player-stats?apiKey=${apiKey}&player=${joinedIds}&league=${encodeURIComponent(tournamentSlug)}&limit=1000&fields=${encodeURIComponent(
+          "player.id,player.name,teamName,team.id,season.startYear,season.endYear"
+        )}`;
+        
+        console.log(`Fetching tournament details (chunk ${i}, ${chunk.length} players):`, url);
+        const resp = await fetch(url);
+        if (!resp.ok) {
+          console.error("Failed to fetch tournament details chunk", resp.statusText);
+          return new Map<number, { teamName: string; teamId?: number; season: { startYear: number; endYear: number } | null }>();
+        }
+        
+        const data = await resp.json();
+        if (!data.data || !Array.isArray(data.data)) {
+          return new Map<number, { teamName: string; teamId?: number; season: { startYear: number; endYear: number } | null }>();
+        }
+        
+        const chunkMap = new Map<number, { teamName: string; teamId?: number; season: { startYear: number; endYear: number } | null }>();
+        for (const item of data.data) {
+          const playerId = item.player?.id;
+          if (!playerId) continue;
+          
+          chunkMap.set(playerId, {
+            teamName: item.teamName || "Unknown Team",
+            teamId: item.team?.id,
+            season: item.season ? {
+              startYear: item.season.startYear || 0,
+              endYear: item.season.endYear || 0
+            } : null
+          });
+        }
+        return chunkMap;
+      });
+
+      const chunkResults = await Promise.all(chunkPromises);
+      for (const cMap of chunkResults) {
+        for (const [pid, details] of cMap.entries()) {
+          resultMap.set(pid, details);
+        }
+      }
+    }
+    
+    return resultMap;
+  } catch (err) {
+    console.error("Error fetching tournament details:", err);
+    return resultMap;
+  }
+}
+
 /** 
  * The main GET handler for /api/tournament-alumni.
  * e.g. /api/tournament-alumni?tournaments=brick-invitational,spengler-cup&league=nhl&gender=male
@@ -395,12 +461,31 @@ export async function GET(request: Request) {
     const allPlayerIds = allPlayers.map((cp) => cp.player.id);
     const draftPickMap = await fetchBatchDraftPicks(allPlayerIds);
 
+    // 4) Fetch tournament-specific details for each player for each tournament
+    const tournamentDetailsMap = new Map<number, { tournamentSlug: string; teamName: string; teamId?: number; season: { startYear: number; endYear: number } | null }>();
+    
+    for (const slug of tournamentSlugs) {
+      console.log(`Fetching tournament details for '${slug}' for ${allPlayerIds.length} players`);
+      const tournamentDetailsForSlug = await fetchTournamentDetails(allPlayerIds, slug);
+      console.log(`Found ${tournamentDetailsForSlug.size} players with data for tournament '${slug}'`);
+      
+      // Merge the tournament details from this slug into our overall map
+      for (const [playerId, details] of tournamentDetailsForSlug.entries()) {
+        tournamentDetailsMap.set(playerId, {
+          tournamentSlug: slug,
+          teamName: details.teamName,
+          teamId: details.teamId,
+          season: details.season
+        });
+      }
+    }
+
     // Attach draft picks
     for (const cp of allPlayers) {
       cp.draftPick = draftPickMap.get(cp.player.id) ?? null;
     }
 
-    // 4) Shape the final output as AlumniPlayer objects
+    // 5) Shape the final output as AlumniPlayer objects
     //    (matching your `AlumniPlayer` interface).
     const finalPlayers = allPlayers.map((cp) => {
       // Convert CombinedPlayer -> AlumniPlayer
@@ -420,12 +505,16 @@ export async function GET(request: Request) {
 
       // Map the teams to the format expected by the Alumni component
       const mappedTeams = cp.teams.map((t) => ({
+        id: t.id,
         name: t.name,
         leagueLevel: t.leagueLevel,
         leagueSlug: t.leagueSlug,
         isCurrentTeam: t.isCurrentTeam
       }));
 
+      // Get tournament details for this player
+      const tournamentDetails = tournamentDetailsMap.get(cp.player.id);
+      
       return {
         id: cp.player.id,
         name: cp.player.name,
@@ -434,7 +523,19 @@ export async function GET(request: Request) {
         status: cp.player.status,
         position: cp.player.position,
         draftPick,
-        teams: mappedTeams
+        teams: mappedTeams,
+        // Include the tournament-specific details
+        tournamentTeamName: tournamentDetails?.teamName || "Unknown Team",
+        tournamentSeason: tournamentDetails?.season
+          ? `${tournamentDetails.season.startYear}-${tournamentDetails.season.endYear}`
+          : null,
+        tournamentSlug: tournamentDetails?.tournamentSlug || null,
+        tournamentTeam: tournamentDetails?.teamId 
+          ? {
+              id: tournamentDetails.teamId,
+              name: tournamentDetails.teamName || "Unknown Team"
+            }
+          : undefined
       };
     });
 
@@ -446,6 +547,17 @@ export async function GET(request: Request) {
 
     // Cache & return
     tournamentAlumniCache.set(cacheKey, { data: responseData, timestamp: now });
+    console.log("Tournament Alumni Response:", {
+      tournaments: tournamentSlugs,
+      totalPlayers: finalPlayers.length,
+      totalPlayersWithTournamentData: finalPlayers.filter(p => p.tournamentTeamName && p.tournamentTeamName !== "Unknown Team").length,
+      samplePlayers: finalPlayers.slice(0, 3).map(p => ({ 
+        id: p.id, 
+        name: p.name,
+        tournamentTeamName: p.tournamentTeamName,
+        tournamentSeason: p.tournamentSeason
+      }))
+    });
     return NextResponse.json(responseData, { status: 200 });
   } catch (err: any) {
     console.error("Error in /api/tournament-alumni route:", err);
