@@ -387,7 +387,7 @@ const EmbedDemo = () => {
                   <pre className="text-sm">
 {`<div 
   class="ep-widget" 
-  data-widget-type="tournament" 
+  data-widget-type="alumni-tournament" 
   data-selected-tournaments='["brick-invitational"]'
   data-selected-leagues='["nhl","ahl"]'
   data-background-color="#052D41"
@@ -405,7 +405,7 @@ const EmbedDemo = () => {
                 <div className="bg-gray-50 p-4 rounded-lg" style={{ minHeight: "450px" }}>
                   <div 
                     className="ep-widget" 
-                    data-widget-type="tournament" 
+                    data-widget-type="alumni-tournament" 
                     data-selected-tournaments='["brick-invitational"]'
                     data-selected-leagues='["nhl","ahl"]'
                     data-background-color="#052D41"

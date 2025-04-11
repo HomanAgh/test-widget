@@ -3,6 +3,7 @@
  * 
  * This script loads and renders widgets directly inside the page without iframes.
  * It only loads the JS bundle which contains injected CSS.
+ * Modified to use XMLHttpRequest for better CMS compatibility.
  */
 (function() {
   // Enable debug mode
@@ -13,7 +14,7 @@
     if (DEBUG) console.log('[EP Widget]', ...args);
   };
   
-  debug('Widget loader starting');
+  debug('Widget loader starting!');
   
   // Add preconnect for Google Fonts
   function addGoogleFontsPreconnect() {
@@ -93,6 +94,44 @@
   
   debug('API Base URL (for data fetching):', API_BASE_URL);
   
+  // XMLHttpRequest utility functions (compatible with older browsers/CMS systems)
+  // Using the same function signature as the weatherwidget for better compatibility
+  function requestGet(url, callback, id) {
+    debug('Making GET request to:', url);
+    var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    request.onreadystatechange = function() {
+      if (request.readyState === 4 && request.status === 200) {
+        debug('GET request successful:', url);
+        callback(id, request.responseText);
+      }
+    };
+    request.open('GET', url, true);
+    request.send();
+  }
+  
+  function requestPost(url, callback, params, id) {
+    debug('Making POST request to:', url);
+    var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    request.onreadystatechange = function() {
+      if (request.readyState === 4 && request.status === 200) {
+        debug('POST request successful:', url);
+        callback(request.responseText, id);
+      }
+    };
+    request.open('POST', url, true);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    request.send(params);
+  }
+  
+  // Function to convert object to URL parameters (like the weatherwidget)
+  function objectToUrlParams(obj) {
+    return Object.keys(obj)
+      .map(function(key) {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]);
+      })
+      .join('&');
+  }
+  
   // Load the React bundle (with injected CSS)
   const loadBundle = () => {
     debug('Loading widget bundle...');
@@ -108,6 +147,12 @@
         if (window.EPWidgets) {
           window.EPWidgets.API_BASE_URL = API_BASE_URL;
           debug('Set API base URL for widget bundle:', API_BASE_URL);
+          
+          // Add the request functions to the bundle
+          window.EPWidgets.requestGet = requestGet;
+          window.EPWidgets.requestPost = requestPost;
+          window.EPWidgets.objectToUrlParams = objectToUrlParams;
+          debug('Added XMLHttpRequest functions to widget bundle');
         }
         
         resolve();
@@ -128,38 +173,110 @@
     });
   };
   
-  // Track fetch calls to detect API issues
+  // Simplified API calls monitoring - similar to weatherwidget approach
   const monitorApiCalls = () => {
-    const originalFetch = window.fetch;
-    window.fetch = function(...args) {
-      let url = args[0];
-      const options = args[1] || {};
-      
-      // IMPORTANT: Rewrite API URLs to use our base URL
-      if (typeof url === 'string' && url.match(/^\/api\//)) {
-        // If API call starts with /api/, use our API base URL
-        url = `${API_BASE_URL}${url}`;
-        args[0] = url;
-        debug('Rewritten API URL:', url);
-      }
-      
-      debug('API Call:', url, options);
-      
-      // Add requestId to track which component made the call
-      const requestId = options.headers?.get('X-Widget-Id') || 'unknown';
-      
-      const startTime = Date.now();
-      return originalFetch.apply(this, args)
-        .then(response => {
-          const duration = Date.now() - startTime;
-          debug(`API Response (${duration}ms):`, url, response.status);
-          return response;
-        })
-        .catch(error => {
-          debug('API Error:', url, error);
-          throw error;
+    // Only override fetch if it exists and is being used
+    if (typeof window.fetch === 'function') {
+      window.fetch = function(url, options = {}) {
+        debug('Fetch call intercepted, using XMLHttpRequest instead:', url);
+        
+        return new Promise((resolve, reject) => {
+          // IMPORTANT: Rewrite API URLs to use our base URL
+          if (typeof url === 'string' && url.match(/^\/api\//)) {
+            url = API_BASE_URL + url;
+            debug('Rewritten API URL:', url);
+          }
+          
+          const method = options.method || 'GET';
+          
+          if (method.toUpperCase() === 'GET') {
+            var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+            request.onreadystatechange = function() {
+              if (request.readyState === 4) {
+                if (request.status === 200) {
+                  const response = {
+                    ok: true,
+                    status: request.status,
+                    statusText: request.statusText,
+                    url: url,
+                    json: function() {
+                      return Promise.resolve(JSON.parse(request.responseText));
+                    },
+                    text: function() {
+                      return Promise.resolve(request.responseText);
+                    }
+                  };
+                  resolve(response);
+                } else {
+                  reject(new Error('Request failed with status ' + request.status));
+                }
+              }
+            };
+            request.open('GET', url, true);
+            
+            // Add headers if provided
+            if (options.headers) {
+              for (const key in options.headers) {
+                request.setRequestHeader(key, options.headers[key]);
+              }
+            }
+            
+            request.send();
+            
+          } else if (method.toUpperCase() === 'POST') {
+            var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+            request.onreadystatechange = function() {
+              if (request.readyState === 4) {
+                if (request.status === 200) {
+                  const response = {
+                    ok: true,
+                    status: request.status,
+                    statusText: request.statusText,
+                    url: url,
+                    json: function() {
+                      return Promise.resolve(JSON.parse(request.responseText));
+                    },
+                    text: function() {
+                      return Promise.resolve(request.responseText);
+                    }
+                  };
+                  resolve(response);
+                } else {
+                  reject(new Error('Request failed with status ' + request.status));
+                }
+              }
+            };
+            request.open('POST', url, true);
+            
+            // IMPORTANT: Always use form-urlencoded like the weatherwidget
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            
+            // Add other headers if provided (except Content-Type which we force)
+            if (options.headers) {
+              for (const key in options.headers) {
+                if (key.toLowerCase() !== 'content-type') {
+                  request.setRequestHeader(key, options.headers[key]);
+                }
+              }
+            }
+            
+            // Convert JSON body to URL parameters like the weatherwidget
+            let body = options.body || '';
+            if (typeof body === 'string' && body.startsWith('{')) {
+              try {
+                body = objectToUrlParams(JSON.parse(body));
+              } catch (e) {
+                debug('Error converting JSON to URL params:', e);
+              }
+            } else if (typeof body === 'object') {
+              body = objectToUrlParams(body);
+            }
+            
+            request.send(body);
+          }
         });
-    };
+      };
+    }
   };
   
   // Initialize widgets when resources are loaded
