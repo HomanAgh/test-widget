@@ -8,36 +8,35 @@ const nextConfig: NextConfig = {
     hostname: 'localhost.st', 
   },
 
-    images: {
-      unoptimized: true,
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'files.eliteprospects.com',
-          pathname: '/**',
-        },
-        {
-          protocol: 'https',
-          hostname: 'www.eliteprospects.com',
-          pathname: '/**',
-        },
-        {
-          protocol: 'https',
-          hostname: 'eliteprospects.com',
-          pathname: '/**',
-        }
-      ]
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'files.eliteprospects.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.eliteprospects.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'eliteprospects.com',
+        pathname: '/**',
+      }
+    ]
   },
 
   async headers() {
-    // Create a more comprehensive set of CORS headers
+    // Create standard CORS headers with only valid HTTP header names
     const corsHeaders = [
       { key: "Access-Control-Allow-Credentials", value: "true" },
       { key: "Access-Control-Allow-Origin", value: "*" },
       { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-      { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-widget-id, User-Agent, Authorization, Origin, Referer, Cookie, append, delete, entries, foreach, get, getsetcookie, has, keys, set, values" },
-      // Add this header to handle preflight caching
-      { key: "Access-Control-Max-Age", value: "86400" } // Cache preflight request results for 24 hours
+      { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-widget-id, User-Agent, Authorization, Origin, Referer, Cookie, Set-Cookie" },
+      { key: "Access-Control-Max-Age", value: "86400" }
     ];
     
     return [
