@@ -114,8 +114,7 @@
   
   debug('API Base URL (for data fetching):', API_BASE_URL);
   
-  // XMLHttpRequest utility functions (compatible with older browsers/CMS systems)
-  // Using the same function signature as the weatherwidget for better compatibility
+  // Simplified XMLHttpRequest utility functions with minimal headers
   function requestGet(url, callback, id) {
     debug('Making GET request to:', url);
     var request = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
@@ -200,18 +199,14 @@
     });
   };
   
-  // Simplified API calls monitoring - similar to weatherwidget approach
+  // Super simplified fetch polyfill with minimal headers
   const monitorApiCalls = () => {
-    // Only override fetch if it exists and is being used
     if (typeof window.fetch === 'function') {
       window.fetch = function(url, options = {}) {
-        debug('Fetch call intercepted, using XMLHttpRequest instead:', url);
-        
         return new Promise((resolve, reject) => {
-          // IMPORTANT: Rewrite API URLs to use our base URL
+          // Rewrite API URLs to use our base URL
           if (typeof url === 'string' && url.match(/^\/api\//)) {
             url = API_BASE_URL + url;
-            debug('Rewritten API URL:', url);
           }
           
           const method = options.method || 'GET';
@@ -241,10 +236,28 @@
             };
             request.open('GET', url, true);
             
-            // Add headers if provided
+            // Only add essential headers
             if (options.headers) {
-              for (const key in options.headers) {
-                request.setRequestHeader(key, options.headers[key]);
+              try {
+                if (options.headers.get && typeof options.headers.get === 'function') {
+                  // It's a Headers object
+                  if (options.headers.get('Content-Type')) {
+                    request.setRequestHeader('Content-Type', options.headers.get('Content-Type'));
+                  }
+                  if (options.headers.get('Authorization')) {
+                    request.setRequestHeader('Authorization', options.headers.get('Authorization'));
+                  }
+                } else {
+                  // It's a plain object
+                  if (options.headers['Content-Type']) {
+                    request.setRequestHeader('Content-Type', options.headers['Content-Type']);
+                  }
+                  if (options.headers['Authorization']) {
+                    request.setRequestHeader('Authorization', options.headers['Authorization']);
+                  }
+                }
+              } catch (e) {
+                debug('Error setting headers:', e);
               }
             }
             
@@ -275,17 +288,8 @@
             };
             request.open('POST', url, true);
             
-            // IMPORTANT: Always use form-urlencoded like the weatherwidget
+            // Always use form-urlencoded like the weatherwidget
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            // Add other headers if provided (except Content-Type which we force)
-            if (options.headers) {
-              for (const key in options.headers) {
-                if (key.toLowerCase() !== 'content-type') {
-                  request.setRequestHeader(key, options.headers[key]);
-                }
-              }
-            }
             
             // Convert JSON body to URL parameters like the weatherwidget
             let body = options.body || '';
