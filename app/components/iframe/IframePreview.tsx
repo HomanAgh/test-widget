@@ -140,7 +140,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       if (params.has('headerTextColor')) widgetDiv += `\n  data-header-text-color="${params.get('headerTextColor')}"`;
       if (params.has('nameTextColor')) widgetDiv += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
       
-      widgetDiv += `\n></div>\n\n<script async src="${window.location.origin}/embed.js?id=${widgetId}"></script>`;
+      widgetDiv += `\n></div>\n\n<script async src="https://widget.eliteprospects.com/embed.js?id=${widgetId}"></script>`;
       
       return widgetDiv;
     } catch (error) {

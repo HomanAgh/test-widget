@@ -28,13 +28,34 @@
     console.error('Error parsing widget ID:', e);
   }
   
-  // Load the main widget loader
+  // Always use absolute URL to widget domain, not relative path
+  var scriptDomain = "https://widget.eliteprospects.com";
+  
+  // Check if we're in dev mode
+  var isDev = false;
+  try {
+    if (scriptSrc.indexOf('dev=true') > -1) {
+      isDev = true;
+      scriptDomain = "http://localhost:3000";
+    }
+  } catch (e) {
+    console.error('Error checking dev mode:', e);
+  }
+  
+  // Load the main widget loader with absolute URL
   var script = document.createElement('script');
-  script.src = currentScript.src.split('embed.js')[0] + 'widget-loader-combined.js';
+  script.src = scriptDomain + '/widget-loader-combined.js';
+  
   if (widgetId) {
     // Add the widget ID as a data attribute
     script.setAttribute('data-widget-id', widgetId);
   }
+  
+  // Pass dev mode if needed
+  if (isDev) {
+    script.src += '?dev=true';
+  }
+  
   script.async = true;
   document.body.appendChild(script);
 })(); 
