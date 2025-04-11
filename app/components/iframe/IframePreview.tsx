@@ -31,9 +31,11 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       const pathParts = url.pathname.split('/');
       const widgetType = pathParts[pathParts.length - 1];
       
+      // Generate a unique widget ID
+      const widgetId = `ep_${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
       
-      // Build the direct script implementation
-      let widgetDiv = `<div class="ep-widget" \n  data-widget-type="${widgetType}"`;
+      // Build the direct script implementation with ID
+      let widgetDiv = `<div id="${widgetId}" class="ep-widget" \n  data-widget-type="${widgetType}"`;
       
       // Add parameters based on widget type
       switch (widgetType) {
@@ -138,7 +140,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
       if (params.has('headerTextColor')) widgetDiv += `\n  data-header-text-color="${params.get('headerTextColor')}"`;
       if (params.has('nameTextColor')) widgetDiv += `\n  data-name-text-color="${params.get('nameTextColor')}"`;
       
-      widgetDiv += `\n></div>\n\n<script async src="${window.location.origin}/widget-loader-combined.js"></script>`;
+      widgetDiv += `\n></div>\n\n<script async src="${window.location.origin}/embed.js?id=${widgetId}"></script>`;
       
       return widgetDiv;
     } catch (error) {

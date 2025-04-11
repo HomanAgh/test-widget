@@ -16,6 +16,15 @@
   
   debug('Widget loader starting!');
   
+  // Get the current script element and its widget ID
+  var scriptElement = document.currentScript;
+  var targetWidgetId = null;
+  
+  if (scriptElement && scriptElement.getAttribute('data-widget-id')) {
+    targetWidgetId = scriptElement.getAttribute('data-widget-id');
+    debug('Target widget ID:', targetWidgetId);
+  }
+  
   // Add preconnect for Google Fonts
   function addGoogleFontsPreconnect() {
     // Only add if they don't already exist
@@ -46,19 +55,30 @@
   // Add the fonts directly
   addFontStylesheet();
   
-  // Find all widget containers
-  const widgets = document.querySelectorAll('.ep-widget');
+  // Find widget containers - either a specific one by ID or all with the class
+  let widgets = [];
+  if (targetWidgetId) {
+    // If we have a target ID, only get that specific widget
+    const targetWidget = document.getElementById(targetWidgetId);
+    if (targetWidget) {
+      widgets = [targetWidget];
+      debug(`Found target widget with ID ${targetWidgetId}`);
+    } else {
+      debug(`Warning: Target widget with ID ${targetWidgetId} not found`);
+    }
+  } else {
+    // Otherwise get all widgets with the class
+    widgets = document.querySelectorAll('.ep-widget');
+    debug(`Found ${widgets.length} widgets on page`);
+  }
   
   if (!widgets.length) {
     console.warn('No EliteProspects widgets found on page');
     return;
   }
   
-  debug(`Found ${widgets.length} widgets on page`);
-  
   // IMPORTANT: Determine environment from script URL or query param
   // Check if script URL has dev=true parameter
-  const scriptElement = document.currentScript;
   let isDev = false;
   
   try {
@@ -136,6 +156,13 @@
   const loadBundle = () => {
     debug('Loading widget bundle...');
     return new Promise((resolve, reject) => {
+      // Only load the bundle if it hasn't been loaded already
+      if (window.EPWidgets) {
+        debug('Widget bundle already loaded, skipping load');
+        resolve();
+        return;
+      }
+      
       const script = document.createElement('script');
       // Load bundle from same location as this script
       script.src = `${isDev ? API_BASE_URL : scriptBaseURL}/widget-bundle.js`;
@@ -307,7 +334,7 @@
           });
         
         // Add widget index for tracking
-        config.widgetId = `widget-${index}`;
+        config.widgetId = container.id || `widget-${index}`;
         
         // IMPORTANT: Add API base URL to config
         config.apiBaseUrl = API_BASE_URL;
