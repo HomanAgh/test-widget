@@ -538,7 +538,7 @@
     window.addEventListener('error', function(e) {
       console.error('Global error in widget:', e.error || e.message);
     });
-    
+    //changes. 
     // Main initialization with retry mechanism
     function initializeWithRetry(maxRetries = 2) {
       let retryCount = 0;
