@@ -36,27 +36,29 @@
       debug('Target widget ID:', targetWidgetId);
     }
     
-    // Add preconnect for Google Fonts
+    // Add preconnect for Google Fonts - only for widget containers
     function addGoogleFontsPreconnect() {
-      // Only add if they don't already exist
-      if (!document.querySelector('link[href="https://fonts.googleapis.com"]')) {
+      // Only add if they don't already exist and we have widget containers
+      if (document.querySelector('.ep-widget') && !document.querySelector('link[href="https://fonts.googleapis.com"][data-ep-widget]')) {
         const preconnect1 = document.createElement('link');
         preconnect1.rel = 'preconnect';
         preconnect1.href = 'https://fonts.googleapis.com';
+        preconnect1.setAttribute('data-ep-widget', 'true');
         document.head.appendChild(preconnect1);
         
-        debug('Added Google Fonts preconnect');
+        debug('Added Google Fonts preconnect for widget');
       }
     }
     
-    // Add Google Fonts directly (minimal subset for faster loading)
+    // Add Google Fonts directly (minimal subset for faster loading) - only for widget containers
     function addFontStylesheet() {
-      if (!document.querySelector('link[href*="fonts.googleapis.com/css2"]')) {
+      if (document.querySelector('.ep-widget') && !document.querySelector('link[href*="fonts.googleapis.com/css2"][data-ep-widget]')) {
         const fontLink = document.createElement('link');
         fontLink.rel = 'stylesheet';
         fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap';
+        fontLink.setAttribute('data-ep-widget', 'true');
         document.head.appendChild(fontLink);
-        debug('Added font stylesheet link');
+        debug('Added font stylesheet link for widget');
       }
     }
     
@@ -236,11 +238,20 @@
       });
     };
     
-    // Super simplified fetch polyfill with minimal headers
+    // Super simplified fetch polyfill with minimal headers - only for widget API calls
     const monitorApiCalls = () => {
       if (typeof window.fetch === 'function') {
         const originalFetch = window.fetch;
         window.fetch = function(url, options = {}) {
+          // Only intercept widget API calls
+          const isWidgetApiCall = typeof url === 'string' && 
+            (url.startsWith(API_BASE_URL) || url.startsWith('/api/'));
+            
+          if (!isWidgetApiCall) {
+            // For non-widget API calls, use original fetch
+            return originalFetch(url, options);
+          }
+          
           // Keep track of original fetch for special cases
           if (options && options.useOriginalFetch) {
             return originalFetch(url, options);
