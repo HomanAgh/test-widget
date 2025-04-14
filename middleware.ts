@@ -1,20 +1,19 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from './app/utils/supabase/middleware'
 
-export async function middleware(request: NextRequest) {
-  // Skip middleware for widget bundle files
-  if (
-    request.nextUrl.pathname.startsWith('/widget-bundle.js') || 
-    request.nextUrl.pathname.startsWith('/widget-loader.js') || 
-    request.nextUrl.pathname.startsWith('/widget-loader-combined.js') ||
-    request.nextUrl.pathname.endsWith('.html')||
-    request.nextUrl.pathname.startsWith('/_next/image') && request.nextUrl.searchParams.has('url')
-  ) {
-    return;
-  }
+
+// export async function middleware(request: NextRequest) {
+//   // Skip middleware for widget bundle files
+//   if (
+//     request.nextUrl.pathname.startsWith('/widget-bundle.js') || 
+//     request.nextUrl.pathname.startsWith('/widget-loader.js') || 
+//     request.nextUrl.pathname.startsWith('/widget-loader-combined.js') ||
+//     request.nextUrl.pathname.endsWith('.html')||
+//     request.nextUrl.pathname.startsWith('/_next/image') && request.nextUrl.searchParams.has('url')
+//   ) {
+//     return;
+//   }
   
-  return await updateSession(request)
-}
+//   return await updateSession(request)
+// }
 
 export const config = {
   matcher: [
