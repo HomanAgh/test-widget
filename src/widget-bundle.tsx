@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './widget-styles.css';
+import styles from './widget-styles.module.css';
 
 // Polyfill for process in browser environment
 // This is needed because some React code might expect process.env to exist
@@ -26,7 +26,7 @@ declare global {
 
 // Create a dummy component for fallbacks
 const DummyComponent = (props: any) => (
-  <div>
+  <div className={styles.widgetContainer}>
     <h3>Widget Component Error</h3>
     <p>This widget is not available. Please check console for details.</p>
     <pre>{JSON.stringify(props, null, 2)}</pre>
@@ -74,7 +74,7 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
   // Check if the widget type is supported
   if (!WIDGET_COMPONENTS[widgetType]) {
     console.error(`Widget type '${widgetType}' not supported`);
-    container.innerHTML = `<div>Widget type '${widgetType}' not supported</div>`;
+    container.innerHTML = `<div class="${styles.widgetContainer}">Widget type '${widgetType}' not supported</div>`;
     return;
   }
 
@@ -90,18 +90,38 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
     window._epWidgetFetchEnhanced = true;
     
     window.fetch = function(input, init) {
-      // Add a header to track which widget is making the request
-      const headers = new Headers(init?.headers || {});
-      headers.set('X-Widget-Id', config.widgetId || widgetType);
-      
-      const enhancedInit = {
-        ...init,
-        headers
-      };
-      
+      // Only handle widget-specific API calls
       let inputUrl = typeof input === 'string' 
         ? input 
         : (input instanceof Request ? input.url : input.toString());
+      
+      // Check if this is a widget API call
+      const isWidgetApiCall = inputUrl.startsWith(API_BASE_URL) || 
+        (inputUrl.startsWith('/api/') && 
+         (inputUrl.includes('/alumni/') || 
+          inputUrl.includes('/league/') || 
+          inputUrl.includes('/player/') ||
+          inputUrl.includes('/playerCareer/') ||
+          inputUrl.includes('/playerSeasons/') ||
+          inputUrl.includes('/playerStats/') ||
+          inputUrl.includes('/seasons/') || 
+          inputUrl.includes('/team/') ||
+          inputUrl.includes('/teamroster/') ||
+          inputUrl.includes('/tournament-alumni/')));
+
+      if (!isWidgetApiCall) {
+        // For non-widget API calls, use original fetch
+        return originalFetch.call(this, input, init);
+      }
+
+      // Create enhanced init object with widget headers
+      const enhancedInit = {
+        ...init,
+        headers: new Headers({
+          ...(init?.headers || {}),
+          'X-Widget-Id': config.widgetId || widgetType
+        })
+      };
       
       // IMPORTANT: Handle relative API URLs to use our base URL
       if (typeof inputUrl === 'string' && inputUrl.startsWith('/api/')) {
@@ -163,8 +183,8 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
     if (missingParams.length > 0) {
       console.error(`Missing required parameters for ${widgetType} widget:`, missingParams);
       container.innerHTML = `
-        <div style="padding: 1rem; border: 1px solid #f44336; border-radius: 4px;">
-          <h3 style="color: #f44336; margin: 0 0 0.5rem;">Configuration Error</h3>
+        <div class="${styles.widgetContainer}">
+          <h3>Configuration Error</h3>
           <p>Missing required parameters: ${missingParams.join(', ')}</p>
         </div>
       `;
@@ -237,10 +257,10 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
     // Render the component with error boundary
     const Component = WIDGET_COMPONENTS[widgetType];
     const ErrorFallback = (props: any) => (
-      <div style={{ padding: '1rem', border: '1px solid #f44336', borderRadius: '4px', margin: '0.5rem 0' }}>
-        <h3 style={{ color: '#f44336', margin: '0 0 0.5rem' }}>Widget Error</h3>
+      <div className={styles.widgetContainer}>
+        <h3>Widget Error</h3>
         <p>{props.error?.message || 'An unknown error occurred'}</p>
-        <pre style={{ fontSize: '0.8rem', overflow: 'auto', maxHeight: '200px' }}>
+        <pre>
           {props.error?.stack || ''}
         </pre>
       </div>
@@ -255,10 +275,14 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
       }
     };
     
-    root.render(<WidgetWithErrorHandling {...processedConfig} customColors={customColors} />);
+    root.render(
+      <div className={styles.widgetWrapper}>
+        <WidgetWithErrorHandling {...processedConfig} customColors={customColors} />
+      </div>
+    );
   } catch (error) {
     console.error(`Error rendering widget:`, error);
-    container.innerHTML = `<div>Failed to load widget: ${error instanceof Error ? error.message : 'Unknown error'}</div>`;
+    container.innerHTML = `<div class="${styles.widgetContainer}">Failed to load widget: ${error instanceof Error ? error.message : 'Unknown error'}</div>`;
   }
 };
 
