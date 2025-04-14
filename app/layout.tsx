@@ -26,8 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${openSans.variable} $${montserrat.variable}`}>
-        <Providers>{children}</Providers>
+      <body>
+        <div className={`ep-widget-container ${openSans.variable} $${montserrat.variable}`}>
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );

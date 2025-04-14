@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget Test Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif !important;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .site-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .widget-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="site-content">
+        <h1>Widget Test Site</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="tab1">Tab 1</div>
+            <div class="tab" data-tab="tab2">Tab 2</div>
+        </div>
+
+        <div class="tab-content active" id="tab1">
+            <h2>Tab 1 Content</h2>
+            <p>This is the content of tab 1. The widget should be below.</p>
+            
+            <div class="widget-container">
+                <div id="ep_9351" class="ep-widget" 
+                data-widget-type="alumni-tournament"
+                data-selected-tournaments='["brick-invitational"]'
+                data-selected-leagues='["shl"]'
+                data-selected-columns='{"name":true,"birthYear":true,"draftPick":true,"tournamentTeam":true,"tournamentSeason":true,"juniorTeams":false,"collegeTeams":false,"proTeams":true}'
+                data-selected-league-categories='{"junior":true,"college":true,"professional":true}'
+                data-background-color="#052D41"
+                data-text-color="#000000"
+                data-table-background-color="#FFFFFF"
+                data-header-text-color="#FFFFFF"
+                data-name-text-color="#0D73A6"
+              ></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab2">
+            <h2>Tab 2 Content</h2>
+            <p>This is the content of tab 2. The widget should be below.</p>
+            
+            <div class="widget-container">
+                <div id="ep_2413" class="ep-widget" 
+                data-widget-type="player"
+                data-player-id="23856"
+                data-game-limit="5"
+                data-view-mode="stats"
+                data-show-summary="false"
+                data-background-color="#052D41"
+                data-text-color="#000000"
+                data-table-background-color="#FFFFFF"
+                data-header-text-color="#FFFFFF"
+                data-name-text-color="#0D73A6"
+              ></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Debug logging
+        console.log('Test site loaded');
+        window.addEventListener('error', function(e) {
+            console.error('Error in test site:', e.error);
+        });
+    </script>
+
+    <!-- Load the widget script -->
+    <script async src="https://widget.eliteprospects.com/embed.js?id=ep_9351"></script>
+    <script async src="https://widget.eliteprospects.com/embed.js?id=ep_9352"></script>
+</body>
+</html> 
