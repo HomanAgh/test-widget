@@ -13,6 +13,9 @@
     --foreground: #ededed;
   }
 } */
+html:where(:not(.widget-html)) {
+  font-family: inherit !important;
+}
 
 .ep-widget-container {
   font-family: var(--font-open-sans);
