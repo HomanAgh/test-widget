@@ -36,38 +36,6 @@
       debug('Target widget ID:', targetWidgetId);
     }
     
-    // Add preconnect for Google Fonts - only for widget containers
-    function addGoogleFontsPreconnect() {
-      // Only add if they don't already exist and we have widget containers
-      if (document.querySelector('.ep-widget') && !document.querySelector('link[href="https://fonts.googleapis.com"][data-ep-widget]')) {
-        const preconnect1 = document.createElement('link');
-        preconnect1.rel = 'preconnect';
-        preconnect1.href = 'https://fonts.googleapis.com';
-        preconnect1.setAttribute('data-ep-widget', 'true');
-        document.head.appendChild(preconnect1);
-        
-        debug('Added Google Fonts preconnect for widget');
-      }
-    }
-    
-    // Add Google Fonts directly (minimal subset for faster loading) - only for widget containers
-    function addFontStylesheet() {
-      if (document.querySelector('.ep-widget') && !document.querySelector('link[href*="fonts.googleapis.com/css2"][data-ep-widget]')) {
-        const fontLink = document.createElement('link');
-        fontLink.rel = 'stylesheet';
-        fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap';
-        fontLink.setAttribute('data-ep-widget', 'true');
-        document.head.appendChild(fontLink);
-        debug('Added font stylesheet link for widget');
-      }
-    }
-    
-    // Add font preconnect
-    addGoogleFontsPreconnect();
-    
-    // Add the fonts directly
-    addFontStylesheet();
-    
     // Find widget containers - either a specific one by ID or all with the class
     let widgets = [];
     if (targetWidgetId) {
@@ -126,6 +94,42 @@
     }
     
     debug('API Base URL (for data fetching):', API_BASE_URL);
+    
+    // Create a shadow DOM for each widget to isolate styles and fonts
+    widgets.forEach((container, index) => {
+      try {
+        // Create a shadow root for the widget
+        const shadowRoot = container.attachShadow({ mode: 'open' });
+        
+        // Add Google Fonts to the shadow DOM only
+        const style = document.createElement('style');
+        style.textContent = `
+          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap');
+          
+          /* Reset styles to prevent inheritance */
+          * {
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+          }
+        `;
+        shadowRoot.appendChild(style);
+        
+        // Create a container div inside the shadow DOM
+        const widgetContainer = document.createElement('div');
+        widgetContainer.className = 'ep-widget-container';
+        shadowRoot.appendChild(widgetContainer);
+        
+        // Store the shadow root and container for later use
+        container._shadowRoot = shadowRoot;
+        container._widgetContainer = widgetContainer;
+        
+        debug(`Created shadow DOM for widget ${index}`);
+      } catch (error) {
+        console.error('Error creating shadow DOM:', error);
+      }
+    });
     
     // Simplified XMLHttpRequest utility functions with minimal headers
     function requestGet(url, callback, id) {
@@ -243,9 +247,20 @@
       if (typeof window.fetch === 'function') {
         const originalFetch = window.fetch;
         window.fetch = function(url, options = {}) {
-          // Only intercept widget API calls
+          // Only intercept widget API calls - be very specific about the URLs
           const isWidgetApiCall = typeof url === 'string' && 
-            (url.startsWith(API_BASE_URL) || url.startsWith('/api/'));
+            (url.startsWith(API_BASE_URL) || 
+             (url.startsWith('/api/') && 
+              (url.includes('/alumni/') || 
+               url.includes('/league/') || 
+               url.includes('/player/') ||
+               url.includes('/playerCareer/') ||
+               url.includes('/playerSeasons/') ||
+               url.includes('/playerStats/') ||
+               url.includes('/seasons/') || 
+               url.includes('/team/') ||
+               url.includes('/teamroster/') ||
+               url.includes('/tournament-alumni/'))));
             
           if (!isWidgetApiCall) {
             // For non-widget API calls, use original fetch
@@ -485,7 +500,7 @@
           const widgetType = container.getAttribute('data-widget-type');
           if (!widgetType) {
             console.error('Widget type not specified');
-            container.innerHTML = '<div>Widget type not specified</div>';
+            container._widgetContainer.innerHTML = '<div>Widget type not specified</div>';
             return;
           }
           
@@ -510,8 +525,8 @@
           debug(`Initializing ${widgetType} widget:`, config);
           
           // Add loading indicator to container
-          const loadingHtml = '<div class="ep-widget-loading" style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">Loading widget...</div>';
-          container.innerHTML = loadingHtml;
+          const loadingHtml = '<div class="ep-widget-loading" style="text-align: center; padding: 20px;">Loading widget...</div>';
+          container._widgetContainer.innerHTML = loadingHtml;
           
           // Initialize widget if the global widget renderer is available
           if (window.EPWidgets && typeof window.EPWidgets.renderWidget === 'function') {
@@ -519,26 +534,26 @@
             
             // Wrap in try/catch to ensure rendering attempts don't fail silently
             try {
-              window.EPWidgets.renderWidget(container, widgetType, config);
+              window.EPWidgets.renderWidget(container._widgetContainer, widgetType, config);
               
               // Set a safety timeout to check if widget has rendered properly
               setTimeout(() => {
-                if (container.innerHTML === loadingHtml || container.innerHTML === '') {
+                if (container._widgetContainer.innerHTML === loadingHtml || container._widgetContainer.innerHTML === '') {
                   debug('Widget rendering may have failed silently, attempting to re-render');
-                  window.EPWidgets.renderWidget(container, widgetType, config);
+                  window.EPWidgets.renderWidget(container._widgetContainer, widgetType, config);
                 }
               }, 3000);
             } catch (renderError) {
               console.error('Error rendering widget:', renderError);
-              container.innerHTML = `<div>Error rendering widget: ${renderError.message}</div>`;
+              container._widgetContainer.innerHTML = `<div>Error rendering widget: ${renderError.message}</div>`;
             }
           } else {
             console.error('Widget renderer not loaded properly');
-            container.innerHTML = '<div>Widget renderer not available</div>';
+            container._widgetContainer.innerHTML = '<div>Widget renderer not available</div>';
           }
         } catch (error) {
           console.error('Error initializing widget:', error);
-          container.innerHTML = `<div>Error initializing widget: ${error.message}</div>`;
+          container._widgetContainer.innerHTML = `<div>Error initializing widget: ${error.message}</div>`;
         }
       });
       
@@ -570,7 +585,7 @@
               setTimeout(tryInitialize, 1000 * retryCount); // Increase delay with each retry
             } else {
               widgets.forEach(container => {
-                container.innerHTML = `<div>Failed to load widget: ${error.message}</div>`;
+                container._widgetContainer.innerHTML = `<div>Failed to load widget: ${error.message}</div>`;
               });
             }
           });
