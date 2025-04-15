@@ -218,13 +218,31 @@
             
             // Add a helper to identify widget API calls
             window.EPWidgets.isWidgetApiCall = function(url) {
-              // Check if this URL is specific to the widget
-              return typeof url === 'string' && (
-                url.includes('/widget') || 
-                url.includes('/eliteprospects') ||
-                // Add other identifiers specific to your widget API
-                false
-              );
+              if (typeof url !== 'string') return false;
+              
+              // Exclude authentication endpoints
+              if (url.includes('/api/auth/') || url.includes('/api/auth/session')) {
+                return false;
+              }
+              
+              // Check if URL is for one of our widget API endpoints
+              const widgetApiPatterns = [
+                '/api/player/',
+                '/api/team/',
+                '/api/league/',
+                '/api/tournament-alumni/',
+                '/api/alumni/',
+                '/api/playerStats/',
+                '/api/playerSeasons/',
+                '/api/playerCareer/',
+                '/api/teamroster/',
+                '/api/seasons/',
+                '/api/searchPlayer/',
+                '/api/searchLeague/',
+                '/api/searchTeam/'
+              ];
+              
+              return widgetApiPatterns.some(pattern => url.includes(pattern));
             };
             
             debug('Added XMLHttpRequest functions to widget bundle');
@@ -261,11 +279,14 @@
           return new Promise((resolve, reject) => {
             // Only rewrite URLs for EliteProspects widget API calls
             // Check if this is an EliteProspects widget API call
-            if (typeof url === 'string' && url.match(/^\/api\//) && 
-                (options.epWidget === true || 
-                 (options.headers && options.headers['X-EP-Widget']) ||
-                 url.includes('widget') || 
-                 window.EPWidgets && window.EPWidgets.isWidgetApiCall && window.EPWidgets.isWidgetApiCall(url))) {
+            const isWidgetApiCall = 
+              (options.epWidget === true || 
+               (options.headers && options.headers['X-EP-Widget'])) ||
+              (typeof url === 'string' && window.EPWidgets && 
+               window.EPWidgets.isWidgetApiCall && 
+               window.EPWidgets.isWidgetApiCall(url));
+            
+            if (isWidgetApiCall && typeof url === 'string' && url.match(/^\/api\//)) {
               url = API_BASE_URL + url;
               debug('Rewritten URL for EP widget API call:', url);
             }
