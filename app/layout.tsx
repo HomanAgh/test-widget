@@ -26,9 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-font-protected="true">
       <head>
-        <Script src="/widget-protector.js" strategy="beforeInteractive" />
+        {/* Add single font protection script with highest priority */}
+        <Script src="/font-fix.js" strategy="beforeInteractive" />
       </head>
       <body>
         <div className={`ep-widget-container ${openSans.variable} ${montserrat.variable}`}>
