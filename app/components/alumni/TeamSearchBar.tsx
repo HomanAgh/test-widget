@@ -227,7 +227,7 @@ const TeamSearchBar: React.FC<TeamSearchBarProps> = ({
               onClick={clearAllTeams}
               className="my-2 px-4 py-2 rounded uppercase text-sm tracking-wider text-left cursor-pointer"
               style={{
-                fontFamily: "Montserrat, sans-serif",
+                fontFamily: "Montserrat",
                 fontSize: "12px",
                 fontWeight: 700,
                 lineHeight: "24px",

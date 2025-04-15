@@ -64,7 +64,7 @@ This email was sent from your website contact form. To reply to the sender, simp
   <meta charset="utf-8">
   <title>Widget Support/Suggestion Ticket</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
+    body { font-family: Arial; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
     .header { background-color: #f5f5f5; padding: 20px; border-bottom: 3px solid #0B9D52; }
     .content { padding: 20px; }
     .footer { font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 15px; margin-top: 20px; }

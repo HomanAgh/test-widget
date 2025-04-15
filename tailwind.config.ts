@@ -15,8 +15,8 @@ module.exports = {
         customLightBlue: "rgba(246,249,252)",
       },
       fontFamily: {
-        sans: ["var(--font-open-sans)", "sans-serif"],
-        montserrat: ["Montserrat", "sans-serif"],
+        montserrat: ["Montserrat"],
+        openSans: ["Open Sans"],
       },
     },
   },

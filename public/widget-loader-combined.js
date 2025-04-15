@@ -499,7 +499,7 @@
           debug(`Initializing ${widgetType} widget:`, config);
           
           // Add loading indicator to container
-          const loadingHtml = '<div class="ep-widget-loading" style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">Loading widget...</div>';
+          const loadingHtml = '<div class="ep-widget-loading" style="text-align: center; padding: 20px;">Loading widget...</div>';
           container.innerHTML = loadingHtml;
           
           // Initialize widget if the global widget renderer is available
