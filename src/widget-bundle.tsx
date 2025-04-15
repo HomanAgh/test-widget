@@ -162,13 +162,13 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
           '/api/player/',
           '/api/team/',
           '/api/league/',
-          '/api/tournament-alumni/',
+          '/api/tournament-alumni',
           '/api/alumni/',
           '/api/playerStats/',
           '/api/playerSeasons/',
           '/api/playerCareer/',
           '/api/teamroster/',
-          '/api/seasons/'
+          '/api/seasons'
         ];
         
         return widgetApiPatterns.some(pattern => url.includes(pattern));
