@@ -215,6 +215,18 @@
             window.EPWidgets.requestGet = requestGet;
             window.EPWidgets.requestPost = requestPost;
             window.EPWidgets.objectToUrlParams = objectToUrlParams;
+            
+            // Add a helper to identify widget API calls
+            window.EPWidgets.isWidgetApiCall = function(url) {
+              // Check if this URL is specific to the widget
+              return typeof url === 'string' && (
+                url.includes('/widget') || 
+                url.includes('/eliteprospects') ||
+                // Add other identifiers specific to your widget API
+                false
+              );
+            };
+            
             debug('Added XMLHttpRequest functions to widget bundle');
           }
           
@@ -247,9 +259,15 @@
           }
           
           return new Promise((resolve, reject) => {
-            // Rewrite API URLs to use our base URL
-            if (typeof url === 'string' && url.match(/^\/api\//)) {
+            // Only rewrite URLs for EliteProspects widget API calls
+            // Check if this is an EliteProspects widget API call
+            if (typeof url === 'string' && url.match(/^\/api\//) && 
+                (options.epWidget === true || 
+                 (options.headers && options.headers['X-EP-Widget']) ||
+                 url.includes('widget') || 
+                 window.EPWidgets && window.EPWidgets.isWidgetApiCall && window.EPWidgets.isWidgetApiCall(url))) {
               url = API_BASE_URL + url;
+              debug('Rewritten URL for EP widget API call:', url);
             }
             
             const method = options.method || 'GET';
@@ -496,6 +514,9 @@
           // IMPORTANT: Add API base URL to config
           config.apiBaseUrl = API_BASE_URL;
           
+          // Add flag to identify widget API calls
+          config.markApiCalls = true;
+          
           debug(`Initializing ${widgetType} widget:`, config);
           
           // Add loading indicator to container
@@ -505,6 +526,30 @@
           // Initialize widget if the global widget renderer is available
           if (window.EPWidgets && typeof window.EPWidgets.renderWidget === 'function') {
             console.log('Rendering widget:', widgetType, config);
+            
+            // Set up custom fetch for this widget if not already done
+            if (!window.EPWidgets.originalFetch && window.fetch) {
+              window.EPWidgets.originalFetch = window.fetch;
+              
+              // Replace fetch to mark all widget API calls
+              const widgetFetch = function(url, options = {}) {
+                // Mark this as a widget API call
+                options = options || {};
+                options.epWidget = true;
+                
+                // Add header to identify widget API calls
+                if (!options.headers) options.headers = {};
+                if (typeof options.headers === 'object') {
+                  options.headers['X-EP-Widget'] = 'true';
+                }
+                
+                // Use the current fetch implementation (which includes our monitorApiCalls logic)
+                return window.fetch(url, options);
+              };
+              
+              // Store for widgets to use
+              window.EPWidgets.fetch = widgetFetch;
+            }
             
             // Wrap in try/catch to ensure rendering attempts don't fail silently
             try {

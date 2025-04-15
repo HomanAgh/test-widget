@@ -1,6 +1,4 @@
 import type { Config } from 'tailwindcss'
-import path from 'path'
-
 // Detect if we're building the widget bundle based on the command
 const isWidgetBundle = process.env.VITE_BUILD === 'true' || 
                        process.argv.some(arg => arg.includes('vite.widget.config.ts'));
