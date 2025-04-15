@@ -79,9 +79,7 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
   }
 
   // Get the API base URL from config or global setting
-  const API_BASE_URL = config.apiBaseUrl || 
-                      (window.EPWidgets && window.EPWidgets.API_BASE_URL) || 
-                      window.location.origin;
+  const API_BASE_URL = "https://widget.eliteprospects.com";
   
   console.log(`[EP Widget] Using API base URL: ${API_BASE_URL}`);
 

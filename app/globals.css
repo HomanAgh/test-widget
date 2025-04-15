@@ -13,8 +13,7 @@
     --foreground: #ededed;
   }
 } */
-
-body {
+.ep-widget-container {
   font-family: var(--font-open-sans);
   color: var(--foreground);
   background-color: var(--background);
