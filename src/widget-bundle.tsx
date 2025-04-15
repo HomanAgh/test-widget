@@ -103,14 +103,23 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
         ? input 
         : (input instanceof Request ? input.url : input.toString());
       
-      // IMPORTANT: Handle relative API URLs to use our base URL
-      if (typeof inputUrl === 'string' && inputUrl.startsWith('/api/')) {
+      // Determine if this is a widget API call or an external API call
+      // We only want to rewrite relative URLs for our own API calls
+      const isRelativeUrl = typeof inputUrl === 'string' && inputUrl.startsWith('/api/');
+      const isExternalUrl = typeof inputUrl === 'string' && (
+        inputUrl.includes('://') && 
+        !inputUrl.startsWith(API_BASE_URL)
+      );
+      
+      // Only rewrite relative API URLs that don't point to external services
+      if (isRelativeUrl && !isExternalUrl) {
         inputUrl = `${API_BASE_URL}${inputUrl}`;
         input = inputUrl;
         console.log(`[EP Widget] Rewriting API URL to: ${inputUrl}`);
       }
       
       console.log(`[EP Widget] ${widgetType} API call:`, inputUrl);
+      
       return originalFetch.call(this, input, enhancedInit)
         .then(response => {
           if (!response.ok) {
