@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Open_Sans, Montserrat } from "next/font/google";
 import { Providers } from "./providers";
-import Script from "next/script";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -26,11 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-font-protected="true">
-      <head>
-        {/* Add single font protection script with highest priority */}
-        <Script src="/font-fix.js" strategy="beforeInteractive" />
-      </head>
+    <html lang="en">
       <body>
         <div className={`ep-widget-container ${openSans.variable} ${montserrat.variable}`}>
           <Providers>{children}</Providers>
