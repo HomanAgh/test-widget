@@ -1,16 +1,21 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  
-  corePlugins: {
-    preflight: false,
-  },
-  
+import type { Config } from 'tailwindcss'
+import path from 'path'
+
+// Detect if we're building the widget bundle based on the command
+const isWidgetBundle = process.env.VITE_BUILD === 'true' || 
+                       process.argv.some(arg => arg.includes('vite.widget.config.ts'));
+
+const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./app/**/*.{js,ts,jsx,tsx}",
-    
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
+  corePlugins: {
+    // Disable preflight only when building the widget bundle, enable for everything else
+    preflight: !isWidgetBundle,
+  },
   theme: {
     extend: {
       colors: {
@@ -26,4 +31,6 @@ module.exports = {
     },
   },
   plugins: [],
-};
+}
+
+export default config
