@@ -277,8 +277,17 @@
           }
           
           return new Promise((resolve, reject) => {
+            // Explicitly check if this is an auth URL before any other checks
+            const isAuthUrl = typeof url === 'string' && 
+              (url.includes('/api/auth/') || url.includes('/api/auth/session'));
+            
+            if (isAuthUrl) {
+              debug('Auth URL detected, skipping rewrite:', url);
+              // Use original fetch for auth URLs to avoid any interference
+              return originalFetch(url, options).then(resolve).catch(reject);
+            }
+            
             // Only rewrite URLs for EliteProspects widget API calls
-            // Check if this is an EliteProspects widget API call
             const isWidgetApiCall = 
               (options.epWidget === true || 
                (options.headers && options.headers['X-EP-Widget'])) ||

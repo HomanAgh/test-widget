@@ -117,6 +117,21 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
     };
     
     window.fetch = function(input, init) {
+      // Get the URL from the input
+      let inputUrl = typeof input === 'string' 
+        ? input 
+        : (input instanceof Request ? input.url : input.toString());
+      
+      // Explicitly check if this is an auth URL before any other processing
+      const isAuthUrl = typeof inputUrl === 'string' && 
+        (inputUrl.includes('/api/auth/') || inputUrl.includes('/api/auth/session'));
+      
+      if (isAuthUrl) {
+        console.log(`[EP Widget] Auth URL detected, skipping rewrite:`, inputUrl);
+        // Use original fetch for auth URLs
+        return originalFetch.call(this, input, init);
+      }
+      
       // Add a header to track which widget is making the request
       const headers = new Headers(init?.headers || {});
       headers.set('X-Widget-Id', config.widgetId || widgetType);
@@ -127,10 +142,6 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
         headers,
         epWidget: true // Add flag to identify widget requests
       };
-      
-      let inputUrl = typeof input === 'string' 
-        ? input 
-        : (input instanceof Request ? input.url : input.toString());
       
       // Only rewrite URLs for our specific widget API endpoints
       const isWidgetApiCall = window.EPWidgets.isWidgetApiCall ? 
