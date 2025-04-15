@@ -163,11 +163,11 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
           '/api/team/',
           '/api/league/',
           '/api/tournament-alumni',
-          '/api/alumni/',
-          '/api/playerStats/',
-          '/api/playerSeasons/',
-          '/api/playerCareer/',
-          '/api/teamroster/',
+          '/api/alumni',
+          '/api/playerStats',
+          '/api/playerSeasons',
+          '/api/playerCareer',
+          '/api/teamroster',
           '/api/seasons'
         ];
         

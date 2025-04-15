@@ -230,16 +230,13 @@
                 '/api/player/',
                 '/api/team/',
                 '/api/league/',
-                '/api/tournament-alumni/',
-                '/api/alumni/',
-                '/api/playerStats/',
-                '/api/playerSeasons/',
-                '/api/playerCareer/',
-                '/api/teamroster/',
-                '/api/seasons/',
-                '/api/searchPlayer/',
-                '/api/searchLeague/',
-                '/api/searchTeam/'
+                '/api/tournament-alumni',
+                '/api/alumni',
+                '/api/playerStats',
+                '/api/playerSeasons',
+                '/api/playerCareer',
+                '/api/teamroster',
+                '/api/seasons'
               ];
               
               return widgetApiPatterns.some(pattern => url.includes(pattern));
