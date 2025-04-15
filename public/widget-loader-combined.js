@@ -109,6 +109,7 @@
       : "https://widget.eliteprospects.com";  // Production environment
     
     debug(`Running in ${isDev ? 'DEVELOPMENT' : 'PRODUCTION'} mode`);
+    debug(`API Base URL set to: ${API_BASE_URL}`);
     
     // Get the script base URL only for loading the bundle
     let scriptBaseURL;
@@ -293,8 +294,16 @@
                window.EPWidgets.isWidgetApiCall(url));
             
             if (isWidgetApiCall && typeof url === 'string' && url.match(/^\/api\//)) {
-              url = API_BASE_URL + url;
-              debug('Rewritten URL for EP widget API call:', url);
+              const originalUrl = url;
+              debug(`Before rewriting: URL=${originalUrl}, API_BASE_URL=${API_BASE_URL}`);
+              
+              // Force use of the hardcoded API_BASE_URL for consistency
+              const forcedApiBaseUrl = isDev 
+                ? "http://localhost:3000"
+                : "https://widget.eliteprospects.com";
+              
+              url = forcedApiBaseUrl + url;
+              debug(`Rewriting URL from ${originalUrl} to ${url} (using forcedApiBaseUrl=${forcedApiBaseUrl})`);
             }
             
             const method = options.method || 'GET';
@@ -512,7 +521,13 @@
     const initializeWidgets = () => {
       debug('Initializing widgets...');
       
+      // Check API_BASE_URL before fetch monitoring
+      debug('Current API_BASE_URL before monitorApiCalls:', API_BASE_URL);
+      
       monitorApiCalls();
+      
+      // Check API_BASE_URL after fetch monitoring
+      debug('Current API_BASE_URL after monitorApiCalls:', API_BASE_URL);
       
       widgets.forEach((container, index) => {
         try {

@@ -175,9 +175,14 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
       }
       
       if (isWidgetApiCall && typeof inputUrl === 'string' && inputUrl.startsWith('/api/')) {
-        inputUrl = `${API_BASE_URL}${inputUrl}`;
+        console.log(`[EP Widget] Before rewriting: URL=${inputUrl}, API_BASE_URL=${API_BASE_URL}`);
+        
+        // Force use of the hardcoded API_BASE_URL for consistency
+        const forcedApiBaseUrl = "https://widget.eliteprospects.com";
+        
+        inputUrl = `${forcedApiBaseUrl}${inputUrl}`;
         input = inputUrl;
-        console.log(`[EP Widget] Rewriting API URL to: ${inputUrl}`);
+        console.log(`[EP Widget] Rewriting URL to: ${inputUrl} (using forcedApiBaseUrl=${forcedApiBaseUrl})`);
       }
       
       // Only log widget API calls
