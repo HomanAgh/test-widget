@@ -172,18 +172,23 @@ const AdminDashboard = () => {
       setActionLoading(`role-${userId}`);
       console.log('Changing role for user:', userId, 'to:', role);
       
-      const { data, error } = await supabase
-        .from('users')
-        .update({ role })
-        .eq('id', userId)
-        .select();
-
-      if (error) {
-        console.error('Error changing role:', error);
-        throw error;
+      // Call the API endpoint to update both the database and auth metadata
+      const response = await fetch('/api/admin/update-user-role', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, role }),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error('Error updating user role:', result.error);
+        throw new Error(result.error);
       }
       
-      console.log('Role changed:', data);
+      console.log('Role changed successfully:', result);
       await fetchUsers(); // Refresh the list
     } catch (err: any) {
       console.error('Error in handleChangeRole():', err);
