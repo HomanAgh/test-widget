@@ -90,7 +90,7 @@ const ColumnSelector: React.FC<ColumnSelectorProps> = ({
   );
 
   return (
-    <div className="w-full" style={{ fontFamily: "Montserrat, sans-serif" }}>
+    <div className="w-full" style={{ fontFamily: "Montserrat" }}>
       <h2 
         className="mb-6" 
         style={{ 
@@ -98,7 +98,7 @@ const ColumnSelector: React.FC<ColumnSelectorProps> = ({
           fontWeight: 700,
           lineHeight: "24px",
           color: "#000",
-          fontFamily: "Montserrat, sans-serif"
+          fontFamily: "Montserrat"
         }}
       >
         Select columns

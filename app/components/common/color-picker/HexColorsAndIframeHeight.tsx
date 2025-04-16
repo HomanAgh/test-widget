@@ -100,7 +100,7 @@ const ColorPickerButton = ({
         className="mb-2" 
         style={{ 
           color: "#000",
-          fontFamily: "Montserrat, sans-serif",
+          fontFamily: "Montserrat",
           fontSize: "14px",
           fontWeight: 700,
           lineHeight: "24px",
@@ -115,7 +115,7 @@ const ColorPickerButton = ({
             onClick={() => setShowPicker(!showPicker)}
             className="flex items-center border border-gray-300 rounded-l px-3 py-1 bg-white hover:bg-gray-50 w-full h-[36px] relative"
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "14px",
               fontWeight: 400,
               lineHeight: "24px",
@@ -161,7 +161,7 @@ const ColorPickerButton = ({
             value={inputValue}
             onChange={handleInputChange}
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "14px",
               fontWeight: 400,
               lineHeight: "24px",
@@ -180,7 +180,7 @@ const ColorPickerButton = ({
               value={inputValue}
               onChange={handleInputChange}
               style={{
-                fontFamily: "Montserrat, sans-serif",
+                fontFamily: "Montserrat",
                 fontSize: "14px",
                 fontWeight: 400,
                 lineHeight: "24px",
@@ -190,7 +190,7 @@ const ColorPickerButton = ({
               onClick={() => setShowPicker(false)}
               className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
               style={{
-                fontFamily: "Montserrat, sans-serif",
+                fontFamily: "Montserrat",
                 fontSize: "14px",
                 fontWeight: 700,
                 lineHeight: "24px",
@@ -222,7 +222,7 @@ const HeightControl = ({
         className="mb-2" 
         style={{ 
           color: "#000",
-          fontFamily: "Montserrat, sans-serif",
+          fontFamily: "Montserrat",
           fontSize: "14px",
           fontWeight: 700,
           lineHeight: "24px",
@@ -239,7 +239,7 @@ const HeightControl = ({
             value={height}
             onChange={(e) => onChange(Number(e.target.value))}
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "14px",
               fontWeight: 400,
               lineHeight: "24px",
@@ -251,7 +251,7 @@ const HeightControl = ({
             onClick={() => onChange(defaultHeight)}
             className={`border border-gray-300 border-l-0 rounded-r p-1 w-[120px] h-[36px] text-center ${hasChanges ? 'text-[#0B9D52] hover:text-[#0A8A47]' : 'text-gray-400'}`}
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "12px",
               fontWeight: 700,
               lineHeight: "24px",
@@ -297,7 +297,7 @@ const HexColors: React.FC<HexColorsProps> = ({
   // Original component for backward compatibility with new UI
   if (customColors && setCustomColors) {
     return (
-      <div className="w-full" style={{ fontFamily: "Montserrat, sans-serif" }}>
+      <div className="w-full" style={{ fontFamily: "Montserrat" }}>
         <div 
           className="grid grid-cols-1 md:grid-cols-3 gap-x-8 border-t border-gray-200 pt-6"
         >
@@ -353,7 +353,7 @@ const HexColors: React.FC<HexColorsProps> = ({
             onClick={() => hasChanges && setCustomColors(DEFAULT_COLORS)}
             className={`px-4 py-2 rounded uppercase text-sm tracking-wider text-left ${hasChanges ? 'cursor-pointer' : 'cursor-not-allowed'}`}
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "12px",
               fontWeight: 700,
               lineHeight: "24px",

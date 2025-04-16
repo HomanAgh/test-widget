@@ -19,6 +19,7 @@ declare global {
     EPWidgets: {
       renderWidget: (container: HTMLElement, widgetType: string, config: any) => void;
       API_BASE_URL?: string;
+      isWidgetApiCall?: (url: string) => boolean;
     };
     _epWidgetFetchEnhanced?: boolean;
   }
@@ -89,37 +90,117 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
     if (window._epWidgetFetchEnhanced) return;
     window._epWidgetFetchEnhanced = true;
     
+    // Add isWidgetApiCall function to window.EPWidgets
+    window.EPWidgets.isWidgetApiCall = (url: string): boolean => {
+      if (typeof url !== 'string') return false;
+      
+      // Exclude authentication endpoints
+      if (url.includes('/api/auth/') || url.includes('/api/auth/session')) {
+        return false;
+      }
+      
+      // Check if URL is for one of our widget API endpoints
+      const widgetApiPatterns = [
+        '/api/player/',
+        '/api/team/',
+        '/api/league/',
+        '/api/tournament-alumni/',
+        '/api/alumni/',
+        '/api/playerStats/',
+        '/api/playerSeasons/',
+        '/api/playerCareer/',
+        '/api/teamroster/',
+        '/api/seasons/'
+      ];
+      
+      return widgetApiPatterns.some(pattern => url.includes(pattern));
+    };
+    
     window.fetch = function(input, init) {
-      // Add a header to track which widget is making the request
-      const headers = new Headers(init?.headers || {});
-      headers.set('X-Widget-Id', config.widgetId || widgetType);
-      
-      const enhancedInit = {
-        ...init,
-        headers
-      };
-      
+      // Get the URL from the input
       let inputUrl = typeof input === 'string' 
         ? input 
         : (input instanceof Request ? input.url : input.toString());
       
-      // IMPORTANT: Handle relative API URLs to use our base URL
-      if (typeof inputUrl === 'string' && inputUrl.startsWith('/api/')) {
-        inputUrl = `${API_BASE_URL}${inputUrl}`;
-        input = inputUrl;
-        console.log(`[EP Widget] Rewriting API URL to: ${inputUrl}`);
+      // Explicitly check if this is an auth URL before any other processing
+      const isAuthUrl = typeof inputUrl === 'string' && 
+        (inputUrl.includes('/api/auth/') || inputUrl.includes('/api/auth/session'));
+      
+      if (isAuthUrl) {
+        console.log(`[EP Widget] Auth URL detected, skipping rewrite:`, inputUrl);
+        // Use original fetch for auth URLs
+        return originalFetch.call(this, input, init);
       }
       
-      console.log(`[EP Widget] ${widgetType} API call:`, inputUrl);
+      // Add a header to track which widget is making the request
+      const headers = new Headers(init?.headers || {});
+      headers.set('X-Widget-Id', config.widgetId || widgetType);
+      headers.set('X-EP-Widget', 'true'); // Mark as EP widget request
+      
+      const enhancedInit = {
+        ...init,
+        headers,
+        epWidget: true // Add flag to identify widget requests
+      };
+      
+      // Only rewrite URLs for our specific widget API endpoints
+      const isWidgetApiCall = window.EPWidgets.isWidgetApiCall ? 
+        window.EPWidgets.isWidgetApiCall(inputUrl) : 
+        checkIsWidgetApiCall(inputUrl);
+      
+      // Helper function to check if this is a widget API call
+      function checkIsWidgetApiCall(url: string): boolean {
+        if (typeof url !== 'string') return false;
+        
+        // Exclude authentication endpoints
+        if (url.includes('/api/auth/') || url.includes('/api/auth/session')) {
+          return false;
+        }
+        
+        // Check if URL is for one of our widget API endpoints
+        const widgetApiPatterns = [
+          '/api/player/',
+          '/api/team/',
+          '/api/league/',
+          '/api/tournament-alumni',
+          '/api/alumni',
+          '/api/playerStats',
+          '/api/playerSeasons',
+          '/api/playerCareer',
+          '/api/teamroster',
+          '/api/seasons'
+        ];
+        
+        return widgetApiPatterns.some(pattern => url.includes(pattern));
+      }
+      
+      if (isWidgetApiCall && typeof inputUrl === 'string' && inputUrl.startsWith('/api/')) {
+        console.log(`[EP Widget] Before rewriting: URL=${inputUrl}, API_BASE_URL=${API_BASE_URL}`);
+        
+        // Force use of the hardcoded API_BASE_URL for consistency
+        const forcedApiBaseUrl = "https://widget.eliteprospects.com";
+        
+        inputUrl = `${forcedApiBaseUrl}${inputUrl}`;
+        input = inputUrl;
+        console.log(`[EP Widget] Rewriting URL to: ${inputUrl} (using forcedApiBaseUrl=${forcedApiBaseUrl})`);
+      }
+      
+      // Only log widget API calls
+      if (isWidgetApiCall) {
+        console.log(`[EP Widget] ${widgetType} API call:`, inputUrl);
+      }
+      
       return originalFetch.call(this, input, enhancedInit)
         .then(response => {
-          if (!response.ok) {
+          if (!response.ok && isWidgetApiCall) {
             console.error(`[EP Widget] ${widgetType} API error (${response.status}):`, inputUrl);
           }
           return response;
         })
         .catch(error => {
-          console.error(`[EP Widget] ${widgetType} API fetch error:`, error);
+          if (isWidgetApiCall) {
+            console.error(`[EP Widget] ${widgetType} API fetch error:`, error);
+          }
           throw error;
         });
     };

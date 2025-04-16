@@ -142,7 +142,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
             onClick={handleSelectAllToggle}
             className="absolute top-2 right-2 uppercase text-sm tracking-wider cursor-pointer"
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "12px",
               fontWeight: 700,
               lineHeight: "24px",
@@ -233,7 +233,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
             onClick={clearAllLeagues}
             className="mt-2 rounded uppercase text-sm tracking-wider text-left cursor-pointer"
             style={{
-              fontFamily: "Montserrat, sans-serif",
+              fontFamily: "Montserrat",
               fontSize: "12px",
               fontWeight: 700,
               lineHeight: "24px",

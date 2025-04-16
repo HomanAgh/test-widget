@@ -109,6 +109,7 @@
       : "https://widget.eliteprospects.com";  // Production environment
     
     debug(`Running in ${isDev ? 'DEVELOPMENT' : 'PRODUCTION'} mode`);
+    debug(`API Base URL set to: ${API_BASE_URL}`);
     
     // Get the script base URL only for loading the bundle
     let scriptBaseURL;
@@ -215,6 +216,33 @@
             window.EPWidgets.requestGet = requestGet;
             window.EPWidgets.requestPost = requestPost;
             window.EPWidgets.objectToUrlParams = objectToUrlParams;
+            
+            // Add a helper to identify widget API calls
+            window.EPWidgets.isWidgetApiCall = function(url) {
+              if (typeof url !== 'string') return false;
+              
+              // Exclude authentication endpoints
+              if (url.includes('/api/auth/') || url.includes('/api/auth/session')) {
+                return false;
+              }
+              
+              // Check if URL is for one of our widget API endpoints
+              const widgetApiPatterns = [
+                '/api/player/',
+                '/api/team/',
+                '/api/league/',
+                '/api/tournament-alumni',
+                '/api/alumni',
+                '/api/playerStats',
+                '/api/playerSeasons',
+                '/api/playerCareer',
+                '/api/teamroster',
+                '/api/seasons'
+              ];
+              
+              return widgetApiPatterns.some(pattern => url.includes(pattern));
+            };
+            
             debug('Added XMLHttpRequest functions to widget bundle');
           }
           
@@ -247,9 +275,35 @@
           }
           
           return new Promise((resolve, reject) => {
-            // Rewrite API URLs to use our base URL
-            if (typeof url === 'string' && url.match(/^\/api\//)) {
-              url = API_BASE_URL + url;
+            // Explicitly check if this is an auth URL before any other checks
+            const isAuthUrl = typeof url === 'string' && 
+              (url.includes('/api/auth/') || url.includes('/api/auth/session'));
+            
+            if (isAuthUrl) {
+              debug('Auth URL detected, skipping rewrite:', url);
+              // Use original fetch for auth URLs to avoid any interference
+              return originalFetch(url, options).then(resolve).catch(reject);
+            }
+            
+            // Only rewrite URLs for EliteProspects widget API calls
+            const isWidgetApiCall = 
+              (options.epWidget === true || 
+               (options.headers && options.headers['X-EP-Widget'])) ||
+              (typeof url === 'string' && window.EPWidgets && 
+               window.EPWidgets.isWidgetApiCall && 
+               window.EPWidgets.isWidgetApiCall(url));
+            
+            if (isWidgetApiCall && typeof url === 'string' && url.match(/^\/api\//)) {
+              const originalUrl = url;
+              debug(`Before rewriting: URL=${originalUrl}, API_BASE_URL=${API_BASE_URL}`);
+              
+              // Force use of the hardcoded API_BASE_URL for consistency
+              const forcedApiBaseUrl = isDev 
+                ? "http://localhost:3000"
+                : "https://widget.eliteprospects.com";
+              
+              url = forcedApiBaseUrl + url;
+              debug(`Rewriting URL from ${originalUrl} to ${url} (using forcedApiBaseUrl=${forcedApiBaseUrl})`);
             }
             
             const method = options.method || 'GET';
@@ -467,7 +521,13 @@
     const initializeWidgets = () => {
       debug('Initializing widgets...');
       
+      // Check API_BASE_URL before fetch monitoring
+      debug('Current API_BASE_URL before monitorApiCalls:', API_BASE_URL);
+      
       monitorApiCalls();
+      
+      // Check API_BASE_URL after fetch monitoring
+      debug('Current API_BASE_URL after monitorApiCalls:', API_BASE_URL);
       
       widgets.forEach((container, index) => {
         try {
@@ -496,15 +556,42 @@
           // IMPORTANT: Add API base URL to config
           config.apiBaseUrl = API_BASE_URL;
           
+          // Add flag to identify widget API calls
+          config.markApiCalls = true;
+          
           debug(`Initializing ${widgetType} widget:`, config);
           
           // Add loading indicator to container
-          const loadingHtml = '<div class="ep-widget-loading" style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">Loading widget...</div>';
+          const loadingHtml = '<div class="ep-widget-loading" style="text-align: center; padding: 20px;">Loading widget...</div>';
           container.innerHTML = loadingHtml;
           
           // Initialize widget if the global widget renderer is available
           if (window.EPWidgets && typeof window.EPWidgets.renderWidget === 'function') {
             console.log('Rendering widget:', widgetType, config);
+            
+            // Set up custom fetch for this widget if not already done
+            if (!window.EPWidgets.originalFetch && window.fetch) {
+              window.EPWidgets.originalFetch = window.fetch;
+              
+              // Replace fetch to mark all widget API calls
+              const widgetFetch = function(url, options = {}) {
+                // Mark this as a widget API call
+                options = options || {};
+                options.epWidget = true;
+                
+                // Add header to identify widget API calls
+                if (!options.headers) options.headers = {};
+                if (typeof options.headers === 'object') {
+                  options.headers['X-EP-Widget'] = 'true';
+                }
+                
+                // Use the current fetch implementation (which includes our monitorApiCalls logic)
+                return window.fetch(url, options);
+              };
+              
+              // Store for widgets to use
+              window.EPWidgets.fetch = widgetFetch;
+            }
             
             // Wrap in try/catch to ensure rendering attempts don't fail silently
             try {

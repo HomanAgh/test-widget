@@ -1,7 +1,8 @@
 'use server'
 
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
@@ -25,54 +26,42 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
     
-    // Create Supabase admin client with service role key
-    // IMPORTANT: Only use service role key in secure server contexts
-    const supabaseAdmin = createClient(
-      supabaseUrl,
-      supabaseServiceKey,
+    // Create Supabase admin client with service role key using createRouteHandlerClient
+    const supabaseAdmin = createRouteHandlerClient(
+      { cookies },
       {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
+        supabaseUrl: supabaseUrl,
+        supabaseKey: supabaseServiceKey,
       }
     );
     
-    console.log('Admin API: Deleting user', userId);
-    
-    // First try to delete from auth.users
-    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
-    
-    if (authError) {
-      console.error('Admin API: Error deleting auth user:', authError);
-      return NextResponse.json({ 
-        error: authError.message 
-      }, { status: 500 });
+    // First check if the service role client has been properly initialized
+    if (!supabaseAdmin || !supabaseAdmin.auth) {
+      throw new Error('Supabase admin client was not initialized correctly');
     }
     
-    // Then try to delete from public.users table if needed
-    try {
-      const { error: dbError } = await supabaseAdmin
-        .from('users')
-        .delete()
-        .eq('id', userId);
-      
-      if (dbError) {
-        console.error('Admin API: Error deleting from users table:', dbError);
-        // We don't return an error here since the auth user is already deleted
-      }
-    } catch (dbErr) {
-      console.error('Admin API: Exception deleting from users table:', dbErr);
-      // We don't return an error here since the auth user is already deleted
+    console.log('Admin API: Deleting user', userId);
+    
+    // Create a SQL function similar to update_user_role to handle this deletion
+    // Use RPC call to delete user from auth and public tables
+    const {error} = await supabaseAdmin.rpc('delete_user', {
+      p_user_id: userId
+    });
+    
+    if (error) {
+      console.error('Admin API: Error deleting user:', error);
+      return NextResponse.json({ 
+        error: error.message 
+      }, { status: 500 });
     }
     
     console.log('Admin API: User deleted successfully');
     
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Admin API: Unexpected error:', error);
     return NextResponse.json({ 
-      error: 'An unexpected error occurred' 
+      error: error.message || 'An unexpected error occurred' 
     }, { status: 500 });
   }
 } 
