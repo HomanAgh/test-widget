@@ -87,11 +87,11 @@ function getLeagueLevel(slug?: string): string {
     return "professional";
   }
   // Junior
-  if (["ohl","whl","qmjhl","ushl","j20-nationell", "cchl", "mhl", "jwhl-w", "wjc"].includes(slugLc)) {
+  if (["ohl","whl","qmjhl","ushl","j20-nationell", "cchl", "mhl", "jwhl-w", "wjc","nahl"].includes(slugLc)) {
     return "junior";
   }
   // College
-  if (["ncaa","usports","acac","acha","ncaa-w","acha-w","ncaa-iii-w","acha-d2-w"].includes(slugLc)) {
+  if (["ncaa","usports","acac","acha","ncaa-w","acha-w","ncaa-iii-w","acha-d2-w", "usports-w"].includes(slugLc)) {
     return "college";
   }
   // Otherwise treat it as "tournament"

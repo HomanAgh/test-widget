@@ -20,6 +20,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
 
   const { searchParams } = new URL(req.url);
   const season = searchParams.get("season");
+  const nationality = searchParams.get("nationality");
 
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
@@ -78,7 +79,13 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "regularStats.SVS"
   ].join(",");
 
-  const goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=75&sort=-regularStats.SVP&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
+  let goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=75&sort=-regularStats.SVP&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
+
+  // Add nationality filter if specified
+  if (nationality && nationality !== "all") {
+    goalieLeadersUrl += `&player.nationality=${nationality}`;
+  }
+
   console.log("Fetching goalie leaders from:", goalieLeadersUrl);
 
   try {

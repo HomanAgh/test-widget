@@ -46,7 +46,7 @@ export const useFetchLeagues = () => {
         // 2) College Leagues
         const customCollegeLeagueSlugs = [
         //Womens Leagues
-        'ncaa-w', 'ncaa-iii-w', 'acha-w', 'acha-d2-w',
+        'ncaa-w', 'ncaa-iii-w', 'acha-w', 'acha-d2-w', 'usports-w',
         //Mens Leagues
         'ncaa', 'usports', 'acac', 'acha'
         ];
@@ -62,7 +62,7 @@ export const useFetchLeagues = () => {
         //Womens Leagues
         'jwhl-w',
         //Mens Leagues
-        'ohl', 'whl', 'ushl', 'qmjhl', 'j20-nationell', 'mhl', 'cchl'    
+        'ohl', 'whl', 'ushl', 'qmjhl', 'j20-nationell', 'mhl', 'cchl',"nahl"    
         ];
         setJunLeagues(junData.leagues || []);
         setCustomJunLeagues(

@@ -58,6 +58,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "player.nationality.slug",
     "player.nationality.name",
     "player.detailedPosition",
+    "player.playerType",
     "team.id",
     "team.name",
     "team.fullName",
@@ -74,8 +75,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "regularStats.PTS",
   ].join(",");
 
-  // Build the API URL with filters
-  let scoringLeadersUrl = `${apiBaseUrl}/leagues/${leagueSlug}/scoring-leaders?season=${season}&fields=${playerFields}&apiKey=${apiKey}&sort=-regularStats.PTS&limit=75`;
+  // Build the API URL with filters - using player-stats to get ALL entries
+  let scoringLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=1000&sort=-regularStats.PTS&league=${leagueSlug}&season=${season}&fields=${playerFields}&apiKey=${apiKey}&player.playerType=SKATER`;
 
   // Add position filter if specified
   if (position && position !== "all") {
@@ -87,37 +88,107 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     scoringLeadersUrl += `&player.nationality=${nationality}`;
   }
 
-  console.log("Fetching league scoring leaders from:", scoringLeadersUrl);
+  console.log("Fetching player stats from:", scoringLeadersUrl);
 
   try {
-    console.log("Making API request to:", scoringLeadersUrl);
     const response = await fetch(scoringLeadersUrl, { method: "GET" });
-    console.log("API response status:", response.status);
-    
-    // Log response headers to see if they contain information about supported filters
-    console.log("Response headers:", Object.fromEntries(response.headers.entries()));
-    
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API error response:", errorText);
-      throw new Error(`Failed to fetch scoring leaders: ${response.statusText}. Response: ${errorText}`);
+      throw new Error(`Failed to fetch scoring leaders: ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log("API response data:", JSON.stringify(data, null, 2));
-    
-    // Log the first player's data structure to see available fields
-    if (data.data && data.data.length > 0) {
-      console.log("First player's data structure:", JSON.stringify(data.data[0], null, 2));
-    }
-    
-    // Remove _links from the response without creating any variables
+    console.log("Raw data count:", data.data?.length);
+    console.log("First 3 raw entries:", data.data?.slice(0, 3).map((entry: any) => ({
+      name: entry.player?.name,
+      team: entry.team?.name,
+      points: entry.regularStats?.PTS,
+      type: entry.player?.playerType
+    })));
+
     const filteredData = { ...data };
     delete filteredData._links;
     
-    // Process player data to add flag URLs
     if (filteredData.data && Array.isArray(filteredData.data)) {
-      console.log("Processing data for", filteredData.data.length, "players");
+      // Create a map to store aggregated stats by player
+      const playerStatsMap = new Map();
+      
+      // First pass: Aggregate stats for each player
+      filteredData.data.forEach((entry: any) => {
+        const playerId = entry.player?.id;
+        if (!playerId || entry.player?.playerType !== 'SKATER') {
+          console.log("Skipping entry:", {
+            id: playerId,
+            type: entry.player?.playerType,
+            name: entry.player?.name
+          });
+          return;
+        }
+
+        if (!playerStatsMap.has(playerId)) {
+          // First time seeing this player, initialize their stats
+          playerStatsMap.set(playerId, {
+            player: entry.player,
+            teams: [],
+            regularStats: {
+              GP: 0,
+              G: 0,
+              A: 0,
+              PTS: 0
+            }
+          });
+        }
+
+        const playerData = playerStatsMap.get(playerId);
+        
+        // Add team info if not already included
+        if (entry.team) {
+          const teamExists = playerData.teams.some((t: any) => t.id === entry.team.id);
+          if (!teamExists) {
+            playerData.teams.push(entry.team);
+            console.log(`Added team ${entry.team.name} for player ${entry.player.name}`);
+          }
+        }
+
+        // Add stats
+        if (entry.regularStats) {
+          const oldPTS = playerData.regularStats.PTS;
+          playerData.regularStats.GP += entry.regularStats.GP || 0;
+          playerData.regularStats.G += entry.regularStats.G || 0;
+          playerData.regularStats.A += entry.regularStats.A || 0;
+          playerData.regularStats.PTS += entry.regularStats.PTS || 0;
+          if (playerData.teams.length > 1) {
+            console.log(`Updated stats for ${entry.player.name}: ${oldPTS} -> ${playerData.regularStats.PTS} (${entry.team.name})`);
+          }
+        }
+      });
+
+      console.log("Players with multiple teams:", Array.from(playerStatsMap.values())
+        .filter(p => p.teams.length > 1)
+        .map(p => ({
+          name: p.player.name,
+          teams: p.teams.map((t: any) => t.name),
+          totalPoints: p.regularStats.PTS
+        }))
+      );
+
+      // Convert map to array and format for response
+      filteredData.data = Array.from(playerStatsMap.values())
+        .map(player => ({
+          player: player.player,
+          regularStats: player.regularStats,
+          team: player.teams[player.teams.length - 1],
+          allTeams: player.teams.map((t: any) => t.name).join(', ')
+        }))
+        .sort((a, b) => (b.regularStats?.PTS || 0) - (a.regularStats?.PTS || 0))
+        .slice(0, 75);
+
+      /* console.log("Top 5 players after processing:", filteredData.data.slice(0, 5).map(p => ({
+        name: p.player.name,
+        points: p.regularStats.PTS,
+        teams: p.allTeams
+      }))); */
       
       // Create a map of unique nationality slugs
       const nationalitySlugs = new Set<string>();
@@ -126,8 +197,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
           nationalitySlugs.add(player.player.nationality.slug);
         }
       });
-      
-      console.log("Found", nationalitySlugs.size, "unique nationalities");
       
       // Fetch all flag URLs in parallel
       const flagMap = new Map<string, string | null>();
@@ -153,9 +222,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     return NextResponse.json(filteredData);
   } catch (error: any) {
     console.error("Error during fetch:", error.message);
-    console.error("Error stack:", error.stack);
     return NextResponse.json(
-      { error: `An internal server error occurred while fetching scoring leaders: ${error.message}` },
+      { error: "An internal server error occurred while fetching scoring leaders." },
       { status: 500 }
     );
   }

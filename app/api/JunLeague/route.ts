@@ -6,7 +6,7 @@ const apiBaseUrl = process.env.API_BASE_URL;
 
 export async function GET() {
   try {
-    const leagueLevels = ['major-junior', 'junior', 'junior-a', 'junior-u20'];
+    const leagueLevels = ['major-junior', 'junior', 'junior-a', 'junior-u20', 'junior-tier-ii'];
     const leaguePromises = leagueLevels.map(async (level) => {
       const res = await fetch(
         `${apiBaseUrl}/leagues?offset=0&limit=100&sort=name&leagueLevel=${level}&apiKey=${apiKey}&fields=slug,name,logo.url`
