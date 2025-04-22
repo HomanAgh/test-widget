@@ -3,7 +3,7 @@ import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
 interface PageProps {
-  searchParams: Promise<{
+  searchParams: {
     leagueSlug?: string;
     season?: string;
     backgroundColor?: string;
@@ -11,21 +11,24 @@ interface PageProps {
     tableBackgroundColor?: string;
     headerTextColor?: string;
     nameTextColor?: string;
-  }>;
+    nationality?: string;
+  };
 }
 
 const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
-  const params = await searchParams;
-  const leagueSlug = params.leagueSlug || "";
-  const season = params.season || "";
-  const backgroundColor = params.backgroundColor || "#052D41";
-  const textColor = params.textColor || "#000000";
-  const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
-  const headerTextColor = params.headerTextColor || "#FFFFFF";
-  const nameTextColor = params.nameTextColor || "#0D73A6";
+  const {
+    leagueSlug,
+    season = "2024-2025",
+    backgroundColor = "#052D41",
+    textColor = "#000000",
+    tableBackgroundColor = "#FFFFFF",
+    headerTextColor = "#FFFFFF",
+    nameTextColor = "#0D73A6",
+    nationality = "all",
+  } = searchParams;
 
   if (!leagueSlug) {
-    return <div>Missing leagueSlug parameter</div>;
+    return <div>Error: League slug is required</div>;
   }
 
   return (
@@ -41,6 +44,8 @@ const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
             headerTextColor,
             nameTextColor,
           }}
+          hideSeasonSelector={true}
+          nationalityFilter={nationality}
         />
       </div>
     </ClientWrapper>

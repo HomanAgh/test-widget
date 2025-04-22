@@ -16,6 +16,7 @@ interface GoalieLeadersProps {
     nameTextColor?: string;
   };
   hideSeasonSelector?: boolean;
+  nationalityFilter?: string;
 }
 
 const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
@@ -29,6 +30,7 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     nameTextColor: "#0D73A6",
   },
   hideSeasonSelector = false,
+  nationalityFilter = "all",
 }) => {
   const [goalieLeaders, setGoalieLeaders] =
     useState<GoalieLeadersResponse | null>(null);
@@ -36,6 +38,8 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [leagueName, setLeagueName] = useState<string>("");
   const [selectedSeason, setSelectedSeason] = useState<string>(season);
+  const [currentNationalityFilter, setCurrentNationalityFilter] =
+    useState<string>(nationalityFilter);
 
   // Fetch goalie leaders data
   useEffect(() => {
@@ -45,7 +49,7 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
 
       try {
         const response = await fetch(
-          `/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}`
+          `/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}&nationality=${currentNationalityFilter}`
         );
 
         if (!response.ok) {
@@ -77,7 +81,12 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     if (leagueSlug && selectedSeason) {
       fetchGoalieLeaders();
     }
-  }, [leagueSlug, selectedSeason]);
+  }, [leagueSlug, selectedSeason, currentNationalityFilter]);
+
+  // Update currentNationalityFilter when prop changes
+  useEffect(() => {
+    setCurrentNationalityFilter(nationalityFilter);
+  }, [nationalityFilter]);
 
   // Handler for the SeasonSelector component
   const handleSeasonChange = (newSeason: string) => {

@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
+import NationalityFilter from "../common/filters/NationalityFilter";
 
 const DEFAULT_IFRAME_HEIGHT = 1300;
 
@@ -24,9 +25,16 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
     nameTextColor: "#0D73A6",
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
+  const [selectedNationalities, setSelectedNationalities] = useState<string[]>(
+    []
+  );
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const nationalityParam =
+      selectedNationalities.length > 0
+        ? selectedNationalities.join(",")
+        : "all";
 
     const url =
       `${baseUrl}/embed/goalie-leaders` +
@@ -39,17 +47,29 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
       )}` +
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
+      `&nationality=${encodeURIComponent(nationalityParam)}` +
       `&_t=${Date.now()}`;
 
     return url;
-  }, [leagueSlug, season, customColors]);
+  }, [leagueSlug, season, customColors, selectedNationalities]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
 
   return (
     <div>
       <div className="mb-6">
-        <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
+        <div className="space-y-4">
+          <NationalityFilter
+            selectedValues={selectedNationalities}
+            onSelectionChange={setSelectedNationalities}
+            customColors={customColors}
+          />
+        </div>
+        <div
+          className={`flex flex-wrap md:flex-nowrap items-center space-x-8 ${
+            selectedNationalities.length > 0 ? "mt-3" : "mt-0"
+          }`}
+        >
           <HexColors
             customColors={customColors}
             setCustomColors={setCustomColors}
@@ -65,6 +85,11 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
           leagueSlug={leagueSlug}
           season={season}
           customColors={customColors}
+          nationalityFilter={
+            selectedNationalities.length > 0
+              ? selectedNationalities.join(",")
+              : "all"
+          }
         />
       </div>
 

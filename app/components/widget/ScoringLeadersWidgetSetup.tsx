@@ -4,6 +4,8 @@ import React, { useState, useMemo } from "react";
 import ScoringLeaders from "@/app/components/league/ScoringLeaders";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
+import NationalityFilter from "../common/filters/NationalityFilter";
+import PositionFilter from "../common/filters/PositionFilter";
 
 // Default height for iframes
 const DEFAULT_IFRAME_HEIGHT = 1300;
@@ -25,11 +27,19 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
     nameTextColor: "#0D73A6",
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
-  const [positionFilter, setPositionFilter] = useState("all");
-  const [nationalityFilter, setNationalityFilter] = useState("all");
+  const [selectedPositions, setSelectedPositions] = useState<string[]>([]);
+  const [selectedNationalities, setSelectedNationalities] = useState<string[]>(
+    []
+  );
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const positionParam =
+      selectedPositions.length > 0 ? selectedPositions.join(",") : "all";
+    const nationalityParam =
+      selectedNationalities.length > 0
+        ? selectedNationalities.join(",")
+        : "all";
 
     const url =
       `${baseUrl}/embed/scoring-leaders` +
@@ -42,19 +52,43 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
       )}` +
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
-      `&positionFilter=${encodeURIComponent(positionFilter)}` +
-      `&nationalityFilter=${encodeURIComponent(nationalityFilter)}` +
+      `&positionFilter=${encodeURIComponent(positionParam)}` +
+      `&nationalityFilter=${encodeURIComponent(nationalityParam)}` +
       `&_t=${Date.now()}`;
 
     return url;
-  }, [leagueSlug, season, customColors, positionFilter, nationalityFilter]);
+  }, [
+    leagueSlug,
+    season,
+    customColors,
+    selectedPositions,
+    selectedNationalities,
+  ]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
 
   return (
     <div>
       <div className="mb-6">
-        <div className="flex flex-wrap md:flex-nowrap items-center space-x-8 mt-4">
+        <div className="space-y-4">
+          <PositionFilter
+            selectedValues={selectedPositions}
+            onSelectionChange={setSelectedPositions}
+            customColors={customColors}
+          />
+          <NationalityFilter
+            selectedValues={selectedNationalities}
+            onSelectionChange={setSelectedNationalities}
+            customColors={customColors}
+          />
+        </div>
+        <div
+          className={`flex flex-wrap md:flex-nowrap items-center space-x-8 ${
+            selectedNationalities.length > 0 || selectedPositions.length > 0
+              ? "mt-3"
+              : "mt-0"
+          }`}
+        >
           <HexColors
             customColors={customColors}
             setCustomColors={setCustomColors}
@@ -63,45 +97,6 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
             defaultHeight={DEFAULT_IFRAME_HEIGHT}
           />
         </div>
-        <div className="flex items-center space-x-4 mt-4">
-          <select
-            value={positionFilter}
-            onChange={(e) => setPositionFilter(e.target.value)}
-            className="p-2 border rounded-lg"
-            style={{
-              backgroundColor: customColors.tableBackgroundColor,
-              color: customColors.textColor,
-              borderColor: customColors.backgroundColor,
-            }}
-          >
-            <option value="all">All Positions</option>
-            <option value="C">Center</option>
-            <option value="LW">Left Wing</option>
-            <option value="RW">Right Wing</option>
-            <option value="D">Defenseman</option>
-          </select>
-          <select
-            value={nationalityFilter}
-            onChange={(e) => setNationalityFilter(e.target.value)}
-            className="p-2 border rounded-lg"
-            style={{
-              backgroundColor: customColors.tableBackgroundColor,
-              color: customColors.textColor,
-              borderColor: customColors.backgroundColor,
-            }}
-          >
-            <option value="all">All Nationalities</option>
-            <option value="swe">Sweden</option>
-            <option value="fin">Finland</option>
-            <option value="can">Canada</option>
-            <option value="usa">USA</option>
-            <option value="rus">Russia</option>
-            <option value="cze">Czech Republic</option>
-            <option value="svk">Slovakia</option>
-            <option value="deu">Germany</option>
-            <option value="che">Switzerland</option>
-          </select>
-        </div>
       </div>
 
       <div className="mt-6">
@@ -109,8 +104,14 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
           leagueSlug={leagueSlug}
           season={season}
           customColors={customColors}
-          positionFilter={positionFilter}
-          nationalityFilter={nationalityFilter}
+          positionFilter={
+            selectedPositions.length > 0 ? selectedPositions.join(",") : "all"
+          }
+          nationalityFilter={
+            selectedNationalities.length > 0
+              ? selectedNationalities.join(",")
+              : "all"
+          }
         />
       </div>
 
