@@ -3,7 +3,7 @@ import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import ClientWrapper from "@/app/components/embed/ClientWrapper";
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     leagueSlug?: string;
     season?: string;
     backgroundColor?: string;
@@ -12,10 +12,11 @@ interface PageProps {
     headerTextColor?: string;
     nameTextColor?: string;
     nationality?: string;
-  };
+  }>;
 }
 
 const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
   const {
     leagueSlug,
     season = "2024-2025",
@@ -25,7 +26,7 @@ const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
     headerTextColor = "#FFFFFF",
     nameTextColor = "#0D73A6",
     nationality = "all",
-  } = searchParams;
+  } = params;
 
   if (!leagueSlug) {
     return <div>Error: League slug is required</div>;
