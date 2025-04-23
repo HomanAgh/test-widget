@@ -44,7 +44,13 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     );
   }, [playerId, gameLimit, viewMode, showSummary, customColors]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
+  const sourceLinks = useMemo(() => {
+    if (!playerId) return '';
+    
+    return `<p> Source: <a href="https://www.eliteprospects.com/player/${playerId}" target="_blank" rel="noopener noreferrer">Player Page</a> @ Elite Prospects</p>`;
+  }, [playerId]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>

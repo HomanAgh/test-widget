@@ -53,7 +53,14 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
     return url;
   }, [leagueSlug, season, customColors, selectedNationalities]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
+  const sourceLinks = useMemo(() => {
+    if (!leagueSlug) return '';
+    
+    const seasonInfo = season ? `${season}` : '';
+    return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}/stats/${seasonInfo}#goalies" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} Goalie Leaders</a> @ Elite Prospects</p>`;
+  }, [leagueSlug, season]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>
