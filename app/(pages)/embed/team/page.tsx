@@ -2,6 +2,7 @@ import React from "react";
 import Team from "@/app/components/team/Team";
 import ClientWrapper from "@/app/components/embed/ClientWrapper";
 import { Metadata } from "next";
+import { TeamColumnOptions } from "@/app/components/team/TeamColumnSelector";
 
 interface PageProps {
   searchParams: Promise<{
@@ -11,13 +12,17 @@ interface PageProps {
     tableBackgroundColor?: string;
     headerTextColor?: string;
     nameTextColor?: string;
+    columns?: string;
+    selectedColumns?: string;
   }>;
 }
 
-export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
   const params = await searchParams;
   const teamId = params.teamId || "";
-  
+
   return {
     title: `Hockey Team Statistics - Team ID: ${teamId}`,
     description: `View comprehensive hockey statistics for team ID: ${teamId}. Includes team performance, player stats, and season records.`,
@@ -27,19 +32,34 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       googleBot: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
       },
     },
     openGraph: {
       title: `Hockey Team Statistics - Team ID: ${teamId}`,
       description: `View comprehensive hockey statistics for team ID: ${teamId}. Includes team performance, player stats, and season records.`,
-      type: 'website',
-      locale: 'en_US',
+      type: "website",
+      locale: "en_US",
     },
   };
 }
+
+const DEFAULT_COLUMNS: TeamColumnOptions = {
+  name: true,
+  number: true,
+  position: true,
+  age: true,
+  birthYear: true,
+  birthPlace: true,
+  weight: true,
+  height: true,
+  shootsCatches: true,
+  goals: true,
+  assists: true,
+  points: true,
+};
 
 const EmbedTeam = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
@@ -49,6 +69,44 @@ const EmbedTeam = async ({ searchParams }: PageProps) => {
   const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
   const headerTextColor = params.headerTextColor || "#FFFFFF";
   const nameTextColor = params.nameTextColor || "#0D73A6";
+
+  // Parse columns parameter
+  const selectedColumns: TeamColumnOptions = { ...DEFAULT_COLUMNS };
+
+  if (params.selectedColumns) {
+    // Try to parse the JSON selected columns
+    try {
+      const parsedColumns = JSON.parse(params.selectedColumns);
+
+      // Apply the parsed columns, ensuring 'name' is always true
+      Object.keys(selectedColumns).forEach((key) => {
+        if (key in parsedColumns) {
+          selectedColumns[key as keyof TeamColumnOptions] =
+            key === "name" ? true : parsedColumns[key];
+        } else if (key !== "name") {
+          selectedColumns[key as keyof TeamColumnOptions] = false;
+        }
+      });
+    } catch (error) {
+      console.error("Error parsing selectedColumns:", error);
+    }
+  } else if (params.columns) {
+    // Reset all columns to false first
+    Object.keys(selectedColumns).forEach((key) => {
+      if (key !== "name") {
+        // Name is always true
+        selectedColumns[key as keyof TeamColumnOptions] = false;
+      }
+    });
+
+    // Enable only the selected columns
+    const enabledColumns = params.columns.split(",");
+    enabledColumns.forEach((col) => {
+      if (col in selectedColumns) {
+        selectedColumns[col as keyof TeamColumnOptions] = true;
+      }
+    });
+  }
 
   if (!teamId) {
     return <div>Missing team ID</div>;
@@ -64,8 +122,9 @@ const EmbedTeam = async ({ searchParams }: PageProps) => {
             textColor,
             tableBackgroundColor,
             headerTextColor,
-            nameTextColor
+            nameTextColor,
           }}
+          selectedColumns={selectedColumns}
         />
       </div>
     </ClientWrapper>

@@ -13,6 +13,30 @@ const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string
   return null;
 };
 
+const fetchPlayerStats = async (playerId: string, apiKey: string, apiBaseUrl: string) => {
+  try {
+    const statsFields = [
+      "latestStats.regularStats.GP",
+      "latestStats.regularStats.G",
+      "latestStats.regularStats.A",
+      "latestStats.regularStats.PTS",
+    ].join(",");
+    
+    const response = await fetch(`${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(statsFields)}`);
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        goals: data.data?.latestStats?.regularStats?.G || 0,
+        assists: data.data?.latestStats?.regularStats?.A || 0,
+        points: data.data?.latestStats?.regularStats?.PTS || 0
+      };
+    }
+  } catch (err) {
+    console.warn(`Failed to fetch stats for player ${playerId}:`, err);
+  }
+  return { goals: 0, assists: 0, points: 0 };
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const teamId = searchParams.get("teamId");
@@ -76,6 +100,10 @@ export async function GET(req: NextRequest) {
         const flagUrl = entry.player?.nationality?.slug
           ? await fetchCountryFlag(entry.player.nationality.slug, apiKey, apiBaseUrl)
           : null;
+          
+        const playerStats = entry.player?.id 
+          ? await fetchPlayerStats(entry.player.id, apiKey, apiBaseUrl)
+          : { goals: 0, assists: 0, points: 0 };
 
         return {
           id: entry.player?.id || "Unknown ID",
@@ -91,6 +119,7 @@ export async function GET(req: NextRequest) {
           dateOfBirth: entry.player?.dateOfBirth || "N/A",
           flagUrl: flagUrl || null, 
           playerRole: entry.playerRole,
+          stats: playerStats,
         };
       })
     );
