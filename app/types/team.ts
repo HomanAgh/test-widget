@@ -25,6 +25,11 @@ export interface Team {
     dateOfBirth: string; 
     flagUrl: string | null; 
     playerRole: string;
+    stats: {
+      goals: number;
+      assists: number;
+      points: number;
+    };
   }
   
   export interface TeamItem {

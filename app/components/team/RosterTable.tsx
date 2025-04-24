@@ -12,7 +12,12 @@ import {
   Link,
   PoweredBy,
 } from "@/app/components/common/style";
-import { HiMiniChevronUpDown, HiMiniChevronUp, HiMiniChevronDown } from "react-icons/hi2";
+import {
+  HiMiniChevronUpDown,
+  HiMiniChevronUp,
+  HiMiniChevronDown,
+} from "react-icons/hi2";
+import { TeamColumnOptions } from "./TeamColumnSelector";
 
 // Existing helper
 const calculateAge = (dateOfBirth: string): number | "-" => {
@@ -40,6 +45,7 @@ interface RosterTableProps {
     headerTextColor?: string;
     nameTextColor?: string;
   };
+  selectedColumns?: TeamColumnOptions;
 }
 
 type SortKey =
@@ -51,7 +57,10 @@ type SortKey =
   | "birthPlace"
   | "weight"
   | "height"
-  | "shootOrCatch";
+  | "shootOrCatch"
+  | "goals"
+  | "assists"
+  | "points";
 
 // Helper function to get position priority (goaltenders first)
 const getPositionPriority = (position: string): number => {
@@ -60,18 +69,36 @@ const getPositionPriority = (position: string): number => {
   return 3; // Forwards
 };
 
-const RosterTable: React.FC<RosterTableProps> = ({ 
+const DEFAULT_COLUMNS: TeamColumnOptions = {
+  name: true,
+  number: true,
+  position: true,
+  age: true,
+  birthYear: true,
+  birthPlace: true,
+  weight: true,
+  height: true,
+  shootsCatches: true,
+  goals: true,
+  assists: true,
+  points: true,
+};
+
+const RosterTable: React.FC<RosterTableProps> = ({
   roster,
   customColors = {
     backgroundColor: "#052D41",
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
-  }
+    nameTextColor: "#0D73A6",
+  },
+  selectedColumns = DEFAULT_COLUMNS,
 }) => {
   const [sortColumn, setSortColumn] = useState<SortKey>("position");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc" | "none">("asc");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc" | "none">(
+    "asc"
+  );
 
   if (!roster || roster.length === 0) {
     return <p>No Roster</p>;
@@ -90,83 +117,117 @@ const RosterTable: React.FC<RosterTableProps> = ({
 
   const renderSortArrow = (col: SortKey) => {
     if (sortColumn !== col) {
-      return <HiMiniChevronUpDown className="w-4 h-4 inline-block text-gray-300" />;
+      return (
+        <HiMiniChevronUpDown className="w-4 h-4 inline-block text-gray-300" />
+      );
     }
     switch (sortDirection) {
       case "asc":
-        return <HiMiniChevronDown className="w-4 h-4 inline-block text-gray-300" />;
+        return (
+          <HiMiniChevronDown className="w-4 h-4 inline-block text-gray-300" />
+        );
       case "desc":
-        return <HiMiniChevronUp className="w-4 h-4 inline-block text-gray-300" />;
+        return (
+          <HiMiniChevronUp className="w-4 h-4 inline-block text-gray-300" />
+        );
       case "none":
       default:
-        return <HiMiniChevronUpDown className="w-4 h-4 inline-block text-gray-300" />;
+        return (
+          <HiMiniChevronUpDown className="w-4 h-4 inline-block text-gray-300" />
+        );
     }
   };
-  
+
   // Sort all players
-  const sortedPlayers = sortDirection === "none" ? roster : [...roster].sort((a, b) => {
-    let res = 0;
-    switch (sortColumn) {
-      case "number":
-        res = +a.jerseyNumber - +b.jerseyNumber;
-        break;
-      case "player":
-        res =
-          a.firstName.localeCompare(b.firstName) ||
-          a.lastName.localeCompare(b.lastName);
-        break;
-      case "position":
-        res = getPositionPriority(a.position) - getPositionPriority(b.position);
-        if (res === 0) {
-          // If same position type, sort by jersey number
-          res = +a.jerseyNumber - +b.jerseyNumber;
-        }
-        break;
-      case "age": {
-        const ageA = calculateAge(a.dateOfBirth);
-        const ageB = calculateAge(b.dateOfBirth);
-        res =
-          (typeof ageA === "number" ? ageA : 0) -
-          (typeof ageB === "number" ? ageB : 0);
-        break;
-      }
-      case "birthYear": {
-        const yearA = a.dateOfBirth ? new Date(a.dateOfBirth).getFullYear() : 0;
-        const yearB = b.dateOfBirth ? new Date(b.dateOfBirth).getFullYear() : 0;
-        res = yearA - yearB;
-        break;
-      }
-      case "birthPlace":
-        res = (a.placeOfBirth || "").localeCompare(b.placeOfBirth || "");
-        break;
-      case "weight":
-        res = (parseFloat(a.weight) || 0) - (parseFloat(b.weight) || 0);
-        break;
-      case "height":
-        res = (parseFloat(a.height) || 0) - (parseFloat(b.height) || 0);
-        break;
-      case "shootOrCatch": {
-        const statA = a.position === "G" ? a.catches : a.shoots;
-        const statB = b.position === "G" ? b.catches : b.shoots;
-        res = (statA || "").localeCompare(statB || "");
-        break;
-      }
-      default:
-        break;
-    }
-    return sortDirection === "asc" ? res : -res;
-  });
-  
+  const sortedPlayers =
+    sortDirection === "none"
+      ? roster
+      : [...roster].sort((a, b) => {
+          let res = 0;
+          switch (sortColumn) {
+            case "number":
+              res = +a.jerseyNumber - +b.jerseyNumber;
+              break;
+            case "player":
+              res =
+                a.firstName.localeCompare(b.firstName) ||
+                a.lastName.localeCompare(b.lastName);
+              break;
+            case "position":
+              res =
+                getPositionPriority(a.position) -
+                getPositionPriority(b.position);
+              if (res === 0) {
+                // If same position type, sort by jersey number
+                res = +a.jerseyNumber - +b.jerseyNumber;
+              }
+              break;
+            case "age": {
+              const ageA = calculateAge(a.dateOfBirth);
+              const ageB = calculateAge(b.dateOfBirth);
+              res =
+                (typeof ageA === "number" ? ageA : 0) -
+                (typeof ageB === "number" ? ageB : 0);
+              break;
+            }
+            case "birthYear": {
+              const yearA = a.dateOfBirth
+                ? new Date(a.dateOfBirth).getFullYear()
+                : 0;
+              const yearB = b.dateOfBirth
+                ? new Date(b.dateOfBirth).getFullYear()
+                : 0;
+              res = yearA - yearB;
+              break;
+            }
+            case "birthPlace":
+              res = (a.placeOfBirth || "").localeCompare(b.placeOfBirth || "");
+              break;
+            case "weight":
+              res = (parseFloat(a.weight) || 0) - (parseFloat(b.weight) || 0);
+              break;
+            case "height":
+              res = (parseFloat(a.height) || 0) - (parseFloat(b.height) || 0);
+              break;
+            case "shootOrCatch": {
+              const statA = a.position === "G" ? a.catches : a.shoots;
+              const statB = b.position === "G" ? b.catches : b.shoots;
+              res = (statA || "").localeCompare(statB || "");
+              break;
+            }
+            case "goals":
+              res = (a.stats?.goals || 0) - (b.stats?.goals || 0);
+              break;
+            case "assists":
+              res = (a.stats?.assists || 0) - (b.stats?.assists || 0);
+              break;
+            case "points":
+              res = (a.stats?.points || 0) - (b.stats?.points || 0);
+              break;
+            default:
+              break;
+          }
+          return sortDirection === "asc" ? res : -res;
+        });
+
   const isCustomColor =
     customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
     customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   const renderPlayerRow = (player: RosterPlayer, index: number) => (
-    <TableRow 
-      key={player.id} 
-      bgColor={isCustomColor ? customColors.tableBackgroundColor : index % 2 === 0 ? "#F3F4F6" : "#FFFFFF"}
+    <TableRow
+      key={player.id}
+      bgColor={
+        isCustomColor
+          ? customColors.tableBackgroundColor
+          : index % 2 === 0
+          ? "#F3F4F6"
+          : "#FFFFFF"
+      }
     >
-      <TableCell align="center">{player.jerseyNumber || "-"}</TableCell>
+      {selectedColumns.number && (
+        <TableCell align="center">{player.jerseyNumber || "-"}</TableCell>
+      )}
       <TableCell align="left">
         {player.flagUrl && (
           <img
@@ -177,30 +238,60 @@ const RosterTable: React.FC<RosterTableProps> = ({
             className="inline-block mr-2"
           />
         )}
-        <Link 
-          href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
-            player.firstName
-          )}-${encodeURIComponent(player.lastName)}`}
+        <Link
+          href={`https://www.eliteprospects.com/player/${
+            player.id
+          }/${encodeURIComponent(player.firstName)}-${encodeURIComponent(
+            player.lastName
+          )}`}
           style={{ color: customColors.nameTextColor }}
         >
-          {player.firstName} {player.lastName} ({player.position}){" "}
+          {player.firstName} {player.lastName}{" "}
+          {selectedColumns.position && `(${player.position})`}{" "}
           {player.playerRole &&
             player.playerRole !== null &&
             ` "${player.playerRole}"`}
         </Link>
       </TableCell>
-      <TableCell align="center">{calculateAge(player.dateOfBirth)}</TableCell>
-      <TableCell align="center">
-        {player.dateOfBirth
-          ? new Date(player.dateOfBirth).getFullYear()
-          : "N/A"}
-      </TableCell>
-      <TableCell align="center">{player.placeOfBirth}</TableCell>
-      <TableCell align="center">{player.weight} kg</TableCell>
-      <TableCell align="center">{player.height} cm</TableCell>
-      <TableCell align="center">
-        {player.position === "G" ? player.catches : player.shoots}
-      </TableCell>
+      {selectedColumns.age && (
+        <TableCell align="center">{calculateAge(player.dateOfBirth)}</TableCell>
+      )}
+      {selectedColumns.birthYear && (
+        <TableCell align="center">
+          {player.dateOfBirth
+            ? new Date(player.dateOfBirth).getFullYear()
+            : "N/A"}
+        </TableCell>
+      )}
+      {selectedColumns.birthPlace && (
+        <TableCell align="center">{player.placeOfBirth}</TableCell>
+      )}
+      {selectedColumns.weight && (
+        <TableCell align="center">{player.weight} kg</TableCell>
+      )}
+      {selectedColumns.height && (
+        <TableCell align="center">{player.height} cm</TableCell>
+      )}
+      {selectedColumns.shootsCatches && (
+        <TableCell align="center">
+          {player.position === "G" ? player.catches : player.shoots}
+        </TableCell>
+      )}
+      {selectedColumns.goals && (
+        <TableCell align="center">
+          {player.position === "G" ? "-" : player.stats?.goals || 0}
+        </TableCell>
+      )}
+      {selectedColumns.assists && (
+        <TableCell align="center">
+          {player.position === "G" ? "-" : player.stats?.assists || 0}
+        </TableCell>
+      )}
+      {selectedColumns.points && (
+        <TableCell align="center">
+          {player.position === "G" ? "-" : player.stats?.points || 0}
+        </TableCell>
+      )}
     </TableRow>
   );
 
@@ -219,77 +310,128 @@ const RosterTable: React.FC<RosterTableProps> = ({
           tableBgColor={customColors.tableBackgroundColor}
           tableTextColor={customColors.textColor}
         >
-          <TableHead bgColor={customColors.backgroundColor} textColor={customColors.headerTextColor}>
+          <TableHead
+            bgColor={customColors.backgroundColor}
+            textColor={customColors.headerTextColor}
+          >
             <TableRow bgColor={customColors.backgroundColor}>
+              {selectedColumns.number && (
+                <TableCell
+                  isHeader
+                  align="left"
+                  className={`${
+                    !selectedColumns.number ? "rounded-tl-lg" : ""
+                  } cursor-pointer`}
+                  onClick={() => handleSort("number")}
+                >
+                  # {renderSortArrow("number")}
+                </TableCell>
+              )}
               <TableCell
                 isHeader
                 align="left"
-                className="rounded-tl-lg cursor-pointer"
-                onClick={() => handleSort("number")}
-              >
-                # {renderSortArrow("number")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="left"
-                className="cursor-pointer"
+                className={`${
+                  !selectedColumns.number ? "rounded-tl-lg" : ""
+                } cursor-pointer`}
                 onClick={() => handleSort("player")}
               >
                 PLAYER {renderSortArrow("player")}
               </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort("age")}
-              >
-                A {renderSortArrow("age")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort("birthYear")}
-              >
-                BY {renderSortArrow("birthYear")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort("birthPlace")}
-              >
-                BIRTHPLACE {renderSortArrow("birthPlace")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort("weight")}
-              >
-                WT {renderSortArrow("weight")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="cursor-pointer"
-                onClick={() => handleSort("height")}
-              >
-                HT {renderSortArrow("height")}
-              </TableCell>
-              <TableCell
-                isHeader
-                align="center"
-                className="rounded-tr-lg cursor-pointer"
-                onClick={() => handleSort("shootOrCatch")}
-              >
-                S {renderSortArrow("shootOrCatch")}
-              </TableCell>
+              {selectedColumns.age && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("age")}
+                >
+                  AGE {renderSortArrow("age")}
+                </TableCell>
+              )}
+              {selectedColumns.birthYear && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("birthYear")}
+                >
+                  BY {renderSortArrow("birthYear")}
+                </TableCell>
+              )}
+              {selectedColumns.birthPlace && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("birthPlace")}
+                >
+                  BIRTHPLACE {renderSortArrow("birthPlace")}
+                </TableCell>
+              )}
+              {selectedColumns.weight && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("weight")}
+                >
+                  WT {renderSortArrow("weight")}
+                </TableCell>
+              )}
+              {selectedColumns.height && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("height")}
+                >
+                  HT {renderSortArrow("height")}
+                </TableCell>
+              )}
+              {selectedColumns.shootsCatches && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("shootOrCatch")}
+                >
+                  S {renderSortArrow("shootOrCatch")}
+                </TableCell>
+              )}
+              {selectedColumns.goals && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("goals")}
+                >
+                  G {renderSortArrow("goals")}
+                </TableCell>
+              )}
+              {selectedColumns.assists && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className="cursor-pointer"
+                  onClick={() => handleSort("assists")}
+                >
+                  A {renderSortArrow("assists")}
+                </TableCell>
+              )}
+              {selectedColumns.points && (
+                <TableCell
+                  isHeader
+                  align="center"
+                  className={`${
+                    !selectedColumns.points ? "rounded-tr-lg" : ""
+                  } cursor-pointer`}
+                  onClick={() => handleSort("points")}
+                >
+                  PTS {renderSortArrow("points")}
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {sortedPlayers.map(renderPlayerRow)}
-          </TableBody>
+          <TableBody>{sortedPlayers.map(renderPlayerRow)}</TableBody>
         </Table>
       </TableContainer>
       <PoweredBy />
