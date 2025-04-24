@@ -65,7 +65,14 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
     selectedNationalities,
   ]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
+  const sourceLinks = useMemo(() => {
+    if (!leagueSlug) return '';
+    
+    const seasonInfo = season ? `${season}` : '';
+    return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}/stats/${seasonInfo}" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} Scoring Leaders</a> @ Elite Prospects</p>`;
+  }, [leagueSlug, season]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>

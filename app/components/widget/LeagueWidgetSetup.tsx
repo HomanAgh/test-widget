@@ -41,7 +41,13 @@ const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({
     return url;
   }, [leagueSlug, season, customColors]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${DEFAULT_IFRAME_HEIGHT}px" frameborder="0" class="iframe"></iframe>`;
+  const sourceLinks = useMemo(() => {
+    if (!leagueSlug) return '';
+    
+    return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} League Page</a> @ Elite Prospects</p>`;
+  }, [leagueSlug]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>

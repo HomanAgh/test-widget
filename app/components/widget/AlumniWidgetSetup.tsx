@@ -93,7 +93,15 @@ const AlumniWidgetSetup: React.FC = () => {
     );
   }, [selectedTeams, selectedLeagues, customColors, youthName]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
+  const sourceLinks = useMemo(() => {
+    if (selectedTeams.length === 0) return '';
+    
+    return selectedTeams.map(team => (
+      `<p> Source: <a href="https://www.eliteprospects.com/team/${team.id}" target="_blank" rel="noopener noreferrer">${team.name}</a> @ Elite Prospects</p>`
+    )).join('\n');
+  }, [selectedTeams]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>

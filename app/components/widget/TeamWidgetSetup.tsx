@@ -67,7 +67,13 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
     );
   }, [teamId, customColors, selectedColumns]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>`;
+  const sourceLinks = useMemo(() => {
+    if (!teamId) return '';
+    
+    return `<p> Source: <a href="https://www.eliteprospects.com/team/${teamId}" target="_blank" rel="noopener noreferrer">Team Page</a> @ Elite Prospects</p>`;
+  }, [teamId]);
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
   return (
     <div>
