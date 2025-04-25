@@ -39,8 +39,8 @@ export async function GET(req: NextRequest) {
         stats: isGoalie
           ? {
               gamesPlayed: regularStats?.GP || 0,
-              goalsAgainstAverage: regularStats?.GAA || null,
-              savePercentage: regularStats?.SVP || null,
+              goalsAgainstAverage: regularStats?.GAA || 0,
+              savePercentage: regularStats?.SVP || 0,
               shutouts: regularStats?.SO || 0,
             }
           : {
