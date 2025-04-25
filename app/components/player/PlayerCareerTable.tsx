@@ -118,12 +118,8 @@ const PlayerCareerTable: React.FC<PlayerCareerTableProps> = ({
                 <TableCell align="center">{career.gamesPlayed}</TableCell>
                 {isGoaltender ? (
                   <>
-                    <TableCell align="center">
-                      {career.goalsAgainstAverage}
-                    </TableCell>
-                    <TableCell align="center">
-                      {career.savePercentage}
-                    </TableCell>
+                    <TableCell align="center">{career.goalsAgainstAverage}</TableCell>
+                    <TableCell align="center">{career.savePercentage}</TableCell>
                     <TableCell align="center">{career.shutouts}</TableCell>
                   </>
                 ) : (

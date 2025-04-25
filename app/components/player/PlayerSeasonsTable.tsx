@@ -137,12 +137,8 @@ const PlayerSeasonsTable: React.FC<PlayerSeasonsTableProps> = ({
                 <TableCell align="center">{season.gamesPlayed}</TableCell>
                 {isGoaltender ? (
                   <>
-                    <TableCell align="center">
-                      {season.goalsAgainstAverage}
-                    </TableCell>
-                    <TableCell align="center">
-                      {season.savePercentage}
-                    </TableCell>
+                    <TableCell align="center"> {season.goalsAgainstAverage}</TableCell>
+                    <TableCell align="center">{season.savePercentage}</TableCell>
                     <TableCell align="center">{season.shutouts}</TableCell>
                   </>
                 ) : (

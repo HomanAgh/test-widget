@@ -72,7 +72,7 @@ const Player: React.FC<PlayerProps> = ({
       name: data.playerInfo.name || "UnknownPlayer",
       team: data.playerInfo.team,
       league: data.playerInfo.league,
-      jerseyNumber: data.playerInfo.jerseyNumber || "N/A",
+      jerseyNumber: data.playerInfo.jerseyNumber || "",
       views: data.playerInfo.views || 0,
       weightMet: data.playerInfo.weightMet || "",
       weightImp: data.playerInfo.weightImp || "",

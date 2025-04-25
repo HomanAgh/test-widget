@@ -46,8 +46,12 @@ const PlayerSeasons: React.FC<PlayerSeasonsProps> = ({
     return <div>NoStatsAvailable</div>;
   }
 
-  const playerType: PlayerType =
-    data.stats[0]?.role === "GOALTENDER" ? "GOALTENDER" : "SKATER";
+  // Determine player type by checking if any season has role="GOALTENDER"
+  const playerType: PlayerType = data.stats.some(
+    (season: any) => season.role === "GOALTENDER"
+  )
+    ? "GOALTENDER"
+    : "SKATER";
 
   const seasons: SeasonStats[] = data.stats.map((season: any) => ({
     season: season.season,

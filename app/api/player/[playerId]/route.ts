@@ -121,7 +121,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
       playerType: playerData.data.playerType,
       team: playerData.data.latestStats?.team,
       league: playerData.data.latestStats?.league,
-      jerseyNumber: playerData.data.latestStats?.jerseyNumber || "Unknown",
+      jerseyNumber: playerData.data.latestStats?.jerseyNumber || "",
       weightMet: playerData.data.weight.metrics,
       weightImp: playerData.data.weight.imperial,
       heightMet: playerData.data.height.metrics,
