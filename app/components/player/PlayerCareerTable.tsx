@@ -1,5 +1,5 @@
 import React from "react";
-import { CareerStats } from "@/app/types/player";
+import { CareerStats, PlayerType } from "@/app/types/player";
 import {
   TableContainer,
   Table,
@@ -11,8 +11,39 @@ import {
   PoweredBy,
 } from "@/app/components/common/style";
 
+// Format save percentage to display as .XXX
+const formatSavePercentage = (savePercentage: number | undefined): string => {
+  if (savePercentage === undefined) return '.000';
+  
+  // Convert to string
+  let svpString = savePercentage.toString();
+  
+  // If the value already contains a decimal point, we need to handle it differently
+  if (svpString.includes('.')) {
+    // Remove the decimal and ensure 3 digits
+    svpString = svpString.replace('.', '');
+    // Pad with zeros if needed
+    while (svpString.length < 3) {
+      svpString = '0' + svpString;
+    }
+    // If more than 3 digits, truncate to 3
+    if (svpString.length > 3) {
+      svpString = svpString.substring(0, 3);
+    }
+  } else {
+    // Pad with leading zeros if needed for whole numbers
+    while (svpString.length < 3) {
+      svpString = '0' + svpString;
+    }
+  }
+  
+  // Insert decimal point at the beginning
+  return '.' + svpString;
+};
+
 interface PlayerCareerTableProps {
   careers: CareerStats[];
+  playerType: PlayerType;
   customColors?: {
     backgroundColor: string;
     textColor: string;
@@ -24,6 +55,7 @@ interface PlayerCareerTableProps {
 
 const PlayerCareerTable: React.FC<PlayerCareerTableProps> = ({
   careers,
+  playerType,
   customColors = {
     backgroundColor: "#052D41",
     textColor: "#000000",
@@ -32,7 +64,7 @@ const PlayerCareerTable: React.FC<PlayerCareerTableProps> = ({
     nameTextColor: "#0D73A6",
   },
 }) => {
-  const isGoaltender = careers[0]?.goalsAgainstAverage !== undefined;
+  const isGoaltender = playerType === "GOALTENDER";
   const isCustomColor =
     customColors.tableBackgroundColor.toLowerCase() !== "#ffffff" &&
     customColors.tableBackgroundColor.toLowerCase() !== "#fff";
@@ -118,12 +150,8 @@ const PlayerCareerTable: React.FC<PlayerCareerTableProps> = ({
                 <TableCell align="center">{career.gamesPlayed}</TableCell>
                 {isGoaltender ? (
                   <>
-                    <TableCell align="center">
-                      {career.goalsAgainstAverage}
-                    </TableCell>
-                    <TableCell align="center">
-                      {career.savePercentage}
-                    </TableCell>
+                    <TableCell align="center">{career.goalsAgainstAverage}</TableCell>
+                    <TableCell align="center">{formatSavePercentage(career.savePercentage)}</TableCell>
                     <TableCell align="center">{career.shutouts}</TableCell>
                   </>
                 ) : (

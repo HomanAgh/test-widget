@@ -3,7 +3,7 @@
 import React from "react";
 import useSWR from "swr";
 import CareerTable from "./PlayerCareerTable"; // Table component for displaying stats
-import type { CareerStats } from "@/app/types/player";
+import type { CareerStats, PlayerType } from "@/app/types/player";
 
 interface PlayerCareerProps {
   playerId: string;
@@ -61,12 +61,19 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
 
   console.log("Fetched Player Career Stats:", data); // Debug log
 
+  // Determine player type by checking if any career has goalsAgainstAverage defined
+  const playerType: PlayerType = data.stats.some(
+    (career: any) => career.stats.goalsAgainstAverage !== undefined
+  )
+    ? "GOALTENDER"
+    : "SKATER";
+
   // Map stats to the required format
   const careers: CareerStats[] = data.stats.map((career: any) => ({
     league: career.league,
     numberOfSeasons: career.numberOfSeasons || 0,
     gamesPlayed: career.stats.gamesPlayed,
-    ...(career.stats.goalsAgainstAverage !== undefined
+    ...(playerType === "GOALTENDER"
       ? {
           goalsAgainstAverage: career.stats.goalsAgainstAverage,
           savePercentage: career.stats.savePercentage,
@@ -84,7 +91,11 @@ const PlayerCareers: React.FC<PlayerCareerProps> = ({
 
   return (
     <>
-      {careers && <CareerTable careers={careers} customColors={customColors} />}
+      {careers && <CareerTable 
+        careers={careers} 
+        playerType={playerType}
+        customColors={customColors} 
+      />}
     </>
   );
 };

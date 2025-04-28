@@ -65,7 +65,9 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({
 
             {/* Team and league info */}
             <div className="flex items-center flex-wrap text-base font-medium mb-2">
-              <span className="mr-2">#{player.jerseyNumber}</span>
+              {player.jerseyNumber && player.jerseyNumber !== "" && (
+                <span className="mr-2">#{player.jerseyNumber}</span>
+              )}
               {player.team ? (
                 <Link
                   href={`https://www.eliteprospects.com/team/${player.team.id}/${player.team.name}/${player.season.slug}`}

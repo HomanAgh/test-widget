@@ -17,6 +17,36 @@ import {
   PoweredBy,
 } from "@/app/components/common/style";
 
+// Format save percentage to display as .XXX
+const formatSavePercentage = (savePercentage: number | undefined): string => {
+  if (savePercentage === undefined) return '.000';
+  
+  // Convert to string
+  let svpString = savePercentage.toString();
+  
+  // If the value already contains a decimal point, we need to handle it differently
+  if (svpString.includes('.')) {
+    // Remove the decimal and ensure 3 digits
+    svpString = svpString.replace('.', '');
+    // Pad with zeros if needed
+    while (svpString.length < 3) {
+      svpString = '0' + svpString;
+    }
+    // If more than 3 digits, truncate to 3
+    if (svpString.length > 3) {
+      svpString = svpString.substring(0, 3);
+    }
+  } else {
+    // Pad with leading zeros if needed for whole numbers
+    while (svpString.length < 3) {
+      svpString = '0' + svpString;
+    }
+  }
+  
+  // Insert decimal point at the beginning
+  return '.' + svpString;
+};
+
 interface GamesTableProps {
   lastFiveGames: GameLog[];
   playerType: PlayerType;
@@ -153,8 +183,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
                       {(summary as GoaltenderSummary).saves}
                     </TableCell>
                     <TableCell align="center">
-                      {(summary as GoaltenderSummary).savePercentage.toFixed(2)}
-                      %
+                      {formatSavePercentage((summary as GoaltenderSummary).savePercentage)}
                     </TableCell>
                   </>
                 ) : (
@@ -197,7 +226,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
                       </TableCell>
                       <TableCell align="center">{game.saves || 0}</TableCell>
                       <TableCell align="center">
-                        {game.savePercentage?.toFixed(2) || "0.00"}%
+                        {formatSavePercentage(game.savePercentage)}
                       </TableCell>
                     </>
                   ) : (

@@ -49,17 +49,17 @@ const PlayerStat: React.FC<PlayerStatProps> = ({ playerId, customColors }) => {
     type === "GOALTENDER"
       ? ({
           gamesPlayed: data.stats?.gamesPlayed || 0,
-          shotsAgainst: data.stats?.shotsAgainst ?? "N/A",
-          saves: data.stats?.saves ?? "N/A",
-          goalsAgainst: data.stats?.goalsAgainst ?? "N/A",
+          shotsAgainst: data.stats?.shotsAgainst || 0,
+          saves: data.stats?.saves || 0,
+          goalsAgainst: data.stats?.goalsAgainst || 0,
           savePercentage: parseFloat(data.stats?.savePercentage) || 0,
         } as Goalie)
       : ({
           gamesPlayed: data.stats?.gamesPlayed || 0,
-          goals: data.stats?.goals ?? "N/A",
-          assists: data.stats?.assists ?? "N/A",
-          points: data.stats?.points ?? "N/A",
-          plusMinusRating: data.stats?.plusMinusRating ?? "N/A",
+          goals: data.stats?.goals || 0,
+          assists: data.stats?.assists || 0,
+          points: data.stats?.points || 0,
+          plusMinusRating: data.stats?.plusMinusRating || 0,
         } as Skater);
 
   return (
