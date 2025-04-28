@@ -19,7 +19,7 @@ import { NextResponse } from "next/server";
     }
   
     // Define the league levels you want to search
-    const leagueLevels = ["tournament", "midget"];
+    const leagueLevels = ["tournament", "midget", "junior-a"];
     
     try {
       // Make separate API calls for each league level
