@@ -9,6 +9,7 @@ import {
   TeamColumnOptions,
   DEFAULT_COLUMNS,
 } from "../team/TeamColumnDefinitions";
+import { Team as TeamType } from "@/app/types/team";
 
 const DEFAULT_IFRAME_HEIGHT = 800;
 
