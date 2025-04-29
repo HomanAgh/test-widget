@@ -16,36 +16,8 @@ import {
   TableCell,
   PoweredBy,
 } from "@/app/components/common/style";
-
-// Format save percentage to display as .XXX
-const formatSavePercentage = (savePercentage: number | undefined): string => {
-  if (savePercentage === undefined) return '.000';
-  
-  // Convert to string
-  let svpString = savePercentage.toString();
-  
-  // If the value already contains a decimal point, we need to handle it differently
-  if (svpString.includes('.')) {
-    // Remove the decimal and ensure 3 digits
-    svpString = svpString.replace('.', '');
-    // Pad with zeros if needed
-    while (svpString.length < 3) {
-      svpString = '0' + svpString;
-    }
-    // If more than 3 digits, truncate to 3
-    if (svpString.length > 3) {
-      svpString = svpString.substring(0, 3);
-    }
-  } else {
-    // Pad with leading zeros if needed for whole numbers
-    while (svpString.length < 3) {
-      svpString = '0' + svpString;
-    }
-  }
-  
-  // Insert decimal point at the beginning
-  return '.' + svpString;
-};
+import { formatSavePercentage } from '@/app/utils/formatUtils';
+import Tooltip from "@/app/components/common/Tooltip";
 
 interface GamesTableProps {
   lastFiveGames: GameLog[];
@@ -115,6 +87,34 @@ const GamesTable: React.FC<GamesTableProps> = ({
     ? `Summary Last ${gameLimit} Games`
     : `Last ${gameLimit} Games`; */
 
+  const renderGameTeams = (game: GameLog) => {
+    if (!game.homeTeam || !game.awayTeam) return null;
+
+    const tooltipText = `${game.date}\n${game.homeTeam.name} ${game.score?.home} - ${game.score?.away} ${game.awayTeam.name}\n${game.isHomeGame ? 'Home Game' : 'Away Game'}`;
+
+    return (
+      <div className="flex items-center justify-between w-full">
+        <Tooltip tooltip={tooltipText} position="right">
+          <img 
+            src={game.homeTeam.logo} 
+            alt={game.homeTeam.name} 
+            width={20}
+            height={20}
+          />
+        </Tooltip>
+        <span>vs</span>
+        <Tooltip tooltip={tooltipText} position="right">
+          <img 
+            src={game.awayTeam.logo} 
+            alt={game.awayTeam.name} 
+            width={20}
+            height={20}
+          />
+        </Tooltip>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-md mx-auto rounded-lg -mt-4">
       <TableContainer>
@@ -127,8 +127,8 @@ const GamesTable: React.FC<GamesTableProps> = ({
             textColor={customColors.headerTextColor}
           >
             <TableRow bgColor={customColors.backgroundColor}>
-              <TableCell isHeader align="left">
-                Games
+              <TableCell isHeader align="center">
+                Game
               </TableCell>
               {playerType === "GOALTENDER" ? (
                 <>
@@ -170,7 +170,7 @@ const GamesTable: React.FC<GamesTableProps> = ({
                   isCustomColor ? customColors.tableBackgroundColor : "#F3F4F6"
                 }
               >
-                <TableCell align="left">{`Last ${gameLimit} Games`}</TableCell>
+                <TableCell align="center">{`Last ${gameLimit} Games`}</TableCell>
                 {playerType === "GOALTENDER" ? (
                   <>
                     <TableCell align="center">
@@ -215,7 +215,9 @@ const GamesTable: React.FC<GamesTableProps> = ({
                       : "#FFFFFF"
                   }
                 >
-                  <TableCell align="left">{game.date}</TableCell>
+                  <TableCell align="center">
+                    {renderGameTeams(game)}
+                  </TableCell>
                   {playerType === "GOALTENDER" ? (
                     <>
                       <TableCell align="center">

@@ -13,6 +13,18 @@ const fetchCountryFlag = async (slug: string, apiKey: string, apiBaseUrl: string
   return null;
 };
 
+const fetchTeamLogo = async (teamId: string, apiKey: string, apiBaseUrl: string) => {
+  try {
+    const response = await fetch(`${apiBaseUrl}/teams/${teamId}?apiKey=${apiKey}&fields=logo.small`);
+    if (response.ok) {
+      const teamData = await response.json();
+      return teamData.data?.logo?.small || null;
+    }
+  } catch {
+    console.warn(`Failed to fetch logo for team ${teamId}`);
+  }
+  return null;
+};
 
 export async function GET(req: NextRequest, props: { params: Promise<{ playerId: string }> }) {
   const params = await props.params;
@@ -59,20 +71,32 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
     "placeOfBirth",
   ].join(",");
 
-  const skaterFields = ["game.date", "stats.G", "stats.A", "stats.PTS", "stats.PM"].join(",");
-  const goalieFields = ["game.date", "stats.SA", "stats.SV", "stats.GA", "stats.SVP"].join(",");
+  const gameLogFields = [
+    "game.date",
+    "game.dateTime",
+    "team.id",
+    "team.name",
+    "opponent.id",
+    "opponent.name",
+    "gameType",
+    "teamScore",
+    "opponentScore",
+    "stats.G",
+    "stats.A",
+    "stats.PTS",
+    "stats.PM",
+    "stats.SA",
+    "stats.SV",
+    "stats.GA",
+    "stats.SVP"
+  ].join(",");
 
   const playerUrl = `${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(
     playerInfoField
   )}`;
-  const skaterStatsUrl = `${apiBaseUrl}/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
-    skaterFields
+  const gameLogsUrl = `${apiBaseUrl}/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
+    gameLogFields
   )}&limit=${limit}`;
-  const goalieStatsUrl = `${apiBaseUrl}/players/${playerId}/game-logs?apiKey=${apiKey}&fields=${encodeURIComponent(
-    goalieFields
-  )}&limit=${limit}`;
-
-  console.log(playerUrl)
 
   try {
     const playerResponse = await fetch(playerUrl, { method: "GET" });
@@ -81,12 +105,13 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
     }
     const playerData = await playerResponse.json();
     const isGoalie = playerData.data.playerType === "GOALTENDER";
-    const statsUrl = isGoalie ? goalieStatsUrl : skaterStatsUrl;
-    const statsResponse = await fetch(statsUrl, { method: "GET" });
-    if (!statsResponse.ok) {
-      throw new Error(`Stats fetch failed: ${statsResponse.statusText}`);
+
+    const gameLogsResponse = await fetch(gameLogsUrl, { method: "GET" });
+    if (!gameLogsResponse.ok) {
+      throw new Error(`Game logs fetch failed: ${gameLogsResponse.statusText}`);
     }
-    const statsData = await statsResponse.json();
+    const gameLogsData = await gameLogsResponse.json();
+
     const nationalitySlug = playerData.data.nationality?.slug;
     const secondaryNationalitySlug = playerData.data.secondaryNationality?.slug;
     const [primaryFlagUrl, secondaryFlagUrl] = await Promise.all([
@@ -94,26 +119,48 @@ export async function GET(req: NextRequest, props: { params: Promise<{ playerId:
       secondaryNationalitySlug ? fetchCountryFlag(secondaryNationalitySlug, apiKey, apiBaseUrl) : null,
     ]);
 
-    const lastGames = statsData.data.map((gameEntry: any) => {
+    // Process game logs with team logos
+    const lastGames = await Promise.all(gameLogsData.data.map(async (gameEntry: any) => {
+      const [homeTeamLogo, awayTeamLogo] = await Promise.all([
+        fetchTeamLogo(gameEntry.team.id, apiKey, apiBaseUrl),
+        fetchTeamLogo(gameEntry.opponent.id, apiKey, apiBaseUrl)
+      ]);
+
       const stats = gameEntry.stats || {};
-      if (isGoalie) {
-        return {
-          date: gameEntry.game.date || "Unknown Date",
-          shotsAgainst: stats.SA || 0,
-          saves: stats.SV || 0,
-          goalsAgainst: stats.GA || 0,
-          savePercentage: stats.SVP || 0,
-        };
-      } else {
-        return {
-          date: gameEntry.game.date || "Unknown Date",
-          goals: stats.G || 0,
-          assists: stats.A || 0,
-          points: stats.PTS || 0,
-          plusMinusRating: stats.PM || 0,
-        };
-      }
-    });
+      const isHomeGame = gameEntry.gameType === "home";
+
+      return {
+        date: gameEntry.game.date || "Unknown Date",
+        homeTeam: {
+          id: isHomeGame ? gameEntry.team.id : gameEntry.opponent.id,
+          name: isHomeGame ? gameEntry.team.name : gameEntry.opponent.name,
+          logo: isHomeGame ? homeTeamLogo : awayTeamLogo
+        },
+        awayTeam: {
+          id: isHomeGame ? gameEntry.opponent.id : gameEntry.team.id,
+          name: isHomeGame ? gameEntry.opponent.name : gameEntry.team.name,
+          logo: isHomeGame ? awayTeamLogo : homeTeamLogo
+        },
+        score: {
+          home: isHomeGame ? gameEntry.teamScore : gameEntry.opponentScore,
+          away: isHomeGame ? gameEntry.opponentScore : gameEntry.teamScore
+        },
+        isHomeGame,
+        ...(isGoalie
+          ? {
+              shotsAgainst: stats.SA || 0,
+              saves: stats.SV || 0,
+              goalsAgainst: stats.GA || 0,
+              savePercentage: stats.SVP || 0,
+            }
+          : {
+              goals: stats.G || 0,
+              assists: stats.A || 0,
+              points: stats.PTS || 0,
+              plusMinusRating: stats.PM || 0,
+            }),
+      };
+    }));
 
     const playerInfo = {
       id: playerData.data.id,
