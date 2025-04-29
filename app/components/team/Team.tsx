@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import RosterTable from "@/app/components/team/RosterTable";
 import type { Team as TeamType, RosterPlayer } from "@/app/types/team";
 import Link from "../common/style/Link"; // Import the Link component
-import { TeamColumnOptions } from "./TeamColumnSelector";
+import { TeamColumnOptions } from "./TeamColumnDefinitions";
 
 interface TeamStats {
   team: TeamType;

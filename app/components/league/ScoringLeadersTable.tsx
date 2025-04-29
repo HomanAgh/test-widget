@@ -21,6 +21,7 @@ import {
 
 const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
   scoringLeaders,
+  statsType = "regular", // Default to regular season
   customColors = {
     backgroundColor: "#052D41",
     textColor: "#000000",
@@ -56,6 +57,13 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
   ) {
     return <div className="text-center py-4">No scoring data available</div>;
   }
+
+  // Helper function to get the appropriate stats based on statsType
+  const getPlayerStats = (player: any) => {
+    return statsType === "postseason" && player.postseasonStats
+      ? player.postseasonStats
+      : player.regularStats;
+  };
 
   // Helper function to get nationality name
   const getNationalityName = (nationality: any): string => {
@@ -138,26 +146,26 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
         result = teamNameB.localeCompare(teamNameA);
         break;
       case "GP":
-        result = (a.regularStats?.GP || 0) - (b.regularStats?.GP || 0);
+        result = (getPlayerStats(a)?.GP || 0) - (getPlayerStats(b)?.GP || 0);
         break;
       case "G":
-        result = (a.regularStats?.G || 0) - (b.regularStats?.G || 0);
+        result = (getPlayerStats(a)?.G || 0) - (getPlayerStats(b)?.G || 0);
         break;
       case "A":
-        result = (a.regularStats?.A || 0) - (b.regularStats?.A || 0);
+        result = (getPlayerStats(a)?.A || 0) - (getPlayerStats(b)?.A || 0);
         break;
       case "TP":
         // For TP, we want highest first when desc (default)
-        result = (a.regularStats?.PTS || 0) - (b.regularStats?.PTS || 0);
+        result = (getPlayerStats(a)?.PTS || 0) - (getPlayerStats(b)?.PTS || 0);
         break;
       default:
         // Default sort by points
-        result = (a.regularStats?.PTS || 0) - (b.regularStats?.PTS || 0);
+        result = (getPlayerStats(a)?.PTS || 0) - (getPlayerStats(b)?.PTS || 0);
     }
 
     // If sort direction is 'none', return to default sort (points descending)
     if (sortDirection === "none") {
-      return (a.regularStats?.PTS || 0) - (b.regularStats?.PTS || 0);
+      return (getPlayerStats(a)?.PTS || 0) - (getPlayerStats(b)?.PTS || 0);
     }
 
     // For desc, we want highest values first (negative result)
@@ -167,7 +175,9 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
 
   // First, create initial ranking by points (TP) for all players
   const initialRanking = [...scoringLeaders.data]
-    .sort((a, b) => (b.regularStats?.PTS || 0) - (a.regularStats?.PTS || 0))
+    .sort(
+      (a, b) => (getPlayerStats(b)?.PTS || 0) - (getPlayerStats(a)?.PTS || 0)
+    )
     .map((player, index) => {
       // Ensure we have a valid ID for matching
       const playerId =
@@ -303,13 +313,26 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
               );
               const playerUrl =
                 player.player.links?.eliteprospectsUrl ||
-                (player.player.id ? `https://www.eliteprospects.com/player/${player.player.id}/${player.player.lastName?.toLowerCase()}-${player.player.firstName?.toLowerCase()}` : 
-                (player.player.slug ? `/player/${player.player.slug}` : '#'));
+                (player.player.id
+                  ? `https://www.eliteprospects.com/player/${
+                      player.player.id
+                    }/${player.player.lastName?.toLowerCase()}-${player.player.firstName?.toLowerCase()}`
+                  : player.player.slug
+                  ? `/player/${player.player.slug}`
+                  : "#");
 
               const teamUrl =
                 player.team.links?.eliteprospectsUrl ||
-                (player.team.id ? `https://www.eliteprospects.com/team/${player.team.id}/${player.team.name?.toLowerCase().replace(/\s+/g, '-')}` : 
-                (player.team.slug ? `/team/${player.team.slug}` : `#team-${player.team.id}`));
+                (player.team.id
+                  ? `https://www.eliteprospects.com/team/${
+                      player.team.id
+                    }/${player.team.name?.toLowerCase().replace(/\s+/g, "-")}`
+                  : player.team.slug
+                  ? `/team/${player.team.slug}`
+                  : `#team-${player.team.id}`);
+
+              // Get the right stats based on the statsType
+              const playerStats = getPlayerStats(player);
 
               return (
                 <TableRow
@@ -378,18 +401,10 @@ const ScoringLeadersTable: React.FC<ScoringLeadersTableProps> = ({
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell align="center">
-                    {player.regularStats?.GP || 0}
-                  </TableCell>
-                  <TableCell align="center">
-                    {player.regularStats?.G || 0}
-                  </TableCell>
-                  <TableCell align="center">
-                    {player.regularStats?.A || 0}
-                  </TableCell>
-                  <TableCell align="center">
-                    {player.regularStats?.PTS || 0}
-                  </TableCell>
+                  <TableCell align="center">{playerStats?.GP || 0}</TableCell>
+                  <TableCell align="center">{playerStats?.G || 0}</TableCell>
+                  <TableCell align="center">{playerStats?.A || 0}</TableCell>
+                  <TableCell align="center">{playerStats?.PTS || 0}</TableCell>
                 </TableRow>
               );
             })}

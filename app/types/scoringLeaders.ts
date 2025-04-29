@@ -68,6 +68,8 @@ export interface ScoringLeader {
   team: Team;
   season: Season;
   regularStats: PlayerStats;
+  postseasonStats?: PlayerStats;
+  allTeams?: string;
 }
 
 export interface ScoringLeadersResponse {
@@ -78,6 +80,7 @@ export interface ScoringLeadersTableProps {
   scoringLeaders: ScoringLeadersResponse;
   leagueDisplay?: string;
   selectedSeason?: string;
+  statsType?: "regular" | "postseason";
   customColors?: {
     backgroundColor: string;
     textColor: string;

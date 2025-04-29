@@ -35,24 +35,30 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
           throw new Error(`Failed to fetch seasons: ${response.statusText}`);
         }
         const data = await response.json();
-        
+
         if (!isMounted) return;
-        
+
         if (data && data.seasons && Array.isArray(data.seasons)) {
           // Sort seasons in descending order (newest first)
           const sortedSeasons = [...data.seasons].sort((a, b) => {
-            const yearA = parseInt(a.split('-')[0]);
-            const yearB = parseInt(b.split('-')[0]);
+            const yearA = parseInt(a.split("-")[0]);
+            const yearB = parseInt(b.split("-")[0]);
             return yearB - yearA;
           });
-          
+
           console.log("SeasonSelector - Seasons fetched:", sortedSeasons);
           setSeasonsArray(sortedSeasons);
-          
+
           // If the provided season is not in the list, use the most recent one
-          if (sortedSeasons.length > 0 && !sortedSeasons.includes(selectedSeason)) {
+          if (
+            sortedSeasons.length > 0 &&
+            !sortedSeasons.includes(selectedSeason)
+          ) {
             const defaultSeason = sortedSeasons[0];
-            console.log("SeasonSelector - Selected season not in list, defaulting to:", defaultSeason);
+            console.log(
+              "SeasonSelector - Selected season not in list, defaulting to:",
+              defaultSeason
+            );
             setSelectedSeason(defaultSeason);
             onSeasonChange(defaultSeason);
           }
@@ -61,7 +67,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
         console.error("SeasonSelector - Error fetching seasons:", error);
         // Set a default array of recent seasons if API fails
         if (!isMounted) return;
-        
+
         const currentYear = new Date().getFullYear();
         const defaultSeasons = [];
         for (let i = 0; i < 5; i++) {
@@ -69,11 +75,17 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
         }
         console.log("SeasonSelector - Using fallback seasons:", defaultSeasons);
         setSeasonsArray(defaultSeasons);
-        
+
         // Set the initial season if available, otherwise use the current year
-        if (!defaultSeasons.includes(selectedSeason) && defaultSeasons.length > 0) {
+        if (
+          !defaultSeasons.includes(selectedSeason) &&
+          defaultSeasons.length > 0
+        ) {
           const fallbackSeason = defaultSeasons[0];
-          console.log("SeasonSelector - Using fallback season:", fallbackSeason);
+          console.log(
+            "SeasonSelector - Using fallback season:",
+            fallbackSeason
+          );
           setSelectedSeason(fallbackSeason);
           onSeasonChange(fallbackSeason);
         }
@@ -85,7 +97,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
     };
 
     fetchSeasons();
-    
+
     return () => {
       isMounted = false;
     };
@@ -116,7 +128,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
   }
 
   return (
-    <div className="w-full text-center mt-6 mb-4">
+    <div className="inline-flex items-center">
       <label htmlFor="season-select" className="mr-2 font-semibold">
         Select Season:
       </label>
@@ -136,4 +148,4 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({
   );
 };
 
-export default SeasonSelector; 
+export default SeasonSelector;
