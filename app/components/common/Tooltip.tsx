@@ -30,7 +30,7 @@ const Tooltip: React.FC<TooltipProps> = ({
                       text-white 
                       text-center 
                       rounded 
-                      px-2 py-1 
+                      px-1.5 py-0.5 
                       opacity-0 
                       invisible 
                       transition-opacity 
@@ -38,7 +38,9 @@ const Tooltip: React.FC<TooltipProps> = ({
                       pointer-events-none 
                       max-w-xs 
                       group-hover:opacity-100 
-                      group-hover:visible`}
+                      group-hover:visible
+                      text-sm
+                      whitespace-nowrap`}
       >
         {lines.map((line, index) => (
           <div key={index}>{line}</div>

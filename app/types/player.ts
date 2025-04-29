@@ -1,4 +1,3 @@
-
 export type Player = {
   id: string;
   name: string;
@@ -23,50 +22,64 @@ export type Player = {
   placeOfBirth: string;
 };
 
-  export type PlayerType = "SKATER" | "GOALTENDER";
-  
-  export type GameLog = {
-    gameLimit: number,
-    date: string;
-    goals?: number;
-    assists?: number;
-    points?: number;
-    plusMinusRating?: number;
-    shotsAgainst?: number;
-    saves?: number;
-    goalsAgainst?: number;
-    savePercentage?: number;
+export type PlayerType = "SKATER" | "GOALTENDER";
+
+export interface GameLog {
+  date: string;
+  goals?: number;
+  assists?: number;
+  points?: number;
+  plusMinusRating?: number;
+  shotsAgainst?: number;
+  saves?: number;
+  goalsAgainst?: number;
+  savePercentage?: number;
+  homeTeam?: {
+    id: string;
+    name: string;
+    logo: string;
   };
+  awayTeam?: {
+    id: string;
+    name: string;
+    logo: string;
+  };
+  score?: {
+    home: number;
+    away: number;
+  };
+  isHomeGame?: boolean;
+}
 
-  export type GoaltenderSummary = {
-    shotsAgainst: number;
-    saves: number;
-    goalsAgainst: number;
-    savePercentage: number;
-  }
-  
-  export type  SkaterSummary = {
-    goals: number;
-    assists: number;
-    points: number;
-    plusMinusRating: number;
-  }
+export type GoaltenderSummary = {
+  shotsAgainst: number;
+  saves: number;
+  goalsAgainst: number;
+  savePercentage: number;
+}
 
-  export type Skater = {
-    gamesPlayed: number;
-    goals: number;
-    assists: number;
-    points: number;
-    plusMinusRating: number;
-  }
+export type  SkaterSummary = {
+  goals: number;
+  assists: number;
+  points: number;
+  plusMinusRating: number;
+}
 
-  export type Goalie = {
-    gamesPlayed: number;
-    shotsAgainst: number;
-    saves: number;
-    goalsAgainst: number;
-    savePercentage: number;
-  }
+export type Skater = {
+  gamesPlayed: number;
+  goals: number;
+  assists: number;
+  points: number;
+  plusMinusRating: number;
+}
+
+export type Goalie = {
+  gamesPlayed: number;
+  shotsAgainst: number;
+  saves: number;
+  goalsAgainst: number;
+  savePercentage: number;
+}
 
 export interface SeasonStats {
   season: string;
