@@ -7,6 +7,11 @@ import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
 import type { Player as PlayerType } from "@/app/types/player";
 
 const DEFAULT_IFRAME_HEIGHT = 800;
+const STATS_TABLE_HEIGHT = 232;
+const SEASONS_TABLE_HEIGHT = 396;
+const CAREER_TABLE_HEIGHT = 800;
+const GAMES_TABLE_HEIGHT = 456;
+const GAMES_SUMMARY_HEIGHT = 232;
 
 interface WidgetSetupProps {
   playerId: string;
@@ -43,6 +48,32 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
 
     fetchPlayerData();
   }, [playerId]);
+
+  useEffect(() => {
+    switch (viewMode) {
+      case "stats":
+        setIframeHeight(STATS_TABLE_HEIGHT);
+        break;
+      case "seasons":
+        setIframeHeight(SEASONS_TABLE_HEIGHT);
+        break;
+      case "career":
+        setIframeHeight(CAREER_TABLE_HEIGHT);
+        break;
+      case "games":
+        if (showSummary) {
+          setIframeHeight(GAMES_SUMMARY_HEIGHT);
+        } else {
+          // Calculate height based on game limit (5 games = 456px, 10 games = 822px, etc.)
+          const multiplier = gameLimit / 5;
+          const heightReduction = (multiplier - 1) * 170; // Subtract 90px for each multiplier beyond 1
+          setIframeHeight((GAMES_TABLE_HEIGHT * multiplier) - heightReduction);
+        }
+        break;
+      default:
+        setIframeHeight(DEFAULT_IFRAME_HEIGHT);
+    }
+  }, [viewMode, gameLimit, showSummary]);
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
