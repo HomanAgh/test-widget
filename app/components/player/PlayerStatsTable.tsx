@@ -9,35 +9,7 @@ import {
   TableCell,
   PoweredBy,
 } from "@/app/components/common/style";
-
-const formatSavePercentage = (savePercentage: number | undefined): string => {
-  if (savePercentage === undefined) return '.000';
-  
-  // Convert to string
-  let svpString = savePercentage.toString();
-  
-  // If the value already contains a decimal point, we need to handle it differently
-  if (svpString.includes('.')) {
-    // Remove the decimal and ensure 3 digits
-    svpString = svpString.replace('.', '');
-    // Pad with zeros if needed
-    while (svpString.length < 3) {
-      svpString = '0' + svpString;
-    }
-    // If more than 3 digits, truncate to 3
-    if (svpString.length > 3) {
-      svpString = svpString.substring(0, 3);
-    }
-  } else {
-    // Pad with leading zeros if needed for whole numbers
-    while (svpString.length < 3) {
-      svpString = '0' + svpString;
-    }
-  }
-  
-  // Insert decimal point at the beginning
-  return '.' + svpString;
-};
+import { formatSavePercentage } from '@/app/utils/formatUtils';
 
 interface PlayerStatsTableProps {
   playerType: PlayerType;

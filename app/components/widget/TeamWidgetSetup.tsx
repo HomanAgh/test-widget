@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Team from "@/app/components/team/Team";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
 import TeamColumnSelector, {
   TeamColumnOptions,
 } from "../team/TeamColumnSelector";
+import type { Team as TeamType } from "@/app/types/team";
 
 const DEFAULT_IFRAME_HEIGHT = 800;
 
@@ -40,6 +41,24 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
   const [selectedColumns, setSelectedColumns] =
     useState<TeamColumnOptions>(DEFAULT_COLUMNS);
+  const [teamData, setTeamData] = useState<TeamType | null>(null);
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        const response = await fetch(`/api/team/${encodeURIComponent(teamId)}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch team data");
+        }
+        const data = await response.json();
+        setTeamData(data);
+      } catch (error) {
+        console.error("Error fetching team data:", error);
+      }
+    };
+
+    fetchTeamData();
+  }, [teamId]);
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -68,10 +87,10 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   }, [teamId, customColors, selectedColumns]);
 
   const sourceLinks = useMemo(() => {
-    if (!teamId) return '';
+    if (!teamId || !teamData) return '';
     
-    return `<p> Source: <a href="https://www.eliteprospects.com/team/${teamId}" target="_blank" rel="noopener noreferrer">Team Page</a> @ Elite Prospects</p>`;
-  }, [teamId]);
+    return `<p> Source: <a href="https://www.eliteprospects.com/team/${teamId}/${teamData.name.toLowerCase().replace(/\s+/g, '-')}" target="_blank" rel="noopener noreferrer">${teamData.name}</a> @ Elite Prospects</p>`;
+  }, [teamId, teamData]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 

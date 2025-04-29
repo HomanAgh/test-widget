@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Player from "../player/Player";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
+import type { Player as PlayerType } from "@/app/types/player";
 
 const DEFAULT_IFRAME_HEIGHT = 800;
 
@@ -24,6 +25,24 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
     nameTextColor: "#0D73A6",
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
+  const [playerData, setPlayerData] = useState<PlayerType | null>(null);
+
+  useEffect(() => {
+    const fetchPlayerData = async () => {
+      try {
+        const response = await fetch(`/api/player/${encodeURIComponent(playerId)}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch player data");
+        }
+        const data = await response.json();
+        setPlayerData(data.playerInfo);
+      } catch (error) {
+        console.error("Error fetching player data:", error);
+      }
+    };
+
+    fetchPlayerData();
+  }, [playerId]);
 
   const handleGameLimitChange = (limit: number) => {
     setGameLimit(limit);
@@ -45,10 +64,10 @@ const WidgetSetup: React.FC<WidgetSetupProps> = ({ playerId }) => {
   }, [playerId, gameLimit, viewMode, showSummary, customColors]);
 
   const sourceLinks = useMemo(() => {
-    if (!playerId) return '';
+    if (!playerId || !playerData) return '';
     
-    return `<p> Source: <a href="https://www.eliteprospects.com/player/${playerId}" target="_blank" rel="noopener noreferrer">Player Page</a> @ Elite Prospects</p>`;
-  }, [playerId]);
+    return `<p> Source: <a href="https://www.eliteprospects.com/player/${playerId}/${playerData.name.toLowerCase().replace(/\s+/g, '-')}" target="_blank" rel="noopener noreferrer">${playerData.name}</a> @ Elite Prospects</p>`;
+  }, [playerId, playerData]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
 
