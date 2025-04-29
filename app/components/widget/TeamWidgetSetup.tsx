@@ -4,27 +4,13 @@ import React, { useState, useMemo, useEffect } from "react";
 import Team from "@/app/components/team/Team";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
-import TeamColumnSelector, {
+import TeamColumnSelector from "../team/TeamColumnSelector";
+import {
   TeamColumnOptions,
-} from "../team/TeamColumnSelector";
-import type { Team as TeamType } from "@/app/types/team";
+  DEFAULT_COLUMNS,
+} from "../team/TeamColumnDefinitions";
 
 const DEFAULT_IFRAME_HEIGHT = 800;
-
-const DEFAULT_COLUMNS: TeamColumnOptions = {
-  name: true,
-  number: true,
-  position: true,
-  age: true,
-  birthYear: true,
-  birthPlace: true,
-  weight: true,
-  height: true,
-  shootsCatches: true,
-  goals: true,
-  assists: true,
-  points: true,
-};
 
 interface TeamWidgetSetupProps {
   teamId: string;
@@ -92,7 +78,10 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
     return `<p> Source: <a href="https://www.eliteprospects.com/team/${teamId}/${teamData.name.toLowerCase().replace(/\s+/g, '-')}" target="_blank" rel="noopener noreferrer">${teamData.name}</a> @ Elite Prospects</p>`;
   }, [teamId, teamData]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
+
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${
+    sourceLinks ? "\n" + sourceLinks : ""
+  }`;
 
   return (
     <div>

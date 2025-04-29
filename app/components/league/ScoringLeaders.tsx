@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import ScoringLeadersTable from "./ScoringLeadersTable";
 import { ScoringLeadersResponse } from "@/app/types/scoringLeaders";
 import SeasonSelector from "@/app/components/common/SeasonSelector";
+import StatsTypeSelector from "@/app/components/common/StatsTypeSelector";
 
 interface ScoringLeadersProps {
   leagueSlug: string;
@@ -16,8 +17,11 @@ interface ScoringLeadersProps {
     nameTextColor?: string;
   };
   hideSeasonSelector?: boolean;
+  hideStatsTypeSelector?: boolean;
   positionFilter?: string;
   nationalityFilter?: string;
+  defaultStatsType?: "regular" | "postseason";
+  onStatsTypeChange?: (statsType: "regular" | "postseason") => void;
 }
 
 const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
@@ -31,8 +35,11 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     nameTextColor: "#0D73A6",
   },
   hideSeasonSelector = false,
+  hideStatsTypeSelector = false,
   positionFilter = "all",
   nationalityFilter = "all",
+  defaultStatsType = "regular",
+  onStatsTypeChange,
 }) => {
   const date = new Date();
   const currentYear = date.getFullYear();
@@ -51,6 +58,10 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [leagueName, setLeagueName] = useState<string>("");
+  const [statsType, setStatsType] = useState<"regular" | "postseason">(
+    defaultStatsType
+  );
+  const [hasPlayoffStats, setHasPlayoffStats] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchScoringLeaders = async () => {
@@ -61,6 +72,7 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
         // Build query parameters
         const params = new URLSearchParams();
         params.append("season", selectedSeason);
+        params.append("statsType", statsType);
         if (positionFilter !== "all") {
           params.append("position", positionFilter);
         }
@@ -103,6 +115,14 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
           throw new Error("Invalid data structure received from API");
         }
 
+        // Check if data has playoff stats
+        const hasPlayoffs = data.data.some(
+          (player: any) =>
+            player.postseasonStats &&
+            (player.postseasonStats.GP > 0 || player.postseasonStats.PTS > 0)
+        );
+        setHasPlayoffStats(hasPlayoffs);
+
         // Try to extract league name from the first player's data
         if (data.data.length > 0) {
           const firstPlayer = data.data[0];
@@ -125,11 +145,24 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     };
 
     fetchScoringLeaders();
-  }, [leagueSlug, selectedSeason, positionFilter, nationalityFilter]);
+  }, [
+    leagueSlug,
+    selectedSeason,
+    positionFilter,
+    nationalityFilter,
+    statsType,
+  ]);
 
   // Handler for the SeasonSelector component
   const handleSeasonChange = (newSeason: string) => {
     setSelectedSeason(newSeason);
+  };
+
+  const handleStatsTypeChange = (newStatsType: "regular" | "postseason") => {
+    setStatsType(newStatsType);
+    if (onStatsTypeChange) {
+      onStatsTypeChange(newStatsType);
+    }
   };
 
   if (loading) {
@@ -165,17 +198,29 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8">
-      {!hideSeasonSelector && (
-        <SeasonSelector
-          leagueSlug={leagueSlug}
-          initialSeason={selectedSeason}
-          onSeasonChange={handleSeasonChange}
-        />
-      )}
+      <div className="w-full text-center mt-6 mb-4 flex justify-center items-center">
+        {!hideSeasonSelector && (
+          <SeasonSelector
+            leagueSlug={leagueSlug}
+            initialSeason={selectedSeason}
+            onSeasonChange={handleSeasonChange}
+          />
+        )}
+
+        {!hideStatsTypeSelector && (
+          <StatsTypeSelector
+            statsType={statsType}
+            onChange={handleStatsTypeChange}
+            hasPlayoffStats={hasPlayoffStats}
+          />
+        )}
+      </div>
+
       <ScoringLeadersTable
         scoringLeaders={scoringLeaders}
         leagueDisplay={leagueDisplay}
         selectedSeason={selectedSeason}
+        statsType={statsType}
         customColors={customColors}
       />
     </div>

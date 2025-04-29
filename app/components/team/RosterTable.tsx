@@ -17,7 +17,13 @@ import {
   HiMiniChevronUp,
   HiMiniChevronDown,
 } from "react-icons/hi2";
-import { TeamColumnOptions } from "./TeamColumnSelector";
+import {
+  TeamColumnOptions,
+  DEFAULT_COLUMNS,
+  SortKey,
+  getPositionPriority,
+  COLUMN_DISPLAY_NAMES,
+} from "./TeamColumnDefinitions";
 
 // Existing helper
 const calculateAge = (dateOfBirth: string): number | "-" => {
@@ -48,42 +54,6 @@ interface RosterTableProps {
   selectedColumns?: TeamColumnOptions;
 }
 
-type SortKey =
-  | "number"
-  | "player"
-  | "position"
-  | "age"
-  | "birthYear"
-  | "birthPlace"
-  | "weight"
-  | "height"
-  | "shootOrCatch"
-  | "goals"
-  | "assists"
-  | "points";
-
-// Helper function to get position priority (goaltenders first)
-const getPositionPriority = (position: string): number => {
-  if (position === "G") return 1;
-  if (position === "D") return 2;
-  return 3; // Forwards
-};
-
-const DEFAULT_COLUMNS: TeamColumnOptions = {
-  name: true,
-  number: true,
-  position: true,
-  age: true,
-  birthYear: true,
-  birthPlace: true,
-  weight: true,
-  height: true,
-  shootsCatches: true,
-  goals: true,
-  assists: true,
-  points: true,
-};
-
 const RosterTable: React.FC<RosterTableProps> = ({
   roster,
   customColors = {
@@ -95,13 +65,22 @@ const RosterTable: React.FC<RosterTableProps> = ({
   },
   selectedColumns = DEFAULT_COLUMNS,
 }) => {
-  const [sortColumn, setSortColumn] = useState<SortKey>("position");
+  const [sortColumn, setSortColumn] = useState<SortKey>("points");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc" | "none">(
-    "asc"
+    "desc"
   );
 
   if (!roster || roster.length === 0) {
     return <p>No Roster</p>;
+  }
+
+  // Filter out goalies if the excludeGoalies option is selected
+  const filteredRoster = selectedColumns.excludeGoalies
+    ? roster.filter((player) => player.position !== "G")
+    : roster;
+
+  if (filteredRoster.length === 0) {
+    return <p>No players match the current filters</p>;
   }
 
   const handleSort = (col: SortKey) => {
@@ -141,8 +120,8 @@ const RosterTable: React.FC<RosterTableProps> = ({
   // Sort all players
   const sortedPlayers =
     sortDirection === "none"
-      ? roster
-      : [...roster].sort((a, b) => {
+      ? filteredRoster
+      : [...filteredRoster].sort((a, b) => {
           let res = 0;
           switch (sortColumn) {
             case "number":
@@ -189,7 +168,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
             case "height":
               res = (parseFloat(a.height) || 0) - (parseFloat(b.height) || 0);
               break;
-            case "shootOrCatch": {
+            case "shootsCatches": {
               const statA = a.position === "G" ? a.catches : a.shoots;
               const statB = b.position === "G" ? b.catches : b.shoots;
               res = (statA || "").localeCompare(statB || "");
@@ -324,7 +303,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   } cursor-pointer`}
                   onClick={() => handleSort("number")}
                 >
-                  # {renderSortArrow("number")}
+                  {COLUMN_DISPLAY_NAMES.number} {renderSortArrow("number")}
                 </TableCell>
               )}
               <TableCell
@@ -344,7 +323,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   className="cursor-pointer"
                   onClick={() => handleSort("age")}
                 >
-                  AGE {renderSortArrow("age")}
+                  {COLUMN_DISPLAY_NAMES.age} {renderSortArrow("age")}
                 </TableCell>
               )}
               {selectedColumns.birthYear && (
@@ -374,7 +353,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   className="cursor-pointer"
                   onClick={() => handleSort("weight")}
                 >
-                  WT {renderSortArrow("weight")}
+                  {COLUMN_DISPLAY_NAMES.weight} {renderSortArrow("weight")}
                 </TableCell>
               )}
               {selectedColumns.height && (
@@ -384,7 +363,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   className="cursor-pointer"
                   onClick={() => handleSort("height")}
                 >
-                  HT {renderSortArrow("height")}
+                  {COLUMN_DISPLAY_NAMES.height} {renderSortArrow("height")}
                 </TableCell>
               )}
               {selectedColumns.shootsCatches && (
@@ -392,9 +371,10 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   isHeader
                   align="center"
                   className="cursor-pointer"
-                  onClick={() => handleSort("shootOrCatch")}
+                  onClick={() => handleSort("shootsCatches")}
                 >
-                  S {renderSortArrow("shootOrCatch")}
+                  {COLUMN_DISPLAY_NAMES.shootsCatches.charAt(0)}{" "}
+                  {renderSortArrow("shootsCatches")}
                 </TableCell>
               )}
               {selectedColumns.goals && (
@@ -404,7 +384,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   className="cursor-pointer"
                   onClick={() => handleSort("goals")}
                 >
-                  G {renderSortArrow("goals")}
+                  {COLUMN_DISPLAY_NAMES.goals} {renderSortArrow("goals")}
                 </TableCell>
               )}
               {selectedColumns.assists && (
@@ -414,7 +394,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   className="cursor-pointer"
                   onClick={() => handleSort("assists")}
                 >
-                  A {renderSortArrow("assists")}
+                  {COLUMN_DISPLAY_NAMES.assists} {renderSortArrow("assists")}
                 </TableCell>
               )}
               {selectedColumns.points && (
@@ -426,7 +406,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
                   } cursor-pointer`}
                   onClick={() => handleSort("points")}
                 >
-                  PTS {renderSortArrow("points")}
+                  {COLUMN_DISPLAY_NAMES.points} {renderSortArrow("points")}
                 </TableCell>
               )}
             </TableRow>

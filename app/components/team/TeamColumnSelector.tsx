@@ -1,53 +1,16 @@
 "use client";
 
 import React from "react";
-
-export interface TeamColumnOptions {
-  name: boolean; // Always true, can't be unchecked
-  number: boolean;
-  position: boolean;
-  age: boolean;
-  birthYear: boolean;
-  birthPlace: boolean;
-  weight: boolean;
-  height: boolean;
-  shootsCatches: boolean;
-  goals: boolean;
-  assists: boolean;
-  points: boolean;
-}
+import {
+  TeamColumnOptions,
+  DEFAULT_COLUMNS,
+  formatColumnName,
+} from "./TeamColumnDefinitions";
 
 interface TeamColumnSelectorProps {
   selectedColumns: TeamColumnOptions;
   onChange: (columns: TeamColumnOptions) => void;
 }
-
-const DEFAULT_COLUMNS: TeamColumnOptions = {
-  name: true, // Always true
-  number: true,
-  position: true,
-  age: true,
-  birthYear: true,
-  birthPlace: true,
-  weight: true,
-  height: true,
-  shootsCatches: true,
-  goals: true,
-  assists: true,
-  points: true,
-};
-
-// Helper function to convert camelCase to Title Case with spaces
-const formatColumnName = (key: string): string => {
-  // Special cases
-  if (key === "shootsCatches") return "Shoots/Catches";
-  if (key === "birthYear") return "Birth Year";
-  if (key === "birthPlace") return "Birth Place";
-
-  return key
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase());
-};
 
 const TeamColumnSelector: React.FC<TeamColumnSelectorProps> = ({
   selectedColumns,

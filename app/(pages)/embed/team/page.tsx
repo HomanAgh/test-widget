@@ -2,7 +2,10 @@ import React from "react";
 import Team from "@/app/components/team/Team";
 import ClientWrapper from "@/app/components/embed/ClientWrapper";
 import { Metadata } from "next";
-import { TeamColumnOptions } from "@/app/components/team/TeamColumnSelector";
+import {
+  TeamColumnOptions,
+  DEFAULT_COLUMNS,
+} from "@/app/components/team/TeamColumnDefinitions";
 
 interface PageProps {
   searchParams: Promise<{
@@ -45,21 +48,6 @@ export async function generateMetadata({
     },
   };
 }
-
-const DEFAULT_COLUMNS: TeamColumnOptions = {
-  name: true,
-  number: true,
-  position: true,
-  age: true,
-  birthYear: true,
-  birthPlace: true,
-  weight: true,
-  height: true,
-  shootsCatches: true,
-  goals: true,
-  assists: true,
-  points: true,
-};
 
 const EmbedTeam = async ({ searchParams }: PageProps) => {
   const params = await searchParams;

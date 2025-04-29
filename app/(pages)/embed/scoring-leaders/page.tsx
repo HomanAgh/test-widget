@@ -13,6 +13,7 @@ interface PageProps {
     nameTextColor?: string;
     positionFilter?: string;
     nationalityFilter?: string;
+    statsType?: string;
   }>;
 }
 
@@ -27,6 +28,8 @@ const EmbedScoringLeaders = async ({ searchParams }: PageProps) => {
   const nameTextColor = params.nameTextColor || "#0D73A6";
   const positionFilter = params.positionFilter || "all";
   const nationalityFilter = params.nationalityFilter || "all";
+  const statsType =
+    params.statsType === "postseason" ? "postseason" : "regular";
 
   if (!leagueSlug) {
     return <div>Missing leagueSlug parameter</div>;
@@ -47,7 +50,9 @@ const EmbedScoringLeaders = async ({ searchParams }: PageProps) => {
           }}
           positionFilter={positionFilter}
           nationalityFilter={nationalityFilter}
+          defaultStatsType={statsType as "regular" | "postseason"}
           hideSeasonSelector={true}
+          hideStatsTypeSelector={true}
         />
       </div>
     </ClientWrapper>

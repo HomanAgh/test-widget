@@ -31,6 +31,9 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
   const [selectedNationalities, setSelectedNationalities] = useState<string[]>(
     []
   );
+  const [statsType, setStatsType] = useState<"regular" | "postseason">(
+    "regular"
+  );
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -54,6 +57,7 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&positionFilter=${encodeURIComponent(positionParam)}` +
       `&nationalityFilter=${encodeURIComponent(nationalityParam)}` +
+      `&statsType=${encodeURIComponent(statsType)}` +
       `&_t=${Date.now()}`;
 
     return url;
@@ -63,16 +67,23 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
     customColors,
     selectedPositions,
     selectedNationalities,
+    statsType,
   ]);
 
   const sourceLinks = useMemo(() => {
-    if (!leagueSlug) return '';
-    
-    const seasonInfo = season ? `${season}` : '';
+    if (!leagueSlug) return "";
+
+    const seasonInfo = season ? `${season}` : "";
     return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}/stats/${seasonInfo}" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} Scoring Leaders</a> @ Elite Prospects</p>`;
   }, [leagueSlug, season]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${
+    sourceLinks ? "\n" + sourceLinks : ""
+  }`;
+
+  const handleStatsTypeChange = (newStatsType: "regular" | "postseason") => {
+    setStatsType(newStatsType);
+  };
 
   return (
     <div>
@@ -119,6 +130,7 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
               ? selectedNationalities.join(",")
               : "all"
           }
+          onStatsTypeChange={handleStatsTypeChange}
         />
       </div>
 
