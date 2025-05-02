@@ -21,6 +21,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
   const { searchParams } = new URL(req.url);
   const season = searchParams.get("season");
   const nationality = searchParams.get("nationality");
+  // Keep statsType parameter for sorting only, but always fetch both regular and playoff stats
+  const statsType = searchParams.get("statsType") === "postseason" ? "postseason" : "regular";
 
   const apiKey = process.env.API_KEY;
   const apiBaseUrl = process.env.API_BASE_URL;
@@ -76,17 +78,30 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "regularStats.TOI",
     "regularStats.SA",
     "regularStats.GA",
-    "regularStats.SVS"
+    "regularStats.SVS",
+    "postseasonStats.GP",
+    "postseasonStats.GAA",
+    "postseasonStats.SVP",
+    "postseasonStats.SO",
+    "postseasonStats.W",
+    "postseasonStats.L",
+    "postseasonStats.T",
+    "postseasonStats.TOI",
+    "postseasonStats.SA",
+    "postseasonStats.GA",
+    "postseasonStats.SVS"
   ].join(",");
 
-  let goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=75&sort=-regularStats.SVP&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
+  // Sort by regular season SVP by default to get all goalies
+  const statsSortField = "-regularStats.SVP";
+  let goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=100&sort=${statsSortField}&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
 
   // Add nationality filter if specified
   if (nationality && nationality !== "all") {
     goalieLeadersUrl += `&player.nationality=${nationality}`;
   }
 
-  console.log("Fetching goalie leaders from:", goalieLeadersUrl);
+  console.log(`Fetching goalie leaders for both regular and playoff stats:`, goalieLeadersUrl);
 
   try {
     const response = await fetch(goalieLeadersUrl, { method: "GET" });
@@ -99,15 +114,26 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     const filteredData = { ...data };
     delete filteredData._links;
     
-    // Process player data to add flag URLs and filter goalies with more than 10 games
+    // Process player data to add flag URLs and prepare for display
     if (filteredData.data && Array.isArray(filteredData.data)) {
-      // Filter goalies with more than 10 games played
-      filteredData.data = filteredData.data.filter((player: any) => 
-        player.regularStats?.GP && player.regularStats.GP >= 10
-      );
+      // Collect all goalies that have enough games in either regular or postseason
+      const qualifiedGoalies = filteredData.data.filter((player: any) => {
+        const regularGamesPlayed = player.regularStats?.GP || 0;
+        const playoffGamesPlayed = player.postseasonStats?.GP || 0;
+        
+        return regularGamesPlayed >= 10 || playoffGamesPlayed >= 3;
+      });
+      
+      // Sort based on the requested stats type
+      qualifiedGoalies.sort((a: any, b: any) => {
+        if (statsType === "postseason") {
+          return (b.postseasonStats?.SVP || 0) - (a.postseasonStats?.SVP || 0);
+        }
+        return (b.regularStats?.SVP || 0) - (a.regularStats?.SVP || 0);
+      });
       
       // Limit to 75 goalies
-      filteredData.data = filteredData.data.slice(0, 75);
+      filteredData.data = qualifiedGoalies.slice(0, 75);
       
       // Create a map of unique nationality slugs
       const nationalitySlugs = new Set<string>();

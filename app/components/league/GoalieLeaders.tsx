@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import GoalieLeadersTable from "./GoalieLeadersTable";
 import { GoalieLeadersResponse } from "@/app/types/goalieLeaders";
 import SeasonSelector from "@/app/components/common/SeasonSelector";
+import StatsTypeSelector from "@/app/components/common/StatsTypeSelector";
 
 interface GoalieLeadersProps {
   leagueSlug: string;
@@ -16,7 +17,10 @@ interface GoalieLeadersProps {
     nameTextColor?: string;
   };
   hideSeasonSelector?: boolean;
+  hideStatsTypeSelector?: boolean;
   nationalityFilter?: string;
+  defaultStatsType?: "regular" | "postseason";
+  onStatsTypeChange?: (statsType: "regular" | "postseason") => void;
 }
 
 const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
@@ -30,7 +34,10 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     nameTextColor: "#0D73A6",
   },
   hideSeasonSelector = false,
+  hideStatsTypeSelector = false,
   nationalityFilter = "all",
+  defaultStatsType = "regular",
+  onStatsTypeChange,
 }) => {
   const [goalieLeaders, setGoalieLeaders] =
     useState<GoalieLeadersResponse | null>(null);
@@ -40,6 +47,10 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   const [selectedSeason, setSelectedSeason] = useState<string>(season);
   const [currentNationalityFilter, setCurrentNationalityFilter] =
     useState<string>(nationalityFilter);
+  const [statsType, setStatsType] = useState<"regular" | "postseason">(
+    defaultStatsType
+  );
+  const [hasPlayoffStats, setHasPlayoffStats] = useState<boolean>(false);
 
   // Fetch goalie leaders data
   useEffect(() => {
@@ -48,6 +59,7 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
       setError(null);
 
       try {
+        // Always fetch both regular and playoff stats by not specifying statsType
         const response = await fetch(
           `/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}&nationality=${currentNationalityFilter}`
         );
@@ -70,6 +82,14 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
         ) {
           setLeagueName(data.data[0].team.league.name);
         }
+
+        // Check if data has playoff stats
+        const hasPlayoffs = data.data?.some(
+          (player: any) =>
+            player.postseasonStats &&
+            (player.postseasonStats.GP > 0 || player.postseasonStats.SVP > 0)
+        );
+        setHasPlayoffStats(hasPlayoffs);
       } catch (error: any) {
         console.error("Error fetching goalie leaders:", error);
         setError(error.message || "Failed to load goalie leaders");
@@ -81,7 +101,7 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     if (leagueSlug && selectedSeason) {
       fetchGoalieLeaders();
     }
-  }, [leagueSlug, selectedSeason, currentNationalityFilter]);
+  }, [leagueSlug, selectedSeason, currentNationalityFilter]); // Remove statsType from dependency array
 
   // Update currentNationalityFilter when prop changes
   useEffect(() => {
@@ -91,6 +111,14 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
   // Handler for the SeasonSelector component
   const handleSeasonChange = (newSeason: string) => {
     setSelectedSeason(newSeason);
+  };
+
+  // Handler for the StatsTypeSelector component
+  const handleStatsTypeChange = (newStatsType: "regular" | "postseason") => {
+    setStatsType(newStatsType);
+    if (onStatsTypeChange) {
+      onStatsTypeChange(newStatsType);
+    }
   };
 
   if (loading) {
@@ -115,17 +143,28 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto my-8">
-      {!hideSeasonSelector && (
-        <SeasonSelector
-          leagueSlug={leagueSlug}
-          initialSeason={selectedSeason}
-          onSeasonChange={handleSeasonChange}
-        />
-      )}
+      <div className="w-full text-center mt-6 mb-4 flex justify-center items-center">
+        {!hideSeasonSelector && (
+          <SeasonSelector
+            leagueSlug={leagueSlug}
+            initialSeason={selectedSeason}
+            onSeasonChange={handleSeasonChange}
+          />
+        )}
+
+        {!hideStatsTypeSelector && (
+          <StatsTypeSelector
+            statsType={statsType}
+            onChange={handleStatsTypeChange}
+            hasPlayoffStats={hasPlayoffStats}
+          />
+        )}
+      </div>
       <GoalieLeadersTable
         goalieLeaders={goalieLeaders}
         leagueDisplay={leagueDisplay}
         selectedSeason={selectedSeason}
+        statsType={statsType}
         customColors={customColors}
       />
     </div>

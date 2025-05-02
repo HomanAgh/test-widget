@@ -28,6 +28,9 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
   const [selectedNationalities, setSelectedNationalities] = useState<string[]>(
     []
   );
+  const [statsType, setStatsType] = useState<"regular" | "postseason">(
+    "regular"
+  );
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -48,19 +51,26 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&nationality=${encodeURIComponent(nationalityParam)}` +
+      `&statsType=${encodeURIComponent(statsType)}` +
       `&_t=${Date.now()}`;
 
     return url;
-  }, [leagueSlug, season, customColors, selectedNationalities]);
+  }, [leagueSlug, season, customColors, selectedNationalities, statsType]);
 
   const sourceLinks = useMemo(() => {
-    if (!leagueSlug) return '';
-    
-    const seasonInfo = season ? `${season}` : '';
+    if (!leagueSlug) return "";
+
+    const seasonInfo = season ? `${season}` : "";
     return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}/stats/${seasonInfo}#goalies" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} Goalie Leaders</a> @ Elite Prospects</p>`;
   }, [leagueSlug, season]);
 
-  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${sourceLinks ? '\n' + sourceLinks : ''}`;
+  const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${
+    sourceLinks ? "\n" + sourceLinks : ""
+  }`;
+
+  const handleStatsTypeChange = (newStatsType: "regular" | "postseason") => {
+    setStatsType(newStatsType);
+  };
 
   return (
     <div>
@@ -97,6 +107,7 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
               ? selectedNationalities.join(",")
               : "all"
           }
+          onStatsTypeChange={handleStatsTypeChange}
         />
       </div>
 

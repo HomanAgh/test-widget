@@ -17,6 +17,7 @@ interface PageProps {
     nameTextColor?: string;
     columns?: string;
     selectedColumns?: string;
+    statsType?: string;
   }>;
 }
 
@@ -57,6 +58,8 @@ const EmbedTeam = async ({ searchParams }: PageProps) => {
   const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
   const headerTextColor = params.headerTextColor || "#FFFFFF";
   const nameTextColor = params.nameTextColor || "#0D73A6";
+  const statsType =
+    params.statsType === "postseason" ? "postseason" : "regular";
 
   // Parse columns parameter
   const selectedColumns: TeamColumnOptions = { ...DEFAULT_COLUMNS };
@@ -113,6 +116,8 @@ const EmbedTeam = async ({ searchParams }: PageProps) => {
             nameTextColor,
           }}
           selectedColumns={selectedColumns}
+          hideStatsTypeSelector={true}
+          defaultStatsType={statsType as "regular" | "postseason"}
         />
       </div>
     </ClientWrapper>

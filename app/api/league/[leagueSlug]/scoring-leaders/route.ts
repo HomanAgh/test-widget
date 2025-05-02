@@ -22,6 +22,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
   const season = searchParams.get("season");
   const position = searchParams.get("position");
   const nationality = searchParams.get("nationality");
+  // Keep statsType parameter for sorting only, but always fetch both regular and playoff stats
   const statsType = searchParams.get("statsType") || "regular"; // 'regular' or 'postseason'
 
   const apiKey = process.env.API_KEY;
@@ -81,7 +82,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
   ].join(",");
 
   // Build the API URL with filters - using player-stats to get ALL entries
-  let scoringLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=1000&sort=-${statsType === 'postseason' ? 'postseasonStats.PTS' : 'regularStats.PTS'}&league=${leagueSlug}&season=${season}&fields=${playerFields}&apiKey=${apiKey}&player.playerType=SKATER`;
+  // Sort by regularStats.PTS by default to ensure we always get players with regular season stats
+  let scoringLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=1000&sort=-regularStats.PTS&league=${leagueSlug}&season=${season}&fields=${playerFields}&apiKey=${apiKey}&player.playerType=SKATER`;
 
   // Add position filter if specified
   if (position && position !== "all") {
@@ -223,7 +225,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
           allTeams: player.teams.map((t: any) => t.name).join(', ')
         }))
         .sort((a, b) => {
-          // Sort based on the requested stats type
+          // Sort based on the requested stats type, but include all players
           if (statsType === 'postseason') {
             return (b.postseasonStats?.PTS || 0) - (a.postseasonStats?.PTS || 0);
           }

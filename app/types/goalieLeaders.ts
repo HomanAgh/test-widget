@@ -72,6 +72,7 @@ export interface GoalieLeader {
   team: Team;
   season: Season;
   regularStats: GoalieStats;
+  postseasonStats?: GoalieStats;
 }
 
 export interface GoalieLeadersResponse {
@@ -88,6 +89,7 @@ export interface GoalieLeadersTableProps {
   goalieLeaders: GoalieLeadersResponse;
   leagueDisplay?: string;
   selectedSeason?: string;
+  statsType?: "regular" | "postseason";
   customColors?: {
     backgroundColor: string;
     textColor: string;

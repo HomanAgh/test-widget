@@ -20,21 +20,37 @@ const fetchPlayerStats = async (playerId: string, apiKey: string, apiBaseUrl: st
       "latestStats.regularStats.G",
       "latestStats.regularStats.A",
       "latestStats.regularStats.PTS",
+      "latestStats.postseasonStats.GP",
+      "latestStats.postseasonStats.G",
+      "latestStats.postseasonStats.A",
+      "latestStats.postseasonStats.PTS"
     ].join(",");
     
     const response = await fetch(`${apiBaseUrl}/players/${playerId}?apiKey=${apiKey}&fields=${encodeURIComponent(statsFields)}`);
     if (response.ok) {
       const data = await response.json();
       return {
-        goals: data.data?.latestStats?.regularStats?.G || 0,
-        assists: data.data?.latestStats?.regularStats?.A || 0,
-        points: data.data?.latestStats?.regularStats?.PTS || 0
+        regular: {
+          gamesPlayed: data.data?.latestStats?.regularStats?.GP || 0,
+          goals: data.data?.latestStats?.regularStats?.G || 0,
+          assists: data.data?.latestStats?.regularStats?.A || 0,
+          points: data.data?.latestStats?.regularStats?.PTS || 0
+        },
+        postseason: {
+          gamesPlayed: data.data?.latestStats?.postseasonStats?.GP || 0,
+          goals: data.data?.latestStats?.postseasonStats?.G || 0,
+          assists: data.data?.latestStats?.postseasonStats?.A || 0,
+          points: data.data?.latestStats?.postseasonStats?.PTS || 0
+        }
       };
     }
   } catch (err) {
     console.warn(`Failed to fetch stats for player ${playerId}:`, err);
   }
-  return { goals: 0, assists: 0, points: 0 };
+  return { 
+    regular: { gamesPlayed: 0, goals: 0, assists: 0, points: 0 },
+    postseason: { gamesPlayed: 0, goals: 0, assists: 0, points: 0 }
+  };
 };
 
 export async function GET(req: NextRequest) {
@@ -103,7 +119,10 @@ export async function GET(req: NextRequest) {
           
         const playerStats = entry.player?.id 
           ? await fetchPlayerStats(entry.player.id, apiKey, apiBaseUrl)
-          : { goals: 0, assists: 0, points: 0 };
+          : { 
+              regular: { gamesPlayed: 0, goals: 0, assists: 0, points: 0 },
+              postseason: { gamesPlayed: 0, goals: 0, assists: 0, points: 0 }
+            };
 
         return {
           id: entry.player?.id || "Unknown ID",

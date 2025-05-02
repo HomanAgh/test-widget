@@ -7,6 +7,7 @@ interface TableCellProps {
   className?: string;
   onClick?: () => void;
   style?: React.CSSProperties;
+  colSpan?: number;
 }
 
 const TableCell: React.FC<TableCellProps> = ({
@@ -16,6 +17,7 @@ const TableCell: React.FC<TableCellProps> = ({
   className = "font bold",
   onClick,
   style,
+  colSpan,
 }) => {
   const Component = isHeader ? "th" : "td";
   return (
@@ -25,6 +27,7 @@ const TableCell: React.FC<TableCellProps> = ({
       }`}
       onClick={onClick}
       style={style}
+      colSpan={colSpan}
     >
       {children}
     </Component>

@@ -26,9 +26,18 @@ export interface Team {
     flagUrl: string | null; 
     playerRole: string;
     stats: {
-      goals: number;
-      assists: number;
-      points: number;
+      regular: {
+        gamesPlayed: number;
+        goals: number;
+        assists: number;
+        points: number;
+      };
+      postseason: {
+        gamesPlayed: number;
+        goals: number;
+        assists: number;
+        points: number;
+      };
     };
   }
   

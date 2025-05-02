@@ -69,10 +69,9 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
       setError(null);
 
       try {
-        // Build query parameters
+        // Build query parameters, but do not include statsType to fetch both regular and playoff stats
         const params = new URLSearchParams();
         params.append("season", selectedSeason);
-        params.append("statsType", statsType);
         if (positionFilter !== "all") {
           params.append("position", positionFilter);
         }
@@ -145,13 +144,7 @@ const ScoringLeaders: React.FC<ScoringLeadersProps> = ({
     };
 
     fetchScoringLeaders();
-  }, [
-    leagueSlug,
-    selectedSeason,
-    positionFilter,
-    nationalityFilter,
-    statsType,
-  ]);
+  }, [leagueSlug, selectedSeason, positionFilter, nationalityFilter]); // Remove statsType from dependency array
 
   // Handler for the SeasonSelector component
   const handleSeasonChange = (newSeason: string) => {
