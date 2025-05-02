@@ -228,13 +228,6 @@ const RosterTable: React.FC<RosterTableProps> = ({
   if (selectedColumns.assists) visibleColumns.push("assists");
   if (selectedColumns.points) visibleColumns.push("points");
 
-  // Check if any stats columns are visible
-  const hasStatColumns =
-    selectedColumns.games ||
-    selectedColumns.goals ||
-    selectedColumns.assists ||
-    selectedColumns.points;
-
   const renderPlayerRow = (player: RosterPlayer, index: number) => {
     const playerStats = getPlayerStats(player);
 
