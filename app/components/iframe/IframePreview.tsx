@@ -249,7 +249,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                 </button>
                 <button
                   onClick={() => {
-                    window.open('/widget-script-test.html', '_blank');
+                    window.open('/widget-test.html', '_blank');
                   }}
                   className="bg-[#052D41] text-white hover:bg-blue-700 transition-all px-4 py-2 rounded-md "
                 >
