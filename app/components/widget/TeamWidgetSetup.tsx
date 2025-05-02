@@ -29,6 +29,9 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   const [selectedColumns, setSelectedColumns] =
     useState<TeamColumnOptions>(DEFAULT_COLUMNS);
   const [teamData, setTeamData] = useState<TeamType | null>(null);
+  const [statsType, setStatsType] = useState<"regular" | "postseason">(
+    "regular"
+  );
 
   useEffect(() => {
     const fetchTeamData = async () => {
@@ -46,6 +49,10 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
 
     fetchTeamData();
   }, [teamId]);
+
+  const handleStatsTypeChange = (newStatsType: "regular" | "postseason") => {
+    setStatsType(newStatsType);
+  };
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -69,16 +76,20 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&columns=${columnsParam}` +
+      `&statsType=${encodeURIComponent(statsType)}` +
       `&_t=${Date.now()}`
     );
-  }, [teamId, customColors, selectedColumns]);
+  }, [teamId, customColors, selectedColumns, statsType]);
 
   const sourceLinks = useMemo(() => {
-    if (!teamId || !teamData) return '';
-    
-    return `<p> Source: <a href="https://www.eliteprospects.com/team/${teamId}/${teamData.name.toLowerCase().replace(/\s+/g, '-')}" target="_blank" rel="noopener noreferrer">${teamData.name}</a> @ Elite Prospects</p>`;
-  }, [teamId, teamData]);
+    if (!teamId || !teamData) return "";
 
+    return `<p> Source: <a href="https://www.eliteprospects.com/team/${teamId}/${teamData.name
+      .toLowerCase()
+      .replace(/\s+/g, "-")}" target="_blank" rel="noopener noreferrer">${
+      teamData.name
+    }</a> @ Elite Prospects</p>`;
+  }, [teamId, teamData]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${
     sourceLinks ? "\n" + sourceLinks : ""
@@ -110,6 +121,7 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
           teamId={teamId}
           customColors={customColors}
           selectedColumns={selectedColumns}
+          onStatsTypeChange={handleStatsTypeChange}
         />
       </div>
 

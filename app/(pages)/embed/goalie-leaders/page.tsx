@@ -12,6 +12,7 @@ interface PageProps {
     headerTextColor?: string;
     nameTextColor?: string;
     nationality?: string;
+    statsType?: string;
   }>;
 }
 
@@ -27,6 +28,9 @@ const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
     nameTextColor = "#0D73A6",
     nationality = "all",
   } = params;
+
+  const statsType =
+    params.statsType === "postseason" ? "postseason" : "regular";
 
   if (!leagueSlug) {
     return <div>Error: League slug is required</div>;
@@ -46,7 +50,9 @@ const EmbedGoalieLeaders = async ({ searchParams }: PageProps) => {
             nameTextColor,
           }}
           hideSeasonSelector={true}
+          hideStatsTypeSelector={true}
           nationalityFilter={nationality}
+          defaultStatsType={statsType as "regular" | "postseason"}
         />
       </div>
     </ClientWrapper>

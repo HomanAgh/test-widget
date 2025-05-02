@@ -9,6 +9,7 @@ export interface TeamColumnOptions {
     weight: boolean;
     height: boolean;
     shootsCatches: boolean;
+    games: boolean;
     goals: boolean;
     assists: boolean;
     points: boolean;
@@ -26,6 +27,7 @@ export interface TeamColumnOptions {
     | "weight"
     | "height"
     | "shootsCatches" // Standardized name (was shootOrCatch in RosterTable)
+    | "games"
     | "goals"
     | "assists"
     | "points";
@@ -41,6 +43,7 @@ export interface TeamColumnOptions {
     weight: true,
     height: true,
     shootsCatches: false,
+    games: false,
     goals: false,
     assists: false,
     points: true,
@@ -71,6 +74,7 @@ export interface TeamColumnOptions {
     weight: "Weight",
     height: "Height",
     shootsCatches: "Shoots/Catches",
+    games: "GP",
     goals: "G",
     assists: "A",
     points: "PTS",
