@@ -207,13 +207,13 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                iframe (Legacy)
+                iframe (Ease of use)
               </button>
             </div>
             
             <div className="mb-4">
               <h3 className="font-semibold mb-2">
-                {embedType === 'direct-script' ? 'Direct Script Embed Code (Recommended)' : 'iframe Embed Code (Legacy)'}
+                {embedType === 'direct-script' ? 'Direct Script Embed Code (Recommended)' : 'iframe Embed Code (Ease of use)'}
               </h3>
               <div className="relative">
                 <textarea
@@ -249,7 +249,7 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                 </button>
                 <button
                   onClick={() => {
-                    window.open('/widget-script-test.html', '_blank');
+                    window.open('/widget-test.html', '_blank');
                   }}
                   className="bg-[#052D41] text-white hover:bg-blue-700 transition-all px-4 py-2 rounded-md "
                 >
@@ -267,10 +267,10 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
               )}
 
               {embedType === 'iframe' && (
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
-                  <p className="text-sm text-amber-800">
-                    <strong>Legacy Method:</strong> iframe embedding is still supported but not recommended. 
-                    Consider using the direct script implementation for better integration and performance.
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <p className="text-sm text-green-800">
+                    <strong>Ease of use Method:</strong> The iframe method is the simplest way to embed the widget on your website. 
+                    Just copy and paste the code into your HTML, and the widget will appear exactly as shown in the preview.
                   </p>
                 </div>
               )}

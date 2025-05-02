@@ -41,7 +41,7 @@ const PlayerCareerTable: React.FC<PlayerCareerTableProps> = ({
     customColors.tableBackgroundColor.toLowerCase() !== "#fff";
 
   return (
-    <div className="max-w-lg mx-auto rounded-lg -mt-4">
+    <div className="max-w-xl mx-auto rounded-lg -mt-4">
       {/* <h2
         className="text-xl font-bold mb-2 font-montserrat"
         style={{ color: customColors.textColor }}
