@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+/* import { useState, useEffect } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 
 // GraphQL queries and mutations
@@ -119,4 +119,4 @@ export function useAuth() {
     logout,
     refetch,
   };
-}
+} */

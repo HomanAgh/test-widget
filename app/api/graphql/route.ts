@@ -1,4 +1,4 @@
-import { ApolloServer } from '@apollo/server';
+/* import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { typeDefs } from '../../graphql/schema';
 import { resolvers } from '../../graphql/resolvers';
@@ -66,4 +66,4 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   return handler(request);
-}
+} */

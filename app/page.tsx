@@ -6,17 +6,11 @@ import { useRouter } from "next/navigation";
 const HomePage = () => {
   const router = useRouter();
 
-
   useEffect(() => {
-      
-
-        router.replace("/home");
-
-
+    router.replace("/home");
   }, [router]);
 
-  return null; 
+  return null;
 };
 
 export default HomePage;
-
