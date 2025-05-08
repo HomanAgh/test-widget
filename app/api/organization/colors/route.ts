@@ -1,24 +1,7 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-
-// Define the color preferences type
-export interface ColorPreferences {
-  headerTextColor: string;
-  backgroundColor: string;
-  textColor: string;
-  tableBackgroundColor: string;
-  nameTextColor: string;
-}
-
-// Default colors
-export const DEFAULT_COLORS: ColorPreferences = {
-  headerTextColor: "#FFFFFF",
-  backgroundColor: "#052D41",
-  textColor: "#000000",
-  tableBackgroundColor: "#FFFFFF",
-  nameTextColor: "#0D73A6",
-};
+import { DEFAULT_COLORS } from '../../../types/colors';
 
 // GET organization colors
 export async function GET(
