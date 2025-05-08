@@ -3,10 +3,9 @@
 import React, { useMemo, useState, useEffect } from "react";
 import League from "@/app/components/league/League";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";

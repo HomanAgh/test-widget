@@ -8,7 +8,6 @@ import NationalityFilter from "../common/filters/NationalityFilter";
 import PositionFilter from "../common/filters/PositionFilter";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";
@@ -71,7 +70,8 @@ const ScoringLeadersWidgetSetup: React.FC<ScoringLeadersWidgetSetupProps> = ({
   const [statsType, setStatsType] = useState<"regular" | "postseason">(
     "regular"
   );
-  const [error, setError] = useState<string | null>(null);
+  // Only used internally for displaying error alerts if needed
+  const [, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   // Fetch organization colors
