@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/client";
 import {
@@ -11,7 +11,7 @@ import {
 import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
 import Link from "next/link";
 
-export default function OrgColorsPage() {
+function OrganizationColorsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const supabase = createClient();
@@ -443,5 +443,13 @@ export default function OrgColorsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function OrgColorsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OrganizationColorsContent />
+    </Suspense>
   );
 }
