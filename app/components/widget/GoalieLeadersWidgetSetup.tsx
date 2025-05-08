@@ -7,7 +7,6 @@ import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
 import NationalityFilter from "../common/filters/NationalityFilter";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";
@@ -69,7 +68,8 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
   const [statsType, setStatsType] = useState<"regular" | "postseason">(
     "regular"
   );
-  const [error, setError] = useState<string | null>(null);
+  // Only used internally for displaying error alerts if needed
+  const [, setError] = useState<string | null>(null);
   const supabase = createClient();
 
   // Fetch organization colors

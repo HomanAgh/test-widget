@@ -12,7 +12,6 @@ import EmbedCodeBlock from "../iframe/IframePreview";
 import ColumnSelector, { ColumnOptions } from "../alumni/ColumnSelector";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";

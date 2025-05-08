@@ -7,7 +7,6 @@ import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
 import type { Player as PlayerType } from "@/app/types/player";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";

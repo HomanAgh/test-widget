@@ -12,7 +12,6 @@ import {
 import { Team as TeamType } from "@/app/types/team";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";

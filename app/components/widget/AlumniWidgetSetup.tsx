@@ -11,7 +11,6 @@ import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHe
 import EmbedCodeBlock from "../iframe/IframePreview";
 import { createClient } from "@/app/utils/supabase/client";
 import {
-  getOrganizationColors,
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";
