@@ -1,11 +1,18 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
 import NationalityFilter from "../common/filters/NationalityFilter";
+import { createClient } from "@/app/utils/supabase/client";
+import {
+  getOrganizationColors,
+  ColorPreferences,
+  DEFAULT_COLORS,
+} from "@/app/utils/organizationColors";
 
+// Default height for iframes
 const DEFAULT_IFRAME_HEIGHT = 1300;
 
 interface GoalieLeadersWidgetSetupProps {
@@ -13,16 +20,47 @@ interface GoalieLeadersWidgetSetupProps {
   season: string;
 }
 
+// Function to make sure all color properties exist with valid values
+function ensureCompleteColors(colors: any): ColorPreferences {
+  // Create a copy of DEFAULT_COLORS with explicit assignments
+  const result: ColorPreferences = {
+    headerTextColor: DEFAULT_COLORS.headerTextColor,
+    backgroundColor: DEFAULT_COLORS.backgroundColor,
+    textColor: DEFAULT_COLORS.textColor,
+    tableBackgroundColor: DEFAULT_COLORS.tableBackgroundColor,
+    nameTextColor: DEFAULT_COLORS.nameTextColor,
+  };
+
+  // Override with any valid properties from colors
+  if (colors && typeof colors === "object") {
+    if (colors.headerTextColor && typeof colors.headerTextColor === "string")
+      result.headerTextColor = colors.headerTextColor;
+
+    if (colors.backgroundColor && typeof colors.backgroundColor === "string")
+      result.backgroundColor = colors.backgroundColor;
+
+    if (colors.textColor && typeof colors.textColor === "string")
+      result.textColor = colors.textColor;
+
+    if (
+      colors.tableBackgroundColor &&
+      typeof colors.tableBackgroundColor === "string"
+    )
+      result.tableBackgroundColor = colors.tableBackgroundColor;
+
+    if (colors.nameTextColor && typeof colors.nameTextColor === "string")
+      result.nameTextColor = colors.nameTextColor;
+  }
+
+  return result;
+}
+
 const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
   leagueSlug,
   season,
 }) => {
-  const [customColors, setCustomColors] = useState({
-    headerTextColor: "#FFFFFF",
-    backgroundColor: "#052D41",
-    textColor: "#000000",
-    tableBackgroundColor: "#FFFFFF",
-    nameTextColor: "#0D73A6",
+  const [customColors, setCustomColors] = useState<ColorPreferences>({
+    ...DEFAULT_COLORS,
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
   const [selectedNationalities, setSelectedNationalities] = useState<string[]>(
@@ -31,6 +69,51 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
   const [statsType, setStatsType] = useState<"regular" | "postseason">(
     "regular"
   );
+  const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
+
+  // Fetch organization colors
+  useEffect(() => {
+    const fetchOrgColors = async () => {
+      try {
+        setError(null);
+
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          const { data: userData, error: userError } = await supabase
+            .from("users")
+            .select("organization_id")
+            .eq("id", user.id)
+            .single();
+
+          if (!userError && userData?.organization_id) {
+            const { data: prefData } = await supabase
+              .from("organization_preferences")
+              .select("*")
+              .eq("organization_id", userData.organization_id)
+              .single();
+
+            if (prefData?.colors) {
+              const normalizedColors = ensureCompleteColors(prefData.colors);
+              setCustomColors(normalizedColors);
+            }
+          }
+        }
+      } catch (error: any) {
+        console.error("Error loading data:", error);
+        setError(
+          `An error occurred while loading data: ${
+            error?.message || String(error)
+          }`
+        );
+      }
+    };
+
+    fetchOrgColors();
+  }, [supabase]);
 
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -50,7 +133,7 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
       )}` +
       `&headerTextColor=${encodeURIComponent(customColors.headerTextColor)}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
-      `&nationality=${encodeURIComponent(nationalityParam)}` +
+      `&nationalityFilter=${encodeURIComponent(nationalityParam)}` +
       `&statsType=${encodeURIComponent(statsType)}` +
       `&_t=${Date.now()}`;
 
@@ -61,7 +144,7 @@ const GoalieLeadersWidgetSetup: React.FC<GoalieLeadersWidgetSetupProps> = ({
     if (!leagueSlug) return "";
 
     const seasonInfo = season ? `${season}` : "";
-    return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}/stats/${seasonInfo}#goalies" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} Goalie Leaders</a> @ Elite Prospects</p>`;
+    return `<p> Source: <a href="https://www.eliteprospects.com/league/${leagueSlug}/stats/${seasonInfo}" target="_blank" rel="noopener noreferrer">${leagueSlug.toUpperCase()} Goalie Leaders</a> @ Elite Prospects</p>`;
   }, [leagueSlug, season]);
 
   const iframeCode = `<iframe src="${embedUrl}" width="100%" height="${iframeHeight}px" frameborder="0" class="iframe"></iframe>${

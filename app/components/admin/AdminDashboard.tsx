@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from "@/app/utils/supabase/client";
+import Link from "next/link";
 
 interface User {
   id: string;
   email: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   is_approved: boolean;
   organization: string | null;
   organization_id: number | null;
@@ -33,61 +34,61 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      console.log('Fetching users...');
+      console.log("Fetching users...");
       const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("users")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
         throw error;
       }
-      
-      console.log('Users fetched:', data?.length || 0);
-      
+
+      console.log("Users fetched:", data?.length || 0);
+
       // Fetch users first, then get organizations separately
       const usersData = data || [];
-      
+
       // Get all organization IDs from users
       const orgIds = usersData
-        .map(user => user.organization_id)
-        .filter(id => id !== null) as number[];
-      
-      console.log('Organization IDs from users:', orgIds);
-      
+        .map((user) => user.organization_id)
+        .filter((id) => id !== null) as number[];
+
+      console.log("Organization IDs from users:", orgIds);
+
       // If there are organization IDs, fetch their details
       if (orgIds.length > 0) {
         const { data: orgsData, error: orgsError } = await supabase
-          .from('organizations')
-          .select('*')
-          .in('id', [...new Set(orgIds)]);
-        
+          .from("organizations")
+          .select("*")
+          .in("id", [...new Set(orgIds)]);
+
         if (orgsError) {
-          console.error('Error fetching related organizations:', orgsError);
+          console.error("Error fetching related organizations:", orgsError);
           throw orgsError;
         }
-        
-        console.log('Related organizations:', orgsData);
-        
+
+        console.log("Related organizations:", orgsData);
+
         // Map organization names to users
-        const mappedData = usersData.map(user => {
+        const mappedData = usersData.map((user) => {
           if (user.organization_id) {
-            const org = orgsData?.find(o => o.id === user.organization_id);
+            const org = orgsData?.find((o) => o.id === user.organization_id);
             return {
               ...user,
-              organization: org?.name || null
+              organization: org?.name || null,
             };
           }
           return user;
         });
-        
+
         setUsers(mappedData);
       } else {
         setUsers(usersData);
       }
     } catch (err: any) {
-      console.error('Error in fetchUsers():', err);
+      console.error("Error in fetchUsers():", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -96,102 +97,116 @@ const AdminDashboard = () => {
 
   const fetchOrganizations = async () => {
     try {
-      console.log('Fetching organizations...');
+      console.log("Fetching organizations...");
       const { data, error } = await supabase
-        .from('organizations')
-        .select('*')
-        .order('name', { ascending: true });
+        .from("organizations")
+        .select("*")
+        .order("name", { ascending: true });
 
       if (error) {
-        console.error('Error fetching organizations:', error);
+        console.error("Error fetching organizations:", error);
         throw error;
       }
-      
-      console.log('Organizations fetched:', data?.length || 0);
+
+      console.log("Organizations fetched:", data?.length || 0);
       setOrganizations(data || []);
     } catch (err: any) {
-      console.error('Error in fetchOrganizations():', err);
+      console.error("Error in fetchOrganizations():", err);
       setError(err.message);
     }
   };
 
-  const handleToggleApproval = async (userId: string, currentStatus: boolean) => {
+  const handleToggleApproval = async (
+    userId: string,
+    currentStatus: boolean
+  ) => {
     try {
       setActionLoading(`approve-${userId}`);
-      console.log(`${currentStatus ? 'Unapproving' : 'Approving'} user:`, userId);
-      
+      console.log(
+        `${currentStatus ? "Unapproving" : "Approving"} user:`,
+        userId
+      );
+
       const { data, error } = await supabase
-        .from('users')
+        .from("users")
         .update({ is_approved: !currentStatus })
-        .eq('id', userId)
+        .eq("id", userId)
         .select();
 
       if (error) {
-        console.error('Error toggling approval status:', error);
+        console.error("Error toggling approval status:", error);
         throw error;
       }
-      
-      console.log('User approval status updated:', data);
+
+      console.log("User approval status updated:", data);
       await fetchUsers(); // Refresh the list
     } catch (err: any) {
-      console.error('Error in handleToggleApproval():', err);
+      console.error("Error in handleToggleApproval():", err);
       setError(err.message);
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleChangeOrganization = async (userId: string, organizationId: number | null) => {
+  const handleChangeOrganization = async (
+    userId: string,
+    organizationId: number | null
+  ) => {
     try {
       setActionLoading(`org-${userId}`);
-      console.log('Changing organization for user:', userId, 'to:', organizationId);
-      
+      console.log(
+        "Changing organization for user:",
+        userId,
+        "to:",
+        organizationId
+      );
+
       const { data, error } = await supabase
-        .from('users')
+        .from("users")
         .update({ organization_id: organizationId })
-        .eq('id', userId)
+        .eq("id", userId)
         .select();
 
       if (error) {
-        console.error('Error changing organization:', error);
+        console.error("Error changing organization:", error);
         throw error;
       }
-      
-      console.log('Organization changed:', data);
+
+      console.log("Organization changed:", data);
       await fetchUsers(); // Refresh the list
     } catch (err: any) {
-      console.error('Error in handleChangeOrganization():', err);
+      console.error("Error in handleChangeOrganization():", err);
       setError(err.message);
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleChangeRole = async (userId: string, role: 'user' | 'admin') => {
+  const handleChangeRole = async (userId: string, role: "user" | "admin") => {
     try {
       setActionLoading(`role-${userId}`);
-      console.log('Changing role for user:', userId, 'to:', role);
-      
+      console.log("Changing role for user:", userId, "to:", role);
+
       // Call the API endpoint to update both the database and auth metadata
-      const response = await fetch('/api/admin/update-user-role', {
-        method: 'POST',
+      const response = await fetch("/api/admin/update-user-role", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ userId, role }),
       });
-      
+
       const result = await response.json();
-      
+
       if (!response.ok) {
-        console.error('Error updating user role:', result.error);
+        console.error("Error updating user role:", result.error);
         throw new Error(result.error);
       }
-      
-      console.log('Role changed successfully:', result);
+
+      console.log("Role changed successfully:", result);
       await fetchUsers(); // Refresh the list
     } catch (err: any) {
-      console.error('Error in handleChangeRole():', err);
+      console.error("Error in handleChangeRole():", err);
       setError(err.message);
     } finally {
       setActionLoading(null);
@@ -199,50 +214,50 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
       setActionLoading(`delete-${userId}`);
-      console.log('Deleting user:', userId);
-      
+      console.log("Deleting user:", userId);
+
       // First try to delete directly from auth.users using admin API
       try {
         // NOTE: For this to work, you need service_role key setup with admin access,
         // and you need to have proper admin permissions on your user account
-        console.log('Attempting to delete auth user with admin API...');
-        const { error: authError } = await fetch('/api/admin/delete-user', {
-          method: 'POST',
+        console.log("Attempting to delete auth user with admin API...");
+        const { error: authError } = await fetch("/api/admin/delete-user", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ userId }),
-        }).then(res => res.json());
-        
+        }).then((res) => res.json());
+
         if (authError) {
-          console.error('Error deleting user with admin API:', authError);
+          console.error("Error deleting user with admin API:", authError);
           throw new Error(authError);
         }
-        
-        console.log('User deleted from auth successfully with admin API');
+
+        console.log("User deleted from auth successfully with admin API");
       } catch (authError) {
-        console.error('Admin API delete failed:', authError);
+        console.error("Admin API delete failed:", authError);
         // Fallback: Try to delete from public.users which might cascade
-        console.log('Falling back to deleting from public.users...');
+        console.log("Falling back to deleting from public.users...");
         const { error } = await supabase
-          .from('users')
+          .from("users")
           .delete()
-          .eq('id', userId);
-          
+          .eq("id", userId);
+
         if (error) {
-          console.error('Error deleting user from public.users:', error);
+          console.error("Error deleting user from public.users:", error);
           throw error;
         }
       }
-      
-      console.log('User deletion process completed');
+
+      console.log("User deletion process completed");
       await fetchUsers(); // Refresh the list
     } catch (err: any) {
-      console.error('Error in handleDeleteUser():', err);
+      console.error("Error in handleDeleteUser():", err);
       setError(`Failed to delete user: ${err.message}`);
     } finally {
       setActionLoading(null);
@@ -250,63 +265,80 @@ const AdminDashboard = () => {
   };
 
   const addOrganization = async () => {
-    const name = prompt('Enter organization name:');
+    const name = prompt("Enter organization name:");
     if (!name) return;
 
     try {
-      setActionLoading('add-org');
-      console.log('Adding organization:', name);
-      
+      setActionLoading("add-org");
+      console.log("Adding organization:", name);
+
       const { data, error } = await supabase
-        .from('organizations')
+        .from("organizations")
         .insert([{ name }])
         .select();
 
       if (error) {
-        console.error('Error adding organization:', error);
+        console.error("Error adding organization:", error);
         throw error;
       }
-      
-      console.log('Organization added:', data);
+
+      console.log("Organization added:", data);
       await fetchOrganizations(); // Refresh the list
     } catch (err: any) {
-      console.error('Error in addOrganization():', err);
+      console.error("Error in addOrganization():", err);
       setError(err.message);
     } finally {
       setActionLoading(null);
     }
   };
-  
+
   // Function to clear error messages
   const clearError = () => setError(null);
 
-  if (loading) return (
-    <div className="w-full flex justify-center items-center h-[300px]">
-      <div className="animate-pulse text-lg">Loading user data...</div>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="w-full flex justify-center items-center h-[300px]">
+        <div className="animate-pulse text-lg">Loading user data...</div>
+      </div>
+    );
 
   return (
     <div className="w-full -mx-6">
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 mx-6">
           <span className="block sm:inline">{error}</span>
-          <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={clearError}>
-            <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <span
+            className="absolute top-0 bottom-0 right-0 px-4 py-3"
+            onClick={clearError}
+          >
+            <svg
+              className="fill-current h-6 w-6 text-red-500"
+              role="button"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
               <title>Close</title>
-              <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+              <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
             </svg>
           </span>
         </div>
       )}
-      
-      <div className="flex justify-end mb-8 mx-6">
-        <button 
+
+      <div className="flex justify-between mb-8 mx-6">
+        <div className="flex gap-4">
+          <Link href="/admin/organization-colors">
+            <button className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">
+              Organization Colors
+            </button>
+          </Link>
+        </div>
+
+        <button
           onClick={addOrganization}
-          disabled={actionLoading === 'add-org'}
+          disabled={actionLoading === "add-org"}
           className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 disabled:opacity-50"
         >
-          {actionLoading === 'add-org' ? 'Adding...' : 'Add Organization'}
+          {actionLoading === "add-org" ? "Adding..." : "Add Organization"}
         </button>
       </div>
 
@@ -314,22 +346,40 @@ const AdminDashboard = () => {
         <table className="w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ width: "25%", maxWidth: "300px" }}>
+              <th
+                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                style={{ width: "25%", maxWidth: "300px" }}
+              >
                 Email
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: "100px", width: "12%" }}>
+              <th
+                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                style={{ minWidth: "100px", width: "12%" }}
+              >
                 Role
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: "100px", width: "13%" }}>
+              <th
+                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                style={{ minWidth: "100px", width: "13%" }}
+              >
                 Status
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: "180px", width: "20%" }}>
+              <th
+                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                style={{ minWidth: "180px", width: "20%" }}
+              >
                 Organization
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: "100px", width: "15%" }}>
+              <th
+                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                style={{ minWidth: "100px", width: "15%" }}
+              >
                 Created
               </th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: "150px", width: "15%" }}>
+              <th
+                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                style={{ minWidth: "150px", width: "15%" }}
+              >
                 Actions
               </th>
             </tr>
@@ -337,13 +387,21 @@ const AdminDashboard = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 truncate" style={{ maxWidth: "300px" }}>
+                <td
+                  className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 truncate"
+                  style={{ maxWidth: "300px" }}
+                >
                   {user.email}
                 </td>
                 <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                   <select
                     value={user.role}
-                    onChange={(e) => handleChangeRole(user.id, e.target.value as 'user' | 'admin')}
+                    onChange={(e) =>
+                      handleChangeRole(
+                        user.id,
+                        e.target.value as "user" | "admin"
+                      )
+                    }
                     disabled={actionLoading === `role-${user.id}`}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:opacity-50"
                   >
@@ -352,21 +410,25 @@ const AdminDashboard = () => {
                   </select>
                 </td>
                 <td className="px-3 py-4 whitespace-nowrap text-sm">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.is_approved
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {user.is_approved ? 'Approved' : 'Pending'}
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      user.is_approved
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {user.is_approved ? "Approved" : "Pending"}
                   </span>
                 </td>
                 <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                   <select
-                    value={user.organization_id || ''}
-                    onChange={(e) => handleChangeOrganization(
-                      user.id, 
-                      e.target.value ? parseInt(e.target.value) : null
-                    )}
+                    value={user.organization_id || ""}
+                    onChange={(e) =>
+                      handleChangeOrganization(
+                        user.id,
+                        e.target.value ? parseInt(e.target.value) : null
+                      )
+                    }
                     disabled={actionLoading === `org-${user.id}`}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:opacity-50"
                   >
@@ -383,25 +445,30 @@ const AdminDashboard = () => {
                 </td>
                 <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
                   <button
-                    onClick={() => handleToggleApproval(user.id, user.is_approved)}
+                    onClick={() =>
+                      handleToggleApproval(user.id, user.is_approved)
+                    }
                     disabled={actionLoading === `approve-${user.id}`}
                     className={`mr-2 disabled:opacity-50 ${
-                      user.is_approved 
-                        ? 'text-yellow-600 hover:text-yellow-900' 
-                        : 'text-green-600 hover:text-green-900'
+                      user.is_approved
+                        ? "text-yellow-600 hover:text-yellow-900"
+                        : "text-green-600 hover:text-green-900"
                     }`}
                   >
-                    {actionLoading === `approve-${user.id}` 
-                      ? 'Updating...' 
-                      : user.is_approved ? 'Unapprove' : 'Approve'
-                    }
+                    {actionLoading === `approve-${user.id}`
+                      ? "Updating..."
+                      : user.is_approved
+                      ? "Unapprove"
+                      : "Approve"}
                   </button>
                   <button
                     onClick={() => handleDeleteUser(user.id)}
                     disabled={actionLoading === `delete-${user.id}`}
                     className="text-red-600 hover:text-red-900 disabled:opacity-50"
                   >
-                    {actionLoading === `delete-${user.id}` ? 'Deleting...' : 'Delete'}
+                    {actionLoading === `delete-${user.id}`
+                      ? "Deleting..."
+                      : "Delete"}
                   </button>
                 </td>
               </tr>
@@ -413,4 +480,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard; 
+export default AdminDashboard;

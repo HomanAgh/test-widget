@@ -1,4 +1,4 @@
-import { GraphQLError } from 'graphql';
+/* import { GraphQLError } from 'graphql';
 import { createClient } from '@/app/utils/supabase/server';
 
 // For troubleshooting
@@ -175,4 +175,4 @@ export const resolvers = {
       return true;
     },
   },
-};
+}; */

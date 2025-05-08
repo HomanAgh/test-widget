@@ -27,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className={`ep-widget-container ${openSans.variable} ${montserrat.variable}`}>
+        <div
+          className={`ep-widget-container ${openSans.variable} ${montserrat.variable}`}
+        >
           <Providers>{children}</Providers>
         </div>
       </body>
