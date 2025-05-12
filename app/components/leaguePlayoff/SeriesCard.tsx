@@ -49,7 +49,8 @@ export default function SeriesCard({ series, align }: SeriesCardProps) {
       const time = gameDate.toLocaleTimeString('default', { hour: '2-digit', minute: '2-digit', hour12: false });
       
       return `${month} ${day}, ${time}`;
-    } catch (_) {
+    } catch {
+      // Fallback to raw date if parsing fails
       return nextGame.date;
     }
   };
