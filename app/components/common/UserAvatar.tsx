@@ -10,22 +10,36 @@ const UserAvatar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
+    // Create the client inside useEffect to avoid SSR issues
+    const supabase = createClient();
+    
     const fetchUserInfo = async () => {
       try {
+        console.log('UserAvatar: Fetching user info');
         const { data: { user } } = await supabase.auth.getUser();
+        console.log('UserAvatar: User data retrieved', user ? 'successfully' : 'empty');
+        
         if (user && user.email) {
           setEmail(user.email);
+          console.log('UserAvatar: Email set');
         } else {
           setEmail(null);
+          console.log('UserAvatar: No email found');
         }
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        console.error('UserAvatar: Error fetching user info:', error);
         setEmail(null);
       } finally {
         setLoading(false);
+        console.log('UserAvatar: Loading completed');
       }
     };
 
@@ -33,6 +47,9 @@ const UserAvatar = () => {
   }, []);
 
   useEffect(() => {
+    // Skip if not in browser environment
+    if (typeof window === 'undefined') return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
@@ -47,6 +64,9 @@ const UserAvatar = () => {
 
   const handleLogout = async () => {
     try {
+      // Create the client inside the handler to ensure fresh client
+      const supabase = createClient();
+      console.log('UserAvatar: Logging out');
       await supabase.auth.signOut();
       
       // Add a small delay before navigation to ensure the signOut completes
@@ -56,10 +76,11 @@ const UserAvatar = () => {
         router.refresh();
       }, 100);
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error("UserAvatar: Error during logout:", error);
     }
   };
 
+  // Show a loading state briefly
   if (loading) {
     return (
       <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
@@ -68,8 +89,17 @@ const UserAvatar = () => {
     );
   }
 
+  // Fallback in case email isn't available yet
   if (!email) {
-    return null;
+    // Make login button for anonymous users
+    return (
+      <button 
+        className="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-lg font-bold cursor-pointer shadow-sm hover:bg-gray-400 transition-colors"
+        onClick={() => router.push('/auth')}
+      >
+        ?
+      </button>
+    );
   }
 
   const firstLetter = email.charAt(0).toUpperCase();
