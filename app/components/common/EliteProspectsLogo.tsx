@@ -1,13 +1,12 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 const EliteProspectsLogo: React.FC = () => {
   return (
-    <a
-      href="https://www.eliteprospects.com/"
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href="/home"
       className="flex items-center justify-center flex-shrink-0"
     >
       {/* Logo Image */}
@@ -17,7 +16,7 @@ const EliteProspectsLogo: React.FC = () => {
       <span className="text-[18px] font-montserrat font-bold ml-2 text-gray-800">
         Widget admin
       </span>
-    </a>
+    </Link>
   );
 };
 
