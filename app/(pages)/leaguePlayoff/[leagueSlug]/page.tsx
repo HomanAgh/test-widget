@@ -10,8 +10,8 @@ interface PageProps {
   searchParams: { season?: string };
 }
 
-export default function LeaguePlayoffPage({ params, searchParams }: PageProps) {
-  const { leagueSlug } = params;
+export default async function LeaguePlayoffPage({ params, searchParams }: PageProps) {
+  const { leagueSlug } = await params;
   const season = searchParams.season || "2024-2025";
   
   return (
