@@ -6,13 +6,13 @@ import ClientLeaguePlayoffPage from "@/app/components/leaguePlayoff/ClientLeague
 import { Suspense } from "react";
 
 interface PageProps {
-  params: { leagueSlug: string };
-  searchParams: { season?: string };
+  params: Promise<{ leagueSlug: string }>;
+  searchParams: Promise<{ season?: string }>;
 }
 
 export default async function LeaguePlayoffPage({ params, searchParams }: PageProps) {
   const { leagueSlug } = await params;
-  const season = searchParams.season || "2024-2025";
+  const season = (await searchParams).season || "2024-2025";
   
   return (
     <PageWrapper>
