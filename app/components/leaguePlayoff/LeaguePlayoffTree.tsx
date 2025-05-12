@@ -11,7 +11,7 @@ const containerStyles = {
   height: "800px",
   border: "1px solid #444",
   borderRadius: "8px",
-  overflow: "auto" 
+  overflow: "auto"
 };
 
 const treeWrapperStyles = {
@@ -53,7 +53,7 @@ const renderCustomNode = ({ nodeDatum, toggleNode }: { nodeDatum: any; toggleNod
 };
 
 export default function LeaguePlayoffTree({ bracket }: LeaguePlayoffTreeProps) {
-  const [dimensions, _translate, containerRef] = useCenteredTree();  
+  const [dimensions, , containerRef] = useCenteredTree();  
   const treeData = useMemo(() => {  
     return convertBracketToTree(bracket);
   }, [bracket]);
@@ -63,7 +63,7 @@ export default function LeaguePlayoffTree({ bracket }: LeaguePlayoffTreeProps) {
   };
   
   return (
-    <div style={containerStyles}>
+    <div className="bg-gray-100" style={containerStyles}>
       <div id="treeWrapper" style={treeWrapperStyles} ref={containerRef as React.LegacyRef<HTMLDivElement>}>
         <Tree
           data={treeData} 

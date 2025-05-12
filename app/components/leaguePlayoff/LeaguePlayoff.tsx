@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { LeaguePlayoffResponse } from '@/app/types/leaguePlayoff';
 import LeaguePlayoffBracket from './LeaguePlayoffBracket';
 import SeasonSelector from '@/app/components/common/SeasonSelector';
-import LeaguePlayoffTree from './LeaguePlayoffTree';
 
 interface LeaguePlayoffProps {
   leagueId: string;
@@ -114,12 +113,15 @@ export default function LeaguePlayoff({
           <SeasonSelector
             leagueSlug={leagueId}
             initialSeason={currentSeason}
-            onSeasonChange={handleSeasonChange}
+            onSeasonChange={handleSeasonChange}   
           />
         </div>
       )}
-      <h2 className="text-2xl font-bold mb-4 text-center">Playoff Bracket</h2>
-      <LeaguePlayoffBracket bracket={data.bracket} />
+      <LeaguePlayoffBracket 
+      bracket={data.bracket}
+      customColors={customColors} 
+      hideSeasonSelector={hideSeasonSelector}
+      />
     </div>
   );
 }

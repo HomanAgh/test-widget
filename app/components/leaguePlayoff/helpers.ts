@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ReactD3TreeItem, PlayoffBracket, PlayoffSeries, PlayoffTeam } from "@/app/types/leaguePlayoff";
+import { ReactD3TreeItem, PlayoffBracket, PlayoffSeries} from "@/app/types/leaguePlayoff";
 
 // This helper hook returns dimensions, translate, and containerRef for the tree
 export const useCenteredTree = () => {

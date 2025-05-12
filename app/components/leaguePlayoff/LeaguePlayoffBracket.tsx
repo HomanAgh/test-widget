@@ -8,6 +8,14 @@ import LeaguePlayoffTree from './LeaguePlayoffTree';
 
 interface LeaguePlayoffBracketProps {
   bracket: PlayoffBracket;
+  customColors?: {
+    backgroundColor: string;
+    textColor: string;
+    tableBackgroundColor: string;
+    headerTextColor?: string;
+    nameTextColor?: string;
+  };
+  hideSeasonSelector?: boolean;
 }
 
 export default function LeaguePlayoffBracket({ bracket }: LeaguePlayoffBracketProps) {
