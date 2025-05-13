@@ -8,7 +8,7 @@ interface EmbedCodeBlockProps {
 
 const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
   const [showModalCode, setShowModalCode] = useState(false);
-  const [embedType, setEmbedType] = useState<'direct-script' | 'iframe'>('direct-script');
+  const [embedType, setEmbedType] = useState<'direct-script' | 'iframe'>('iframe');
   const [showModal, setShowModal] = useState(false);
 
   const copyToClipboard = useCallback(async (text: string) => {
@@ -190,16 +190,6 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
             <p className="mb-2">Choose how you want to embed this widget:</p>
             <div className="flex space-x-2 mb-4">
               <button
-                onClick={() => setEmbedType('direct-script')}
-                className={`px-4 py-2 rounded-md ${
-                  embedType === 'direct-script' 
-                    ? 'bg-[#0B9D52] text-white' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Direct Script (Recommended)
-              </button>
-              <button
                 onClick={() => setEmbedType('iframe')}
                 className={`px-4 py-2 rounded-md ${
                   embedType === 'iframe' 
@@ -209,11 +199,21 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
               >
                 iframe (Ease of use)
               </button>
+              <button
+                onClick={() => setEmbedType('direct-script')}
+                className={`px-4 py-2 rounded-md ${
+                  embedType === 'direct-script' 
+                    ? 'bg-[#0B9D52] text-white' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Direct Script (Recommended)
+              </button>
             </div>
             
             <div className="mb-4">
               <h3 className="font-semibold mb-2">
-                {embedType === 'direct-script' ? 'Direct Script Embed Code (Recommended)' : 'iframe Embed Code (Ease of use)'}
+                {embedType === 'iframe' ? 'iframe Embed Code (Ease of use)' : 'Direct Script Embed Code (Recommended)'}
               </h3>
               <div className="relative">
                 <textarea
@@ -257,20 +257,20 @@ const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ iframeCode }) => {
                 </button>
               </div>
 
-              {embedType === 'direct-script' && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                  <p className="text-sm text-blue-800">
-                    <strong>Direct Script Implementation:</strong> This method embeds the widget directly into your page without an iframe. 
-                    It provides better integration with your site and improved performance.
-                  </p>
-                </div>
-              )}
-
               {embedType === 'iframe' && (
                 <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
                   <p className="text-sm text-green-800">
                     <strong>Ease of use Method:</strong> The iframe method is the simplest way to embed the widget on your website. 
                     Just copy and paste the code into your HTML, and the widget will appear exactly as shown in the preview.
+                  </p>
+                </div>
+              )}
+
+              {embedType === 'direct-script' && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-800">
+                    <strong>Direct Script Implementation:</strong> This method embeds the widget directly into your page without an iframe. 
+                    It provides better integration with your site and improved performance.
                   </p>
                 </div>
               )}

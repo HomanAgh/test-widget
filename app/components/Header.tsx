@@ -1,5 +1,8 @@
 import EliteProspectsLogo from "./common/EliteProspectsLogo";
-import ClientButtons from './ClientButtons';
+import UserAvatar from "./common/UserAvatar";
+import HomeButton from "./common/HomeButton";
+import AdminButton from "./common/AdminButton";
+import EmbedButton from "./common/EmbedButton";
 
 // This is a server component
 const Header = ({ currentPath }: { currentPath: string }) => {
@@ -10,8 +13,13 @@ const Header = ({ currentPath }: { currentPath: string }) => {
         <EliteProspectsLogo />
       </div>
 
-      {/* Right Side - Home & Logout Buttons */}
-      <ClientButtons isHomePage={currentPath === "/home"} />
+      {/* Right Side - Navigation buttons and User Avatar */}
+      <div className="flex items-center gap-[16px]">
+        <HomeButton isDisabled={currentPath === "/home"} />
+        <AdminButton isDisabled={currentPath === "/admin"} />
+        <EmbedButton isDisabled={currentPath === "/embed"} />
+        <UserAvatar />
+      </div>
     </div>
   );
 };

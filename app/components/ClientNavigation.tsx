@@ -24,7 +24,7 @@ const ClientNavigation: React.FC<ClientNavigationProps> = ({ menuItems }) => {
           key={item.path}
           onClick={() => handleNavigation(item.path)}
           className="flex flex-col items-center justify-center pb-[24px] pt-[24px] pl-[16px] pr-[16px] 
-                     border border-green-600 bg-white rounded-lg 
+                     border border-green-600 bg-gray-100 rounded-lg 
                      hover:bg-green-600 transition-all group"
         >
           <div className="text-black pb-[16px] transition-all group-hover:text-white">
