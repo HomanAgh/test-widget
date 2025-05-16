@@ -1,16 +1,50 @@
 "use client";
 
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/app/components/auth/actionRegister";
+import { createClient } from "@/app/utils/client";
+
+interface Organization {
+  id: number;
+  name: string;
+}
 
 export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [organizationId, setOrganizationId] = useState<number | null>(null);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingOrgs, setLoadingOrgs] = useState(true);
   const router = useRouter();
+  
+  // Fetch organizations on component mount
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        setLoadingOrgs(true);
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("organizations")
+          .select("id, name")
+          .order("name");
+          
+        if (error) throw error;
+        
+        setOrganizations(data || []);
+      } catch (err) {
+        console.error("Error fetching organizations:", err);
+        setError("Could not load organizations. Please try again later.");
+      } finally {
+        setLoadingOrgs(false);
+      }
+    };
+    
+    fetchOrganizations();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +53,7 @@ export default function RegisterForm() {
     setSuccess("");
 
     try {
-      const result = await registerUser(email, password);
+      const result = await registerUser(email, password, organizationId);
       
       if (!result.success) {
         setError(result.error || "Registration failed");
@@ -29,6 +63,7 @@ export default function RegisterForm() {
       setSuccess("Registration successful! Redirecting to login...");
       setEmail("");
       setPassword("");
+      setOrganizationId(null);
       
       // Redirect to login page after a short delay
       setTimeout(() => {
@@ -72,6 +107,26 @@ export default function RegisterForm() {
             required
             disabled={loading}
           />
+        </div>
+        
+        <div className="flex flex-col">
+          <label className="text-sm font-semibold pb-[8px]">Organization</label>
+          <select
+            value={organizationId || ""}
+            onChange={(e) => setOrganizationId(e.target.value ? parseInt(e.target.value) : null)}
+            className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading || loadingOrgs}
+          >
+            <option value="">Select an organization</option>
+            {organizations.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name}
+              </option>
+            ))}
+          </select>
+          {loadingOrgs && (
+            <p className="text-sm text-gray-500 mt-1">Loading organizations...</p>
+          )}
         </div>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
