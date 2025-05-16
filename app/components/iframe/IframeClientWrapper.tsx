@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import ResizeObserver from "./ResizeObserver";
+import ResizeObserver from "../iframe/ResizeObserver";
 
 interface ClientWrapperProps {
   children: React.ReactNode;

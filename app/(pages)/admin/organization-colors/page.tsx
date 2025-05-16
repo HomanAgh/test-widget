@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,
   saveOrganizationColors,
 } from "@/app/utils/organizationColors";
-import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "@/app/components/iframe/IframeHeightAndHexcolors";
 import Link from "next/link";
 
 function OrganizationColorsContent() {

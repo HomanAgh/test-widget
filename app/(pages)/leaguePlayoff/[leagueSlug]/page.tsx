@@ -7,12 +7,10 @@ import { Suspense } from "react";
 
 interface PageProps {
   params: Promise<{ leagueSlug: string }>;
-  searchParams: Promise<{ season?: string }>;
 }
 
-export default async function LeaguePlayoffPage({ params, searchParams }: PageProps) {
+export default async function LeaguePlayoffPage({ params}: PageProps) {
   const { leagueSlug } = await params;
-  const season = (await searchParams).season || "2024-2025";
   
   return (
     <PageWrapper>
@@ -24,7 +22,7 @@ export default async function LeaguePlayoffPage({ params, searchParams }: PagePr
         </div>
         <SearchBar />
         <Suspense fallback={<div>Loading...</div>}>
-          <ClientLeaguePlayoffPage leagueSlug={leagueSlug} season={season} />
+          <ClientLeaguePlayoffPage leagueSlug={leagueSlug} season={"2024-2025"} />
         </Suspense>
       </div>
     </PageWrapper>

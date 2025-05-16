@@ -32,7 +32,6 @@ export async function GET(
 ) {
   try {
     console.log("API Route: /api/leaguePlayoff/[leagueSlug] started");
-    
     // Await the params object
     const resolvedParams = await params;
     console.log("Resolved params:", resolvedParams);
@@ -46,7 +45,7 @@ export async function GET(
     const leagueSlug = resolvedParams.leagueSlug;
     
     const { searchParams } = new URL(request.url);
-    const season = searchParams.get('season') || '2023-2024';
+    const season = searchParams.get('season') || '2024-2025';
     console.log(`Processing request for league: ${leagueSlug}, season: ${season}`);
 
     // Fetch standings data 

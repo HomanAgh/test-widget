@@ -1,6 +1,6 @@
 import React from "react";
 import LeaguePlayoff from "@/app/components/leaguePlayoff/LeaguePlayoff";
-import ClientWrapper from "@/app/components/embed/ClientWrapper";
+import ClientWrapper from "@/app/components/iframe/IframeClientWrapper";
 
 interface PageProps {
   searchParams: Promise<{

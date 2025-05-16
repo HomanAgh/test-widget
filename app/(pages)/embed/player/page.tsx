@@ -1,6 +1,6 @@
 import React from "react";
 import Player from "../../../components/player/Player";
-import ClientWrapper from "@/app/components/embed/ClientWrapper";
+import ClientWrapper from "@/app/components/iframe/IframeClientWrapper";
 
 interface PageProps {
   searchParams: Promise<{

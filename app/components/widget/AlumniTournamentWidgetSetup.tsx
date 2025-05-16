@@ -4,13 +4,13 @@ import React, { useState, useMemo, useEffect } from "react";
 import { TournamentItem } from "@/app/types/tournament";
 import TournamentSearchBar from "@/app/components/alumni/TournamentSearchBar";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
-import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
+import { useFetchLeagues } from "@/app/hooks/useFetchLeagues";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
 import AlumniTournament from "@/app/components/alumni/AlumniTournament";
-import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "@/app/components/iframe/IframeHeightAndHexcolors";
 import EmbedCodeBlock from "../iframe/IframePreview";
 import ColumnSelector, { ColumnOptions } from "../alumni/ColumnSelector";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,

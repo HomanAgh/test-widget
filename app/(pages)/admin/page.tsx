@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/app/utils/client';
 import AdminDashboard from "@/app/components/admin/AdminDashboard";
 import Header from "@/app/components/Header";
 import { AdminPageWrapper, PageTitle, PoweredBy } from "@/app/components/common/style";

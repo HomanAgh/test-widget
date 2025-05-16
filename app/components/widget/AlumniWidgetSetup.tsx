@@ -4,12 +4,12 @@ import React, { useState, useMemo, useEffect } from "react";
 import { SelectedTeam } from "@/app/types/team";
 import TeamSearchBar from "@/app/components/alumni/TeamSearchBar";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
-import { useFetchLeagues } from "@/app/components/alumni/hooks/useFetchLeagues";
+import { useFetchLeagues } from "@/app/hooks/useFetchLeagues";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
 import Alumni from "@/app/components/alumni/Alumni";
-import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "@/app/components/iframe/IframeHeightAndHexcolors";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,

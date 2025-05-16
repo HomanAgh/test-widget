@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+
 export async function updateSession(request: NextRequest) {
   // Debug: Log the current path
   console.log('Middleware: Current path:', request.nextUrl.pathname)
@@ -44,7 +45,6 @@ export async function updateSession(request: NextRequest) {
     '/register',
     '/register',
     '/api/graphql',
-    '/verify-email',
     '/api',
     '/embed'
   ]

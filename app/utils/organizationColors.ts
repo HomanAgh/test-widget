@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 
 export interface ColorPreferences {
   headerTextColor: string;

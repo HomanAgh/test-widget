@@ -2,7 +2,7 @@
 
 import React, { useState} from "react";
 import { useRouter } from "next/navigation";
-import { registerUser } from "@/app/actions/auth";
+import { registerUser } from "@/app/components/auth/actionRegister";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState("");

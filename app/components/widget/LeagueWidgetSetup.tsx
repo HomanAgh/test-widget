@@ -3,8 +3,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import League from "@/app/components/league/League";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
-import { createClient } from "@/app/utils/supabase/client";
+import HexColors from "../iframe/IframeHeightAndHexcolors";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,
@@ -165,7 +165,9 @@ const LeagueWidgetSetup: React.FC<LeagueWidgetSetupProps> = ({
       </div>
 
       <div className="mt-4">
-        <League leagueSlug={leagueSlug} customColors={customColors} />
+        <League 
+        leagueSlug={leagueSlug} 
+        customColors={customColors} />
       </div>
 
       <EmbedCodeBlock iframeCode={iframeCode} />

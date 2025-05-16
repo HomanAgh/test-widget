@@ -1,6 +1,6 @@
 import React from "react";
 import AlumniTournament from "@/app/components/alumni/AlumniTournament";
-import ClientWrapper from "@/app/components/embed/ClientWrapper";
+import ClientWrapper from "@/app/components/iframe/IframeClientWrapper";
 import { ColumnOptions } from "@/app/components/alumni/ColumnSelector";
 
 interface PageProps {

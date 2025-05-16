@@ -20,7 +20,9 @@ const ClientLeaguePage: React.FC<ClientLeaguePageProps> = ({ leagueSlug, season 
   return (
     <>
       {selectedLeagueSlug && (
-        <LeagueWidgetSetup leagueSlug={selectedLeagueSlug} season={season} />
+        <LeagueWidgetSetup 
+        leagueSlug={selectedLeagueSlug} 
+        season={season} />
       )}
     </>
   );

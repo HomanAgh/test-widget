@@ -1,29 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, Suspense } from "react";
+import { useRouter} from "next/navigation";
 import Link from "next/link";
 import EliteProspectsLogo from "@/app/components/common/EliteProspectsLogo";
 import PageWrapper from "@/app/components/common/style/PageWrapper";
 import { PoweredBy } from "@/app/components/common/style";
-import { login } from "@/app/login/action";
+import { login } from "@/app/components/auth/actionLogin";
 
 // Separate component that uses useSearchParams
 const LoginPageContent = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    // Check if this is an email verification redirect
-    const code = searchParams?.get("code");
-
-    if (code) {
-      // Redirect to verify-email with the code
-      router.push(`/verify-email?code=${code}`);
-    }
-  }, [searchParams, router]);
 
   const handleSubmit = async (formData: FormData) => {
     setIsLoading(true);

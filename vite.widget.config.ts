@@ -24,7 +24,7 @@ export default defineConfig({
     outDir: 'public',
     emptyOutDir: false, // Don't delete other files in public folder
     lib: {
-      entry: resolve(__dirname, 'src/widget-bundle.tsx'),
+      entry: resolve(__dirname, 'script/widget-bundle.tsx'),
       name: 'EPWidgets',
       fileName: () => 'widget-bundle.js', // Use fixed filename instead of format-based
       formats: ['iife'],

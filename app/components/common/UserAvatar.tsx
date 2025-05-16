@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/app/utils/client';
 import { useRouter } from 'next/navigation';
 
 const UserAvatar = () => {

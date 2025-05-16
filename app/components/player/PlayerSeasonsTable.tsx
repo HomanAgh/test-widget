@@ -11,7 +11,7 @@ import {
   PoweredBy,
 } from "@/app/components/common/style";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { formatSavePercentage } from '@/app/utils/formatUtils';
+import { formatSavePercentage } from '@/app/utils/formatSVP';
 interface PlayerSeasonsTableProps {
   playerType: PlayerType;
   seasons: SeasonStats[];

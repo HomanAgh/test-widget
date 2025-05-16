@@ -3,14 +3,14 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Team from "@/app/components/team/Team";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "../iframe/IframeHeightAndHexcolors";
 import TeamColumnSelector from "../team/TeamColumnSelector";
 import {
   TeamColumnOptions,
   DEFAULT_COLUMNS,
 } from "../team/TeamColumnDefinitions";
 import { Team as TeamType } from "@/app/types/team";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,
