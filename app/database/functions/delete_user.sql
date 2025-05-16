@@ -8,9 +8,9 @@ AS $$
 DECLARE
   success BOOLEAN := FALSE;
 BEGIN
-  -- Delete the user from the auth.users table
-  DELETE FROM auth.users 
-  WHERE id = p_user_id;
+  -- Delete the user from the auth.users table using the admin API
+  -- This properly removes the user from Supabase Auth
+  PERFORM supabase_admin.delete_user(p_user_id);
   
   -- Delete from public.users table
   DELETE FROM public.users
