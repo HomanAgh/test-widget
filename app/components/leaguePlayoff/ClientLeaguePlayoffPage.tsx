@@ -8,7 +8,7 @@ interface ClientLeaguePlayoffPageProps {
   season: string;
 }
 
-export default function ClientLeaguePlayoffPage({ leagueSlug, season }: ClientLeaguePlayoffPageProps) {
+const ClientLeaguePlayoffPage: React.FC<ClientLeaguePlayoffPageProps> = ({ leagueSlug, season }) => {
   const [selectedLeagueSlug, setSelectedLeagueSlug] = useState<string>(leagueSlug);
 
   useEffect(() => {
@@ -20,8 +20,12 @@ export default function ClientLeaguePlayoffPage({ leagueSlug, season }: ClientLe
   return (
     <>
       {selectedLeagueSlug && (
-        <LeaguePlayoffWidgetSetup leagueId={selectedLeagueSlug} season={season} />
+        <LeaguePlayoffWidgetSetup 
+        leagueId={selectedLeagueSlug} 
+        season={season} />
       )}
     </>
   );
 } 
+
+export default ClientLeaguePlayoffPage;

@@ -1,6 +1,6 @@
 import React from "react";
 import Team from "@/app/components/team/Team";
-import ClientWrapper from "@/app/components/embed/ClientWrapper";
+import ClientWrapper from "@/app/components/iframe/IframeClientWrapper";
 import { Metadata } from "next";
 import {
   TeamColumnOptions,

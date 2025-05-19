@@ -3,9 +3,9 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Player from "../player/Player";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "../iframe/IframeHeightAndHexcolors";
 import type { Player as PlayerType } from "@/app/types/player";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run build:widget && next dev --turbopack",
-    "build": "prisma generate && npm run build:widget && next build",
+    "build": "npm run build:widget && next build",
     "build:widget": "vite build --config vite.widget.config.ts",
     "build:all": "npm run build && npm run build:widget",
     "start": "next start",

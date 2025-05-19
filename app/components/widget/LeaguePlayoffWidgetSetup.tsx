@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import LeaguePlayoff from "@/app/components/leaguePlayoff/LeaguePlayoff";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import HexColors from "@/app/components/common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "@/app/components/iframe/IframeHeightAndHexcolors";
 
 const DEFAULT_IFRAME_HEIGHT = 800;
 
@@ -79,7 +79,6 @@ const LeaguePlayoffWidgetSetup: React.FC<LeaguePlayoffWidgetSetupProps> = ({
         }}>
           <LeaguePlayoff 
             leagueId={leagueId}
-            season={season}
             customColors={customColors}
           />
         </div>

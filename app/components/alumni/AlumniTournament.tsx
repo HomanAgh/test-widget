@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
-import { useFetchTournamentPlayers } from "./hooks/useFetchTournamentPlayers";
+import { useFetchTournamentPlayers } from "../../hooks/useFetchTournamentPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
 import { ColumnOptions } from "./ColumnSelector";
 

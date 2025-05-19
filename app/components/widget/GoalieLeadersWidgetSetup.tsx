@@ -3,9 +3,9 @@
 import React, { useState, useMemo, useEffect } from "react";
 import GoalieLeaders from "@/app/components/league/GoalieLeaders";
 import EmbedCodeBlock from "../iframe/IframePreview";
-import HexColors from "../common/color-picker/HexColorsAndIframeHeight";
+import HexColors from "../iframe/IframeHeightAndHexcolors";
 import NationalityFilter from "../common/filters/NationalityFilter";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
   DEFAULT_COLORS,

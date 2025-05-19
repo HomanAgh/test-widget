@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/app/utils/client";
 import Link from "next/link";
+import { HiMiniChevronUp, HiMiniChevronDown } from "react-icons/hi2";
 
 interface User {
   id: string;
@@ -19,18 +20,87 @@ interface Organization {
   name: string;
 }
 
+type SortField = 'email' | 'role' | 'is_approved' | 'organization' | 'created_at';
+type SortDirection = 'asc' | 'desc';
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('created_at');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const supabase = createClient();
 
   useEffect(() => {
     fetchUsers();
     fetchOrganizations();
   }, []);
+
+  // Sort users whenever the sort parameters change
+  useEffect(() => {
+    if (users.length) {
+      sortUsers();
+    }
+  }, [sortField, sortDirection]);
+
+  const sortUsers = () => {
+    const sortedUsers = [...users].sort((a, b) => {
+      // Handle different field types
+      if (sortField === 'email') {
+        return sortDirection === 'asc' 
+          ? a.email.localeCompare(b.email)
+          : b.email.localeCompare(a.email);
+      } else if (sortField === 'role') {
+        return sortDirection === 'asc'
+          ? a.role.localeCompare(b.role)
+          : b.role.localeCompare(a.role);
+      } else if (sortField === 'is_approved') {
+        return sortDirection === 'asc'
+          ? Number(a.is_approved) - Number(b.is_approved)
+          : Number(b.is_approved) - Number(a.is_approved);
+      } else if (sortField === 'organization') {
+        const orgA = a.organization || '';
+        const orgB = b.organization || '';
+        return sortDirection === 'asc'
+          ? orgA.localeCompare(orgB)
+          : orgB.localeCompare(orgA);
+      } else if (sortField === 'created_at') {
+        return sortDirection === 'asc'
+          ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          : new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+      return 0;
+    });
+    
+    setUsers(sortedUsers);
+  };
+
+  const handleSort = (field: SortField) => {
+    // If clicking the same field, toggle direction
+    if (field === sortField) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // New field, default to ascending
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Render sort indicator
+  const renderSortIndicator = (field: SortField) => {
+    if (sortField !== field) return null;
+    
+    return (
+      <span className="ml-1 inline-block">
+        {sortDirection === 'asc' 
+          ? <HiMiniChevronUp className="inline h-4 w-4 text-black" />
+          : <HiMiniChevronDown className="inline h-4 w-4 text-black" />
+        }
+      </span>
+    );
+  };
 
   const fetchUsers = async () => {
     try {
@@ -347,37 +417,42 @@ const AdminDashboard = () => {
           <thead className="bg-gray-50">
             <tr>
               <th
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 style={{ width: "25%", maxWidth: "300px" }}
+                onClick={() => handleSort('email')}
               >
-                Email
+                Email {renderSortIndicator('email')}
               </th>
               <th
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-left text-xs font-medium text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 style={{ minWidth: "100px", width: "12%" }}
+                onClick={() => handleSort('role')}
               >
-                Role
+                Role {renderSortIndicator('role')}
               </th>
               <th
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-left text-xs font-medium text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 style={{ minWidth: "100px", width: "13%" }}
+                onClick={() => handleSort('is_approved')}
               >
-                Status
+                Status {renderSortIndicator('is_approved')}
               </th>
               <th
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-left text-xs font-medium text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 style={{ minWidth: "180px", width: "20%" }}
+                onClick={() => handleSort('organization')}
               >
-                Organization
+                Organization {renderSortIndicator('organization')}
               </th>
               <th
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-left text-xs font-medium text-black uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 style={{ minWidth: "100px", width: "15%" }}
+                onClick={() => handleSort('created_at')}
               >
-                Created
+                Created {renderSortIndicator('created_at')}
               </th>
               <th
-                className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-3 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                 style={{ minWidth: "150px", width: "15%" }}
               >
                 Actions

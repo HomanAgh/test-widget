@@ -1,10 +1,3 @@
-/**
- * Widget Loader Script (Combined Version)
- * 
- * This script loads and renders widgets directly inside the page without iframes.
- * It only loads the JS bundle which contains injected CSS.
- * Modified to use XMLHttpRequest for better CMS compatibility.
- */
 (function() {
   // Enable debug mode
   const DEBUG = true;

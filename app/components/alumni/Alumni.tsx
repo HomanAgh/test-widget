@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import PlayerTable from "./PlayerTable";
 import { SelectedTeam } from "@/app/types/team";
-import { useFetchPlayers } from "./hooks/useFetchPlayers";
+import { useFetchPlayers } from "../../hooks/useFetchPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 type GenderParam = "male" | "female" | null;

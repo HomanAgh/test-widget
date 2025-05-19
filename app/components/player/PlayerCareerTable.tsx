@@ -10,7 +10,7 @@ import {
   Link,
   PoweredBy,
 } from "@/app/components/common/style";
-import { formatSavePercentage } from '@/app/utils/formatUtils';
+import { formatSavePercentage } from '@/app/utils/formatSVP';
 
 interface PlayerCareerTableProps {
   careers: CareerStats[];

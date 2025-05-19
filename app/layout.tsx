@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Open_Sans, Montserrat } from "next/font/google";
-import { Providers } from "./providers";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -30,7 +29,7 @@ export default function RootLayout({
         <div
           className={`ep-widget-container ${openSans.variable} ${montserrat.variable}`}
         >
-          <Providers>{children}</Providers>
+          {children}
         </div>
       </body>
     </html>
