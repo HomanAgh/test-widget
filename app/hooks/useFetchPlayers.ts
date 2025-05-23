@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import isEqual from 'lodash.isequal';
 import { AlumniPlayer, AlumniAPIResponse } from '@/app/types/alumni';
 
@@ -18,6 +19,7 @@ export function useFetchPlayers(
   const [error, setError] = useState('');
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
+  const router = useRouter();
 
   // Build a cache key representing the current query parameters.
   const cacheKey = JSON.stringify({
@@ -71,7 +73,18 @@ export function useFetchPlayers(
       console.log('useFetchPlayers: GET =>', url);
 
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch players.');
+      
+      if (response.status === 401) {
+        // Handle unauthorized access
+        router.push('/auth');
+        setError('Please log in to access this feature.');
+        return;
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch players.');
+      }
 
       const data = (await response.json()) as AlumniAPIResponse;
       if (!data.players) {
@@ -97,7 +110,7 @@ export function useFetchPlayers(
       setHasMore(newPlayers.length === limit);
     } catch (err) {
       console.error('useFetchPlayers error:', err);
-      setError('Failed to fetch players.');
+      setError(err instanceof Error ? err.message : 'Failed to fetch players.');
     } finally {
       setLoading(false);
     }
@@ -110,6 +123,7 @@ export function useFetchPlayers(
     offset,
     results,
     cacheKey,
+    router,
   ]);
 
   // Effect to trigger a refetch if relevant inputs changed
