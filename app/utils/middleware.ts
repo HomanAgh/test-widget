@@ -43,6 +43,7 @@ export async function updateSession(request: NextRequest) {
     '/auth',           // Authentication pages
     '/login',          // Login page
     '/register',       // Registration page
+    '/api',            // All API endpoints
     '/api/graphql',    // GraphQL API endpoint
     '/api/auth',       // Auth API endpoints
     '/embed'           // Embed routes
