@@ -126,7 +126,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
     onChange(allSelected ? [] : allLeagueSlugs);
   };
 
-  const handleCategorySelectAll = (leagues: League[], categoryName: string) => {
+  const handleCategorySelectAll = (leagues: League[]) => {
     const categorySlugs = leagues.map(l => l.slug.toLowerCase());
     const allCategorySelected = categorySlugs.every(slug => selectedLeagues.includes(slug));
     
@@ -187,7 +187,7 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold">{title}</h3>
                 <button
-                  onClick={() => handleCategorySelectAll(leagues, title)}
+                  onClick={() => handleCategorySelectAll(leagues)}
                   className="uppercase text-sm tracking-wider cursor-pointer"
                   style={{
                     fontFamily: "Montserrat",
