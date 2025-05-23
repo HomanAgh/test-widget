@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import { NATIONALITIES } from "./filterOptions";
+import { NATIONALITIES } from "./NationalityFilterOptions";
 
 interface NationalityFilterProps {
   selectedValues: string[];

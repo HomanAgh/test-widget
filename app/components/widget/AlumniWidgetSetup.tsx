@@ -9,6 +9,8 @@ import ErrorMessage from "@/app/components/common/ErrorMessage";
 import Alumni from "@/app/components/alumni/Alumni";
 import HexColors from "@/app/components/iframe/IframeHeightAndHexcolors";
 import EmbedCodeBlock from "../iframe/IframePreview";
+import StatusFilter from "@/app/components/common/filters/StatusFilter";
+import SettingsFilter from "@/app/components/common/filters/SettingsFilter";
 import { createClient } from "@/app/utils/client";
 import {
   ColorPreferences,
@@ -55,7 +57,9 @@ function ensureCompleteColors(colors: any): ColorPreferences {
 const AlumniWidgetSetup: React.FC = () => {
   const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isPaginationEnabled, setIsPaginationEnabled] = useState<boolean>(true);
   const [customColors, setCustomColors] = useState<ColorPreferences>({
     ...DEFAULT_COLORS,
   });
@@ -157,11 +161,13 @@ const AlumniWidgetSetup: React.FC = () => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
     const teamIds = selectedTeams.map((t) => t.id).join(",");
     const leagues = selectedLeagues.join(",");
+    const status = selectedStatus.join(",");
 
     return (
       `${baseUrl}/embed/alumni` +
       `?teamIds=${encodeURIComponent(teamIds)}` +
       `&leagues=${encodeURIComponent(leagues)}` +
+      `&status=${encodeURIComponent(status)}` +
       `&teams=${encodeURIComponent(youthName)}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
@@ -170,9 +176,10 @@ const AlumniWidgetSetup: React.FC = () => {
       )}` +
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&includeYouth=true` +
+      `&isPaginationEnabled=${encodeURIComponent(isPaginationEnabled)}` +
       `&_t=${Date.now()}`
     );
-  }, [selectedTeams, selectedLeagues, customColors, youthName]);
+  }, [selectedTeams, selectedLeagues, selectedStatus, customColors, youthName, isPaginationEnabled]);
 
   const sourceLinks = useMemo(() => {
     if (selectedTeams.length === 0) return "";
@@ -210,6 +217,22 @@ const AlumniWidgetSetup: React.FC = () => {
         onChange={setSelectedLeagues}
       />
 
+      <div className="mt-4">
+        <StatusFilter
+          selectedValues={selectedStatus}
+          onSelectionChange={setSelectedStatus}
+          customColors={customColors}
+        />
+      </div>
+
+      <div className="mt-4">
+        <SettingsFilter
+          isPaginationEnabled={isPaginationEnabled}
+          onPaginationToggle={setIsPaginationEnabled}
+          customColors={customColors}
+        />
+      </div>
+
       <div className="flex flex-wrap md:flex-nowrap items-center space-x-8">
         <HexColors
           customColors={customColors}
@@ -225,9 +248,11 @@ const AlumniWidgetSetup: React.FC = () => {
           <Alumni
             selectedTeams={selectedTeams}
             selectedLeagues={selectedLeagues}
+            selectedStatus={selectedStatus}
             customColors={customColors}
             includeYouth={true}
             selectedLeagueCategories={selectedLeagueCategories}
+            isPaginationEnabled={isPaginationEnabled}
           />
         </div>
       )}

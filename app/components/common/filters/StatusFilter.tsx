@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import { POSITIONS } from "./PositionsFilterOption";
+import { Status } from "./StatusFilterOptions";
 
-interface PositionFilterProps {
+interface StatusFilterProps {
   selectedValues: string[];
   onSelectionChange: (values: string[]) => void;
   customColors?: {
@@ -14,7 +14,7 @@ interface PositionFilterProps {
   };
 }
 
-const PositionFilter: React.FC<PositionFilterProps> = ({
+const StatusFilter: React.FC<StatusFilterProps> = ({
   selectedValues,
   onSelectionChange,
 }) => {
@@ -39,12 +39,12 @@ const PositionFilter: React.FC<PositionFilterProps> = ({
     onSelectionChange([]);
   };
 
-  const allSelected = POSITIONS.every((option) =>
+  const allSelected = Status.every((option) =>
     selectedValues.includes(option.value)
   );
 
   const handleSelectAllToggle = () => {
-    onSelectionChange(allSelected ? [] : POSITIONS.map((opt) => opt.value));
+    onSelectionChange(allSelected ? [] : Status.map((opt) => opt.value));
   };
 
   return (
@@ -53,7 +53,7 @@ const PositionFilter: React.FC<PositionFilterProps> = ({
         onClick={toggleDropdown}
         className="w-full bg-[#052D41] text-white text-sm font-montserrat font-bold p-2 rounded flex justify-between items-center"
       >
-        SELECT POSITIONS
+        SELECT STATUS
         <span>{isOpen ? <FaChevronUp /> : <FaChevronDown />}</span>
       </button>
 
@@ -79,8 +79,8 @@ const PositionFilter: React.FC<PositionFilterProps> = ({
           </button>
 
           <div className="mt-6">
-            <div className="grid grid-cols-2 gap-2">
-              {POSITIONS.map((option) => (
+            <div className="flex flex-col gap-2">
+              {Status.map((option) => (
                 <label
                   key={option.value}
                   className="flex items-center space-x-2"
@@ -100,10 +100,10 @@ const PositionFilter: React.FC<PositionFilterProps> = ({
 
       {selectedValues.length > 0 && (
         <div className="mt-2 p-2 rounded text-[#052D41] font-montserrat text-lg">
-          <strong>Selected Positions</strong>
+          <strong>Selected Status</strong>
           <div className="flex flex-wrap gap-2 mt-3 mb-2">
             {selectedValues.map((value) => {
-              const option = POSITIONS.find((opt) => opt.value === value);
+              const option = Status.find((opt) => opt.value === value);
               return (
                 <span
                   key={value}
@@ -153,4 +153,4 @@ const PositionFilter: React.FC<PositionFilterProps> = ({
   );
 };
 
-export default PositionFilter;
+export default StatusFilter; 

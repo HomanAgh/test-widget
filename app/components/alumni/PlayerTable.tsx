@@ -35,6 +35,7 @@ interface ExtendedPlayerTableProps extends PlayerTableProps {
     professional: boolean;
   };
   selectedColumns?: ColumnOptions;
+  isPaginationEnabled?: boolean;
 }
 
 const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
@@ -65,6 +66,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     collegeTeams: true,
     proTeams: true,
   },
+  isPaginationEnabled = true,
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -237,379 +239,385 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   const totalPages = Math.max(1, Math.ceil(totalPlayers / pageSize));
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
-  const pagePlayers = processedPlayers.slice(startIndex, endIndex);
+  const pagePlayers = isPaginationEnabled 
+    ? processedPlayers.slice(startIndex, endIndex)
+    : processedPlayers;
   const isCustomColor =
     tableBgColor.toLowerCase() !== "#ffffff" &&
     tableBgColor.toLowerCase() !== "#fff";
 
   return (
     <div className="min-w-full overflow-y-auto">
-      <TableContainer>
-        <Table tableBgColor={tableBgColor} tableTextColor={tableTextColor}>
-          <TableHead bgColor={headerBgColor} textColor={headerTextColor}>
-            <TableRow>
-              <TableCell
-                isHeader
-                align="left"
-                className="font-bold cursor-pointer relative"
-                onClick={() => handleSort("nameGroup")}
-              >
-                {nameGroupLabel} {renderSortArrow("nameGroup")}
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowNameMenu((prev) => !prev);
-                  }}
-                  className="absolute ml-1 px-2 rounded bg-gray-200 text-black cursor-pointer text-sm"
-                >
-                  +
-                </span>
-                {showNameMenu && (
-                  <div
-                    className="absolute bg-white text-black border border-gray-300 rounded px-2 py-1 mt-1 z-10 text-sm"
-                    style={{ minWidth: "120px" }}
-                  >
-                    <div
-                      className="cursor-pointer hover:bg-gray-100 p-1 font-normal"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePickNameField("name");
-                      }}
-                    >
-                      Sort by Name
-                    </div>
-                    <div
-                      className="cursor-pointer hover:bg-gray-100 p-1 font-normal"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePickNameField("position");
-                      }}
-                    >
-                      Sort by Position
-                    </div>
-                    <div
-                      className="cursor-pointer hover:bg-gray-100 p-1 font-normal"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePickNameField("status");
-                      }}
-                    >
-                      Sort by Status
-                    </div>
-                  </div>
-                )}
-              </TableCell>
-
-              {/* Birth Year - conditionally render */}
-              {selectedColumns.birthYear && (
+      <div className={isPaginationEnabled ? "" : "h-[840px] overflow-y-auto"}>
+        <TableContainer>
+          <Table tableBgColor={tableBgColor} tableTextColor={tableTextColor}>
+            <TableHead bgColor={headerBgColor} textColor={headerTextColor} className={isPaginationEnabled ? "" : "sticky top-0 z-10"}>
+              <TableRow>
                 <TableCell
                   isHeader
-                  align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("birthYear")}
-                >
-                  BY {renderSortArrow("birthYear")}
-                </TableCell>
-              )}
-
-              {/* Conditionally render NHL DP column - moved to be right after birth year */}
-              {!isWomenLeague && selectedColumns.draftPick && (
-                <TableCell
-                  isHeader
-                  align="center"
+                  align="left"
                   className="font-bold cursor-pointer relative"
-                  onClick={() =>
-                    handleSort(
-                      sortColumn === "draftYear" ? "draftYear" : "draftPick"
-                    )
-                  }
+                  onClick={() => handleSort("nameGroup")}
                 >
-                  <span>
-                    {sortColumn === "draftYear" ? "NHL DY" : "NHL DP"}
-                  </span>{" "}
-                  {renderSortArrow(
-                    sortColumn === "draftYear" ? "draftYear" : "draftPick"
-                  )}
+                  {nameGroupLabel} {renderSortArrow("nameGroup")}
                   <span
                     onClick={(e) => {
                       e.stopPropagation();
-                      setShowDraftMenu((prev) => !prev);
+                      setShowNameMenu((prev) => !prev);
                     }}
                     className="absolute ml-1 px-2 rounded bg-gray-200 text-black cursor-pointer text-sm"
                   >
                     +
                   </span>
-                  {showDraftMenu && (
+                  {showNameMenu && (
                     <div
                       className="absolute bg-white text-black border border-gray-300 rounded px-2 py-1 mt-1 z-10 text-sm"
-                      style={{ minWidth: "150px", right: 0 }}
+                      style={{ minWidth: "120px" }}
                     >
                       <div
-                        className={`cursor-pointer hover:bg-gray-100 p-1 font-normal ${
-                          sortColumn === "draftPick" ? "bg-blue-50" : ""
-                        }`}
+                        className="cursor-pointer hover:bg-gray-100 p-1 font-normal"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSortColumn("draftPick");
-                          setSortDirection("asc");
-                          setShowDraftMenu(false);
+                          handlePickNameField("name");
                         }}
                       >
-                        Sort by Overall Pick
+                        Sort by Name
                       </div>
                       <div
-                        className={`cursor-pointer hover:bg-gray-100 p-1 font-normal ${
-                          sortColumn === "draftYear" ? "bg-blue-50" : ""
-                        }`}
+                        className="cursor-pointer hover:bg-gray-100 p-1 font-normal"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSortColumn("draftYear");
-                          setSortDirection("desc");
-                          setShowDraftMenu(false);
+                          handlePickNameField("position");
                         }}
                       >
-                        Sort by Draft Year
+                        Sort by Position
+                      </div>
+                      <div
+                        className="cursor-pointer hover:bg-gray-100 p-1 font-normal"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePickNameField("status");
+                        }}
+                      >
+                        Sort by Status
                       </div>
                     </div>
                   )}
                 </TableCell>
-              )}
 
-              {/* Conditionally render Tournament Team */}
-              {selectedColumns.tournamentTeam && (
-                <TableCell
-                  isHeader
-                  align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("tournamentTeam")}
-                >
-                  PLAYED FOR {renderSortArrow("tournamentTeam")}
-                </TableCell>
-              )}
-
-              {/* Conditionally render Tournament Season */}
-              {selectedColumns.tournamentSeason && (
-                <TableCell
-                  isHeader
-                  align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("tournamentSeason")}
-                >
-                  SEASON {renderSortArrow("tournamentSeason")}
-                </TableCell>
-              )}
-
-              {/* Conditionally render JUNIOR column */}
-              {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
-                <TableCell
-                  isHeader
-                  align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("junior")}
-                >
-                  JUNIOR {renderSortArrow("junior")}
-                </TableCell>
-              )}
-
-              {/* Conditionally render COLLEGE column */}
-              {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
-                <TableCell
-                  isHeader
-                  align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("college")}
-                >
-                  COLLEGE {renderSortArrow("college")}
-                </TableCell>
-              )}
-
-              {/* Conditionally render PRO column */}
-              {selectedLeagueCategories.professional && selectedColumns.proTeams && (
-                <TableCell
-                  isHeader
-                  align="center"
-                  className="font-bold cursor-pointer"
-                  onClick={() => handleSort("pro")}
-                >
-                  PRO {renderSortArrow("pro")}
-                </TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {pagePlayers.map((player, idx) => {
-              const rowBackground = isCustomColor
-                ? tableBgColor
-                : idx % 2 === 0
-                ? evenRowColor
-                : oddRowColor;
-
-              const juniorTeams = sortTeamsByLeagueRankThenName(
-                (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
-                  (t.leagueLevel ?? "").toLowerCase().includes("junior")
-                )
-              );
-              const collegeTeams = sortTeamsByLeagueRankThenName(
-                (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
-                  (t.leagueLevel ?? "").toLowerCase().includes("college")
-                )
-              );
-              const professionalTeams = sortTeamsByLeagueRankThenName(
-                (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
-                  (t.leagueLevel ?? "").toLowerCase().includes("professional")
-                )
-              );
-
-              const fullName = player?.name || "";
-              const [firstName, ...rest] = fullName.split(" ");
-              const lastName = rest.join(" ");
-              const pos = player?.position || null;
-              const stat = player?.status || null;
-
-              return (
-                <TableRow key={player.id} bgColor={rowBackground}>
-                  <TableCell align="center" style={{ color: nameTextColor }}>
-                    <Link
-                      href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
-                        player.name || ""
-                      )}`}
-                      target="_blank"
-                      style={{ color: nameTextColor }}
-                    >
-                      <span className="block font-medium text-left">
-                        {renderNameBlock(firstName, lastName, pos, stat)}
-                      </span>
-                    </Link>
+                {/* Birth Year - conditionally render */}
+                {selectedColumns.birthYear && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer"
+                    onClick={() => handleSort("birthYear")}
+                  >
+                    BY {renderSortArrow("birthYear")}
                   </TableCell>
+                )}
 
-                  {/* Birth Year - conditionally render */}
-                  {selectedColumns.birthYear && (
-                    <TableCell align="center">
-                      {player?.birthYear ?? "-"}
+                {/* Conditionally render NHL DP column - moved to be right after birth year */}
+                {!isWomenLeague && selectedColumns.draftPick && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer relative"
+                    onClick={() =>
+                      handleSort(
+                        sortColumn === "draftYear" ? "draftYear" : "draftPick"
+                      )
+                    }
+                  >
+                    <span>
+                      {sortColumn === "draftYear" ? "NHL DY" : "NHL DP"}
+                    </span>{" "}
+                    {renderSortArrow(
+                      sortColumn === "draftYear" ? "draftYear" : "draftPick"
+                    )}
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowDraftMenu((prev) => !prev);
+                      }}
+                      className="absolute ml-1 px-2 rounded bg-gray-200 text-black cursor-pointer text-sm"
+                    >
+                      +
+                    </span>
+                    {showDraftMenu && (
+                      <div
+                        className="absolute bg-white text-black border border-gray-300 rounded px-2 py-1 mt-1 z-10 text-sm"
+                        style={{ minWidth: "150px", right: 0 }}
+                      >
+                        <div
+                          className={`cursor-pointer hover:bg-gray-100 p-1 font-normal ${
+                            sortColumn === "draftPick" ? "bg-blue-50" : ""
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSortColumn("draftPick");
+                            setSortDirection("asc");
+                            setShowDraftMenu(false);
+                          }}
+                        >
+                          Sort by Overall Pick
+                        </div>
+                        <div
+                          className={`cursor-pointer hover:bg-gray-100 p-1 font-normal ${
+                            sortColumn === "draftYear" ? "bg-blue-50" : ""
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSortColumn("draftYear");
+                            setSortDirection("desc");
+                            setShowDraftMenu(false);
+                          }}
+                        >
+                          Sort by Draft Year
+                        </div>
+                      </div>
+                    )}
+                  </TableCell>
+                )}
+
+                {/* Conditionally render Tournament Team */}
+                {selectedColumns.tournamentTeam && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer"
+                    onClick={() => handleSort("tournamentTeam")}
+                  >
+                    PLAYED FOR {renderSortArrow("tournamentTeam")}
+                  </TableCell>
+                )}
+
+                {/* Conditionally render Tournament Season */}
+                {selectedColumns.tournamentSeason && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer"
+                    onClick={() => handleSort("tournamentSeason")}
+                  >
+                    SEASON {renderSortArrow("tournamentSeason")}
+                  </TableCell>
+                )}
+
+                {/* Conditionally render JUNIOR column */}
+                {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer"
+                    onClick={() => handleSort("junior")}
+                  >
+                    JUNIOR {renderSortArrow("junior")}
+                  </TableCell>
+                )}
+
+                {/* Conditionally render COLLEGE column */}
+                {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer"
+                    onClick={() => handleSort("college")}
+                  >
+                    COLLEGE {renderSortArrow("college")}
+                  </TableCell>
+                )}
+
+                {/* Conditionally render PRO column */}
+                {selectedLeagueCategories.professional && selectedColumns.proTeams && (
+                  <TableCell
+                    isHeader
+                    align="center"
+                    className="font-bold cursor-pointer"
+                    onClick={() => handleSort("pro")}
+                  >
+                    PRO {renderSortArrow("pro")}
+                  </TableCell>
+                )}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {pagePlayers.map((player, idx) => {
+                const rowBackground = isCustomColor
+                  ? tableBgColor
+                  : idx % 2 === 0
+                  ? evenRowColor
+                  : oddRowColor;
+
+                const juniorTeams = sortTeamsByLeagueRankThenName(
+                  (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                    (t.leagueLevel ?? "").toLowerCase().includes("junior")
+                  )
+                );
+                const collegeTeams = sortTeamsByLeagueRankThenName(
+                  (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                    (t.leagueLevel ?? "").toLowerCase().includes("college")
+                  )
+                );
+                const professionalTeams = sortTeamsByLeagueRankThenName(
+                  (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                    (t.leagueLevel ?? "").toLowerCase().includes("professional")
+                  )
+                );
+
+                const fullName = player?.name || "";
+                const [firstName, ...rest] = fullName.split(" ");
+                const lastName = rest.join(" ");
+                const pos = player?.position || null;
+                const stat = player?.status || null;
+
+                return (
+                  <TableRow key={player.id} bgColor={rowBackground}>
+                    <TableCell align="center" style={{ color: nameTextColor }}>
+                      <Link
+                        href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
+                          player.name || ""
+                        )}`}
+                        target="_blank"
+                        style={{ color: nameTextColor }}
+                      >
+                        <span className="block font-medium text-left">
+                          {renderNameBlock(firstName, lastName, pos, stat)}
+                        </span>
+                      </Link>
                     </TableCell>
-                  )}
 
-                  {/* NHL Draft Pick - conditionally render - moved to be after birth year */}
-                  {!isWomenLeague && selectedColumns.draftPick && (
-                    <TableCell align="center">
-                      {player?.draftPick && player?.draftPick.team ? (
-                        <div className="flex items-center justify-center gap-1">
-                          {player?.draftPick.team.logo && (
+                    {/* Birth Year - conditionally render */}
+                    {selectedColumns.birthYear && (
+                      <TableCell align="center">
+                        {player?.birthYear ?? "-"}
+                      </TableCell>
+                    )}
+
+                    {/* NHL Draft Pick - conditionally render - moved to be after birth year */}
+                    {!isWomenLeague && selectedColumns.draftPick && (
+                      <TableCell align="center">
+                        {player?.draftPick && player?.draftPick.team ? (
+                          <div className="flex items-center justify-center gap-1">
+                            {player?.draftPick.team.logo && (
+                              <Tooltip
+                                tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
+                              >
+                                <img
+                                  src={player?.draftPick.team.logo}
+                                  alt={player?.draftPick.team.name}
+                                  width={20}
+                                  height={20}
+                                />
+                              </Tooltip>
+                              
+                            )}
                             <Tooltip
                               tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
                             >
-                              <img
-                                src={player?.draftPick.team.logo}
-                                alt={player?.draftPick.team.name}
-                                width={20}
-                                height={20}
-                              />
+                              <span>
+                                {sortColumn === "draftYear" ? (
+                                  <span className="text-sm">
+                                    {player?.draftPick.year}
+                                  </span>
+                                ) : (
+                                  <span>{"#" + player?.draftPick.overall}</span>
+                                )}
+                              </span>
                             </Tooltip>
-                            
-                          )}
-                          <Tooltip
-                            tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
+                          </div>
+                        ) : (
+                          <span>-</span>
+                        )}
+                      </TableCell>
+                    )}
+
+                    {/* Conditionally render Tournament Team with link */}
+                    {selectedColumns.tournamentTeam && (
+                      <TableCell align="center">
+                        {player?.tournamentTeam?.id ? (
+                          <Link
+                            href={`https://www.eliteprospects.com/team/${player.tournamentTeam.id}/${encodeURIComponent(player.tournamentTeamName || "")}`}
+                            target="_blank"
+                            style={{ color: nameTextColor }}
                           >
-                            <span>
-                              {sortColumn === "draftYear" ? (
-                                <span className="text-sm">
-                                  {player?.draftPick.year}
-                                </span>
-                              ) : (
-                                <span>{"#" + player?.draftPick.overall}</span>
-                              )}
-                            </span>
-                          </Tooltip>
-                        </div>
-                      ) : (
-                        <span>-</span>
-                      )}
-                    </TableCell>
-                  )}
+                            {player?.tournamentTeamName || "-"}
+                          </Link>
+                        ) : (
+                          player?.tournamentTeamName || "-"
+                        )}
+                      </TableCell>
+                    )}
 
-                  {/* Conditionally render Tournament Team with link */}
-                  {selectedColumns.tournamentTeam && (
-                    <TableCell align="center">
-                      {player?.tournamentTeam?.id ? (
-                        <Link
-                          href={`https://www.eliteprospects.com/team/${player.tournamentTeam.id}/${encodeURIComponent(player.tournamentTeamName || "")}`}
-                          target="_blank"
-                          style={{ color: nameTextColor }}
-                        >
-                          {player?.tournamentTeamName || "-"}
-                        </Link>
-                      ) : (
-                        player?.tournamentTeamName || "-"
-                      )}
-                    </TableCell>
-                  )}
+                    {/* Conditionally render Tournament Season */}
+                    {selectedColumns.tournamentSeason && (
+                      <TableCell align="center">
+                        {player?.tournamentSeason || "-"}
+                      </TableCell>
+                    )}
 
-                  {/* Conditionally render Tournament Season */}
-                  {selectedColumns.tournamentSeason && (
-                    <TableCell align="center">
-                      {player?.tournamentSeason || "-"}
-                    </TableCell>
-                  )}
+                    {/* Junior Teams - conditionally render */}
+                    {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
+                      <TableCell align="center">
+                        {juniorTeams.length > 0 ? (
+                          <ToggleTeamList
+                            teams={juniorTeams.slice(0, 3)}
+                            linkColor={nameTextColor}
+                          />
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                    )}
 
-                  {/* Junior Teams - conditionally render */}
-                  {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
-                    <TableCell align="center">
-                      {juniorTeams.length > 0 ? (
-                        <ToggleTeamList
-                          teams={juniorTeams.slice(0, 3)}
-                          linkColor={nameTextColor}
-                        />
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                  )}
+                    {/* College Teams - conditionally render */}
+                    {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
+                      <TableCell align="center">
+                        {collegeTeams.length > 0 ? (
+                          <ToggleTeamList
+                            teams={collegeTeams.slice(0, 3)}
+                            linkColor={nameTextColor}
+                          />
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                    )}
 
-                  {/* College Teams - conditionally render */}
-                  {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
-                    <TableCell align="center">
-                      {collegeTeams.length > 0 ? (
-                        <ToggleTeamList
-                          teams={collegeTeams.slice(0, 3)}
-                          linkColor={nameTextColor}
-                        />
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                  )}
-
-                  {/* Pro Teams - conditionally render */}
-                  {selectedLeagueCategories.professional && selectedColumns.proTeams && (
-                    <TableCell align="center">
-                      {professionalTeams.length > 0 ? (
-                        <ToggleTeamList
-                          teams={professionalTeams.slice(0, 3)}
-                          linkColor={nameTextColor}
-                        />
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                  )}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                    {/* Pro Teams - conditionally render */}
+                    {selectedLeagueCategories.professional && selectedColumns.proTeams && (
+                      <TableCell align="center">
+                        {professionalTeams.length > 0 ? (
+                          <ToggleTeamList
+                            teams={professionalTeams.slice(0, 3)}
+                            linkColor={nameTextColor}
+                          />
+                        ) : (
+                          "-"
+                        )}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
 
       {/* Pagination controls */}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={(page) =>
-          setPages((prev) =>
-            isWomenLeague ? { ...prev, women: page } : { ...prev, men: page }
-          )
+      {isPaginationEnabled && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) =>
+            setPages((prev) =>
+              isWomenLeague ? { ...prev, women: page } : { ...prev, men: page }
+            )
         }
-      />
+        />
+      )}
 
       <div className="flex flex-col items-center justify-center mt-4">
         <PoweredBy />

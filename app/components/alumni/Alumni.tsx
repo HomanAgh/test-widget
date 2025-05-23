@@ -12,6 +12,7 @@ interface AlumniProps {
   selectedTeams?: SelectedTeam[];
   selectedLeagues?: string[];
   selectedTournaments?: string[];
+  selectedStatus?: string[];
   customColors?: {
     backgroundColor: string;
     textColor: string;
@@ -25,11 +26,13 @@ interface AlumniProps {
     college: boolean;
     professional: boolean;
   };
+  isPaginationEnabled?: boolean;
 }
 
 const Alumni: React.FC<AlumniProps> = ({
   selectedTeams = [],
   selectedLeagues = [],
+  selectedStatus = [],
   customColors = {
     backgroundColor: "#052D41",
     textColor: "#000000",
@@ -43,6 +46,7 @@ const Alumni: React.FC<AlumniProps> = ({
     college: true,
     professional: true,
   },
+  isPaginationEnabled = true,
 }) => {
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
     "men"
@@ -67,12 +71,22 @@ const Alumni: React.FC<AlumniProps> = ({
   );
 
   const filteredPlayers = useMemo(() => {
-    return results.filter((player) =>
+    let players = results.filter((player) =>
       activeGenderTab === "men"
         ? player.gender === "male"
         : player.gender === "female"
     );
-  }, [results, activeGenderTab]);
+
+    // Apply status filter if any status is selected
+    if (selectedStatus.length > 0) {
+      players = players.filter((player) => {
+        const playerStatus = player.status?.toLowerCase() || "unknown";
+        return selectedStatus.some(status => status.toLowerCase() === playerStatus);
+      });
+    }
+
+    return players;
+  }, [results, activeGenderTab, selectedStatus]);
 
   const searchedPlayers = useMemo(() => {
     if (!searchQuery) return filteredPlayers;
@@ -142,7 +156,7 @@ const Alumni: React.FC<AlumniProps> = ({
         isWomenLeague={activeGenderTab === "women"}
         resetPagination={resetPagination}
         selectedLeagueCategories={selectedLeagueCategories}
-
+        isPaginationEnabled={isPaginationEnabled}
       />
     </div>
   );
