@@ -110,12 +110,7 @@ const WhereAreTheyNow: React.FC<WhereAreTheyNowProps> = ({
     setResetPagination(Date.now());
   };
 
-  // Count active players for summary
-  const activePlayers = useMemo(() => {
-    return searchedPlayers.filter(player => 
-      player.currentTeams && player.currentTeams.length > 0
-    );
-  }, [searchedPlayers]);
+
 
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">

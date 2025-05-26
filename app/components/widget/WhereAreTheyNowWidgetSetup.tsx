@@ -207,7 +207,7 @@ const WhereAreTheyNowWidgetSetup: React.FC = () => {
   return (
     <div>
       <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2">About "Where Are They Now"</h2>
+        <h2 className="text-lg font-semibold mb-2">About &ldquo;Where Are They Now&rdquo;</h2>
         <p className="text-sm text-gray-700">
           This widget shows current teams and leagues where alumni players are actively playing. 
           Unlike the Alumni widget which shows all historical teams, this focuses only on current active seasons.

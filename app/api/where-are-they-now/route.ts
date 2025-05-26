@@ -237,7 +237,7 @@ async function fetchAndMergeCurrentPlayerStats(
 
     // Process all items - focus on current teams only
     let activeSeasonCount = 0;
-    let totalItemsCount = items.length;
+    const totalItemsCount = items.length;
     
     for (const item of items) {
       // IMPORTANT: Filter for active seasons only - API doesn't support URL filtering
