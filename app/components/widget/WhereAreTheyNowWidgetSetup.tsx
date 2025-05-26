@@ -16,6 +16,7 @@ import {
   ColorPreferences,
   DEFAULT_COLORS,
 } from "@/app/utils/organizationColors";
+import { determineSelectedLeagueCategories } from "@/app/utils/leagueCategories";
 
 const DEFAULT_IFRAME_HEIGHT = 1300;
 
@@ -119,44 +120,8 @@ const WhereAreTheyNowWidgetSetup: React.FC = () => {
 
   // Determine which league categories are selected
   const selectedLeagueCategories = useMemo(() => {
-    const categories = {
-      junior: false,
-      college: false,
-      professional: false,
-    };
-
-    // Check each selected league against available leagues to determine its category
-    selectedLeagues.forEach((selectedSlug) => {
-      const allLeagues = [
-        ...customLeagues,
-        ...customJunLeagues,
-        ...customCollegeLeagues,
-      ];
-      const league = allLeagues.find(
-        (l) => l.slug.toLowerCase() === selectedSlug
-      );
-
-      if (league) {
-        if (
-          customJunLeagues.some((l) => l.slug.toLowerCase() === selectedSlug)
-        ) {
-          categories.junior = true;
-        } else if (
-          customCollegeLeagues.some(
-            (l) => l.slug.toLowerCase() === selectedSlug
-          )
-        ) {
-          categories.college = true;
-        } else if (
-          customLeagues.some((l) => l.slug.toLowerCase() === selectedSlug)
-        ) {
-          categories.professional = true;
-        }
-      }
-    });
-
-    return categories;
-  }, [selectedLeagues, customLeagues, customJunLeagues, customCollegeLeagues]);
+    return determineSelectedLeagueCategories(selectedLeagues);
+  }, [selectedLeagues]);
 
   const youthName =
     selectedTeams.length > 0 ? selectedTeams[0].name : "CHICAGO MISSION U16";

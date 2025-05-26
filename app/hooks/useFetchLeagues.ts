@@ -34,7 +34,7 @@ export const useFetchLeagues = () => {
         //Womens Leagues
         'pwhl-w', 'sdhl-w', 'nwhl-ca-w', 'phf-w',
         //Mens Leagues
-        'nhl', 'shl', 'ahl', 'khl','nl', 'liiga', 'czechia', 'del', 'echl', 'icehl', 'slovakia', 'hockeyallsvenskan'
+        'nhl', 'shl', 'ahl', 'khl','nl', 'liiga', 'czechia', 'del', 'echl', 'icehl', 'slovakia', 'hockeyallsvenskan','alpshl','norway','del2','denmark', 'hockeyettan', 'sl', 'mestis', 'eihl', 'ligue-magnus'
         ];
         setProLeagues(proData.leagues || []);
         setCustomLeagues(

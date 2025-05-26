@@ -1,6 +1,7 @@
 import React from "react";
 import Alumni from "@/app/components/alumni/Alumni";
 import ClientWrapper from "@/app/components/iframe/IframeClientWrapper";
+import { determineSelectedLeagueCategories } from "@/app/utils/leagueCategories";
 
 interface PageProps {
   searchParams: Promise<{
@@ -50,6 +51,9 @@ const EmbedAlumni = async ({ searchParams }: PageProps) => {
     league: selectedLeagues[0] || "",
   }));
 
+  // Determine which league categories are selected
+  const selectedLeagueCategories = determineSelectedLeagueCategories(selectedLeagues);
+
   return (
     <ClientWrapper>
       <div style={{ overflow: "auto" }}>
@@ -64,6 +68,7 @@ const EmbedAlumni = async ({ searchParams }: PageProps) => {
             nameTextColor
           }}
           includeYouth={true}
+          selectedLeagueCategories={selectedLeagueCategories}
           isPaginationEnabled={isPaginationEnabled}
           isLeagueGroupingEnabled={isLeagueGroupingEnabled}
           subHeaderColors={{
