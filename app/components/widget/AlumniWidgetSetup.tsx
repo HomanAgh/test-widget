@@ -60,8 +60,13 @@ const AlumniWidgetSetup: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPaginationEnabled, setIsPaginationEnabled] = useState<boolean>(true);
+  const [isLeagueGroupingEnabled, setIsLeagueGroupingEnabled] = useState<boolean>(false);
   const [customColors, setCustomColors] = useState<ColorPreferences>({
     ...DEFAULT_COLORS,
+  });
+  const [subHeaderColors, setSubHeaderColors] = useState({
+    backgroundColor: "#f8f9fa",
+    textColor: "#000000",
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
   const supabase = createClient();
@@ -177,9 +182,12 @@ const AlumniWidgetSetup: React.FC = () => {
       `&nameTextColor=${encodeURIComponent(customColors.nameTextColor)}` +
       `&includeYouth=true` +
       `&isPaginationEnabled=${encodeURIComponent(isPaginationEnabled)}` +
+      `&isLeagueGroupingEnabled=${encodeURIComponent(isLeagueGroupingEnabled)}` +
+      `&subHeaderBackgroundColor=${encodeURIComponent(subHeaderColors.backgroundColor)}` +
+      `&subHeaderTextColor=${encodeURIComponent(subHeaderColors.textColor)}` +
       `&_t=${Date.now()}`
     );
-  }, [selectedTeams, selectedLeagues, selectedStatus, customColors, youthName, isPaginationEnabled]);
+  }, [selectedTeams, selectedLeagues, selectedStatus, customColors, youthName, isPaginationEnabled, isLeagueGroupingEnabled, subHeaderColors]);
 
   const sourceLinks = useMemo(() => {
     if (selectedTeams.length === 0) return "";
@@ -229,6 +237,8 @@ const AlumniWidgetSetup: React.FC = () => {
         <SettingsFilter
           isPaginationEnabled={isPaginationEnabled}
           onPaginationToggle={setIsPaginationEnabled}
+          isLeagueGroupingEnabled={isLeagueGroupingEnabled}
+          onLeagueGroupingToggle={setIsLeagueGroupingEnabled}
           customColors={customColors}
         />
       </div>
@@ -240,6 +250,14 @@ const AlumniWidgetSetup: React.FC = () => {
           height={iframeHeight}
           onHeightChange={setIframeHeight}
           defaultHeight={DEFAULT_IFRAME_HEIGHT}
+          subHeaderColors={subHeaderColors}
+          setSubHeaderColors={setSubHeaderColors}
+          isPaginationEnabled={isPaginationEnabled}
+          isLeagueGroupingEnabled={isLeagueGroupingEnabled}
+          onResetSettings={() => {
+            setIsPaginationEnabled(true);
+            setIsLeagueGroupingEnabled(false);
+          }}
         />
       </div>
 
@@ -253,6 +271,8 @@ const AlumniWidgetSetup: React.FC = () => {
             includeYouth={true}
             selectedLeagueCategories={selectedLeagueCategories}
             isPaginationEnabled={isPaginationEnabled}
+            isLeagueGroupingEnabled={isLeagueGroupingEnabled}
+            subHeaderColors={subHeaderColors}
           />
         </div>
       )}

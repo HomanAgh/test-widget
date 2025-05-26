@@ -15,6 +15,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  SubHeaderCell,
   PaginationControls,
   PoweredBy,
 } from "@/app/components/common/style";
@@ -36,6 +37,11 @@ interface ExtendedPlayerTableProps extends PlayerTableProps {
   };
   selectedColumns?: ColumnOptions;
   isPaginationEnabled?: boolean;
+  isLeagueGroupingEnabled?: boolean;
+  subHeaderColors?: {
+    backgroundColor: string;
+    textColor: string;
+  };
 }
 
 const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
@@ -67,6 +73,11 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     proTeams: true,
   },
   isPaginationEnabled = true,
+  isLeagueGroupingEnabled = false,
+  subHeaderColors = {
+    backgroundColor: "#f8f9fa",
+    textColor: "#000000",
+  },
 }) => {
   const [sortColumn, setSortColumn] = React.useState<
     | "name"
@@ -234,6 +245,111 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
       filterAndSortPlayers(players, genderFilter, sortColumn, sortDirection),
     [players, genderFilter, sortColumn, sortDirection]
   );
+
+  // League grouping logic
+  const getPlayerLeagueGroup = (player: any) => {
+    if (!player.teams || player.teams.length === 0) return "Other";
+    
+    // Get the highest priority league from player's teams
+    const leagueSlugs = player.teams.map((team: any) => team.leagueSlug?.toLowerCase()).filter(Boolean);
+    
+    // Priority order: NHL > AHL > North America > Europe > Other
+    if (leagueSlugs.includes("nhl")) return "NHL";
+    if (leagueSlugs.includes("ahl")) return "AHL";
+    
+    // North American leagues (excluding NHL/AHL)
+    const northAmericanLeagues = ["ushl", "ohl", "whl", "qmjhl", "ncaa", "echl", "usports", "acac", "acha", "cchl"];
+    if (leagueSlugs.some((slug: string) => northAmericanLeagues.includes(slug))) return "North America";
+    
+    // European leagues
+    const europeanLeagues = ["shl", "khl", "nl", "liiga", "czechia", "del", "icehl", "slovakia", "hockeyallsvenskan", "j20-nationell", "mhl"];
+    if (leagueSlugs.some((slug: string) => europeanLeagues.includes(slug))) return "Europe";
+    
+    return "Other";
+  };
+
+  // Function to get league group icon
+  const getLeagueGroupIcon = (groupName: string) => {
+    switch (groupName) {
+      case "NHL":
+        return (
+          <img 
+            src="https://files.eliteprospects.com/layout/league-logos/6bd23dcd-5599-4699-80d5-607e91eedafc.svg" 
+            alt="NHL" 
+            width={28} 
+            height={28}
+            className="object-contain"
+          />
+        );
+      case "AHL":
+        return (
+          <img 
+            src="https://files.eliteprospects.com/layout/league-logos/365560fe-9f9c-4d3f-a137-724d840867cd.svg" 
+            alt="AHL" 
+            width={28} 
+            height={28}
+            className="object-contain"
+          />
+        );
+      case "North America":
+        return (
+          <div className="flex gap-1">
+            <img 
+              src="https://flagcdn.com/w20/us.png" 
+              alt="USA" 
+              width={24} 
+              height={18}
+              className="object-contain"
+            />
+            <img 
+              src="https://flagcdn.com/w20/ca.png" 
+              alt="Canada" 
+              width={24} 
+              height={18}
+              className="object-contain"
+            />
+          </div>
+        );
+      case "Europe":
+        return (
+          <img 
+            src="https://flagcdn.com/w20/eu.png" 
+            alt="Europe" 
+            width={24} 
+            height={18}
+            className="object-contain"
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  const groupedPlayers = React.useMemo(() => {
+    if (!isLeagueGroupingEnabled) return { "All Players": processedPlayers };
+    
+    const groups: { [key: string]: any[] } = {
+      "NHL": [],
+      "AHL": [],
+      "North America": [],
+      "Europe": [],
+      "Other": []
+    };
+    
+    processedPlayers.forEach(player => {
+      const group = getPlayerLeagueGroup(player);
+      groups[group].push(player);
+    });
+    
+    // Remove empty groups
+    Object.keys(groups).forEach(key => {
+      if (groups[key].length === 0) {
+        delete groups[key];
+      }
+    });
+    
+    return groups;
+  }, [processedPlayers, isLeagueGroupingEnabled]);
 
   const totalPlayers = processedPlayers.length;
   const totalPages = Math.max(1, Math.ceil(totalPlayers / pageSize));
@@ -443,36 +559,221 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
             </TableHead>
 
             <TableBody>
-              {pagePlayers.map((player, idx) => {
-                const rowBackground = isCustomColor
-                  ? tableBgColor
-                  : idx % 2 === 0
-                  ? evenRowColor
-                  : oddRowColor;
+              {isLeagueGroupingEnabled ? (
+                Object.entries(groupedPlayers).map(([groupName, groupPlayers]) => (
+                  <React.Fragment key={groupName}>
+                    {/* Group Header Row */}
+                    <TableRow>
+                      <SubHeaderCell 
+                        colSpan={
+                          (selectedColumns.birthYear ? 1 : 0) +
+                          (!isWomenLeague && selectedColumns.draftPick ? 1 : 0) +
+                          (selectedColumns.tournamentTeam ? 1 : 0) +
+                          (selectedColumns.tournamentSeason ? 1 : 0) +
+                          (selectedLeagueCategories.junior && selectedColumns.juniorTeams ? 1 : 0) +
+                          (selectedLeagueCategories.college && selectedColumns.collegeTeams ? 1 : 0) +
+                          (selectedLeagueCategories.professional && selectedColumns.proTeams ? 1 : 0) + 1
+                        }
+                        align="left"
+                        bgColor={subHeaderColors.backgroundColor}
+                        textColor={subHeaderColors.textColor}
+                        icon={getLeagueGroupIcon(groupName)}
+                      >
+                        {groupName} ({groupPlayers.length} player{groupPlayers.length !== 1 ? 's' : ''})
+                      </SubHeaderCell>
+                    </TableRow>
+                    {/* Group Players */}
+                    {groupPlayers.map((player, idx) => {
+                      const rowBackground = isCustomColor
+                        ? tableBgColor
+                        : idx % 2 === 0
+                        ? evenRowColor
+                        : oddRowColor;
 
-                const juniorTeams = sortTeamsByLeagueRankThenName(
-                  (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
-                    (t.leagueLevel ?? "").toLowerCase().includes("junior")
-                  )
-                );
-                const collegeTeams = sortTeamsByLeagueRankThenName(
-                  (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
-                    (t.leagueLevel ?? "").toLowerCase().includes("college")
-                  )
-                );
-                const professionalTeams = sortTeamsByLeagueRankThenName(
-                  (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
-                    (t.leagueLevel ?? "").toLowerCase().includes("professional")
-                  )
-                );
+                      const juniorTeams = sortTeamsByLeagueRankThenName(
+                        (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                          (t.leagueLevel ?? "").toLowerCase().includes("junior")
+                        )
+                      );
+                      const collegeTeams = sortTeamsByLeagueRankThenName(
+                        (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                          (t.leagueLevel ?? "").toLowerCase().includes("college")
+                        )
+                      );
+                      const professionalTeams = sortTeamsByLeagueRankThenName(
+                        (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                          (t.leagueLevel ?? "").toLowerCase().includes("professional")
+                        )
+                      );
 
-                const fullName = player?.name || "";
-                const [firstName, ...rest] = fullName.split(" ");
-                const lastName = rest.join(" ");
-                const pos = player?.position || null;
-                const stat = player?.status || null;
+                      const fullName = player?.name || "";
+                      const [firstName, ...rest] = fullName.split(" ");
+                      const lastName = rest.join(" ");
+                      const pos = player?.position || null;
+                      const stat = player?.status || null;
 
-                return (
+                      return (
+                        <TableRow key={`${groupName}-${player.id}`} bgColor={rowBackground}>
+                          <TableCell align="center" style={{ color: nameTextColor }}>
+                            <Link
+                              href={`https://www.eliteprospects.com/player/${player.id}/${encodeURIComponent(
+                                player.name || ""
+                              )}`}
+                              target="_blank"
+                              style={{ color: nameTextColor }}
+                            >
+                              <span className="block font-medium text-left">
+                                {renderNameBlock(firstName, lastName, pos, stat)}
+                              </span>
+                            </Link>
+                          </TableCell>
+
+                          {/* Birth Year - conditionally render */}
+                          {selectedColumns.birthYear && (
+                            <TableCell align="center">
+                              {player?.birthYear ?? "-"}
+                            </TableCell>
+                          )}
+
+                          {/* NHL Draft Pick - conditionally render - moved to be after birth year */}
+                          {!isWomenLeague && selectedColumns.draftPick && (
+                            <TableCell align="center">
+                              {player?.draftPick && player?.draftPick.team ? (
+                                <div className="flex items-center justify-center gap-1">
+                                  {player?.draftPick.team.logo && (
+                                    <Tooltip
+                                      tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
+                                    >
+                                      <img
+                                        src={player?.draftPick.team.logo}
+                                        alt={player?.draftPick.team.name}
+                                        width={20}
+                                        height={20}
+                                      />
+                                    </Tooltip>
+                                    
+                                  )}
+                                  <Tooltip
+                                    tooltip={`${player?.draftPick.year} NHL Draft\nRound ${player?.draftPick.round}, #${player?.draftPick.overall} overall\nby ${player?.draftPick.team.name}`}
+                                  >
+                                    <span>
+                                      {sortColumn === "draftYear" ? (
+                                        <span className="text-sm">
+                                          {player?.draftPick.year}
+                                        </span>
+                                      ) : (
+                                        <span>{"#" + player?.draftPick.overall}</span>
+                                      )}
+                                    </span>
+                                  </Tooltip>
+                                </div>
+                              ) : (
+                                <span>-</span>
+                              )}
+                            </TableCell>
+                          )}
+
+                          {/* Conditionally render Tournament Team with link */}
+                          {selectedColumns.tournamentTeam && (
+                            <TableCell align="center">
+                              {player?.tournamentTeam?.id ? (
+                                <Link
+                                  href={`https://www.eliteprospects.com/team/${player.tournamentTeam.id}/${encodeURIComponent(player.tournamentTeamName || "")}`}
+                                  target="_blank"
+                                  style={{ color: nameTextColor }}
+                                >
+                                  {player?.tournamentTeamName || "-"}
+                                </Link>
+                              ) : (
+                                player?.tournamentTeamName || "-"
+                              )}
+                            </TableCell>
+                          )}
+
+                          {/* Conditionally render Tournament Season */}
+                          {selectedColumns.tournamentSeason && (
+                            <TableCell align="center">
+                              {player?.tournamentSeason || "-"}
+                            </TableCell>
+                          )}
+
+                          {/* Junior Teams - conditionally render */}
+                          {selectedLeagueCategories.junior && selectedColumns.juniorTeams && (
+                            <TableCell align="center">
+                              {juniorTeams.length > 0 ? (
+                                <ToggleTeamList
+                                  teams={juniorTeams.slice(0, 3)}
+                                  linkColor={nameTextColor}
+                                />
+                              ) : (
+                                "-"
+                              )}
+                            </TableCell>
+                          )}
+
+                          {/* College Teams - conditionally render */}
+                          {selectedLeagueCategories.college && selectedColumns.collegeTeams && (
+                            <TableCell align="center">
+                              {collegeTeams.length > 0 ? (
+                                <ToggleTeamList
+                                  teams={collegeTeams.slice(0, 3)}
+                                  linkColor={nameTextColor}
+                                />
+                              ) : (
+                                "-"
+                              )}
+                            </TableCell>
+                          )}
+
+                          {/* Pro Teams - conditionally render */}
+                          {selectedLeagueCategories.professional && selectedColumns.proTeams && (
+                            <TableCell align="center">
+                              {professionalTeams.length > 0 ? (
+                                <ToggleTeamList
+                                  teams={professionalTeams.slice(0, 3)}
+                                  linkColor={nameTextColor}
+                                />
+                              ) : (
+                                "-"
+                              )}
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      );
+                    })}
+                  </React.Fragment>
+                ))
+              ) : (
+                pagePlayers.map((player, idx) => {
+                  const rowBackground = isCustomColor
+                    ? tableBgColor
+                    : idx % 2 === 0
+                    ? evenRowColor
+                    : oddRowColor;
+
+                  const juniorTeams = sortTeamsByLeagueRankThenName(
+                    (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                      (t.leagueLevel ?? "").toLowerCase().includes("junior")
+                    )
+                  );
+                  const collegeTeams = sortTeamsByLeagueRankThenName(
+                    (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                      (t.leagueLevel ?? "").toLowerCase().includes("college")
+                    )
+                  );
+                  const professionalTeams = sortTeamsByLeagueRankThenName(
+                    (player.teams ?? []).filter((t: { leagueLevel?: string }) =>
+                      (t.leagueLevel ?? "").toLowerCase().includes("professional")
+                    )
+                  );
+
+                  const fullName = player?.name || "";
+                  const [firstName, ...rest] = fullName.split(" ");
+                  const lastName = rest.join(" ");
+                  const pos = player?.position || null;
+                  const stat = player?.status || null;
+
+                  return (
                   <TableRow key={player.id} bgColor={rowBackground}>
                     <TableCell align="center" style={{ color: nameTextColor }}>
                       <Link
@@ -600,7 +901,8 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
                     )}
                   </TableRow>
                 );
-              })}
+                })
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -615,7 +917,7 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
             setPages((prev) =>
               isWomenLeague ? { ...prev, women: page } : { ...prev, men: page }
             )
-        }
+          }
         />
       )}
 

@@ -27,6 +27,11 @@ interface AlumniProps {
     professional: boolean;
   };
   isPaginationEnabled?: boolean;
+  isLeagueGroupingEnabled?: boolean;
+  subHeaderColors?: {
+    backgroundColor: string;
+    textColor: string;
+  };
 }
 
 const Alumni: React.FC<AlumniProps> = ({
@@ -47,6 +52,11 @@ const Alumni: React.FC<AlumniProps> = ({
     professional: true,
   },
   isPaginationEnabled = true,
+  isLeagueGroupingEnabled = false,
+  subHeaderColors = {
+    backgroundColor: "#f8f9fa",
+    textColor: "#000000",
+  },
 }) => {
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
     "men"
@@ -157,6 +167,8 @@ const Alumni: React.FC<AlumniProps> = ({
         resetPagination={resetPagination}
         selectedLeagueCategories={selectedLeagueCategories}
         isPaginationEnabled={isPaginationEnabled}
+        isLeagueGroupingEnabled={isLeagueGroupingEnabled}
+        subHeaderColors={subHeaderColors}
       />
     </div>
   );

@@ -14,6 +14,9 @@ interface PageProps {
     nameTextColor?: string;
     teams?: string;
     isPaginationEnabled?: string;
+    isLeagueGroupingEnabled?: string;
+    subHeaderBackgroundColor?: string;
+    subHeaderTextColor?: string;
   }>;
 }
 
@@ -29,6 +32,9 @@ const EmbedAlumni = async ({ searchParams }: PageProps) => {
   const nameTextColor = params.nameTextColor || "#0D73A6";
   const youthTeam = params.teams || "";
   const isPaginationEnabled = params.isPaginationEnabled !== "false";
+  const isLeagueGroupingEnabled = params.isLeagueGroupingEnabled === "true";
+  const subHeaderBackgroundColor = params.subHeaderBackgroundColor || "#f8f9fa";
+  const subHeaderTextColor = params.subHeaderTextColor || "#000000";
 
   const teamIds = teamIdsStr
     .split(",")
@@ -67,6 +73,11 @@ const EmbedAlumni = async ({ searchParams }: PageProps) => {
           }}
           includeYouth={true}
           isPaginationEnabled={isPaginationEnabled}
+          isLeagueGroupingEnabled={isLeagueGroupingEnabled}
+          subHeaderColors={{
+            backgroundColor: subHeaderBackgroundColor,
+            textColor: subHeaderTextColor,
+          }}
         />
       </div>
     </ClientWrapper>

@@ -34,6 +34,21 @@ interface HexColorsProps {
   height?: number;
   onHeightChange?: (height: number) => void;
   defaultHeight?: number;
+  // New props for subheader colors
+  subHeaderColors?: {
+    backgroundColor: string;
+    textColor: string;
+  };
+  setSubHeaderColors?: Dispatch<
+    SetStateAction<{
+      backgroundColor: string;
+      textColor: string;
+    }>
+  >;
+  // New props for settings display
+  isPaginationEnabled?: boolean;
+  isLeagueGroupingEnabled?: boolean;
+  onResetSettings?: () => void;
 }
 
 // Default colors
@@ -216,6 +231,73 @@ const ColorPickerButton = ({
   );
 };
 
+const SettingsDisplay = ({
+  isPaginationEnabled,
+  isLeagueGroupingEnabled,
+  onResetSettings,
+}: {
+  isPaginationEnabled?: boolean;
+  isLeagueGroupingEnabled?: boolean;
+  onResetSettings?: () => void;
+}) => {
+  if (isPaginationEnabled === undefined && isLeagueGroupingEnabled === undefined) {
+    return null;
+  }
+
+  // Check if settings have been changed from defaults (pagination: true, league grouping: false)
+  const settingsChanged = isPaginationEnabled === false || isLeagueGroupingEnabled === true;
+
+  return (
+    <div className="mt-2 p-2 rounded text-[#052D41] font-montserrat text-lg">
+      <strong>Selected Settings</strong>
+      <div className="flex flex-wrap gap-2 mt-3 mb-2">
+        {isPaginationEnabled !== undefined && (
+          <span className="inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]">
+            <div
+              className={`w-2 h-2 rounded-full mr-2 ${
+                isPaginationEnabled ? "bg-green-500" : "bg-blue-500"
+              }`}
+            />
+            {isPaginationEnabled ? "Pagination Enabled" : "Scroll Enabled"}
+          </span>
+        )}
+        {isLeagueGroupingEnabled !== undefined && isLeagueGroupingEnabled && (
+          <span className="inline-flex items-center bg-white text-[#0D73A6] px-2 py-1 text-sm font-sans font-semibold border-[1.5px] border-[#0D73A6] rounded-[36px]">
+            <div className="w-2 h-2 rounded-full bg-purple-500 mr-2" />
+            League Grouping Enabled
+          </span>
+        )}
+      </div>
+      
+      {/* Reset Settings Button */}
+      {onResetSettings && (
+        <button
+          onClick={() => settingsChanged && onResetSettings()}
+          className={`mt-4 rounded uppercase text-sm tracking-wider text-left ${
+            settingsChanged ? "cursor-pointer" : "cursor-not-allowed"
+          }`}
+          style={{
+            fontFamily: "Montserrat, sans-serif",
+            fontSize: "12px",
+            fontWeight: 700,
+            lineHeight: "24px",
+            backgroundColor: "transparent",
+            color: settingsChanged ? "#0B9D52" : "#9CA3AF",
+            border: "none",
+            letterSpacing: "0.05em",
+            display: "block",
+            textAlign: "left",
+            padding: "0",
+            marginBottom: "2rem",
+          }}
+        >
+          RESET TO DEFAULT SETTINGS
+        </button>
+      )}
+    </div>
+  );
+};
+
 const HeightControl = ({
   height,
   onChange,
@@ -291,13 +373,28 @@ const HexColors: React.FC<HexColorsProps> = ({
   height,
   onHeightChange,
   defaultHeight,
+  subHeaderColors,
+  setSubHeaderColors,
+  isPaginationEnabled,
+  isLeagueGroupingEnabled,
+  onResetSettings,
 }) => {
   // Check if any colors have been changed from defaults
   const hasChanges = customColors ? colorsChanged(customColors) : false;
+  
+  // Check if subheader colors have been changed from defaults
+  const subHeaderDefaults = { backgroundColor: "#f8f9fa", textColor: "#000000" };
+  const subHeaderChanged = subHeaderColors ? 
+    (subHeaderColors.backgroundColor !== subHeaderDefaults.backgroundColor || 
+     subHeaderColors.textColor !== subHeaderDefaults.textColor) : false;
+  
   const heightChanged =
     height !== undefined &&
     defaultHeight !== undefined &&
     height !== defaultHeight;
+    
+  // Combined check for any changes
+  const anyChanges = hasChanges || subHeaderChanged;
 
   // If using the individual color picker mode
   if (label && value !== undefined && onChange) {
@@ -319,6 +416,13 @@ const HexColors: React.FC<HexColorsProps> = ({
   if (customColors && setCustomColors) {
     return (
       <div className="w-full" style={{ fontFamily: "Montserrat" }}>
+        {/* Settings Display */}
+        <SettingsDisplay 
+          isPaginationEnabled={isPaginationEnabled}
+          isLeagueGroupingEnabled={isLeagueGroupingEnabled}
+          onResetSettings={onResetSettings}
+        />
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 border-t border-gray-200 pt-6">
           <ColorPickerButton
             label="Header background"
@@ -382,11 +486,38 @@ const HexColors: React.FC<HexColorsProps> = ({
             )}
         </div>
 
+        {/* Subheader Colors - only show when league grouping is enabled */}
+        {isLeagueGroupingEnabled && subHeaderColors && setSubHeaderColors && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8">
+            <ColorPickerButton
+              label="Subheader background"
+              color={subHeaderColors.backgroundColor}
+              defaultColor="#f8f9fa"
+              onChange={(color) => setSubHeaderColors(prev => ({ ...prev, backgroundColor: color }))}
+            />
+            <ColorPickerButton
+              label="Subheader text"
+              color={subHeaderColors.textColor}
+              defaultColor="#000000"
+              onChange={(color) => setSubHeaderColors(prev => ({ ...prev, textColor: color }))}
+            />
+            {/* Empty space for potential third color picker */}
+            <div></div>
+          </div>
+        )}
+
         <div className="mt-6 mb-6">
           <button
-            onClick={() => hasChanges && setCustomColors(DEFAULT_COLORS)}
+            onClick={() => {
+              if (anyChanges) {
+                setCustomColors(DEFAULT_COLORS);
+                if (setSubHeaderColors) {
+                  setSubHeaderColors(subHeaderDefaults);
+                }
+              }
+            }}
             className={`px-4 py-2 rounded uppercase text-sm tracking-wider text-left ${
-              hasChanges ? "cursor-pointer" : "cursor-not-allowed"
+              anyChanges ? "cursor-pointer" : "cursor-not-allowed"
             }`}
             style={{
               fontFamily: "Montserrat",
@@ -394,7 +525,7 @@ const HexColors: React.FC<HexColorsProps> = ({
               fontWeight: 700,
               lineHeight: "24px",
               backgroundColor: "transparent",
-              color: hasChanges ? "#0B9D52" : "#9CA3AF",
+              color: anyChanges ? "#0B9D52" : "#9CA3AF",
               border: "none",
               letterSpacing: "0.05em",
               display: "block",
@@ -409,6 +540,7 @@ const HexColors: React.FC<HexColorsProps> = ({
         <div
           style={{
             borderBottom: "1px solid #E5E7EB",
+            marginTop: "2rem",
             marginBottom: "1.5rem",
           }}
         />

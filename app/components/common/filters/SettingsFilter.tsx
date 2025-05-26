@@ -6,6 +6,8 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 interface SettingsFilterProps {
   isPaginationEnabled: boolean;
   onPaginationToggle: (enabled: boolean) => void;
+  isLeagueGroupingEnabled?: boolean;
+  onLeagueGroupingToggle?: (enabled: boolean) => void;
   customColors?: {
     backgroundColor: string;
     textColor: string;
@@ -16,6 +18,8 @@ interface SettingsFilterProps {
 const SettingsFilter: React.FC<SettingsFilterProps> = ({
   isPaginationEnabled,
   onPaginationToggle,
+  isLeagueGroupingEnabled = false,
+  onLeagueGroupingToggle,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -49,6 +53,25 @@ const SettingsFilter: React.FC<SettingsFilterProps> = ({
                   : "All results will be shown in a scrollable list"
                 }
               </div>
+              
+              {onLeagueGroupingToggle && (
+                <>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={isLeagueGroupingEnabled}
+                      onChange={(e) => onLeagueGroupingToggle(e.target.checked)}
+                    />
+                    <span>Enable League Grouping</span>
+                  </label>
+                  <div className="text-sm text-gray-600">
+                    {isLeagueGroupingEnabled 
+                      ? "Players will be grouped by league headers (NHL, AHL, North America, Europe)" 
+                      : "Players will be displayed in a single list"
+                    }
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

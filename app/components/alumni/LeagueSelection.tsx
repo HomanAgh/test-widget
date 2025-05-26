@@ -9,8 +9,8 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 export const leagueRankings: Record<string, number> = {
   // Professional Leagues
   nhl: 1,
-  shl: 2,
-  ahl: 3,
+  ahl: 2,
+  shl: 3,
   khl: 4,
   nl: 5,
   liiga: 6,
