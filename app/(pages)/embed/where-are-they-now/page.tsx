@@ -1,5 +1,5 @@
 import React from "react";
-import Alumni from "@/app/components/alumni/Alumni";
+import WhereAreTheyNow from "@/app/components/where-are-they-now/WhereAreTheyNow";
 import ClientWrapper from "@/app/components/iframe/IframeClientWrapper";
 
 interface PageProps {
@@ -19,7 +19,7 @@ interface PageProps {
   }>;
 }
 
-const EmbedAlumni = async ({ searchParams }: PageProps) => {
+const EmbedWhereAreTheyNow = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
   const teamIdsStr = params.teamIds || "";
   const leaguesStr = params.leagues || "";
@@ -53,7 +53,7 @@ const EmbedAlumni = async ({ searchParams }: PageProps) => {
   return (
     <ClientWrapper>
       <div style={{ overflow: "auto" }}>
-        <Alumni
+        <WhereAreTheyNow
           selectedTeams={selectedTeams}
           selectedLeagues={selectedLeagues}
           customColors={{
@@ -76,4 +76,4 @@ const EmbedAlumni = async ({ searchParams }: PageProps) => {
   );
 };
 
-export default EmbedAlumni;
+export default EmbedWhereAreTheyNow; 

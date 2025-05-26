@@ -6,7 +6,7 @@ import TeamSearchBar from "@/app/components/alumni/TeamSearchBar";
 import LeagueSelectionDropdown from "@/app/components/alumni/LeagueSelection";
 import { useFetchLeagues } from "@/app/hooks/useFetchLeagues";
 import ErrorMessage from "@/app/components/common/ErrorMessage";
-import Alumni from "@/app/components/alumni/Alumni";
+import WhereAreTheyNow from "@/app/components/where-are-they-now/WhereAreTheyNow";
 import HexColors from "@/app/components/iframe/IframeHeightAndHexcolors";
 import EmbedCodeBlock from "../iframe/IframePreview";
 
@@ -54,7 +54,7 @@ function ensureCompleteColors(colors: any): ColorPreferences {
   return result;
 }
 
-const AlumniWidgetSetup: React.FC = () => {
+const WhereAreTheyNowWidgetSetup: React.FC = () => {
   const [selectedTeams, setSelectedTeams] = useState<SelectedTeam[]>([]);
   const [selectedLeagues, setSelectedLeagues] = useState<string[]>([]);
 
@@ -161,14 +161,14 @@ const AlumniWidgetSetup: React.FC = () => {
   const youthName =
     selectedTeams.length > 0 ? selectedTeams[0].name : "CHICAGO MISSION U16";
 
-  // Create embed URL
+  // Create embed URL for "Where are they now"
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
     const teamIds = selectedTeams.map((t) => t.id).join(",");
     const leagues = selectedLeagues.join(",");
 
     return (
-      `${baseUrl}/embed/alumni` +
+      `${baseUrl}/embed/where-are-they-now` +
       `?teamIds=${encodeURIComponent(teamIds)}` +
       `&leagues=${encodeURIComponent(leagues)}` +
       `&teams=${encodeURIComponent(youthName)}` +
@@ -206,6 +206,20 @@ const AlumniWidgetSetup: React.FC = () => {
 
   return (
     <div>
+      <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+        <h2 className="text-lg font-semibold mb-2">About "Where Are They Now"</h2>
+        <p className="text-sm text-gray-700">
+          This widget shows current teams and leagues where alumni players are actively playing. 
+          Unlike the Alumni widget which shows all historical teams, this focuses only on current active seasons.
+        </p>
+        <ul className="list-disc list-inside mt-2 text-sm text-gray-600">
+          <li>Shows only players with active seasons (isActiveSeason = true)</li>
+          <li>Displays current teams instead of historical career data</li>
+          <li>Includes summary statistics for active players</li>
+          <li>Real-time view of where alumni are playing now</li>
+        </ul>
+      </div>
+
       <TeamSearchBar
         onSelect={(team) => setSelectedTeams([team])}
         onError={(errMsg) => setError(errMsg)}
@@ -255,7 +269,7 @@ const AlumniWidgetSetup: React.FC = () => {
 
       {selectedTeams.length > 0 && (
         <div className="mt-6">
-          <Alumni
+          <WhereAreTheyNow
             selectedTeams={selectedTeams}
             selectedLeagues={selectedLeagues}
             customColors={customColors}
@@ -273,4 +287,4 @@ const AlumniWidgetSetup: React.FC = () => {
   );
 };
 
-export default AlumniWidgetSetup;
+export default WhereAreTheyNowWidgetSetup; 

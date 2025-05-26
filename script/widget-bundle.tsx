@@ -43,6 +43,7 @@ const WIDGET_COMPONENTS: Record<string, React.ComponentType<any>> = {
   'goalie-leaders': DummyComponent,
   alumni: DummyComponent,
   'alumni-tournament': DummyComponent,
+  'where-are-they-now': DummyComponent,
 };
 
 // In a browser environment, we need to directly import the components
@@ -55,6 +56,7 @@ import ScoringLeaders from '../app/components/league/ScoringLeaders';
 import GoalieLeaders from '../app/components/league/GoalieLeaders';
 import Alumni from '../app/components/alumni/Alumni';
 import AlumniTournament from '../app/components/alumni/AlumniTournament';
+import WhereAreTheyNow from '../app/components/where-are-they-now/WhereAreTheyNow';
 
 // Set up components with error handling
 try {
@@ -66,6 +68,7 @@ try {
   WIDGET_COMPONENTS['goalie-leaders'] = GoalieLeaders;
   WIDGET_COMPONENTS.alumni = Alumni;
   WIDGET_COMPONENTS['alumni-tournament'] = AlumniTournament;
+  WIDGET_COMPONENTS['where-are-they-now'] = WhereAreTheyNow;
 } catch (e) {
   console.error('Error setting up widget components:', e);
 }
@@ -100,18 +103,19 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
       }
       
       // Check if URL is for one of our widget API endpoints
-      const widgetApiPatterns = [
-        '/api/player/',
-        '/api/team/',
-        '/api/league/',
-        '/api/tournament-alumni/',
-        '/api/alumni/',
-        '/api/playerStats/',
-        '/api/playerSeasons/',
-        '/api/playerCareer/',
-        '/api/teamroster/',
-        '/api/seasons/'
-      ];
+              const widgetApiPatterns = [
+          '/api/player/',
+          '/api/team/',
+          '/api/league/',
+          '/api/tournament-alumni/',
+          '/api/alumni/',
+          '/api/where-are-they-now/',
+          '/api/playerStats/',
+          '/api/playerSeasons/',
+          '/api/playerCareer/',
+          '/api/teamroster/',
+          '/api/seasons/'
+        ];
       
       return widgetApiPatterns.some(pattern => url.includes(pattern));
     };
@@ -164,6 +168,7 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
           '/api/league/',
           '/api/tournament-alumni',
           '/api/alumni',
+          '/api/where-are-they-now',
           '/api/playerStats',
           '/api/playerSeasons',
           '/api/playerCareer',
@@ -239,6 +244,10 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
         if (!config.selectedTournaments) missingParams.push('data-selected-tournaments');
         if (!config.selectedLeagues) missingParams.push('data-selected-leagues');
         break;
+      case 'where-are-they-now':
+        if (!config.selectedTeams) missingParams.push('data-selected-teams');
+        if (!config.selectedLeagues) missingParams.push('data-selected-leagues');
+        break;
     }
     
     if (missingParams.length > 0) {
@@ -293,8 +302,8 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
       nameTextColor: config.nameTextColor || '#0D73A6',
     };
     
-    // Special handling for alumni and tournament widgets
-    if (widgetType === 'alumni' || widgetType === 'tournament') {
+    // Special handling for alumni, tournament, and where-are-they-now widgets
+    if (widgetType === 'alumni' || widgetType === 'tournament' || widgetType === 'where-are-they-now') {
       // Extra checks and formats for specific widgets
       if (processedConfig.selectedLeagueCategories) {
         console.log('Using selectedLeagueCategories from config');
@@ -307,7 +316,7 @@ const renderWidget = (container: HTMLElement, widgetType: string, config: any) =
         };
       }
       
-      if (widgetType === 'alumni') {
+      if (widgetType === 'alumni' || widgetType === 'where-are-they-now') {
         processedConfig.includeYouth = processedConfig.includeYouth || false;
       }
     }
