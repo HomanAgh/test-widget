@@ -24,6 +24,11 @@ interface AlumniTournamentProps {
     professional: boolean;
   };
   selectedColumns?: ColumnOptions;
+  onLoadingChange?: (
+    loading: boolean,
+    currentLeague?: string | null,
+    progress?: { current: number; total: number }
+  ) => void;
 }
 
 const AlumniTournament: React.FC<AlumniTournamentProps> = ({
@@ -34,7 +39,7 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
     textColor: "#000000",
     tableBackgroundColor: "#FFFFFF",
     headerTextColor: "#FFFFFF",
-    nameTextColor: "#0D73A6"
+    nameTextColor: "#0D73A6",
   },
   selectedLeagueCategories = {
     junior: true,
@@ -49,20 +54,31 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
     tournamentSeason: true,
     juniorTeams: true,
     collegeTeams: true,
-    proTeams: true
-  }
+    proTeams: true,
+  },
+  onLoadingChange,
 }) => {
-  const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">("men");
+  const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
+    "men"
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [resetPagination, setResetPagination] = useState(Date.now());
 
   const genderParam: GenderParam = null;
 
-  const { results, loading, error } = useFetchTournamentPlayers(
-    selectedTournaments,
-    selectedLeagues.join(","),
-    genderParam
-  );
+  const { results, loading, error, currentLeague, progress } =
+    useFetchTournamentPlayers(
+      selectedTournaments,
+      selectedLeagues, // Now passing array directly
+      genderParam
+    );
+
+  // Notify parent component of loading state changes
+  React.useEffect(() => {
+    if (onLoadingChange) {
+      onLoadingChange(loading, currentLeague, progress);
+    }
+  }, [loading, currentLeague, progress, onLoadingChange]);
 
   const filteredPlayers = useMemo(() => {
     return results.filter((player) =>
@@ -84,6 +100,11 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
     setResetPagination(Date.now());
   };
 
+  // Helper function to get league display name
+  const getLeagueDisplayName = (leagueSlug: string) => {
+    return leagueSlug.toUpperCase();
+  };
+
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
@@ -97,12 +118,15 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
           />
           <RxMagnifyingGlass className="absolute left-7 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
         </div>
-        {loading && (
-          <p className="flex justify-center pt-3 font-montserrat font-semibold">
-            Loading...
-          </p>
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="pt-3 px-4">
+            <p className="text-red-600 font-montserrat font-semibold">
+              {error}
+            </p>
+          </div>
         )}
-        {error && <p>{error}</p>}
       </div>
 
       {/* Men/Women Tabs */}

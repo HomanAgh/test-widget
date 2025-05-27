@@ -63,6 +63,9 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
     ...DEFAULT_COLORS,
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentLeague, setCurrentLeague] = useState<string | null>(null);
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
   const supabase = createClient();
 
   const { customLeagues, customJunLeagues, customCollegeLeagues } =
@@ -224,6 +227,22 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
   const showColumnSelector =
     selectedTournaments.length > 0 && selectedLeagues.length > 0;
 
+  // Handle loading state changes from AlumniTournament component
+  const handleLoadingChange = (
+    loading: boolean,
+    league?: string | null,
+    progressData?: { current: number; total: number }
+  ) => {
+    setIsLoading(loading);
+    setCurrentLeague(league || null);
+    setProgress(progressData || { current: 0, total: 0 });
+  };
+
+  // Helper function to get league display name
+  const getLeagueDisplayName = (leagueSlug: string) => {
+    return leagueSlug.toUpperCase();
+  };
+
   return (
     <div>
       <TournamentSearchBar
@@ -264,6 +283,38 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
         </div>
       )}
 
+      {/* Loading State with Progress - Above the iframe */}
+      {isLoading &&
+        selectedTournaments.length > 0 &&
+        selectedLeagues.length > 0 && (
+          <div className="mt-6 mb-4">
+            <div className="flex flex-col items-center pt-3 font-montserrat bg-gray-50 rounded-lg p-4">
+              <p className="font-semibold mb-2">
+                {currentLeague
+                  ? `Loading ${getLeagueDisplayName(currentLeague)}...`
+                  : "Loading leagues..."}
+              </p>
+
+              {/* Progress Bar */}
+              {progress.total > 0 && (
+                <div className="w-full max-w-md">
+                  <div className="bg-gray-200 rounded-full h-2 mb-2">
+                    <div
+                      className="bg-[#0D73A6] h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${(progress.current / progress.total) * 100}%`,
+                      }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-gray-600 text-center">
+                    {progress.current} of {progress.total} leagues loaded
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       {selectedTournaments.length > 0 && selectedLeagues.length > 0 && (
         <div className="mt-6">
           <AlumniTournament
@@ -272,6 +323,7 @@ const AlumniTournamentWidgetSetup: React.FC = () => {
             customColors={customColors}
             selectedLeagueCategories={selectedLeagueCategories}
             selectedColumns={selectedColumns}
+            onLoadingChange={handleLoadingChange}
           />
         </div>
       )}
