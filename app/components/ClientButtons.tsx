@@ -1,5 +1,8 @@
 "use client";
 
+
+//Buttons 
+
 import { usePathname } from "next/navigation";
 import HomeButton from "./common/HomeButton";
 import LogoutButton from "./common/LogoutButton";

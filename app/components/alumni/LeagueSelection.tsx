@@ -9,8 +9,8 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 export const leagueRankings: Record<string, number> = {
   // Professional Leagues
   nhl: 1,
-  shl: 2,
-  ahl: 3,
+  ahl: 2,
+  shl: 3,
   khl: 4,
   nl: 5,
   liiga: 6,
@@ -20,31 +20,40 @@ export const leagueRankings: Record<string, number> = {
   icehl: 10,
   slovakia: 11,
   hockeyallsvenskan: 12,
+  sl: 13,
+  denmark: 14,
+  norway: 15,
+  mestis: 16,
+  del2: 17,
+  eihl: 18,
+  alpshl: 19,
+  "ligue-magnus": 20,	
+ hockeyettan: 21,
   // College Leagues
-  ncaa: 13,
-  usports: 14,
-  acac: 15,
-  acha: 16,
+  ncaa: 22,
+  usports: 23,
+  acac: 24,
+  acha: 25,
   // Junior Leagues
-  ohl: 17,
-  whl: 18,
-  ushl: 19,
-  qmjhl: 20,
-  "j20-nationell": 21,
-  mhl: 22,
-  cchl: 23,
+  ohl: 26,
+  whl: 27,
+  ushl: 28,
+  qmjhl: 29,
+  "j20-nationell": 30,
+  mhl: 31,
+  cchl: 32,
   // Womens Professional Leagues
-  "pwhl-w": 24,
-  "sdhl-w": 25,
-  "nwhl-ca-w": 26,
-  "phf-w": 27,
+  "pwhl-w": 33,
+  "sdhl-w": 34,
+  "nwhl-ca-w": 35,
+  "phf-w": 36,
   // Womens College Leagues
-  "ncaa-w": 28,
-  "ncaa-iii-w": 29,
-  "acha-w": 30,
-  "acha-d2-w": 31,
+  "ncaa-w": 37,
+  "ncaa-iii-w": 38,
+  "acha-w": 39,
+  "acha-d2-w": 40,
   // Womens Junior Leagues
-  "jwhl-w": 32,
+  "jwhl-w": 41,
 };
 
 export const sortLeaguesByRank = (slugs: string[]): string[] => {
@@ -126,6 +135,26 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
     onChange(allSelected ? [] : allLeagueSlugs);
   };
 
+  const handleCategorySelectAll = (leagues: League[]) => {
+    const categorySlugs = leagues.map(l => l.slug.toLowerCase());
+    const allCategorySelected = categorySlugs.every(slug => selectedLeagues.includes(slug));
+    
+    if (allCategorySelected) {
+      // Deselect all in this category
+      const updatedLeagues = selectedLeagues.filter(slug => !categorySlugs.includes(slug));
+      onChange(sortLeaguesByRank(updatedLeagues));
+    } else {
+      // Select all in this category
+      const newSelections = [...new Set([...selectedLeagues, ...categorySlugs])];
+      onChange(sortLeaguesByRank(newSelections));
+    }
+  };
+
+  const isCategoryAllSelected = (leagues: League[]) => {
+    const categorySlugs = leagues.map(l => l.slug.toLowerCase());
+    return categorySlugs.every(slug => selectedLeagues.includes(slug));
+  };
+
   return (
     <div className="relative">
       <button
@@ -164,7 +193,27 @@ const LeagueSelectionDropdown: React.FC<LeagueSelectionDropdownProps> = ({
             { title: "Junior Leagues", leagues: juniorLeagues },
           ].map(({ title, leagues }, index, array) => (
             <div key={title} className="mt-6">
-              <h3 className="font-bold mb-2">{title}</h3>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-bold">{title}</h3>
+                <button
+                  onClick={() => handleCategorySelectAll(leagues)}
+                  className="uppercase text-sm tracking-wider cursor-pointer"
+                  style={{
+                    fontFamily: "Montserrat",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    lineHeight: "24px",
+                    backgroundColor: "transparent",
+                    color: "#0B9D52",
+                    border: "none",
+                    letterSpacing: "0.05em",
+                    textAlign: "right",
+                    padding: "0",
+                  }}
+                >
+                  {isCategoryAllSelected(leagues) ? `DESELECT ALL ${title.split(' ')[0]}` : `SELECT ALL ${title.split(' ')[0]}`}
+                </button>
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {sortLeagueObjectsByRank(leagues).map((league) => (
                   <label

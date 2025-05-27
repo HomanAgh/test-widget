@@ -4,6 +4,7 @@ export { default as AdminPageWrapper } from "./AdminPageWrapper";
 export { default as Table } from "./Table";
 export { default as TableBody } from "./TableBody";
 export { default as TableCell } from "./TableCell";
+export { default as SubHeaderCell } from "./SubHeaderCell";
 export { default as TableContainer } from "./TableContainer";
 export { default as TableHead } from "./TableHead";
 export { default as TableRow } from "./TableRow";

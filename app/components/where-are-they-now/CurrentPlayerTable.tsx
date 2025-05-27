@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PlayerTableProps } from "@/app/types/alumni";
+import { CurrentPlayer } from "@/app/hooks/useFetchCurrentPlayers";
 import Link from "../common/style/Link";
 import {
   HiMiniChevronUpDown,
@@ -19,16 +19,26 @@ import {
   PaginationControls,
   PoweredBy,
 } from "@/app/components/common/style";
-import ToggleTeamList from "./ToggleTeamList";
+import ToggleTeamList from "../alumni/ToggleTeamList";
 import Tooltip from "../common/Tooltip";
 import {
   sortTeamsByLeagueRankThenName,
   filterAndSortPlayers,
-} from "./PlayerTableProcessor";
-import { ColumnOptions } from "./ColumnSelector";
+} from "../alumni/PlayerTableProcessor";
+import { ColumnOptions } from "../alumni/ColumnSelector";
 import { useLeagueGrouping, getLeagueGroupIcon } from "../common/LeagueGrouping";
 
-interface ExtendedPlayerTableProps extends PlayerTableProps {
+interface ExtendedCurrentPlayerTableProps {
+  players: CurrentPlayer[];
+  genderFilter: "all" | "male" | "female";
+  pageSize?: number;
+  headerBgColor?: string;
+  headerTextColor?: string;
+  tableBgColor?: string;
+  tableTextColor?: string;
+  nameTextColor?: string;
+  oddRowColor?: string;
+  evenRowColor?: string;
   isWomenLeague?: boolean;
   resetPagination?: number;
   selectedLeagueCategories?: {
@@ -45,7 +55,7 @@ interface ExtendedPlayerTableProps extends PlayerTableProps {
   };
 }
 
-const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
+const CurrentPlayerTable: React.FC<ExtendedCurrentPlayerTableProps> = ({
   players,
   genderFilter,
   pageSize = 15,
@@ -241,10 +251,29 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
     }
   };
 
+  // Convert CurrentPlayer to match alumni player structure for processing
+  const convertedPlayers = React.useMemo(() => {
+    return players.map(player => ({
+      id: player.id,
+      name: player.name,
+      birthYear: player.birthYear,
+      gender: player.gender,
+      position: player.position,
+      status: player.status,
+      draftPick: player.draftPick,
+      teams: player.currentTeams?.map(team => ({
+        name: team.name,
+        leagueLevel: team.leagueLevel,
+        leagueSlug: team.leagueSlug,
+        isCurrentTeam: team.isCurrentTeam || true, // All teams are current in this context
+      })) || [],
+    }));
+  }, [players]);
+
   const processedPlayers = React.useMemo(
     () =>
-      filterAndSortPlayers(players, genderFilter, sortColumn, sortDirection),
-    [players, genderFilter, sortColumn, sortDirection]
+      filterAndSortPlayers(convertedPlayers, genderFilter, sortColumn, sortDirection),
+    [convertedPlayers, genderFilter, sortColumn, sortDirection]
   );
 
   // Use the league grouping hook
@@ -838,4 +867,4 @@ const PlayerTable: React.FC<ExtendedPlayerTableProps> = ({
   );
 };
 
-export default PlayerTable;
+export default CurrentPlayerTable; 

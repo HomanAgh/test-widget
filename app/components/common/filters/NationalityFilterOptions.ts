@@ -9,10 +9,3 @@ export const NATIONALITIES = [
   { value: "deu", label: "Germany" },
   { value: "che", label: "Switzerland" },
 ];
-
-export const POSITIONS = [
-  { value: "C", label: "Center" },
-  { value: "LW", label: "Left Wing" },
-  { value: "RW", label: "Right Wing" },
-  { value: "D", label: "Defenseman" },
-]; 

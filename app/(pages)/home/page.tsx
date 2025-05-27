@@ -1,5 +1,5 @@
 import React from "react";
-import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold, PiTrophyBold, PiPlusBold } from "react-icons/pi"; 
+import { PiGridNineBold, PiHockeyBold, PiUsersFourBold, PiGraduationCapBold, PiTrophyBold, PiPlusBold, PiMapPinBold } from "react-icons/pi"; 
 import { GiJasonMask } from "react-icons/gi";
 import { LiaHockeyPuckSolid } from "react-icons/lia";
 import { TbTournament } from "react-icons/tb";
@@ -14,6 +14,7 @@ const HomePage = () => {
     { label: "League\nStandings", path: "/league", icon: <PiGridNineBold size={48} /> },
     { label: "Team\nRoster", path: "/team", icon: <PiUsersFourBold size={48} /> },
     { label: "Team\nAlumni", path: "/alumni", icon: <PiGraduationCapBold size={48} /> },
+    { label: "Where Are\nThey Now", path: "/where-are-they-now", icon: <PiMapPinBold size={48} /> },
     { label: "Tournament\nAlumni", path: "/alumni/tournament", icon: <PiTrophyBold size={48} /> },
     { label: "Scoring\nLeaders", path: "/scoring-leaders", icon: <LiaHockeyPuckSolid size={48} /> },
     { label: "Goalie\nLeaders", path: "/goalie-leaders", icon: <GiJasonMask size={48} /> },

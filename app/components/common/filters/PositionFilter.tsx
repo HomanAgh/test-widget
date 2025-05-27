@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import { POSITIONS } from "./filterOptions";
+import { POSITIONS } from "./PositionsFilterOption";
 
 interface PositionFilterProps {
   selectedValues: string[];

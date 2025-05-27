@@ -19,6 +19,7 @@ export function useFetchPlayers(
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
 
+
   // Build a cache key representing the current query parameters.
   const cacheKey = JSON.stringify({
     teamIds: [...selectedTeamIds].sort((a, b) => a - b),
@@ -71,7 +72,11 @@ export function useFetchPlayers(
       console.log('useFetchPlayers: GET =>', url);
 
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch players.');
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch players.');
+      }
 
       const data = (await response.json()) as AlumniAPIResponse;
       if (!data.players) {
@@ -97,7 +102,7 @@ export function useFetchPlayers(
       setHasMore(newPlayers.length === limit);
     } catch (err) {
       console.error('useFetchPlayers error:', err);
-      setError('Failed to fetch players.');
+      setError(err instanceof Error ? err.message : 'Failed to fetch players.');
     } finally {
       setLoading(false);
     }

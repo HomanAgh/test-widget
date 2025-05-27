@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import PlayerTable from "./PlayerTable";
+import CurrentPlayerTable from "./CurrentPlayerTable";
 import { SelectedTeam } from "@/app/types/team";
-import { useFetchPlayers } from "../../hooks/useFetchPlayers";
+import { useFetchCurrentPlayers } from "../../hooks/useFetchCurrentPlayers";
 import { RxMagnifyingGlass } from "react-icons/rx";
 
 type GenderParam = "male" | "female" | null;
 
-interface AlumniProps {
+interface WhereAreTheyNowProps {
   selectedTeams?: SelectedTeam[];
   selectedLeagues?: string[];
   selectedTournaments?: string[];
@@ -34,7 +34,7 @@ interface AlumniProps {
   };
 }
 
-const Alumni: React.FC<AlumniProps> = ({
+const WhereAreTheyNow: React.FC<WhereAreTheyNowProps> = ({
   selectedTeams = [],
   selectedLeagues = [],
   selectedStatus = [],
@@ -71,7 +71,7 @@ const Alumni: React.FC<AlumniProps> = ({
   const youthTeam = selectedTeams.length > 0 ? selectedTeams[0]?.name : null;
   const genderParam: GenderParam = null;
 
-  const { results, loading, error } = useFetchPlayers(
+  const { results, loading, error } = useFetchCurrentPlayers(
     selectedTeamIds,
     "customLeague",
     selectedLeagues.join(","),
@@ -110,8 +110,11 @@ const Alumni: React.FC<AlumniProps> = ({
     setResetPagination(Date.now());
   };
 
+
+
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
+      {/* Search */}
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
         <div className="relative w-full">
           <input
@@ -123,12 +126,18 @@ const Alumni: React.FC<AlumniProps> = ({
           />
           <RxMagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black w-[20px] h-[20px]" />
         </div>
+        
+        {/* Loading and Error States */}
         {loading && (
           <p className="flex justify-center pt-3 font-montserrat font-semibold">
-            Loading...
+            Loading current players...
           </p>
         )}
-        {error && <p>{error}</p>}
+        {error && (
+          <p className="text-red-500 text-center pt-3">
+            Error: {error}
+          </p>
+        )}
       </div>
 
       {/* Men/Women Tabs */}
@@ -154,8 +163,8 @@ const Alumni: React.FC<AlumniProps> = ({
           WOMEN&apos;S LEAGUE
         </button>
       </div>
-
-      <PlayerTable
+      {/* Player Table */}
+      <CurrentPlayerTable
         players={searchedPlayers}
         genderFilter="all"
         headerBgColor={customColors.backgroundColor}
@@ -174,4 +183,4 @@ const Alumni: React.FC<AlumniProps> = ({
   );
 };
 
-export default Alumni;
+export default WhereAreTheyNow; 

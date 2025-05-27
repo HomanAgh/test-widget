@@ -39,21 +39,18 @@ export async function updateSession(request: NextRequest) {
   // Debug: Log user state
   console.log('Middleware: User state:', user ? 'Logged in' : 'Not logged in')
   // List of public routes that don't require authentication
-  const publicRoutes =
-  ['/login',
-    '/auth',
-    '/register',
-    '/register',
-    '/api/graphql',
-    '/api',
-    '/embed'
+  const publicRoutes = [
+    '/auth',           // Authentication pages
+    '/login',          // Login page
+    '/register',       // Registration page
+    '/api',            // All API endpoints
+    '/api/graphql',    // GraphQL API endpoint
+    '/api/auth',       // Auth API endpoints
+    '/embed'           // Embed routes
   ]
   // Check if the current path is under /embed
   const isEmbedRoute = request.nextUrl.pathname.startsWith('/embed')
-  const isPublicRoute = publicRoutes.some(route =>
-
-    request.nextUrl.pathname.startsWith(route)
-  )
+  const isPublicRoute = publicRoutes.some(route => request.nextUrl.pathname.startsWith(route))
   // Debug: Log route state
   console.log('Middleware: Route type:', isPublicRoute ? 'Public' : 'Protected')
   // If user is logged in and trying to access auth pages, redirect to home
