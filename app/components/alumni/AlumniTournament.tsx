@@ -100,11 +100,6 @@ const AlumniTournament: React.FC<AlumniTournamentProps> = ({
     setResetPagination(Date.now());
   };
 
-  // Helper function to get league display name
-  const getLeagueDisplayName = (leagueSlug: string) => {
-    return leagueSlug.toUpperCase();
-  };
-
   return (
     <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
       <div className="bg-white flex flex-col rounded-lg py-6 mt-4">
