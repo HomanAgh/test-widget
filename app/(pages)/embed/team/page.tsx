@@ -10,6 +10,7 @@ import {
 interface PageProps {
   searchParams: Promise<{
     teamId?: string;
+    season?: string;
     backgroundColor?: string;
     textColor?: string;
     tableBackgroundColor?: string;
@@ -53,6 +54,7 @@ export async function generateMetadata({
 const EmbedTeam = async ({ searchParams }: PageProps) => {
   const params = await searchParams;
   const teamId = params.teamId || "";
+  const season = params.season || "2024-2025";
   const backgroundColor = params.backgroundColor || "#052D41";
   const textColor = params.textColor || "#000000";
   const tableBackgroundColor = params.tableBackgroundColor || "#FFFFFF";
@@ -108,6 +110,7 @@ const EmbedTeam = async ({ searchParams }: PageProps) => {
       <div style={{ overflow: "auto" }}>
         <Team
           teamId={teamId}
+          season={season}
           customColors={{
             backgroundColor,
             textColor,
@@ -117,6 +120,7 @@ const EmbedTeam = async ({ searchParams }: PageProps) => {
           }}
           selectedColumns={selectedColumns}
           hideStatsTypeSelector={true}
+          hideSeasonSelector={true}
           defaultStatsType={statsType as "regular" | "postseason"}
         />
       </div>

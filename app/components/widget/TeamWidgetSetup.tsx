@@ -59,6 +59,7 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
   const [selectedColumns, setSelectedColumns] =
     useState<TeamColumnOptions>(DEFAULT_COLUMNS);
   const [teamData, setTeamData] = useState<TeamType | null>(null);
+  const [season, setSeason] = useState<string>("2024-2025");
   const [statsType, setStatsType] = useState<"regular" | "postseason">(
     "regular"
   );
@@ -131,6 +132,10 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
     setStatsType(newStatsType);
   };
 
+  const handleSeasonChange = (newSeason: string) => {
+    setSeason(newSeason);
+  };
+
   const embedUrl = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -145,6 +150,7 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
     return (
       `${baseUrl}/embed/team` +
       `?teamId=${encodeURIComponent(teamId)}` +
+      `&season=${encodeURIComponent(season)}` +
       `&backgroundColor=${encodeURIComponent(customColors.backgroundColor)}` +
       `&textColor=${encodeURIComponent(customColors.textColor)}` +
       `&tableBackgroundColor=${encodeURIComponent(
@@ -156,7 +162,7 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
       `&statsType=${encodeURIComponent(statsType)}` +
       `&_t=${Date.now()}`
     );
-  }, [teamId, customColors, selectedColumns, statsType]);
+  }, [teamId, season, customColors, selectedColumns, statsType]);
 
   const sourceLinks = useMemo(() => {
     if (!teamId || !teamData) return "";
@@ -211,9 +217,11 @@ const TeamWidgetSetup: React.FC<TeamWidgetSetupProps> = ({ teamId }) => {
       <div className="mt-6">
         <Team
           teamId={teamId}
+          season={season}
           customColors={customColors}
           selectedColumns={selectedColumns}
           onStatsTypeChange={handleStatsTypeChange}
+          onSeasonChange={handleSeasonChange}
         />
       </div>
 

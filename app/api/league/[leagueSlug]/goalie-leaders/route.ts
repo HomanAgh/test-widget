@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
   const { searchParams } = new URL(req.url);
   const season = searchParams.get("season");
   const nationality = searchParams.get("nationality");
-  // Keep statsType parameter for sorting only, but always fetch both regular and playoff stats
+  // Use statsType parameter to determine which dataset to fetch and how to sort
   const statsType = searchParams.get("statsType") === "postseason" ? "postseason" : "regular";
 
   const apiKey = process.env.API_KEY;
@@ -92,8 +92,8 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     "postseasonStats.SVS"
   ].join(",");
 
-  // Sort by regular season SVP by default to get all goalies
-  const statsSortField = "-regularStats.SVP";
+  // Sort based on statsType: regular season or playoff stats
+  const statsSortField = statsType === 'postseason' ? '-postseasonStats.SVP' : '-regularStats.SVP';
   let goalieLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=100&sort=${statsSortField}&league=${leagueSlug}&season=${season}&player.playerType=GOALTENDER&fields=${playerFields}&apiKey=${apiKey}`;
 
   // Add nationality filter if specified
@@ -101,7 +101,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     goalieLeadersUrl += `&player.nationality=${nationality}`;
   }
 
-  console.log(`Fetching goalie leaders for both regular and playoff stats:`, goalieLeadersUrl);
+  console.log(`Fetching ${statsType} goalie leaders:`, goalieLeadersUrl);
 
   try {
     const response = await fetch(goalieLeadersUrl, { method: "GET" });
@@ -116,21 +116,49 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     
     // Process player data to add flag URLs and prepare for display
     if (filteredData.data && Array.isArray(filteredData.data)) {
-      // Collect all goalies that have enough games in either regular or postseason
-      const qualifiedGoalies = filteredData.data.filter((player: any) => {
-        const regularGamesPlayed = player.regularStats?.GP || 0;
-        const playoffGamesPlayed = player.postseasonStats?.GP || 0;
-        
-        return regularGamesPlayed >= 10 || playoffGamesPlayed >= 3;
-      });
+      let qualifiedGoalies;
       
-      // Sort based on the requested stats type
-      qualifiedGoalies.sort((a: any, b: any) => {
-        if (statsType === "postseason") {
-          return (b.postseasonStats?.SVP || 0) - (a.postseasonStats?.SVP || 0);
-        }
-        return (b.regularStats?.SVP || 0) - (a.regularStats?.SVP || 0);
-      });
+      if (statsType === 'postseason') {
+        // For playoff stats, only include goalies who actually played in playoffs
+        qualifiedGoalies = filteredData.data.filter((player: any) => {
+          const playoffGamesPlayed = player.postseasonStats?.GP || 0;
+          return playoffGamesPlayed >= 3; // Minimum 3 playoff games
+        });
+        
+        // Sort by playoff save percentage
+        qualifiedGoalies.sort((a: any, b: any) => {
+          const svpA = a.postseasonStats?.SVP || 0;
+          const svpB = b.postseasonStats?.SVP || 0;
+          if (svpB !== svpA) return svpB - svpA;
+          
+          // Secondary sort: playoff games played (more games is better for same SVP)
+          const gpA = a.postseasonStats?.GP || 0;
+          const gpB = b.postseasonStats?.GP || 0;
+          return gpB - gpA;
+        });
+        
+        console.log(`Playoff goalies found: ${qualifiedGoalies.length}`);
+      } else {
+        // For regular season, include goalies with enough regular season games
+        qualifiedGoalies = filteredData.data.filter((player: any) => {
+          const regularGamesPlayed = player.regularStats?.GP || 0;
+          return regularGamesPlayed >= 10; // Minimum 10 regular season games
+        });
+        
+        // Sort by regular season save percentage
+        qualifiedGoalies.sort((a: any, b: any) => {
+          const svpA = a.regularStats?.SVP || 0;
+          const svpB = b.regularStats?.SVP || 0;
+          if (svpB !== svpA) return svpB - svpA;
+          
+          // Secondary sort: regular season games played (more games is better for same SVP)
+          const gpA = a.regularStats?.GP || 0;
+          const gpB = b.regularStats?.GP || 0;
+          return gpB - gpA;
+        });
+        
+        console.log(`Regular season goalies found: ${qualifiedGoalies.length}`);
+      }
       
       // Limit to 75 goalies
       filteredData.data = qualifiedGoalies.slice(0, 75);
