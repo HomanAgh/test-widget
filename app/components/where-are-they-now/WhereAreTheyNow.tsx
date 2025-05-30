@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import CurrentPlayerTable from "./CurrentPlayerTable";
 import { SelectedTeam } from "@/app/types/team";
 import { useFetchCurrentPlayers } from "../../hooks/useFetchCurrentPlayers";
@@ -32,6 +32,7 @@ interface WhereAreTheyNowProps {
     backgroundColor: string;
     textColor: string;
   };
+  onPlayerCountChange?: (count: number) => void;
 }
 
 const WhereAreTheyNow: React.FC<WhereAreTheyNowProps> = ({
@@ -57,6 +58,7 @@ const WhereAreTheyNow: React.FC<WhereAreTheyNowProps> = ({
     backgroundColor: "#f8f9fa",
     textColor: "#000000",
   },
+  onPlayerCountChange,
 }) => {
   const [activeGenderTab, setActiveGenderTab] = useState<"men" | "women">(
     "men"
@@ -109,6 +111,13 @@ const WhereAreTheyNow: React.FC<WhereAreTheyNowProps> = ({
     setSearchQuery(e.target.value);
     setResetPagination(Date.now());
   };
+
+  // Notify parent component of player count changes
+  useEffect(() => {
+    if (onPlayerCountChange) {
+      onPlayerCountChange(searchedPlayers.length);
+    }
+  }, [searchedPlayers.length, onPlayerCountChange]);
 
 
 

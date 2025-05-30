@@ -6,6 +6,11 @@ import {
   DraftSelection,
   CombinedPlayer,
 } from "@/app/types/route"; // Adjust import path if needed
+import { 
+  getLeagueLevel as getLeagueLevelFromConfig, 
+  getTournamentLeagueSlug,
+  getLeagueCategory as getLeagueCategoryFromConfig 
+} from "@/app/config/leagues";
 
 // 1 hour cache
 const CACHE_TTL = 60 * 60 * 1000;
@@ -15,87 +20,22 @@ const apiKey = process.env.API_KEY;
 const apiBaseUrl = process.env.API_BASE_URL;
 
 /**
- * Map tournament slugs to the appropriate category and leagueSlug.
- * The leagueSlug must exist in leagueRankings for sorting to work.
- */
-const tournamentMapping: Record<string, { category: string; leagueSlug: string }> = {
-  // International Pro Tournaments
-  "world-championship": { category: "professional", leagueSlug: "wc" },
-  "wc": { category: "professional", leagueSlug: "wc" },
-  "olympics": { category: "professional", leagueSlug: "olympics" },
-  "olympic-games": { category: "professional", leagueSlug: "olympics" },
-  "spengler-cup": { category: "professional", leagueSlug: "shl" }, // using SHL ranking
-  "champions-hockey-league": { category: "professional", leagueSlug: "shl" },
-  
-  // Junior Tournaments
-  "world-junior": { category: "junior", leagueSlug: "wjc" },
-  "wjc": { category: "junior", leagueSlug: "wjc" },
-  "world-juniors": { category: "junior", leagueSlug: "wjc" },
-  "u18-world-championship": { category: "junior", leagueSlug: "wjc" },
-  "u18-worlds": { category: "junior", leagueSlug: "wjc" },
-  "memorial-cup": { category: "junior", leagueSlug: "ohl" }, // using OHL ranking
-  "hlinka-gretzky": { category: "junior", leagueSlug: "wjc" },
-  
-  // College Tournaments
-  "ncaa-tournament": { category: "college", leagueSlug: "ncaa" },
-  "frozen-four": { category: "college", leagueSlug: "ncaa" },
-  "beanpot": { category: "college", leagueSlug: "ncaa" },
-  
-  // Women's Tournaments
-  "womens-worlds": { category: "professional", leagueSlug: "pwhl-w" },
-  "womens-olympics": { category: "professional", leagueSlug: "pwhl-w" },
-  "u18-womens-worlds": { category: "junior", leagueSlug: "jwhl-w" }
-};
-
-/**
  * Get tournament mapping info with fallbacks
  */
 function getTournamentMapping(slug: string): { category: string; leagueSlug: string } {
-  const slugLc = slug.toLowerCase();
+  const leagueSlug = getTournamentLeagueSlug(slug);
   
-  // Direct mapping
-  if (tournamentMapping[slugLc]) {
-    return tournamentMapping[slugLc];
-  }
+  // Get category based on the mapped league slug
+  const category = getLeagueCategoryFromConfig(leagueSlug) || 'professional';
   
-  // Fallback based on name patterns
-  if (slugLc.includes('junior') || slugLc.includes('u18') || slugLc.includes('u20')) {
-    return { category: 'junior', leagueSlug: 'wjc' };
-  }
-  
-  if (slugLc.includes('college') || slugLc.includes('ncaa') || slugLc.includes('university')) {
-    return { category: 'college', leagueSlug: 'ncaa' };
-  }
-  
-  if (slugLc.includes('women') || slugLc.includes('girl')) {
-    return { category: 'professional', leagueSlug: 'pwhl-w' };
-  }
-  
-  // Default to pro tournament
-  return { category: 'professional', leagueSlug: 'nhl' };
+  return { category, leagueSlug };
 }
 
 /** 
  * Determine the appropriate leagueLevel for a league slug
  */
 function getLeagueLevel(slug?: string): string {
-  if (!slug) return "unknown";
-  const slugLc = slug.toLowerCase();
-
-  // Professional
-  if (["nhl","ahl","shl","del","liiga","echl","icehl","khl","pwhl-w","phf-w","nwhl-ca-w", "slovakia", "nl", "czechia","sdhl-w","hockeyallsvenskan"].includes(slugLc)) {
-    return "professional";
-  }
-  // Junior
-  if (["ohl","whl","qmjhl","ushl","j20-nationell", "cchl", "mhl", "jwhl-w", "wjc","nahl"].includes(slugLc)) {
-    return "junior";
-  }
-  // College
-  if (["ncaa","usports","acac","acha","ncaa-w","acha-w","ncaa-iii-w","acha-d2-w", "usports-w"].includes(slugLc)) {
-    return "college";
-  }
-  // Otherwise treat it as "tournament"
-  return "professional"; // Default to professional if unknown
+  return getLeagueLevelFromConfig(slug);
 }
 
 /** Fallback for missing league data. */

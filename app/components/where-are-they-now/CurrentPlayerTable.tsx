@@ -292,10 +292,10 @@ const CurrentPlayerTable: React.FC<ExtendedCurrentPlayerTableProps> = ({
 
   return (
     <div className="min-w-full overflow-y-auto">
-      <div className={isPaginationEnabled ? "" : "h-[840px] overflow-y-auto"}>
+      <div className={isPaginationEnabled ? "" : ""}>
         <TableContainer>
           <Table tableBgColor={tableBgColor} tableTextColor={tableTextColor}>
-            <TableHead bgColor={headerBgColor} textColor={headerTextColor} className={isPaginationEnabled ? "" : "sticky top-0 z-10"}>
+            <TableHead bgColor={headerBgColor} textColor={headerTextColor}>
               <TableRow>
                 <TableCell
                   isHeader

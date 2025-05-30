@@ -1,4 +1,5 @@
 import React from "react";
+import { getNorthAmericanLeagues, getEuropeanLeagues } from "@/app/config/leagues";
 
 // League grouping utility functions
 export const getPlayerLeagueGroup = (player: any) => {
@@ -11,12 +12,11 @@ export const getPlayerLeagueGroup = (player: any) => {
   if (leagueSlugs.includes("nhl")) return "NHL";
   if (leagueSlugs.includes("ahl")) return "AHL";
   
-  // North American leagues (excluding NHL/AHL)
-  const northAmericanLeagues = ["ushl", "ohl", "whl", "qmjhl", "ncaa", "echl", "usports", "acac", "acha", "cchl"];
-  if (leagueSlugs.some((slug: string) => northAmericanLeagues.includes(slug))) return "Other North American Leagues";
+  // Get league arrays from centralized config
+  const northAmericanLeagues = getNorthAmericanLeagues();
+  const europeanLeagues = getEuropeanLeagues();
   
-  // European leagues
-  const europeanLeagues = ["shl", "khl", "nl", "liiga", "czechia", "del", "icehl", "slovakia", "hockeyallsvenskan", "j20-nationell", "mhl", "del2", "alpshl", "norway", "hockeyettan", "sl", "denmark", "mestis", "eihl", "ligue-magnus"];
+  if (leagueSlugs.some((slug: string) => northAmericanLeagues.includes(slug))) return "Other North American Leagues";
   if (leagueSlugs.some((slug: string) => europeanLeagues.includes(slug))) return "European Leagues";
   
   return "Other";

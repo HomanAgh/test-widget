@@ -70,10 +70,34 @@ const WhereAreTheyNowWidgetSetup: React.FC = () => {
     textColor: "#000000",
   });
   const [iframeHeight, setIframeHeight] = useState(DEFAULT_IFRAME_HEIGHT);
+  const [playerCount, setPlayerCount] = useState<number>(0);
   const supabase = createClient();
 
   const { customLeagues, customJunLeagues, customCollegeLeagues } =
     useFetchLeagues();
+
+  // Calculate dynamic iframe height based on player count when pagination is disabled
+  const calculateDynamicHeight = (count: number) => {
+    const baseHeight = 604;
+    const rowHeight = 56;
+    return baseHeight + (count * rowHeight);
+  };
+
+  // Update iframe height when pagination setting or player count changes
+  useEffect(() => {
+    if (!isPaginationEnabled) {
+      if (playerCount > 0) {
+        const dynamicHeight = calculateDynamicHeight(playerCount);
+        setIframeHeight(dynamicHeight);
+      } else {
+        // Use base height when no players but pagination is disabled
+        setIframeHeight(580);
+      }
+    } else {
+      // Reset to default height when pagination is enabled
+      setIframeHeight(DEFAULT_IFRAME_HEIGHT);
+    }
+  }, [isPaginationEnabled, playerCount]);
 
   // Fetch organization colors when component loads
   useEffect(() => {
@@ -231,7 +255,6 @@ const WhereAreTheyNowWidgetSetup: React.FC = () => {
           }}
         />
       </div>
-
       {selectedTeams.length > 0 && (
         <div className="mt-6">
           <WhereAreTheyNow
@@ -243,6 +266,7 @@ const WhereAreTheyNowWidgetSetup: React.FC = () => {
             isPaginationEnabled={isPaginationEnabled}
             isLeagueGroupingEnabled={isLeagueGroupingEnabled}
             subHeaderColors={subHeaderColors}
+            onPlayerCountChange={setPlayerCount}
           />
         </div>
       )}

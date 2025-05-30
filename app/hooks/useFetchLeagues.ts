@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { League } from '@/app/types/league';
+import { getLeagueSlugs } from '@/app/config/leagues';
 
 export const useFetchLeagues = () => {
   const [proLeagues, setProLeagues] = useState<League[]>([]);
@@ -29,45 +30,32 @@ export const useFetchLeagues = () => {
           collegeResponse.json(),
         ]);
 
+        // Get league slugs from centralized config
+        const professionalLeagueSlugs = getLeagueSlugs('professional');
+        const collegeLeagueSlugs = getLeagueSlugs('college');
+        const juniorLeagueSlugs = getLeagueSlugs('junior');
+
         // 1) Professional Leagues
-        const customLeagueSlugs = [
-        //Womens Leagues
-        'pwhl-w', 'sdhl-w', 'nwhl-ca-w', 'phf-w',
-        //Mens Leagues
-        'nhl', 'shl', 'ahl', 'khl','nl', 'liiga', 'czechia', 'del', 'echl', 'icehl', 'slovakia', 'hockeyallsvenskan','alpshl','norway','del2','denmark', 'hockeyettan', 'sl', 'mestis', 'eihl', 'ligue-magnus'
-        ];
         setProLeagues(proData.leagues || []);
         setCustomLeagues(
           (proData.leagues || []).filter((league: League) =>
-            customLeagueSlugs.includes(league.slug)
+            professionalLeagueSlugs.includes(league.slug.toLowerCase())
           )
         );
 
         // 2) College Leagues
-        const customCollegeLeagueSlugs = [
-        //Womens Leagues
-        'ncaa-w', 'ncaa-iii-w', 'acha-w', 'acha-d2-w', 'usports-w',
-        //Mens Leagues
-        'ncaa', 'usports', 'acac', 'acha'
-        ];
         setCollegeLeagues(collegeData.leagues || []);
         setCustomCollegeLeagues(
           (collegeData.leagues || []).filter((league: League) =>
-            customCollegeLeagueSlugs.includes(league.slug)
+            collegeLeagueSlugs.includes(league.slug.toLowerCase())
           )
         );
 
         // 3) Junior Leagues
-        const customJuniorLeagueSlugs = [
-        //Womens Leagues
-        'jwhl-w',
-        //Mens Leagues
-        'ohl', 'whl', 'ushl', 'qmjhl', 'j20-nationell', 'mhl', 'cchl',"nahl"    
-        ];
         setJunLeagues(junData.leagues || []);
         setCustomJunLeagues(
           (junData.leagues || []).filter((league: League) =>
-            customJuniorLeagueSlugs.includes(league.slug)
+            juniorLeagueSlugs.includes(league.slug.toLowerCase())
           )
         );
       } catch (err) {
