@@ -8,7 +8,8 @@ const FAQPage = () => {
   return (
     <PageWrapper>
       <Header currentPath="/faq" />
-      <PageTitle title="Frequently Asked Questions" />
+      <div className="container mx-auto px-4 py-8">
+        <PageTitle title="Frequently Asked Questions" />
         <div className="space-y-4">
           <Collapsible title="What is this application for?">
             <p className="py-3 px-4 text-gray-700">
@@ -160,6 +161,7 @@ const FAQPage = () => {
           </Collapsible>
         </div>
         <PoweredBy />
+      </div>
     </PageWrapper>
   );
 };
