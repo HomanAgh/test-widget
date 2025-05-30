@@ -83,7 +83,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
 
   // Build the API URL with filters - using player-stats to get ALL entries
   // Sort based on statsType: regular season or playoff stats
-  let sortField = statsType === 'postseason' ? '-postseasonStats.PTS' : '-regularStats.PTS';
+  const sortField = statsType === 'postseason' ? '-postseasonStats.PTS' : '-regularStats.PTS';
   let scoringLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=1000&sort=${sortField}&league=${leagueSlug}&season=${season}&fields=${playerFields}&apiKey=${apiKey}&player.playerType=SKATER`;
 
   // Note: We'll filter playoff players in the processing logic instead of at API level
