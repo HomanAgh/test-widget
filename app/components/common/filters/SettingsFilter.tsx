@@ -25,6 +25,24 @@ const SettingsFilter: React.FC<SettingsFilterProps> = ({
 
   const toggleDropdown = () => setIsOpen((prev) => !prev);
 
+  const handlePaginationChange = (enabled: boolean) => {
+    onPaginationToggle(enabled);
+    // If enabling pagination, disable league grouping
+    if (enabled && isLeagueGroupingEnabled && onLeagueGroupingToggle) {
+      onLeagueGroupingToggle(false);
+    }
+  };
+
+  const handleLeagueGroupingChange = (enabled: boolean) => {
+    if (onLeagueGroupingToggle) {
+      onLeagueGroupingToggle(enabled);
+      // If enabling league grouping, disable pagination
+      if (enabled && isPaginationEnabled) {
+        onPaginationToggle(false);
+      }
+    }
+  };
+
   return (
     <div className="relative">
       <button
@@ -43,7 +61,7 @@ const SettingsFilter: React.FC<SettingsFilterProps> = ({
                 <input
                   type="checkbox"
                   checked={isPaginationEnabled}
-                  onChange={(e) => onPaginationToggle(e.target.checked)}
+                  onChange={(e) => handlePaginationChange(e.target.checked)}
                 />
                 <span>Enable Pagination</span>
               </label>
@@ -60,7 +78,7 @@ const SettingsFilter: React.FC<SettingsFilterProps> = ({
                     <input
                       type="checkbox"
                       checked={isLeagueGroupingEnabled}
-                      onChange={(e) => onLeagueGroupingToggle(e.target.checked)}
+                      onChange={(e) => handleLeagueGroupingChange(e.target.checked)}
                     />
                     <span>Enable League Grouping</span>
                   </label>

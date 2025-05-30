@@ -4,57 +4,10 @@ import React, { useState } from "react";
 import { League } from "@/app/types/league";
 import { LeagueSelectionDropdownProps } from "@/app/types/league";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { getLeagueRankings } from "@/app/config/leagues";
 
-// Predefined league rankings (all keys in lower-case for consistency)
-export const leagueRankings: Record<string, number> = {
-  // Professional Leagues
-  nhl: 1,
-  ahl: 2,
-  shl: 3,
-  khl: 4,
-  nl: 5,
-  liiga: 6,
-  czechia: 7,
-  del: 8,
-  echl: 9,
-  icehl: 10,
-  slovakia: 11,
-  hockeyallsvenskan: 12,
-  sl: 13,
-  denmark: 14,
-  norway: 15,
-  mestis: 16,
-  del2: 17,
-  eihl: 18,
-  alpshl: 19,
-  "ligue-magnus": 20,	
- hockeyettan: 21,
-  // College Leagues
-  ncaa: 22,
-  usports: 23,
-  acac: 24,
-  acha: 25,
-  // Junior Leagues
-  ohl: 26,
-  whl: 27,
-  ushl: 28,
-  qmjhl: 29,
-  "j20-nationell": 30,
-  mhl: 31,
-  cchl: 32,
-  // Womens Professional Leagues
-  "pwhl-w": 33,
-  "sdhl-w": 34,
-  "nwhl-ca-w": 35,
-  "phf-w": 36,
-  // Womens College Leagues
-  "ncaa-w": 37,
-  "ncaa-iii-w": 38,
-  "acha-w": 39,
-  "acha-d2-w": 40,
-  // Womens Junior Leagues
-  "jwhl-w": 41,
-};
+// Get league rankings from centralized config
+export const leagueRankings = getLeagueRankings();
 
 export const sortLeaguesByRank = (slugs: string[]): string[] => {
   return [...slugs].sort(

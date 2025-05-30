@@ -1,29 +1,12 @@
 // Utility functions for determining league categories
 // This can be used in both client and server components
 
-// Professional league slugs (from useFetchLeagues.ts)
-const professionalLeagueSlugs = [
-  // Women's Leagues
-  'pwhl-w', 'sdhl-w', 'nwhl-ca-w', 'phf-w',
-  // Men's Leagues
-  'nhl', 'shl', 'ahl', 'khl', 'nl', 'liiga', 'czechia', 'del', 'echl', 'icehl', 'slovakia', 'hockeyallsvenskan','alpshl','norway','del2','denmark', 'hockeyettan', 'sl', 'mestis', 'eihl', 'ligue-magnus'
-];
+import { getLeagueSlugs, getLeagueCategory as getLeagueCategoryFromConfig } from '@/app/config/leagues';
 
-// College league slugs (from useFetchLeagues.ts)
-const collegeLeagueSlugs = [
-  // Women's Leagues
-  'ncaa-w', 'ncaa-iii-w', 'acha-w', 'acha-d2-w', 'usports-w',
-  // Men's Leagues
-  'ncaa', 'usports', 'acac', 'acha'
-];
-
-// Junior league slugs (from useFetchLeagues.ts)
-const juniorLeagueSlugs = [
-  // Women's Leagues
-  'jwhl-w',
-  // Men's Leagues
-  'ohl', 'whl', 'ushl', 'qmjhl', 'j20-nationell', 'mhl', 'cchl', 'nahl'
-];
+// Get league slugs from centralized config
+const professionalLeagueSlugs = getLeagueSlugs('professional');
+const collegeLeagueSlugs = getLeagueSlugs('college');
+const juniorLeagueSlugs = getLeagueSlugs('junior');
 
 /**
  * Determines which league categories are represented in the selected leagues
@@ -58,17 +41,7 @@ export function determineSelectedLeagueCategories(selectedLeagues: string[]) {
  * @returns The category name or null if not found
  */
 export function getLeagueCategory(leagueSlug: string): 'junior' | 'college' | 'professional' | null {
-  const normalizedSlug = leagueSlug.toLowerCase();
-  
-  if (juniorLeagueSlugs.includes(normalizedSlug)) {
-    return 'junior';
-  } else if (collegeLeagueSlugs.includes(normalizedSlug)) {
-    return 'college';
-  } else if (professionalLeagueSlugs.includes(normalizedSlug)) {
-    return 'professional';
-  }
-  
-  return null;
+  return getLeagueCategoryFromConfig(leagueSlug);
 }
 
 // Export the arrays for other uses if needed
