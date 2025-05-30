@@ -82,8 +82,12 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
   ].join(",");
 
   // Build the API URL with filters - using player-stats to get ALL entries
-  // Sort by regularStats.PTS by default to ensure we always get players with regular season stats
-  let scoringLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=1000&sort=-regularStats.PTS&league=${leagueSlug}&season=${season}&fields=${playerFields}&apiKey=${apiKey}&player.playerType=SKATER`;
+  // Sort based on statsType: regular season or playoff stats
+  let sortField = statsType === 'postseason' ? '-postseasonStats.PTS' : '-regularStats.PTS';
+  let scoringLeadersUrl = `${apiBaseUrl}/player-stats?offset=0&limit=1000&sort=${sortField}&league=${leagueSlug}&season=${season}&fields=${playerFields}&apiKey=${apiKey}&player.playerType=SKATER`;
+
+  // Note: We'll filter playoff players in the processing logic instead of at API level
+  // to avoid potential API syntax issues
 
   // Add position filter if specified
   if (position && position !== "all") {
@@ -95,7 +99,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
     scoringLeadersUrl += `&player.nationality=${nationality}`;
   }
 
-  console.log("Fetching player stats from:", scoringLeadersUrl);
+  console.log(`Fetching ${statsType} player stats from:`, scoringLeadersUrl);
 
   try {
     const response = await fetch(scoringLeadersUrl, { method: "GET" });
@@ -216,22 +220,82 @@ export async function GET(req: NextRequest, props: { params: Promise<{ leagueSlu
       );
 
       // Convert map to array and format for response
-      filteredData.data = Array.from(playerStatsMap.values())
+      let playersArray = Array.from(playerStatsMap.values())
         .map(player => ({
           player: player.player,
           regularStats: player.regularStats,
           postseasonStats: player.postseasonStats,
           team: player.teams[player.teams.length - 1],
           allTeams: player.teams.map((t: any) => t.name).join(', ')
-        }))
-        .sort((a, b) => {
-          // Sort based on the requested stats type, but include all players
-          if (statsType === 'postseason') {
-            return (b.postseasonStats?.PTS || 0) - (a.postseasonStats?.PTS || 0);
-          }
-          return (b.regularStats?.PTS || 0) - (a.regularStats?.PTS || 0);
-        })
-        .slice(0, 75);
+        }));
+
+      // Sort based on stats type and filter playoff players if needed
+      if (statsType === 'postseason') {
+        // Filter to only include players who actually played in playoffs
+        playersArray = playersArray
+          .filter(player => player.postseasonStats && player.postseasonStats.GP > 0)
+          .sort((a, b) => {
+            // Primary sort: playoff points (descending)
+            const ptsA = a.postseasonStats?.PTS || 0;
+            const ptsB = b.postseasonStats?.PTS || 0;
+            if (ptsB !== ptsA) return ptsB - ptsA;
+            
+            // Secondary sort: playoff goals (descending)
+            const goalsA = a.postseasonStats?.G || 0;
+            const goalsB = b.postseasonStats?.G || 0;
+            if (goalsB !== goalsA) return goalsB - goalsA;
+            
+            // Tertiary sort: playoff assists (descending)
+            const assistsA = a.postseasonStats?.A || 0;
+            const assistsB = b.postseasonStats?.A || 0;
+            if (assistsB !== assistsA) return assistsB - assistsA;
+            
+            // Final sort: playoff games played (ascending - fewer games is better for same stats)
+            const gpA = a.postseasonStats?.GP || 0;
+            const gpB = b.postseasonStats?.GP || 0;
+            return gpA - gpB;
+          });
+        
+        console.log(`Playoff players returned: ${playersArray.length}`);
+        console.log("Top 10 playoff scorers:", playersArray.slice(0, 10).map(p => ({
+          name: p.player.name,
+          team: p.team?.name,
+          GP: p.postseasonStats?.GP || 0,
+          G: p.postseasonStats?.G || 0,
+          A: p.postseasonStats?.A || 0,
+          PTS: p.postseasonStats?.PTS || 0
+        })));
+      } else {
+        playersArray = playersArray.sort((a, b) => {
+          // Primary sort: regular season points (descending)
+          const ptsA = a.regularStats?.PTS || 0;
+          const ptsB = b.regularStats?.PTS || 0;
+          if (ptsB !== ptsA) return ptsB - ptsA;
+          
+          // Secondary sort: regular season goals (descending)
+          const goalsA = a.regularStats?.G || 0;
+          const goalsB = b.regularStats?.G || 0;
+          if (goalsB !== goalsA) return goalsB - goalsA;
+          
+          // Tertiary sort: regular season assists (descending)
+          const assistsA = a.regularStats?.A || 0;
+          const assistsB = b.regularStats?.A || 0;
+          return assistsB - assistsA;
+        });
+        
+        console.log(`Regular season players returned: ${playersArray.length}`);
+        console.log("Top 10 regular season scorers:", playersArray.slice(0, 10).map(p => ({
+          name: p.player.name,
+          team: p.team?.name,
+          GP: p.regularStats?.GP || 0,
+          G: p.regularStats?.G || 0,
+          A: p.regularStats?.A || 0,
+          PTS: p.regularStats?.PTS || 0
+        })));
+      }
+
+      // Take top 75 players after proper sorting
+      filteredData.data = playersArray.slice(0, 75);
       
       // Check if any players have playoff stats
       const playersWithPlayoffStats = filteredData.data.filter(

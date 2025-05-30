@@ -59,9 +59,9 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
       setError(null);
 
       try {
-        // Always fetch both regular and playoff stats by not specifying statsType
+        // Include statsType to fetch the appropriate dataset
         const response = await fetch(
-          `/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}&nationality=${currentNationalityFilter}`
+          `/api/league/${leagueSlug}/goalie-leaders?season=${selectedSeason}&nationality=${currentNationalityFilter}&statsType=${statsType}`
         );
 
         if (!response.ok) {
@@ -101,7 +101,7 @@ const GoalieLeaders: React.FC<GoalieLeadersProps> = ({
     if (leagueSlug && selectedSeason) {
       fetchGoalieLeaders();
     }
-  }, [leagueSlug, selectedSeason, currentNationalityFilter]); // Remove statsType from dependency array
+  }, [leagueSlug, selectedSeason, currentNationalityFilter, statsType]);
 
   // Update currentNationalityFilter when prop changes
   useEffect(() => {

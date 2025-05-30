@@ -6,6 +6,7 @@ import type { Team as TeamType, RosterPlayer } from "@/app/types/team";
 import Link from "../common/style/Link"; // Import the Link component
 import { TeamColumnOptions } from "./TeamColumnDefinitions";
 import StatsTypeSelector from "@/app/components/common/StatsTypeSelector";
+import SeasonSelector from "@/app/components/common/SeasonSelector";
 
 interface TeamStats {
   team: TeamType;
@@ -14,6 +15,7 @@ interface TeamStats {
 
 interface TeamProps {
   teamId: string;
+  season?: string;
   customColors?: {
     backgroundColor: string;
     textColor: string;
@@ -23,8 +25,10 @@ interface TeamProps {
   };
   selectedColumns?: TeamColumnOptions;
   hideStatsTypeSelector?: boolean;
+  hideSeasonSelector?: boolean;
   defaultStatsType?: "regular" | "postseason";
   onStatsTypeChange?: (statsType: "regular" | "postseason") => void;
+  onSeasonChange?: (season: string) => void;
 }
 
 const DEFAULT_COLUMNS: TeamColumnOptions = {
@@ -43,8 +47,27 @@ const DEFAULT_COLUMNS: TeamColumnOptions = {
   points: true,
 };
 
+// Helper function to get current season
+const getCurrentSeason = (): string => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+
+  // Hockey season typically starts in September/October
+  // If we're in Jan-Aug, we're in the season that started the previous year
+  // If we're in Sep-Dec, we're in the season that started this year
+  if (currentMonth >= 9) {
+    // September or later - new season starting
+    return `${currentYear}-${currentYear + 1}`;
+  } else {
+    // January to August - season that started last year
+    return `${currentYear - 1}-${currentYear}`;
+  }
+};
+
 const Team: React.FC<TeamProps> = ({
   teamId,
+  season = getCurrentSeason(), // Dynamic default season
   customColors = {
     backgroundColor: "#052D41",
     textColor: "#000000",
@@ -54,19 +77,26 @@ const Team: React.FC<TeamProps> = ({
   },
   selectedColumns = DEFAULT_COLUMNS,
   hideStatsTypeSelector = false,
+  hideSeasonSelector = false,
   defaultStatsType = "regular",
   onStatsTypeChange,
+  onSeasonChange,
 }) => {
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSeason, setSelectedSeason] = useState<string>(season);
   const [statsType, setStatsType] = useState<"regular" | "postseason">(
     defaultStatsType
   );
   const [hasPlayoffStats, setHasPlayoffStats] = useState<boolean>(false);
+  const [leagueSlug, setLeagueSlug] = useState<string>("");
 
   useEffect(() => {
     const fetchTeamStats = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         const teamInfoResponse = await fetch(
           `/api/team/${encodeURIComponent(teamId)}`
@@ -76,9 +106,14 @@ const Team: React.FC<TeamProps> = ({
         }
         const teamInfo = await teamInfoResponse.json();
 
-        // Fetch roster data
+        // Extract league slug for SeasonSelector
+        setLeagueSlug(teamInfo.leagueSlug || "");
+
+        // Fetch roster data with season parameter
         const rosterResponse = await fetch(
-          `/api/teamroster?teamId=${encodeURIComponent(teamId)}`
+          `/api/teamroster?teamId=${encodeURIComponent(
+            teamId
+          )}&season=${encodeURIComponent(selectedSeason)}`
         );
         if (!rosterResponse.ok) {
           throw new Error("Failed to fetch team roster");
@@ -112,7 +147,15 @@ const Team: React.FC<TeamProps> = ({
     };
 
     fetchTeamStats();
-  }, [teamId]);
+  }, [teamId, selectedSeason]); // Add selectedSeason to dependencies
+
+  // Handler for season change
+  const handleSeasonChange = (newSeason: string) => {
+    setSelectedSeason(newSeason);
+    if (onSeasonChange) {
+      onSeasonChange(newSeason);
+    }
+  };
 
   // Handler for stats type change
   const handleStatsTypeChange = (newStatsType: "regular" | "postseason") => {
@@ -168,14 +211,25 @@ const Team: React.FC<TeamProps> = ({
               </div>
             </div>
 
-            {!hideStatsTypeSelector && (
-              <StatsTypeSelector
-                statsType={statsType}
-                onChange={handleStatsTypeChange}
-                hasPlayoffStats={hasPlayoffStats}
-              />
-            )}
+            <div className="flex items-center space-x-4">
+              {!hideSeasonSelector && leagueSlug && (
+                <SeasonSelector
+                  leagueSlug={leagueSlug}
+                  initialSeason={selectedSeason}
+                  onSeasonChange={handleSeasonChange}
+                />
+              )}
+
+              {!hideStatsTypeSelector && (
+                <StatsTypeSelector
+                  statsType={statsType}
+                  onChange={handleStatsTypeChange}
+                  hasPlayoffStats={hasPlayoffStats}
+                />
+              )}
+            </div>
           </div>
+
           <RosterTable
             roster={teamStats.roster}
             customColors={customColors}
